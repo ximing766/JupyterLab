@@ -1,0 +1,202 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>控制协议帧示例</title>
+  <style>
+    :root {
+      --header-start: #4158D0;
+      --header-end: #C850C0;
+      --data: #c9c9c9;
+      --length: #59a5ec;
+      --checksum: #00B4DB;
+      --footer: #0BA360;
+      --text-dark: #2C3E50;
+      --shadow-color: rgba(0, 0, 0, 0.05);
+      --hover-shadow: rgba(0, 0, 0, 0.08);
+    }
+
+    body {
+      font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+      background: linear-gradient(135deg, #f6f8fb 0%, #f1f4f8 100%);
+      min-height: 100vh;
+      margin: 0;
+      padding: 3rem 2rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .frame {
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(10px);
+      border-radius: 16px;
+      box-shadow: 0 6px 20px var(--shadow-color);
+      margin: 2rem 0;
+      padding: 2.5rem;
+      width: min(92%, 850px);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .frame:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 25px var(--hover-shadow);
+    }
+
+    h2 {
+      color: var(--text-dark);
+      font-size: 2rem;
+      margin: 0 0 2rem;
+      padding-bottom: 0.8rem;
+      border-bottom: 2px solid rgba(44, 62, 80, 0.1);
+      letter-spacing: 1.2px;
+      text-align: center;
+      font-weight: 600;
+    }
+
+    .bytes {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+      margin: 1rem 0;
+    }
+
+    .byte {
+      background: rgba(255, 255, 255, 0.9);
+      border-radius: 8px;
+      padding: 1rem;
+      min-width: 45px;            /* here */
+      font-weight: 600;
+      font-family: 'Consolas', monospace;
+      box-shadow: 0 3px 8px var(--shadow-color);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      position: relative;
+      overflow: hidden;
+      text-align: center;
+    }
+
+    .byte:hover {
+      transform: scale(1.08);
+      box-shadow: 0 5px 12px var(--hover-shadow);
+    }
+
+    .byte::before {
+      content: "";
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      opacity: 0.2;
+    }
+
+    .header::before { background: linear-gradient(45deg, var(--header-start), var(--header-end)); }
+    .ID::before     { background: var(--length); }
+    .data::before   { background: var(--data); }
+    .checksum::before { background: var(--checksum); }
+    .footer::before { background: var(--footer); }
+
+    .description {
+      color: #5a6c7d;
+      font-size: 0.95rem;
+      margin-top: 2rem;
+      padding: 1.2rem;
+      background: rgba(246, 248, 251, 0.8);
+      backdrop-filter: blur(5px);
+      border-radius: 12px;
+      text-align: center;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+      gap: 1rem;
+      box-shadow: inset 0 2px 4px var(--shadow-color);
+    }
+
+    @media (max-width: 600px) {
+      body { padding: 1rem; }
+      .frame { padding: 1.5rem; }
+      .byte { min-width: 56px; padding: 0.6rem; }
+      h2 { font-size: 1.4rem; }
+    }
+  </style>
+</head>
+<body>
+
+<div class="frame">
+  <h2>🚪 门禁控制</h2>
+  <div class="bytes">
+    <div class="byte header">0xFF</div>
+    <div class="byte header">0x00</div>
+    <div class="byte ID">0x00</div>
+    <div class="byte ID">0x0C</div>
+    <div class="byte data">0x01</div>
+    <div class="byte data">0x01</div>
+    <div class="byte data">0x11</div>
+    <div class="byte data">0x22</div>
+    <div class="byte data">0x33</div>
+    <div class="byte data">0x44</div>
+    <div class="byte data">0x55</div>
+    <div class="byte data">0x66</div>
+    <div class="byte data">0x77</div>
+    <div class="byte data">0x88</div>
+    <div class="byte data">0x88</div>
+    <div class="byte data">0x88</div>
+    <div class="byte footer">0xEE</div>
+    <div class="byte footer">0xAA</div>
+  </div>
+</div>
+
+<!-- 对其他两个frame做相同修改 -->
+<div class="frame">
+  <h2>🔼 呼叫电梯上行</h2>
+  <div class="bytes">
+    <div class="byte header">0xFF</div>
+    <div class="byte header">0x01</div>
+    <div class="byte ID">0x00</div>
+    <div class="byte ID">0x0E</div>
+    <div class="byte data">0x01</div>
+    <div class="byte data">0x01</div>
+    <div class="byte data">0x11</div>
+    <div class="byte data">0x22</div>
+    <div class="byte data">0x33</div>
+    <div class="byte data">0x44</div>
+    <div class="byte data">0x55</div>
+    <div class="byte data">0x66</div>
+    <div class="byte data">0x77</div>
+    <div class="byte data">0x88</div>
+    <div class="byte data">0x88</div>
+    <div class="byte data">0x88</div>
+    <div class="byte checksum">0x01</div>
+    <div class="byte checksum">0x03</div>
+    <div class="byte footer">0xF4</div>
+    <div class="byte footer">0xAA</div>
+  </div>
+</div>
+
+<div class="frame">
+  <h2>🏢 楼层选择</h2>
+  <div class="bytes">
+    <div class="byte header">0xFF</div>
+    <div class="byte header">0x02</div>
+    <div class="byte ID">0x00</div>
+    <div class="byte ID">0x0D</div>
+    <div class="byte data">0x01</div>
+    <div class="byte data">0x01</div>
+    <div class="byte data">0x11</div>
+    <div class="byte data">0x22</div>
+    <div class="byte data">0x33</div>
+    <div class="byte data">0x44</div>
+    <div class="byte data">0x55</div>
+    <div class="byte data">0x66</div>
+    <div class="byte data">0x77</div>
+    <div class="byte data">0x88</div>
+    <div class="byte data">0x88</div>
+    <div class="byte data">0x88</div>
+    <div class="byte checksum">0x15</div>
+    <div class="byte footer">0x06</div>
+    <div class="byte footer">0xAA</div>
+  </div>
+</div>
+
+</body>
+</html>
