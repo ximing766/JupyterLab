@@ -2,6 +2,7 @@
 import sys
 import os
 import json
+import re
 import datetime
 import time
 import queue
@@ -44,6 +45,8 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon(str(icon_path)))  
         self.current_theme = ThemeManager.DARK_THEME
         self.logger = Logger(app_path=str(app_path))
+        self.background_cache = None  # 添加背景缓存
+        self.last_window_size = QSize()  # 添加窗口尺寸记录
         self.drag_pos = QPoint()
         self.data_bits = 8
         self.parity = 'N'  # N-无校验
@@ -91,6 +94,26 @@ class MainWindow(QMainWindow):
             Qt.WindowType.WindowMaximizeButtonHint  # 允许最大化
         )
         self.init_ui()
+    
+    def paintEvent(self, event):
+        """重写绘制事件,绘制背景图片"""
+        if not self.background_cache or self.size() != self.last_window_size:
+            # 仅在窗口大小改变时重新生成背景
+            # 移除这里的painter = QPainter(self)  # 错误的位置
+            size = self.size()
+            background = QPixmap(str(Path(__file__).parent / "person1.jpg"))
+            self.background_cache = background.scaled(
+                size, 
+                Qt.AspectRatioMode.KeepAspectRatioByExpanding,
+                Qt.TransformationMode.SmoothTransformation
+            )
+            self.last_window_size = size
+            
+        painter = QPainter(self)  # 正确的唯一painter实例
+        painter.setOpacity(0.3)
+        x = (self.width() - self.background_cache.width()) // 2
+        y = (self.height() - self.background_cache.height()) // 2
+        painter.drawPixmap(x, y, self.background_cache)
 
     def init_ui(self):
         title_bar = self.create_title_bar()
@@ -148,7 +171,7 @@ class MainWindow(QMainWindow):
         self.nav_list.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.nav_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         
-        nav_items = ["COM", "CHART", "Page 3"] 
+        nav_items = ["COM P1", "COM P2", "CHART"] 
         for item in nav_items:
             list_item = QListWidgetItem(item)
             list_item.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
@@ -250,17 +273,17 @@ class MainWindow(QMainWindow):
             self.maximize_btn.setText("❐")
 
     def create_pages(self):
-        first_page = self.create_first_page()
-        second_page = self.create_second_page()
-        third_page = self.create_third_page()
+        COM1_page = self.create_COM1_page()
+        COM2_page = self.create_COM2_page()
+        Chart_page = self.create_Chart_page()
 
-        self.stacked_widget.addWidget(first_page)
-        self.stacked_widget.addWidget(second_page)
-        self.stacked_widget.addWidget(third_page)
+        self.stacked_widget.addWidget(COM1_page)
+        self.stacked_widget.addWidget(COM2_page)
+        self.stacked_widget.addWidget(Chart_page)
         
-    def create_first_page(self):
-        first_page = QWidget()
-        layout = QVBoxLayout(first_page)
+    def create_COM1_page(self):
+        COM1_page = QWidget()
+        layout = QVBoxLayout(COM1_page)
         layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         
@@ -283,11 +306,11 @@ class MainWindow(QMainWindow):
         line_top_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
         
         # 添加行数设置
-        max_lines_label = QLabel("最大行数")
+        max_lines_label = QLabel("最大行数")  #TODO 可显示的最大行数待确认
         self.max_lines_spin = QSpinBox()
-        self.max_lines_spin.setRange(5000, 200000)
-        self.max_lines_spin.setValue(30000)
-        self.max_lines_spin.setSingleStep(5000)
+        self.max_lines_spin.setRange(10000, 250000)
+        self.max_lines_spin.setValue(50000)
+        self.max_lines_spin.setSingleStep(10000)
         self.max_lines_spin.valueChanged.connect(self.update_max_lines)
         
         # 当前行数显示
@@ -422,7 +445,7 @@ class MainWindow(QMainWindow):
         self.port_scan_timer.start(1000)
         self.refresh_ports()
         
-        return first_page
+        return COM1_page
     
 
     
@@ -443,7 +466,7 @@ class MainWindow(QMainWindow):
         """创建数据显示区域"""
         self.serial_display = QTextEdit()
         self.serial_display.setReadOnly(True)
-        self.serial_display.document().setMaximumBlockCount(30000)  # 限制最大行数
+        self.serial_display.document().setMaximumBlockCount(50000)  # 限制最大行数
         self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # 自动换行
         self.serial_display.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)  # 允许在任何位置换行
         
@@ -554,9 +577,9 @@ class MainWindow(QMainWindow):
         
         layout.addWidget(self.serial_display)
 
-    def create_second_page(self):
-        second_page = QWidget()
-        layout = QVBoxLayout(second_page)
+    def create_Chart_page(self):
+        Chart_page = QWidget()
+        layout = QVBoxLayout(Chart_page)
         layout.setContentsMargins(0, 0, 0, 0)
         layout.setSpacing(0)
 
@@ -602,7 +625,7 @@ class MainWindow(QMainWindow):
         main_splitter.setSizes([100, 200])
 
         layout.addWidget(main_splitter)
-        return second_page
+        return Chart_page
     
     def create_position_area(self):
         bottom_right = QWidget()
@@ -783,10 +806,10 @@ class MainWindow(QMainWindow):
         except Exception as e:
             messagebox.showerror("错误", f"更新测试点失败: {str(e)}")
 
-    def create_third_page(self):
+    def create_COM2_page(self):
         # 空白页面
-        third_page = QWidget()
-        return third_page
+        COM2_page = QWidget()
+        return COM2_page
     
     def on_display_wheel(self, event):
         """处理显示区域的鼠标滚轮事件"""
@@ -1093,11 +1116,18 @@ class MainWindow(QMainWindow):
     def handle_serial_data(self, data):
         try:
             text = data.decode('utf-8')
-            self.data_buffer.append(text)   # 串口数据先缓存，定时在显示区域刷新
+            
             self.log_worker.add_log_task("UwbLog", "info", text.strip())
+            text = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
+            self.data_buffer.append(text)   # 串口数据先缓存，定时在显示区域刷新
             
             if "@POSITION" in text:
-                json_data = json.loads(text)
+                # print(f'接收到原始数据：{repr(text)}')
+                try:
+                    json_data = json.loads(text)
+                except json.JSONDecodeError as e:
+                    print(f"JSON解析错误: {e}")
+                    return
                 # 提取用户坐标
                 user_x = float(json_data.get('User-X', 0))
                 user_y = float(json_data.get('User-Y', 0))
@@ -1388,7 +1418,11 @@ class MainWindow(QMainWindow):
             self.data_table.setShowGrid(False)
         
     def switch_page(self, index):
+        """切换页面时的处理逻辑"""
         self.stacked_widget.setCurrentIndex(index)
+        # 检查当前页面是否为COM1页面
+        if index != 0:  
+            self.find_dialog.close()
 
 class ThemeManager:
     # 📌📁❌🔸
@@ -1765,12 +1799,27 @@ class SerialReadThread(QThread):
         
     def run(self):
         self.running = True
+        buffer = bytearray()
         while self.running and self.serial_port.is_open:
             try:
                 if self.serial_port.in_waiting:
-                    line = self.serial_port.readline()
-                    if line:
-                        self.data_received.emit(line)
+                    # 等待一小段时间，让数据完整到达
+                    time.sleep(0.05)
+                    # 读取可用数据
+                    data = self.serial_port.read(self.serial_port.in_waiting)
+                    if data:
+                        buffer.extend(data)
+                        # 检查是否有完整的行
+                        while b'\n' in buffer:
+                            # 查找第一个换行符的位置
+                            line_end = buffer.find(b'\n')
+                            # 提取完整的行（包括换行符）
+                            line = bytes(buffer[:line_end + 1])
+                            # 更新缓冲区，移除已处理的数据
+                            buffer = buffer[line_end + 1:]
+                            # 发送完整的行
+                            if line.strip():  # 忽略空行
+                                self.data_received.emit(line)
             except Exception as e:
                 print(f"串口读取错误: {str(e)}")
                 break
