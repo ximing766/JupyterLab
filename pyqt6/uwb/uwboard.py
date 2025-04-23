@@ -45,6 +45,7 @@ class MainWindow(QMainWindow):
         self.setWindowIcon(QIcon(str(icon_path)))  
         self.current_theme = ThemeManager.DARK_THEME
         self.logger = Logger(app_path=str(app_path))
+        self.csv_title = ['Master', 'Slave', 'NLOS', 'RSSI', 'Speed','X', 'Y', 'Z', 'Auth', 'Trans']
         self.background_cache = None  # 添加背景缓存
         self.last_window_size = QSize()  # 添加窗口尺寸记录
         self.drag_pos = QPoint()
@@ -101,7 +102,7 @@ class MainWindow(QMainWindow):
             # 仅在窗口大小改变时重新生成背景
             # 移除这里的painter = QPainter(self)  # 错误的位置
             size = self.size()
-            background = QPixmap(str(Path(__file__).parent / "person1.jpg"))
+            background = QPixmap(str(Path(__file__).parent / "city1.jpg"))
             self.background_cache = background.scaled(
                 size, 
                 Qt.AspectRatioMode.KeepAspectRatioByExpanding,
@@ -110,7 +111,7 @@ class MainWindow(QMainWindow):
             self.last_window_size = size
             
         painter = QPainter(self)  # 正确的唯一painter实例
-        painter.setOpacity(0.3)
+        painter.setOpacity(0.5)
         x = (self.width() - self.background_cache.width()) // 2
         y = (self.height() - self.background_cache.height()) // 2
         painter.drawPixmap(x, y, self.background_cache)
@@ -171,7 +172,7 @@ class MainWindow(QMainWindow):
         self.nav_list.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.nav_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         
-        nav_items = ["COM P1", "COM P2", "CHART"] 
+        nav_items = ["COM P1", "CHART"] 
         for item in nav_items:
             list_item = QListWidgetItem(item)
             list_item.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
@@ -260,8 +261,6 @@ class MainWindow(QMainWindow):
         dialog = HighlightConfigDialog(self.highlight_config, self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             self.highlight_config = dialog.get_config()
-            # 可选：立即重新高亮整个文本区域 (如果需要)
-            # self.rehighlight_all_text()
 
 
     def toggle_maximize(self):
@@ -273,15 +272,13 @@ class MainWindow(QMainWindow):
             self.maximize_btn.setText("❐")
 
     def create_pages(self):
-        COM1_page = self.create_COM1_page()
-        COM2_page = self.create_COM2_page()
+        COM1_page = self.create_COM_page()
         Chart_page = self.create_Chart_page()
 
         self.stacked_widget.addWidget(COM1_page)
-        self.stacked_widget.addWidget(COM2_page)
         self.stacked_widget.addWidget(Chart_page)
         
-    def create_COM1_page(self):
+    def create_COM_page(self):
         COM1_page = QWidget()
         layout = QVBoxLayout(COM1_page)
         layout.setContentsMargins(10, 10, 10, 10)
@@ -447,8 +444,6 @@ class MainWindow(QMainWindow):
         
         return COM1_page
     
-
-    
     def update_max_lines(self, value):
         """更新显示区域最大行数"""
         self.serial_display.document().setMaximumBlockCount(value)
@@ -481,7 +476,7 @@ class MainWindow(QMainWindow):
         
         self.serial_display.setStyleSheet("""
             QTextEdit {
-                background-color: rgba(36, 42, 56, 0.33);
+                background-color: rgba(36, 42, 56, 0.177);
                 border: 1.5px solid #3a4a5c;
                 border-radius: 16px;
                 padding: 12px;
@@ -494,7 +489,7 @@ class MainWindow(QMainWindow):
             }
             QTextEdit:focus {
                 border: 1.5px solid #477faa;
-                background-color: rgba(36, 42, 56, 0.92);
+                background-color: rgba(36, 42, 56, 0.5);
             }
             QScrollBar:vertical {
                 background: transparent;
@@ -570,7 +565,6 @@ class MainWindow(QMainWindow):
         find_layout.addWidget(self.close_find_btn)
 
         # 添加鼠标事件处理
-        # self.serial_display.mousePressEvent = self.on_display_mouse_press
         self.serial_display.wheelEvent = self.on_display_wheel
         self.serial_display.keyPressEvent = self.on_display_key_press
         self.font_size = 12  # 初始字体大小
@@ -768,48 +762,6 @@ class MainWindow(QMainWindow):
 
         bottom_left_layout.addWidget(form_splitter)
         return bottom_left
-
-    def update_test_points(self):
-        try:
-            self.test_gate_width = int(self.Anchor_len.text())
-            self.test_gate_height = int(self.Anchor_H.text())
-            self.MAnchor = [self.test_gate_width/2, 0, self.test_gate_height]
-            self.SAnchor = [-self.test_gate_width/2, 0, self.test_gate_height]
-            self.test_point = {
-                **{f"A{i}": [x * (self.test_gate_width/2 if x != 0 else 1), y, 80] 
-                    for i, (x, y) in enumerate(self.base_points)},
-                **{f"B{i}": [x * (self.test_gate_width/2 if x != 0 else 1), y, 150] 
-                    for i, (x, y) in enumerate(self.base_points)}
-            }
-            self.point_distances = {
-                'A': {},  # A类测试点的距离
-                'B': {}   # B类测试点的距离
-            }
-            for point_name, coords in self.test_point.items():
-                m_dist = math.sqrt((coords[0] - self.MAnchor[0])**2 + 
-                                    (coords[1] - self.MAnchor[1])**2 + 
-                                    (coords[2] - self.MAnchor[2])**2)
-                s_dist = math.sqrt((coords[0] - self.SAnchor[0])**2 + 
-                                    (coords[1] - self.SAnchor[1])**2 + 
-                                    (coords[2] - self.SAnchor[2])**2)
-                
-                # 根据点名前缀(A或B)存储距离
-                point_type = point_name[0]  # 获取A或B
-                point_index = point_name[1:]  # 获取数字部分
-                self.point_distances[point_type][point_index] = {
-                    'D_M': round(m_dist),
-                    'D_S': round(s_dist)
-                }
-            print(self.point_distances)
-        except ValueError as e:
-            messagebox.showerror("错误", "请输入有效的数字")
-        except Exception as e:
-            messagebox.showerror("错误", f"更新测试点失败: {str(e)}")
-
-    def create_COM2_page(self):
-        # 空白页面
-        COM2_page = QWidget()
-        return COM2_page
     
     def on_display_wheel(self, event):
         """处理显示区域的鼠标滚轮事件"""
@@ -852,6 +804,15 @@ class MainWindow(QMainWindow):
             self.auto_scroll.setChecked(True)
         # 调用原始的键盘事件处理
         QTextEdit.keyPressEvent(self.serial_display, event)
+    
+    def mousePressEvent(self, event):
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.drag_pos = event.globalPosition().toPoint()
+
+    def mouseMoveEvent(self, event):
+        if event.buttons() & Qt.MouseButton.LeftButton:
+            self.move(self.pos() + event.globalPosition().toPoint() - self.drag_pos)
+            self.drag_pos = event.globalPosition().toPoint()
     
     def update_find_count(self):
         """增量更新查找结果计数"""
@@ -1014,6 +975,8 @@ class MainWindow(QMainWindow):
                     self.current_csv_log_file_path = os.path.join(self.logger.csv_log_dir, csv_log_filename)
                     self.current_text_log_file_path = os.path.join(self.logger.text_log_dir, text_log_filename)
                     self.logger.create_logger("data", csv_log_filename, "csv") # 创建 CSV 日志
+                    header_str = ",".join(self.csv_title)
+                    self.log_worker.add_log_task("data", "info", header_str)
                     self.logger.create_logger("UwbLog", text_log_filename, "text") # 创建 Text 日志
                     self.open_csv_log_file_btn.setEnabled(True) # 启用按钮
                     self.open_text_log_file_btn.setEnabled(True)
@@ -1062,19 +1025,16 @@ class MainWindow(QMainWindow):
 
     def open_log_folder(self):
         """使用系统文件浏览器打开日志文件夹"""
-        # --- Edit Start ---
-        # 优先使用 logger 对象中定义的 log_dir
         log_dir = getattr(self.logger, 'log_dir', None)
         if log_dir and os.path.isdir(log_dir):
             try:
                 os.startfile(log_dir) # Windows specific
-                return # 成功打开，直接返回
+                return 
             except Exception as e:
                 QMessageBox.warning(self, "打开失败", f"无法打开日志目录 '{log_dir}'：\n{e}")
-        # --- Edit End ---
 
         # 如果 logger 没有 log_dir 或目录不存在，可以尝试打开程序运行目录下的 'UWBLogs' 文件夹
-        fallback_dir = os.path.join(os.path.dirname(__file__), 'UWBLogs') # 使用 __file__ 获取当前脚本目录
+        fallback_dir = os.path.join(os.path.dirname(__file__), 'UWBLogs') 
         if os.path.isdir(fallback_dir):
              try:
                 os.startfile(fallback_dir)
@@ -1273,14 +1233,6 @@ class MainWindow(QMainWindow):
             self.data_table.scrollToBottom()
             self.pending_table_rows.clear()
 
-    def mousePressEvent(self, event):
-        if event.button() == Qt.MouseButton.LeftButton:
-            self.drag_pos = event.globalPosition().toPoint()
-
-    def mouseMoveEvent(self, event):
-        if event.buttons() & Qt.MouseButton.LeftButton:
-            self.move(self.pos() + event.globalPosition().toPoint() - self.drag_pos)
-            self.drag_pos = event.globalPosition().toPoint()
     
     def toggle_theme(self):
         self.current_theme = ThemeManager.DARK_THEME if \
@@ -1787,7 +1739,6 @@ class PositionView(QWidget):
         painter.setPen(QPen(QColor("#4a90e2"), 2))
         painter.setBrush(QColor(74, 144, 226, 255))
         painter.drawEllipse(int(screen_x) - 6, int(screen_y) - 6, 12, 12)  # 增大点的大小
-
 
 class SerialReadThread(QThread):
     data_received = pyqtSignal(bytes)
