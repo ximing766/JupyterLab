@@ -33,8 +33,6 @@ from PyQt6.QtCharts import (
 # 自定义模块
 from log import Logger
 
-
-
 class MainWindow(QMainWindow):
     theme_changed = pyqtSignal()
 
@@ -55,18 +53,23 @@ class MainWindow(QMainWindow):
         self.current_csv_log_file_path = None
         self.current_text_log_file_path = None
         self.current_ports = []
+        self.current_ports2 = []
         self.data_buffer = []
+        self.data_buffer2 = []
         self.highlight_config = {
-            "ERROR"              : QColor("#FF5252"),
+            "APP     :ERROR:"              : QColor("#FF5252"),
             "gCapSessionHandle"  : QColor("#00ff7f"),
             "gDtxSessionHandle"  : QColor("#9C27B0"),
             "gMrmSessionHandle"  : QColor("#ffaaff"),
             "AuthenticationState": QColor("#95ceef"),
-            "APP_HIFTask"        : QColor("#1cdef0"), 
+            "APP_HIFTask"        : QColor("#1cdef0"),
         }
         self.display_timer = QTimer()
-        self.display_timer.timeout.connect(self.update_display) #COM Log show
+        self.display_timer.timeout.connect(self.update_display)
         self.display_timer.start(250)
+        self.display_timer2 = QTimer() 
+        self.display_timer2.timeout.connect(self.update_display2) 
+        self.display_timer2.start(250)
         self.log_worker = LogWorker(self.logger)
         self.log_worker.start()
         self.chart_thread = ChartUpdateThread()
@@ -97,10 +100,7 @@ class MainWindow(QMainWindow):
         self.init_ui()
     
     def paintEvent(self, event):
-        """重写绘制事件,绘制背景图片"""
         if not self.background_cache or self.size() != self.last_window_size:
-            # 仅在窗口大小改变时重新生成背景
-            # 移除这里的painter = QPainter(self)  # 错误的位置
             size = self.size()
             background = QPixmap(str(Path(__file__).parent / "city1.jpg"))
             self.background_cache = background.scaled(
@@ -110,7 +110,7 @@ class MainWindow(QMainWindow):
             )
             self.last_window_size = size
             
-        painter = QPainter(self)  # 正确的唯一painter实例
+        painter = QPainter(self) 
         painter.setOpacity(0.5)
         x = (self.width() - self.background_cache.width()) // 2
         y = (self.height() - self.background_cache.height()) // 2
@@ -126,11 +126,9 @@ class MainWindow(QMainWindow):
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
 
-        # 左侧导航栏
         nav_container = self.create_nav_bar()
         self.nav_list.currentRowChanged.connect(self.switch_page)
 
-        # 右侧堆栈窗口
         self.stacked_widget = QStackedWidget()
         self.create_pages()
 
@@ -151,7 +149,7 @@ class MainWindow(QMainWindow):
         
         splitter.addWidget(nav_container)
         splitter.addWidget(self.stacked_widget)
-        splitter.setStretchFactor(1, 1)  # 设置堆栈窗口可以拉伸
+        splitter.setStretchFactor(1, 1)  
         splitter.setSizes([80,500])
 
         main_layout.addWidget(title_bar)
@@ -162,8 +160,8 @@ class MainWindow(QMainWindow):
 
     def create_nav_bar(self):
         nav_container = QWidget()
-        nav_container.setMinimumWidth(65)  # 允许拉伸的最小宽度
-        nav_container.setMaximumWidth(300)  # 限制最大宽度
+        nav_container.setMinimumWidth(65)  
+        nav_container.setMaximumWidth(300) 
         nav_layout = QVBoxLayout(nav_container)
         nav_layout.setContentsMargins(0, 0, 0, 0)
         nav_layout.setSpacing(0)
@@ -172,7 +170,7 @@ class MainWindow(QMainWindow):
         self.nav_list.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.nav_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         
-        nav_items = ["COM P1", "CHART"] 
+        nav_items = ["COM P1", "COM P2", "CHART"] 
         for item in nav_items:
             list_item = QListWidgetItem(item)
             list_item.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
@@ -197,17 +195,14 @@ class MainWindow(QMainWindow):
         title_layout.setContentsMargins(10, 0, 10, 0)
         title_layout.setSpacing(5)
 
-        # 启用鼠标追踪
         title_bar.setAttribute(Qt.WidgetAttribute.WA_MouseTracking)
         
-        # 标题和图标
         self.title_label = QLabel("UWBCOM APP")
         self.title_label.setObjectName("titleLabel")
         about_btn = QPushButton("关于")
         about_btn.setStyleSheet("background: transparent; border: none;color:#c29500;font-weight:bold;")
         about_btn.clicked.connect(self.show_about_dialog)
 
-        # 窗口控制按钮
         btn_size = QSize(20, 20)
         
         minimize_btn = QPushButton("─")
@@ -222,7 +217,6 @@ class MainWindow(QMainWindow):
         close_btn.setFixedSize(btn_size)
         close_btn.clicked.connect(self.close)
 
-        # 统一按钮样式
         control_btns = [minimize_btn, self.maximize_btn, close_btn]
         for btn in control_btns:
             btn.setStyleSheet("""
@@ -236,7 +230,6 @@ class MainWindow(QMainWindow):
                     background-color: rgba(255, 255, 255, 0.1);
                 }
             """)
-        # 特殊处理关闭按钮的悬停效果
         close_btn.setStyleSheet(close_btn.styleSheet() + """
             QPushButton:hover {
                 background-color: #ff4444;
@@ -253,11 +246,9 @@ class MainWindow(QMainWindow):
         return title_bar
     
     def show_about_dialog(self):
-        """显示关于对话框"""
         QMessageBox.about(self, "关于", "UWBCOM APP\nAuthor: Kewei@QLL")
     
     def open_highlight_config_dialog(self):
-        """打开高亮配置对话框"""
         dialog = HighlightConfigDialog(self.highlight_config, self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             self.highlight_config = dialog.get_config()
@@ -273,10 +264,408 @@ class MainWindow(QMainWindow):
 
     def create_pages(self):
         COM1_page = self.create_COM_page()
+        COM2_page = self.create_COM_page2()
         Chart_page = self.create_Chart_page()
 
         self.stacked_widget.addWidget(COM1_page)
+        self.stacked_widget.addWidget(COM2_page)
         self.stacked_widget.addWidget(Chart_page)
+    
+    def create_COM_page2(self):
+        COM2_page = QWidget()
+        layout = QVBoxLayout(COM2_page)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(10)
+        
+        top_widget = QWidget()
+        top_layout = QHBoxLayout(top_widget)
+        top_layout.setContentsMargins(5, 5, 5, 5)
+        
+        self.port_combo2 = QComboBox()
+        self.port_combo2.setMinimumWidth(120)
+
+        self.baud_combo2 = QComboBox()
+        self.baud_combo2.addItems(['9600', '115200', '3000000'])
+        self.baud_combo2.setCurrentText('3000000')
+        self.baud_combo2.setStyleSheet(self.port_combo2.styleSheet())
+
+        line_top_1 = QFrame()
+        line_top_1.setFrameShape(QFrame.Shape.VLine)
+        line_top_1.setFrameShadow(QFrame.Shadow.Sunken)
+        line_top_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
+        
+        max_lines_label = QLabel("最大行数")
+        self.max_lines_spin2 = QSpinBox()
+        self.max_lines_spin2.setRange(50000, 250000)
+        self.max_lines_spin2.setValue(100000)
+        self.max_lines_spin2.setSingleStep(10000)
+        self.max_lines_spin2.valueChanged.connect(self.update_max_lines2)
+        self.current_lines_label2 = QLabel("当前行数: 0")
+        
+        status_widget = QWidget()
+        status_layout = QHBoxLayout(status_widget)
+        status_layout.setContentsMargins(10, 0, 10, 0)
+        status_layout.setSpacing(5)
+        self.status_indicator2 = QLabel("●")
+        self.status_indicator2.setStyleSheet("color: red; font-size: 16px;")
+        status_layout.addWidget(self.status_indicator2)
+
+        self.toggle_btn2 = QPushButton("打开串口")
+        self.toggle_btn2.setFixedWidth(90)
+        self.toggle_btn2.clicked.connect(self.toggle_port2)
+        
+        top_layout.addWidget(self.port_combo2)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(self.baud_combo2)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(status_widget)
+        top_layout.addWidget(self.toggle_btn2)
+        top_layout.addSpacing(20)
+        top_layout.addWidget(line_top_1)
+        top_layout.addSpacing(20)
+        top_layout.addWidget(max_lines_label)
+        top_layout.addWidget(self.max_lines_spin2)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(self.current_lines_label2)
+        top_layout.addStretch()
+
+        layout.addWidget(top_widget)
+
+        splitter = QSplitter(Qt.Orientation.Vertical)
+        splitter.setStyleSheet("""
+            QSplitter::handle {
+                background: transparent;
+                border: none;
+                min-height: 5px;
+            }
+            QSplitter::handle:vertical {
+                height: 5px;
+            }
+            QSplitter::handle:horizontal {
+                width: 5px;
+            }
+        """)
+        
+        self.create_display_area2(splitter)
+    
+        bottom_widget = QWidget()
+        bottom_layout = QHBoxLayout(bottom_widget)
+        
+        self.clear_btn2 = QPushButton("清屏")
+        self.clear_btn2.setFixedWidth(80)
+        self.clear_btn2.clicked.connect(self.serial_display2.clear)
+
+        self.config_highlight_btn2 = QPushButton("高亮")
+        self.config_highlight_btn2.setFixedWidth(80)
+        self.config_highlight_btn2.clicked.connect(self.open_highlight_config_dialog)
+
+        self.timestamp2 = QCheckBox("🕒 时间戳")
+        self.timestamp2.setObjectName("timestamp")
+        self.timestamp2.setToolTip("每行前添加时间戳")
+        self.timestamp2.setChecked(True)
+        self.auto_scroll2 = QCheckBox("📌 自动滚动")
+        self.auto_scroll2.setObjectName("autoScroll")
+        self.auto_scroll2.setChecked(False)
+        self.auto_scroll2.setToolTip("锁定滚动条到底部")
+
+        line_bottom_1 = QFrame()
+        line_bottom_1.setFrameShape(QFrame.Shape.VLine)
+        line_bottom_1.setFrameShadow(QFrame.Shadow.Sunken)
+        line_bottom_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
+
+        bottom_layout.addWidget(self.clear_btn2)
+        bottom_layout.addWidget(self.config_highlight_btn2)
+        bottom_layout.addSpacing(10)
+        bottom_layout.addWidget(line_bottom_1)
+        bottom_layout.addSpacing(10)
+        bottom_layout.addWidget(self.timestamp2)
+        bottom_layout.addWidget(self.auto_scroll2)
+        bottom_layout.addStretch()
+        
+        splitter.addWidget(bottom_widget)
+        splitter.setSizes([2000, 100])  
+        
+        layout.addWidget(splitter)
+        
+        self.port_scan_timer2 = QTimer()
+        self.port_scan_timer2.timeout.connect(self.refresh_ports2)
+        self.port_scan_timer2.start(1000)
+        self.refresh_ports2()
+        
+        return COM2_page
+    
+    def update_max_lines2(self, value):
+        self.serial_display2.document().setMaximumBlockCount(value)
+    
+    def update_current_lines2(self):
+        current_count = self.serial_display2.document().blockCount()
+        self.current_lines_label2.setText(f"当前行数: {current_count}")
+        max_lines = self.serial_display2.document().maximumBlockCount()
+        if current_count >= max_lines:
+            self.serial_display2.clear()
+
+    def create_display_area2(self, layout):
+        self.serial_display2 = QTextEdit()
+        self.serial_display2.setReadOnly(True)
+        self.serial_display2.document().setMaximumBlockCount(100000)  # 限制最大行数
+        self.serial_display2.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # 自动换行
+        self.serial_display2.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)  # 允许在任何位置换行
+        
+        self.serial_display2.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.serial_display2.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        self.serial_display2.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)
+        
+        font = QFont("Microsoft YaHei", 12)
+        self.serial_display2.setFont(font)
+        
+        self.serial_display2.setStyleSheet("""
+            QTextEdit {
+                background-color: rgba(36, 42, 56, 0.177);
+                border: 1.5px solid #3a4a5c;
+                border-radius: 16px;
+                padding: 12px;
+                color: {theme['text']};
+                font-size: 15px;
+                font-family: 'JetBrains Mono', 'Consolas', 'Microsoft YaHei', monospace;
+                selection-background-color: #5ea2d6;
+                selection-color: #ffffff;
+
+            }
+            QTextEdit:focus {
+                border: 1.5px solid #477faa;
+                background-color: rgba(36, 42, 56, 0.5);
+            }
+            QScrollBar:vertical {
+                background: transparent;
+                width: 10px;
+                margin: 2px 0 2px 0;
+                border-radius: 5px;
+            }
+            QScrollBar::handle:vertical {
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #3da9fc, stop:1 #1e293b
+                );
+                min-height: 24px;
+                border-radius: 5px;
+            }
+            QScrollBar::handle:vertical:hover {
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #90caf9, stop:1 #3da9fc
+                );
+            }
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                height: 0;
+                background: none;
+                border: none;
+            }
+        """)
+        
+        self.serial_display2.document().blockCountChanged.connect(self.update_current_lines2)
+        self.update_current_lines2()
+
+        self.find_dialog2 = QDialog(self)
+        self.find_dialog2.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Tool)
+        self.find_dialog2.setFixedSize(300, 48)
+        self.find_dialog2.setStyleSheet("""
+            QDialog {
+                background-color: rgba(45, 52, 54, 0.95);
+                border: 1px solid rgba(255, 255, 255, 0.1);
+                border-radius: 10px;
+            }
+        """)
+
+        find_layout = QHBoxLayout(self.find_dialog2)
+        find_layout.setContentsMargins(10, 6, 10, 6)
+        find_layout.setSpacing(6)
+
+        self.find_input2 = QLineEdit()
+        self.find_input2.setPlaceholderText("输入搜索内容")
+        self.find_input2.textChanged.connect(self.update_find_count2)
+        self.count_label2 = QLabel("0/0")
+
+        from PyQt6.QtWidgets import QToolButton
+        self.prev_btn2 = QToolButton()
+        self.prev_btn2.setArrowType(Qt.ArrowType.UpArrow)
+        self.prev_btn2.clicked.connect(lambda: self.find_text2(False))
+        self.next_btn2 = QToolButton()
+        self.next_btn2.setArrowType(Qt.ArrowType.DownArrow)
+        self.next_btn2.clicked.connect(lambda: self.find_text2(True))
+
+        self.close_find_btn2 = QToolButton()
+        self.close_find_btn2.setText("✕")
+        self.close_find_btn2.clicked.connect(self.find_dialog2.close)
+        self.close_find_btn2.setStyleSheet("font-size: 16px; color: #fff; background: transparent; border: none;")
+
+        find_layout.addWidget(self.find_input2)
+        find_layout.addWidget(self.count_label2)
+        find_layout.addWidget(self.prev_btn2)
+        find_layout.addWidget(self.next_btn2)
+        find_layout.addWidget(self.close_find_btn2)
+
+        self.serial_display2.keyPressEvent = self.on_display_key_press2
+        self.serial_display2.setTextInteractionFlags(Qt.TextInteractionFlag.NoTextInteraction)
+        
+        layout.addWidget(self.serial_display2)
+    
+    
+    def on_display_key_press2(self, event):
+        if event.modifiers() & Qt.KeyboardModifier.ControlModifier:
+            if event.key() == Qt.Key.Key_F:
+                self.show_find_dialog2()
+                event.accept()
+                return
+        
+        QTextEdit.keyPressEvent(self.serial_display2, event)
+    
+    def show_find_dialog2(self):
+        display_rect = self.serial_display2.rect()
+        display_pos = self.serial_display2.mapToGlobal(display_rect.topRight())
+        dialog_x = display_pos.x() - self.find_dialog2.width() - 10  # 距离右边界10像素
+        dialog_y = display_pos.y() + 10  # 距离顶部10像素
+        self.find_dialog2.move(dialog_x, dialog_y)
+        self.find_dialog2.show()
+        self.find_input2.setFocus()
+        self.find_input2.selectAll()
+    
+    def update_find_count2(self):
+        """增量更新查找结果计数"""
+        text = self.find_input2.text()
+        content = self.serial_display2.toPlainText()
+        
+        # 增量缓存：只对新增内容查找
+        if not hasattr(self, '_find_count_cache2'):
+            self._find_count_cache2 = {'text': '', 'content_len': 0, 'count': 0}
+        cache = self._find_count_cache2
+
+        if not text:
+            self.count_label2.setText("0/0")
+            cache['text'] = ''
+            cache['content_len'] = 0
+            cache['count'] = 0
+            return
+
+        if text != cache['text']:
+            # 关键字变了，重新全量查找
+            count = content.count(text)
+            cache['text'] = text
+            cache['content_len'] = len(content)
+            cache['count'] = count
+        else:
+            # 关键字没变，只查找新增部分
+            old_len = cache['content_len']
+            if len(content) > old_len:
+                new_part = content[old_len:]
+                count_new = new_part.count(text)
+                cache['count'] += count_new
+                cache['content_len'] = len(content)
+            # 如果内容被清空或减少，重新全量查找
+            elif len(content) < old_len:
+                count = content.count(text)
+                cache['count'] = count
+                cache['content_len'] = len(content)
+
+        count = cache['count']
+        
+        # 获取当前选中的位置
+        current = 0
+        cursor = self.serial_display2.textCursor()
+        if cursor.hasSelection():
+            sel_text = cursor.selectedText()
+            if sel_text == text:
+                pos = cursor.position() - len(text)
+                current = content[:pos].count(text) + 1
+        
+        self.count_label2.setText(f"{current}/{count}")
+
+    def find_text2(self, forward=True):
+        """增量查找文本"""
+        text = self.find_input2.text()
+        if not text:
+            return
+        
+        if forward:
+            found = self.serial_display2.find(text)
+            if not found:
+                cursor = self.serial_display2.textCursor()
+                cursor.movePosition(QTextCursor.MoveOperation.Start)
+                self.serial_display2.setTextCursor(cursor)
+                self.serial_display2.find(text)
+        else:
+            found = self.serial_display2.find(text, QTextDocument.FindFlag.FindBackward)
+            if not found:
+                cursor = self.serial_display2.textCursor()
+                cursor.movePosition(QTextCursor.MoveOperation.End)
+                self.serial_display2.setTextCursor(cursor)
+                self.serial_display2.find(text, QTextDocument.FindFlag.FindBackward)
+        
+        self.update_find_count2()
+    
+    def refresh_ports2(self):
+        import serial.tools.list_ports
+        current_port = self.port_combo2.currentText() if self.port_combo2.count() > 0 else ""
+        ports = list(serial.tools.list_ports.comports())
+        available_ports = [port.device for port in ports]
+        if set(available_ports) != set(self.current_ports2):
+            self.port_combo2.clear()
+            for port in ports:
+                self.port_combo2.addItem(port.device)
+            if current_port and self.port_combo2.findText(current_port) >= 0:
+                self.port_combo2.setCurrentText(current_port)
+            self.current_ports2 = available_ports
+    
+    def toggle_port2(self):
+        if self.toggle_btn2.text() == "打开串口":
+            try:
+                port = self.port_combo2.currentText()
+                if not port:
+                    raise Exception("请选择串口")
+                    
+                baud = int(self.baud_combo2.currentText())
+                self.serial2 = serial.Serial(
+                    port=port,
+                    baudrate=baud,
+                    bytesize=self.data_bits,
+                    parity=self.parity,
+                    stopbits=self.stop_bits,
+                    timeout=0.1
+                )
+                
+                if not self.serial2.is_open:
+                    self.serial2.open()
+                
+                self.toggle_btn2.setText("关闭串口")
+                self.status_indicator2.setStyleSheet("color: green; font-size: 16px;")
+                
+                self.serial_thread2 = SerialReadThread(self.serial2)
+                self.serial_thread2.data_received.connect(self.handle_serial_2_data)
+                self.serial_thread2.start()
+                
+            except Exception as e:
+                QMessageBox.warning(self, "错误", f"打开串口失败: {str(e)}")
+        else:
+            try:
+                if hasattr(self, 'serial_thread2') and self.serial_thread2:
+                    self.serial_thread2.stop()
+                    self.serial_thread2 = None
+
+                if hasattr(self, 'serial2') and self.serial2:
+                    self.serial2.close()
+                    self.serial2 = None
+                
+                self.toggle_btn2.setText("打开串口")
+                self.status_indicator2.setStyleSheet("color: red; font-size: 16px;")
+            except Exception as e:
+                QMessageBox.warning(self, "错误", f"关闭串口失败: {str(e)}")
+    
+    def handle_serial_2_data(self, data):
+        try:
+            decoded_data = data.decode('utf-8', errors='ignore')
+            decoded_data = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', decoded_data)
+            self.data_buffer2.append(decoded_data)
+        except Exception as e:
+            print(f"数据处理错误 (on_data_received): {str(e)}")
         
     def create_COM_page(self):
         COM1_page = QWidget()
@@ -284,7 +673,6 @@ class MainWindow(QMainWindow):
         layout.setContentsMargins(10, 10, 10, 10)
         layout.setSpacing(10)
         
-        # 顶部串口控制区域
         top_widget = QWidget()
         top_layout = QHBoxLayout(top_widget)
         top_layout.setContentsMargins(5, 5, 5, 5)
@@ -302,18 +690,14 @@ class MainWindow(QMainWindow):
         line_top_1.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
         
-        # 添加行数设置
-        max_lines_label = QLabel("最大行数")  #TODO 可显示的最大行数待确认
+        max_lines_label = QLabel("最大行数") 
         self.max_lines_spin = QSpinBox()
-        self.max_lines_spin.setRange(10000, 250000)
-        self.max_lines_spin.setValue(50000)
+        self.max_lines_spin.setRange(50000, 250000)
+        self.max_lines_spin.setValue(100000)
         self.max_lines_spin.setSingleStep(10000)
         self.max_lines_spin.valueChanged.connect(self.update_max_lines)
-        
-        # 当前行数显示
         self.current_lines_label = QLabel("当前行数: 0")
         
-        # 创建状态显示区域
         status_widget = QWidget()
         status_layout = QHBoxLayout(status_widget)
         status_layout.setContentsMargins(10, 0, 10, 0)
@@ -326,7 +710,6 @@ class MainWindow(QMainWindow):
         self.toggle_btn.setFixedWidth(90)
         self.toggle_btn.clicked.connect(self.toggle_port)
         
-        # 修改布局，添加新控件
         top_layout.addWidget(self.port_combo)
         top_layout.addSpacing(10)
         top_layout.addWidget(self.baud_combo)
@@ -342,10 +725,8 @@ class MainWindow(QMainWindow):
         top_layout.addWidget(self.current_lines_label)
         top_layout.addStretch()
 
-        # 添加到主布局
         layout.addWidget(top_widget)
 
-        # 创建 QSplitter
         splitter = QSplitter(Qt.Orientation.Vertical)
         splitter.setStyleSheet("""
             QSplitter::handle {
@@ -361,10 +742,8 @@ class MainWindow(QMainWindow):
             }
         """)
         
-        # 数据显示区域
         self.create_display_area(splitter)
         
-        # 底部控制栏
         bottom_widget = QWidget()
         bottom_layout = QHBoxLayout(bottom_widget)
         
@@ -376,18 +755,15 @@ class MainWindow(QMainWindow):
         self.config_highlight_btn.setFixedWidth(80)
         self.config_highlight_btn.clicked.connect(self.open_highlight_config_dialog)
 
-        # 时间戳复选框（带图标）
         self.timestamp = QCheckBox("🕒 时间戳")
         self.timestamp.setObjectName("timestamp")
         self.timestamp.setToolTip("每行前添加时间戳")
-
-        # 自动滚动复选框（带图标）
+        self.timestamp.setChecked(True)
         self.auto_scroll = QCheckBox("📌 自动滚动")
         self.auto_scroll.setObjectName("autoScroll")
         self.auto_scroll.setChecked(False)
         self.auto_scroll.setToolTip("锁定滚动条到底部")
 
-        # 分隔线
         line_bottom_1 = QFrame()
         line_bottom_1.setFrameShape(QFrame.Shape.VLine)
         line_bottom_1.setFrameShadow(QFrame.Shadow.Sunken)
@@ -461,7 +837,7 @@ class MainWindow(QMainWindow):
         """创建数据显示区域"""
         self.serial_display = QTextEdit()
         self.serial_display.setReadOnly(True)
-        self.serial_display.document().setMaximumBlockCount(50000)  # 限制最大行数
+        self.serial_display.document().setMaximumBlockCount(100000)  # 限制最大行数
         self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # 自动换行
         self.serial_display.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)  # 允许在任何位置换行
         
@@ -1152,7 +1528,6 @@ class MainWindow(QMainWindow):
     def update_display(self):
         """更新显示区域"""
         if self.data_buffer:
-            # 保存当前光标位置和选择状态
             cursor = self.serial_display.textCursor()
             scrollbar = self.serial_display.verticalScrollBar()
             current_scroll = scrollbar.value()
@@ -1161,11 +1536,10 @@ class MainWindow(QMainWindow):
             
             # 如果选中了时间戳选项，为每行添加时间戳
             if self.timestamp.isChecked():
-                lines = text.splitlines(True)  # 保持原有的换行符
+                lines = text.splitlines(True) 
                 timestamp = QDateTime.currentDateTime().toString('[yyyy-MM-dd hh:mm:ss.zzz] ')
                 text = ''.join(timestamp + line for line in lines)
             
-            # 优化：插入文本时关闭重绘
             self.serial_display.setUpdatesEnabled(False)
             cursor.movePosition(QTextCursor.MoveOperation.End)
             insert_pos = cursor.position()
@@ -1173,27 +1547,24 @@ class MainWindow(QMainWindow):
             self.data_buffer.clear()
             self.serial_display.setUpdatesEnabled(True)
 
-            if self.highlight_config: # 检查配置是否为空
+            if self.highlight_config: 
                 doc = self.serial_display.document()
                 start_pos = insert_pos
                 end_pos = insert_pos + len(text)
 
-                # 对新插入的文本区域进行高亮
                 block = doc.findBlock(start_pos)
-                if not block.isValid(): # 如果起始位置无效，尝试从文档开头查找
+                if not block.isValid(): 
                     block = doc.begin()
 
                 while block.isValid() and block.position() < end_pos:
                     block_text = block.text()
                     block_start = block.position()
 
-                    # 遍历配置中的每个关键字和颜色
                     for keyword, color in self.highlight_config.items():
-                        if not keyword: continue # 跳过空关键字
+                        if not keyword: continue 
 
                         highlight_fmt = QTextCharFormat()
-                        highlight_fmt.setBackground(color) # 使用配置的颜色
-                        # 可以根据颜色亮度自动设置前景色
+                        highlight_fmt.setBackground(color) 
                         luminance = (0.299 * color.red() + 0.587 * color.green() + 0.114 * color.blue()) / 255
                         text_color = QColor("#000000") if luminance > 0.5 else QColor("#FFFFFF")
                         highlight_fmt.setForeground(text_color)
@@ -1202,7 +1573,6 @@ class MainWindow(QMainWindow):
                         idx = block_text.find(keyword)
                         while idx != -1:
                             abs_pos = block_start + idx
-                            # 确保高亮范围在新插入的文本内
                             if abs_pos >= start_pos and abs_pos + len(keyword) <= end_pos:
                                 highlight_cursor = QTextCursor(doc)
                                 highlight_cursor.setPosition(abs_pos)
@@ -1216,7 +1586,6 @@ class MainWindow(QMainWindow):
                 self.update_find_count()
             
             if self.auto_scroll.isChecked():
-                # 恢复之前的滚动位置
                 scrollbar.setValue(current_scroll)
             else:
                 scrollbar.setValue(scrollbar.maximum())
@@ -1227,13 +1596,85 @@ class MainWindow(QMainWindow):
                 self.data_table.insertRow(row_position)
                 for col, value in enumerate(data_values):
                     self.data_table.setItem(row_position, col, QTableWidgetItem(str(value)))
-                # 保持表格显示最新的100行
                 if self.data_table.rowCount() > 100:
                     self.data_table.removeRow(0)
             self.data_table.scrollToBottom()
             self.pending_table_rows.clear()
-
     
+    def update_display2(self):
+        if not self.data_buffer2:
+            return
+
+        text_to_append = "".join(self.data_buffer2)
+        self.data_buffer2.clear()
+
+        if not hasattr(self, 'serial_display2') or not self.serial_display2:
+            return
+
+        cursor = self.serial_display2.textCursor()
+        scrollbar = self.serial_display2.verticalScrollBar()
+        current_scroll = scrollbar.value()
+
+        insert_pos = cursor.position()
+        cursor.movePosition(QTextCursor.MoveOperation.End)
+
+        if self.timestamp2.isChecked():
+            lines = text_to_append.splitlines(True)
+            timestamp = QDateTime.currentDateTime().toString('[yyyy-MM-dd hh:mm:ss.zzz] ')
+            text_to_append = ''.join(timestamp + line for line in lines)
+
+        self.serial_display2.setUpdatesEnabled(False)
+        cursor.insertText(text_to_append)
+        self.serial_display2.setUpdatesEnabled(True)
+
+        # 强制刷新文档结构，确保高亮能生效
+        QApplication.processEvents()
+
+        # 重新获取插入后的末尾位置
+        end_pos = self.serial_display2.document().characterCount() - 1
+
+        if self.highlight_config:
+            doc = self.serial_display2.document()
+            start_pos = insert_pos
+            end_pos = insert_pos + len(text_to_append)
+
+            block = doc.findBlock(start_pos)
+            if not block.isValid():
+                block = doc.begin()
+
+            while block.isValid() and block.position() < end_pos:
+                block_text = block.text()
+                block_start = block.position()
+                for keyword, color in self.highlight_config.items():
+                    if not keyword:
+                        continue
+                    highlight_fmt = QTextCharFormat()
+                    highlight_fmt.setBackground(color)
+                    luminance = (0.299 * color.red() + 0.587 * color.green() + 0.114 * color.blue()) / 255
+                    text_color = QColor("#000000") if luminance > 0.5 else QColor("#FFFFFF")
+                    highlight_fmt.setForeground(text_color)
+                    highlight_fmt.setFontWeight(QFont.Weight.Bold)
+                    idx = block_text.find(keyword)
+                    while idx != -1:
+                        abs_pos = block_start + idx
+                        if abs_pos >= start_pos and abs_pos + len(keyword) <= end_pos:
+                            highlight_cursor = QTextCursor(doc)
+                            highlight_cursor.setPosition(abs_pos)
+                            highlight_cursor.setPosition(abs_pos + len(keyword), QTextCursor.MoveMode.KeepAnchor)
+                            highlight_cursor.mergeCharFormat(highlight_fmt)
+                        idx = block_text.find(keyword, idx + len(keyword))
+                block = block.next()
+
+        if self.find_dialog2.isVisible():
+            self.update_find_count2()
+
+        if self.auto_scroll2.isChecked():
+            scrollbar.setValue(current_scroll)
+        else:
+            scrollbar.setValue(scrollbar.maximum())
+        self.update_current_lines2()
+    
+
     def toggle_theme(self):
         self.current_theme = ThemeManager.DARK_THEME if \
             self.current_theme == ThemeManager.LIGHT_THEME else ThemeManager.LIGHT_THEME
@@ -1242,7 +1683,6 @@ class MainWindow(QMainWindow):
     
     def apply_theme(self):
         theme = self.current_theme
-        # 移除单独的title_label样式设置
         self.setStyleSheet(f"""
             QMainWindow {{
                 background-color: {theme['bg']};
@@ -1370,11 +1810,11 @@ class MainWindow(QMainWindow):
             self.data_table.setShowGrid(False)
         
     def switch_page(self, index):
-        """切换页面时的处理逻辑"""
         self.stacked_widget.setCurrentIndex(index)
-        # 检查当前页面是否为COM1页面
         if index != 0:  
             self.find_dialog.close()
+        if index != 1:
+            self.find_dialog2.close()
 
 class ThemeManager:
     # 📌📁❌🔸
@@ -1464,7 +1904,6 @@ class HighlightConfigDialog(QDialog):
             self.table.setItem(row_position, 2, QTableWidgetItem(hex_color))
 
     def add_keyword(self):
-        """添加新的关键字和颜色"""
         keyword, ok = QInputDialog.getText(self, "添加关键字", "输入关键字:")
         if ok and keyword:
             color = QColorDialog.getColor(Qt.GlobalColor.yellow, self, "选择高亮颜色")
@@ -1473,7 +1912,6 @@ class HighlightConfigDialog(QDialog):
                 self.populate_table()
 
     def edit_keyword(self):
-        """编辑选中的关键字或颜色"""
         selected_rows = self.table.selectionModel().selectedRows()
         if not selected_rows:
             QMessageBox.warning(self, "警告", "请先选择要编辑的行。")
@@ -1483,24 +1921,20 @@ class HighlightConfigDialog(QDialog):
         old_keyword = self.table.item(row, 0).text()
         old_color = self.config[old_keyword]
 
-        # 编辑关键字
         new_keyword, ok = QInputDialog.getText(self, "编辑关键字", "输入新关键字:", QLineEdit.EchoMode.Normal, old_keyword)
         if not ok or not new_keyword:
-            return # 用户取消或输入为空
+            return 
 
-        # 编辑颜色
         new_color = QColorDialog.getColor(old_color, self, "选择新的高亮颜色")
         if not new_color.isValid():
-            return # 用户取消颜色选择
+            return 
 
-        # 更新配置 (如果关键字改变，需要删除旧的)
         if old_keyword != new_keyword:
             del self.config[old_keyword]
         self.config[new_keyword] = new_color
         self.populate_table()
 
     def remove_keyword(self):
-        """删除选中的关键字"""
         selected_rows = self.table.selectionModel().selectedRows()
         if not selected_rows:
             QMessageBox.warning(self, "警告", "请先选择要删除的行。")
@@ -1518,7 +1952,6 @@ class HighlightConfigDialog(QDialog):
             self.populate_table()
 
     def get_config(self):
-        """返回最终的配置字典"""
         return self.config
 
 class LogWorker(QThread):
