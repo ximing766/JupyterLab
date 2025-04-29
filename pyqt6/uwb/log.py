@@ -18,7 +18,7 @@ class Logger:
         os.makedirs(self.csv_log_dir, exist_ok=True)
 
         # 定义不同的日志格式
-        self.text_format = "[%(asctime)s.%(msecs)03d] | %(message)s"
+        self.text_format = "[%(asctime)s.%(msecs)03d] %(message)s"
         self.csv_format = "%(message)s"
 
         # 日志格式化器
@@ -119,11 +119,12 @@ if __name__ == "__main__":
     
     # 创建不同格式的日志文件
     logger.create_logger("normal", "normal.log", "text")
+    logger.create_logger("normal", "normal2.log", "text")
     logger.create_logger("data", "data.csv", "csv")
     
     # 写入标准格式日志（需要指定日志级别）
     logger.log_to("normal", "info", "这是标准格式日志")
-    logger.log_to("normal", "info", "这是标准格式日志")
+    logger.log_to("normal", "info", "这是标准格式日志2")
     
     # 写入CSV格式数据（日志级别参数会被忽略）
     logger.log_to("data", "info", "123,456,789")

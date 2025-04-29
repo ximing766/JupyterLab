@@ -1,0 +1,11 @@
+{
+    "APP     :ERROR": "#ff7f7f",
+    "APP     :INFO": "#8ccfff",
+    "APP     :WARN": "#ffd280",
+    "gCapSessionHandle": "#00ff7f",
+    "gDtxSessionHandle": "#b9f309",
+    "gMrmSessionHandle": "#ffaaff",
+    "AuthenticationState": "#3daaea",
+    "APP_HIFTask": "#34a7b2",
+    "SystemStatus = 1": "#aa9bff"
+}

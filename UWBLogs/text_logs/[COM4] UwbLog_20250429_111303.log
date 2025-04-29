@@ -1,0 +1,429 @@
+[2025-04-29 11:13:03.845] FFFFF05 FFFFFFFF FFF2C100 0A3A006F 368408A0 00000632 010105A5 269F0802 00309F0C 1E022158 40FFFFFF FF020103 10487049 41202641 65202310 31205310 31000000 00000090 00200002 215840FF FFFFFF02 01031048 70494120 26416520 23103120 53103100 0090003E 00000001 56580058 40000101 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00900012 00000014 69000186 A0000000 00000000 00900082 0027017D 01010000 00000000 00000002 03440344 10019101 00000000 10019101 00000000 00000000 00000001 00000000 00000065 00004131 99000115 00004131 99000115 20250417 14343820 25041714 38190000 00000101 00000000 00001672 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00900019 0018B400 0000
+[2025-04-29 11:13:03.865] [0m[0;34mAPP     :INFO :common_start_quick_timer enter: timeout: 200 ms
+[2025-04-29 11:13:03.871] [0m
+[2025-04-29 11:13:03.877] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00190006 000505CA 2F2D00
+[2025-04-29 11:13:03.883] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:03.889] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=45
+[2025-04-29 11:13:03.899] [0m{"@POSITION": 1, "Master": 33, "Slave": 45, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 64, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":4, "User-Y":32, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:04.039] [0;32mTMLUWB  :RX < :RECV                :62000048 A53F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 001F0000 00640000 64000000 00000003 80000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:04.046] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:04.053] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:04.057] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:04.064] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:04.071] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=31
+[2025-04-29 11:13:04.077] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 1 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:04.083] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 1 ,(cm/s)
+[2025-04-29 11:13:04.092] [0m[0;34mAPP     :INFO :@ b = 31, c = 45, x = 5, y = 32
+[2025-04-29 11:13:04.098] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:04.105] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:04.113] [0m[0;34mAPP     :INFO :System already busy (SystemStatus = 1) or not in triangle field , waiting transaction
+[2025-04-29 11:13:04.119] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 1
+[2025-04-29 11:13:04.126] [0m
+[2025-04-29 11:13:04.132] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 001A0006 000505CA 2F2D00
+[2025-04-29 11:13:04.139] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:04.144] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=45
+[2025-04-29 11:13:04.149] [0m{"@POSITION": 1, "Master": 31, "Slave": 45, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 64, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":5, "User-Y":32, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:04.292] [0;32mTMLUWB  :RX < :RECV                :62000048 A63F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 001F0000 00640000 64000000 00000003 7F000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:04.302] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:04.306] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:04.313] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:04.319] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:04.324] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=31
+[2025-04-29 11:13:04.332] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 1 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:04.338] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 3 ,(cm/s)
+[2025-04-29 11:13:04.343] [0m[0;34mAPP     :INFO :@ b = 31, c = 45, x = 5, y = 32
+[2025-04-29 11:13:04.349] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:04.354] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:04.360] [0m[0;34mAPP     :INFO :System already busy (SystemStatus = 1) or not in triangle field , waiting transaction
+[2025-04-29 11:13:04.364] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 1
+[2025-04-29 11:13:04.370] [0m
+[2025-04-29 11:13:04.374] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 001B0006 000505CA 2F2C00
+[2025-04-29 11:13:04.379] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:04.382] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=44
+[2025-04-29 11:13:04.389] [0m{"@POSITION": 1, "Master": 31, "Slave": 44, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":5, "User-Y":32, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:04.555] [0;32mTMLUWB  :RX < :RECV                :62000048 A73F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 001F0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:04.586] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:04.592] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:04.598] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:04.604] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:04.611] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=31
+[2025-04-29 11:13:04.616] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 1 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:04.623] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 1 ,(cm/s)
+[2025-04-29 11:13:04.629] [0m[0;34mAPP     :INFO :@ b = 31, c = 44, x = 4, y = 33
+[2025-04-29 11:13:04.634] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:04.639] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:04.645] [0m[0;34mAPP     :INFO :System already busy (SystemStatus = 1) or not in triangle field , waiting transaction
+[2025-04-29 11:13:04.650] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 1
+[2025-04-29 11:13:04.656] [0m
+[2025-04-29 11:13:04.660] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 001C0006 000505CA 2F2D00
+[2025-04-29 11:13:04.665] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:04.671] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=45
+[2025-04-29 11:13:04.694] [0m{"@POSITION": 1, "Master": 31, "Slave": 45, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":4, "User-Y":33, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:04.796] [0;32mTMLUWB  :RX < :RECV                :62000048 A83F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 001F0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:04.802] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:04.808] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:04.812] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:04.819] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:04.830] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=31
+[2025-04-29 11:13:04.889] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 1 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:04.933] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 0 ,(cm/s)
+[2025-04-29 11:13:04.942] [0m[0;34mAPP     :INFO :@ b = 31, c = 45, x = 5, y = 32
+[2025-04-29 11:13:04.951] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:04.958] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:04.968] [0m[0;34mAPP     :INFO :System already busy (SystemStatus = 1) or not in triangle field , waiting transaction
+[2025-04-29 11:13:04.976] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 1
+[2025-04-29 11:13:04.983] [0m
+[2025-04-29 11:13:04.989] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 001D0006 000505CA 2F2C00
+[2025-04-29 11:13:04.997] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:05.002] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=44
+[2025-04-29 11:13:05.009] [0m{"@POSITION": 1, "Master": 31, "Slave": 44, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": [0;31mAPP     :ERROR:@@@ reader_timer_callback( ): Don't Receive Reader data!!! Restart Reader process.
+[2025-04-29 11:13:05.019] [0m[0;34mAPP     :INFO :┌──────────────────────────────────────────────────────────────┐
+[2025-04-29 11:13:05.027] [0m[0;34mAPP     :INFO :│ @@@ Time of Reader CB          = 68:06:235  │ CA2F │
+[2025-04-29 11:13:05.034] [0m[0;34mAPP     :INFO :└──────────────────────────────────────────────────────────────┘
+[2025-04-29 11:13:05.040] [0m[0;34mAPP     :INFO :Previous Transaction State of CA2F was: 4
+[2025-04-29 11:13:05.047] [0m[0;34mAPP     :INFO :New Transaction State of CA2F is: 4
+[2025-04-29 11:13:05.053] [0m0, "BlueAreaH": 250, "Speed":0, "User-X":5, "User-Y":32, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:05.060] [0;32mTMLUWB  :RX < :RECV                :62000048 A93F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 001F0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:05.066] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:05.073] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:05.080] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:05.086] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:05.094] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=31
+[2025-04-29 11:13:05.100] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:05.106] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 1 ,(cm/s)
+[2025-04-29 11:13:05.112] [0m[0;34mAPP     :INFO :@ b = 31, c = 44, x = 4, y = 33
+[2025-04-29 11:13:05.116] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:05.121] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:05.127] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-04-29 11:13:05.131] [0m[0;33mAPP     :WARN : Write Card Time < 2s. Return.
+[2025-04-29 11:13:05.141] [0m
+[2025-04-29 11:13:05.181] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 001E0006 000505CA 2F2C00
+[2025-04-29 11:13:05.188] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:05.195] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=44
+[2025-04-29 11:13:05.200] [0m{"@POSITION": 1, "Master": 31, "Slave": 44, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":4, "User-Y":33, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:05.296] [0;32mTMLUWB  :RX < :RECV                :62000048 AA3F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 001F0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:05.304] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:05.308] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:05.314] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:05.318] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:05.322] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=31
+[2025-04-29 11:13:05.327] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:05.332] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 0 ,(cm/s)
+[2025-04-29 11:13:05.338] [0m[0;34mAPP     :INFO :@ b = 31, c = 44, x = 4, y = 33
+[2025-04-29 11:13:05.343] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:05.348] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:05.353] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-04-29 11:13:05.356] [0m[0;33mAPP     :WARN : Write Card Time < 2s. Return.
+[2025-04-29 11:13:05.362] [0m
+[2025-04-29 11:13:05.366] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 001F0006 000505CA 2F2C00
+[2025-04-29 11:13:05.372] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:05.376] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=44
+[2025-04-29 11:13:05.380] [0m{"@POSITION": 1, "Master": 31, "Slave": 44, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":0, "User-X":4, "User-Y":33, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:05.542] [0;32mTMLUWB  :RX < :RECV                :62000048 AB3F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 00210000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:05.548] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:05.554] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:05.558] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:05.563] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:05.570] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=33
+[2025-04-29 11:13:05.574] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:05.582] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 1 ,(cm/s)
+[2025-04-29 11:13:05.588] [0m[0;34mAPP     :INFO :@ b = 33, c = 44, x = 4, y = 32
+[2025-04-29 11:13:05.595] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:05.601] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:05.609] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-04-29 11:13:05.615] [0m[0;33mAPP     :WARN : Write Card Time < 2s. Return.
+[2025-04-29 11:13:05.621] [0m
+[2025-04-29 11:13:05.628] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00200006 000505CA 2F2C00
+[2025-04-29 11:13:05.635] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:05.643] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=44
+[2025-04-29 11:13:05.651] [0m{"@POSITION": 1, "Master": 33, "Slave": 44, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":4, "User-Y":32, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:05.824] [0;32mTMLUWB  :RX < :RECV                :62000048 AC3F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 00200000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:05.837] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:05.845] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:05.849] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:05.855] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:05.860] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=32
+[2025-04-29 11:13:05.868] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:05.874] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 0 ,(cm/s)
+[2025-04-29 11:13:05.882] [0m[0;34mAPP     :INFO :@ b = 32, c = 44, x = 4, y = 33
+[2025-04-29 11:13:05.890] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:05.896] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:05.903] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-04-29 11:13:05.908] [0m[0;33mAPP     :WARN : Write Card Time < 2s. Return.
+[2025-04-29 11:13:05.914] [0m
+[2025-04-29 11:13:05.918] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00210006 000505CA 2F2E00
+[2025-04-29 11:13:05.923] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:05.928] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=46
+[2025-04-29 11:13:05.934] [0m{"@POSITION": 1, "Master": 32, "Slave": 46, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":0, "User-X":4, "User-Y":33, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:06.050] [0;32mTMLUWB  :RX < :RECV                :62000048 AD3F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 00220000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:06.057] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:06.062] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:06.066] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:06.077] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:06.110] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=34
+[2025-04-29 11:13:06.156] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:06.180] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 3 ,(cm/s)
+[2025-04-29 11:13:06.188] [0m[0;34mAPP     :INFO :@ b = 34, c = 46, x = 4, y = 30
+[2025-04-29 11:13:06.194] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:06.200] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:06.205] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-04-29 11:13:06.212] [0m[0;34mAPP     :INFO :┌──────────────────────────────────────────────────────────────┐
+[2025-04-29 11:13:06.219] [0m[0;34mAPP     :INFO :│ @@@ Time of Write Card Start   = 68:07:445  │ CA2F │
+[2025-04-29 11:13:06.225] [0m[0;34mAPP     :INFO :└──────────────────────────────────────────────────────────────┘
+[2025-04-29 11:13:06.232] [0m[0;34mAPP     :INFO :szt_setFlag( ) szt_setFlag 0
+[2025-04-29 11:13:06.238] [0m[0;34mAPP     :INFO :DCS=27
+[2025-04-29 11:13:06.244] [0m[0;34mAPP     :INFO :@@@ Sendbuf Data:   :0000FF31 0206FFFF FFFFFF05 FFFFFFFF FFF3C100 0A3A006F 368408A0 00000632 010105A5 269F0802 00309F0C 1E022158 40FFFFFF FF020103 10487049 41202641 65202310 31205310 31000000 00000090 00200002 215840FF FFFFFF02 01031048 70494120 26416520 23103120 53103100 0090003E 00000001 56580058 40000101 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00900012 00000014 69000186 A0000000 00000000 00900082 0027017D 01010000 00000000 00000002 03440344 10019101 00000000 10019101 00000000 00000000 00000001 00000000 00000065 00004131 99000115 00004131 99000115 20250417 14343820 25041714 38190000 00000101 00000000 00001672 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00900019 0018B400 0000
+[2025-04-29 11:13:06.258] [0m[0;34mAPP     :INFO :common_start_quick_timer enter: timeout: 200 ms
+[2025-04-29 11:13:06.265] [0m
+[2025-04-29 11:13:06.271] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00220006 000505CA 2F2900
+[2025-04-29 11:13:06.278] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:06.287] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=41
+[2025-04-29 11:13:06.294] [0m{"@POSITION": 1, "Master": 34, "Slave": 41, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":4, "User-Y":30, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:06.310] [0;32mTMLUWB  :RX < :RECV                :62000048 AE3F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 001F0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:06.318] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:06.324] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:06.331] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:06.337] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:06.344] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=31
+[2025-04-29 11:13:06.353] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 1 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:06.361] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 3 ,(cm/s)
+[2025-04-29 11:13:06.368] [0m[0;34mAPP     :INFO :@ b = 31, c = 41, x = 3, y = 35
+[2025-04-29 11:13:06.374] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:06.388] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:06.450] [0m[0;34mAPP     :INFO :System already busy (SystemStatus = 1) or not in triangle field , waiting transaction
+[2025-04-29 11:13:06.465] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 1
+[2025-04-29 11:13:06.471] [0m
+[2025-04-29 11:13:06.477] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00230006 000505CA 2F2B00
+[2025-04-29 11:13:06.482] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:06.488] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=43
+[2025-04-29 11:13:06.494] [0m{"@POSITION": 1, "Master": 31, "Slave": 43, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":3, "User-Y":35, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:06.540] [0;32mTMLUWB  :RX < :RECV                :62000048 AF3F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 00220000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:06.547] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:06.554] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:06.558] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:06.564] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:06.569] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=34
+[2025-04-29 11:13:06.573] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 1 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:06.579] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 1 ,(cm/s)
+[2025-04-29 11:13:06.583] [0m[0;34mAPP     :INFO :@ b = 34, c = 43, x = 3, y = 32
+[2025-04-29 11:13:06.588] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:06.593] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:06.599] [0m[0;34mAPP     :INFO :System already busy (SystemStatus = 1) or not in triangle field , waiting transaction
+[2025-04-29 11:13:06.605] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 1
+[2025-04-29 11:13:06.610] [0m
+[2025-04-29 11:13:06.615] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00240006 000505CA 2F2B00
+[2025-04-29 11:13:06.620] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:06.626] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=43
+[2025-04-29 11:13:06.631] [0m{"@POSITION": 1, "Master": 34, "Slave": 43, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":3, "User-Y":32, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:06.805] [0;32mTMLUWB  :RX < :RECV                :62000048 B03F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 001F0000 00640000 64000000 00000003 7F000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:06.813] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:06.818] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:06.823] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:06.830] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:06.835] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=31
+[2025-04-29 11:13:06.840] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 1 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:06.847] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 3 ,(cm/s)
+[2025-04-29 11:13:06.852] [0m[0;34mAPP     :INFO :@ b = 31, c = 43, x = 4, y = 33
+[2025-04-29 11:13:06.856] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:06.863] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:06.868] [0m[0;34mAPP     :INFO :System already busy (SystemStatus = 1) or not in triangle field , waiting transaction
+[2025-04-29 11:13:06.874] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 1
+[2025-04-29 11:13:06.880] [0m
+[2025-04-29 11:13:06.886] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00250006 000505CA 2F2C00
+[2025-04-29 11:13:06.891] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:06.897] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=44
+[2025-04-29 11:13:06.901] [0m{"@POSITION": 1, "Master": 31, "Slave": 44, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":4, "User-Y":33, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:07.056] [0;32mTMLUWB  :RX < :RECV                :62000048 B13F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 00220000 00640000 64000000 00000003 7F000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:07.066] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:07.072] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:07.078] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:07.086] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:07.094] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=34
+[2025-04-29 11:13:07.108] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 1 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:07.115] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 3 ,(cm/s)
+[2025-04-29 11:13:07.125] [0m[0;34mAPP     :INFO :@ b = 34, c = 44, x = 3, y = 32
+[2025-04-29 11:13:07.132] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:07.144] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:07.152] [0m[0;34mAPP     :INFO :System already busy (SystemStatus = 1) or not in triangle field , waiting transaction
+[2025-04-29 11:13:07.159] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 1
+[2025-04-29 11:13:07.165] [0m
+[2025-04-29 11:13:07.168] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00260006 000505CA 2F2C00
+[2025-04-29 11:13:07.173] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:07.179] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=44
+[2025-04-29 11:13:07.184] [0m{"@POSITION": 1, "Master": 34, "Slave": 44, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, [0;31mAPP     :ERROR:@@@ reader_timer_callback( ): Don't Receive Reader data!!! Restart Reader process.
+[2025-04-29 11:13:07.192] [0m[0;34mAPP     :INFO :┌──────────────────────────────────────────────────────────────┐
+[2025-04-29 11:13:07.198] [0m[0;34mAPP     :INFO :│ @@@ Time of Reader CB          = 68:08:485  │ CA2F │
+[2025-04-29 11:13:07.203] [0m[0;34mAPP     :INFO :└──────────────────────────────────────────────────────────────┘
+[2025-04-29 11:13:07.207] [0m[0;34mAPP     :INFO :Previous Transaction State of CA2F was: 4
+[2025-04-29 11:13:07.213] [0m[0;34mAPP     :INFO :New Transaction State of CA2F is: 4
+[2025-04-29 11:13:07.220] [0m"Speed":3, "User-X":3, "User-Y":32, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:07.322] [0;32mTMLUWB  :RX < :RECV                :62000048 B23F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 00210000 00640000 64000000 00000003 7F000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:07.328] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:07.346] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:07.386] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:07.440] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:07.450] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=33
+[2025-04-29 11:13:07.456] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:07.461] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 1 ,(cm/s)
+[2025-04-29 11:13:07.467] [0m[0;34mAPP     :INFO :@ b = 33, c = 44, x = 4, y = 32
+[2025-04-29 11:13:07.472] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:07.479] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:07.484] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-04-29 11:13:07.490] [0m[0;33mAPP     :WARN : Write Card Time < 2s. Return.
+[2025-04-29 11:13:07.496] [0m
+[2025-04-29 11:13:07.501] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00270006 000505CA 2F2C00
+[2025-04-29 11:13:07.506] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:07.512] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=44
+[2025-04-29 11:13:07.517] [0m{"@POSITION": 1, "Master": 33, "Slave": 44, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":4, "User-Y":32, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:07.565] [0;32mTMLUWB  :RX < :RECV                :62000048 B33F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 001E0000 00640000 64000000 00000003 80000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:07.571] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:07.581] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:07.585] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:07.591] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:07.597] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=30
+[2025-04-29 11:13:07.602] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:07.609] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 1 ,(cm/s)
+[2025-04-29 11:13:07.616] [0m[0;34mAPP     :INFO :@ b = 30, c = 44, x = 5, y = 33
+[2025-04-29 11:13:07.624] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:07.630] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:07.637] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-04-29 11:13:07.642] [0m[0;33mAPP     :WARN : Write Card Time < 2s. Return.
+[2025-04-29 11:13:07.648] [0m
+[2025-04-29 11:13:07.652] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00280006 000505CA 2F2A00
+[2025-04-29 11:13:07.658] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:07.669] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=42
+[2025-04-29 11:13:07.711] [0m{"@POSITION": 1, "Master": 30, "Slave": 42, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 64, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":5, "User-Y":33, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:07.820] [0;32mTMLUWB  :RX < :RECV                :62000048 B43F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 001C0000 00640000 64000000 00000003 7F000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:07.831] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:07.838] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:07.843] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:07.851] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:07.859] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=28
+[2025-04-29 11:13:07.868] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:07.879] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 4 ,(cm/s)
+[2025-04-29 11:13:07.888] [0m[0;34mAPP     :INFO :@ b = 28, c = 42, x = 4, y = 36
+[2025-04-29 11:13:07.897] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:07.904] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:07.912] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-04-29 11:13:07.917] [0m[0;33mAPP     :WARN : Write Card Time < 2s. Return.
+[2025-04-29 11:13:07.923] [0m
+[2025-04-29 11:13:07.930] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00290006 000505CA 2F2C00
+[2025-04-29 11:13:07.935] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:07.940] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=44
+[2025-04-29 11:13:07.948] [0m{"@POSITION": 1, "Master": 28, "Slave": 44, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":4, "User-X":4, "User-Y":36, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:08.063] [0;32mTMLUWB  :RX < :RECV                :62000048 B53F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 00200000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:08.075] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:08.083] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:08.088] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:08.095] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:08.101] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=32
+[2025-04-29 11:13:08.106] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:08.115] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 1 ,(cm/s)
+[2025-04-29 11:13:08.120] [0m[0;34mAPP     :INFO :@ b = 32, c = 44, x = 4, y = 33
+[2025-04-29 11:13:08.126] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:08.132] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:08.137] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-04-29 11:13:08.141] [0m[0;33mAPP     :WARN : Write Card Time < 2s. Return.
+[2025-04-29 11:13:08.147] [0m
+[2025-04-29 11:13:08.151] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 002A0006 000505CA 2F2C00
+[2025-04-29 11:13:08.156] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:08.161] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=44
+[2025-04-29 11:13:08.166] [0m{"@POSITION": 1, "Master": 32, "Slave": 44, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":4, "User-Y":33, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:08.329] [0;32mTMLUWB  :RX < :RECV                :62000048 B63F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 00210000 00640000 64000000 00000003 7F000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:08.335] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:08.341] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:08.346] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:08.351] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:08.356] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=33
+[2025-04-29 11:13:08.362] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:08.368] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 1 ,(cm/s)
+[2025-04-29 11:13:08.372] [0m[0;34mAPP     :INFO :@ b = 33, c = 44, x = 4, y = 32
+[2025-04-29 11:13:08.379] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:08.383] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:08.388] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-04-29 11:13:08.394] [0m[0;34mAPP     :INFO :┌──────────────────────────────────────────────────────────────┐
+[2025-04-29 11:13:08.399] [0m[0;34mAPP     :INFO :│ @@@ Time of Write Card Start   = 68:09:695  │ CA2F │
+[2025-04-29 11:13:08.404] [0m[0;34mAPP     :INFO :└──────────────────────────────────────────────────────────────┘
+[2025-04-29 11:13:08.410] [0m[0;34mAPP     :INFO :szt_setFlag( ) szt_setFlag 0
+[2025-04-29 11:13:08.415] [0m[0;34mAPP     :INFO :DCS=28
+[2025-04-29 11:13:08.420] [0m[0;34mAPP     :INFO :@@@ Sendbuf Data:   :0000FF31 0206FFFF FFFFFF05 FFFFFFFF FFF4C100 0A3A006F 368408A0 00000632 010105A5 269F0802 00309F0C 1E022158 40FFFFFF FF020103 10487049 41202641 65202310 31205310 31000000 00000090 00200002 215840FF FFFFFF02 01031048 70494120 26416520 23103120 53103100 0090003E 00000001 56580058 40000101 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00900012 00000014 69000186 A0000000 00000000 00900082 0027017D 01010000 00000000 00000002 03440344 10019101 00000000 10019101 00000000 00000000 00000001 00000000 00000065 00004131 99000115 00004131 99000115 20250417 14343820 25041714 38190000 00000101 00000000 00001672 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00900019 0018B400 0000
+[2025-04-29 11:13:08.438] [0m[0;34mAPP     :INFO :common_start_quick_timer enter: timeout: 200 ms
+[2025-04-29 11:13:08.446] [0m
+[2025-04-29 11:13:08.450] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 002B0006 000505CA 2F2D00
+[2025-04-29 11:13:08.454] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:08.460] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=45
+[2025-04-29 11:13:08.465] [0m{"@POSITION": 1, "Master": 33, "Slave": 45, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":4, "User-Y":32, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:08.549] [0;32mTMLUWB  :RX < :RECV                :62000048 B73F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 00210000 00640000 64000000 00000003 7F000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:08.555] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:08.559] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:08.564] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:08.570] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:08.581] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=33
+[2025-04-29 11:13:08.612] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 1 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:08.646] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 4 ,(cm/s)
+[2025-04-29 11:13:08.669] [0m[0;34mAPP     :INFO :@ b = 33, c = 45, x = 4, y = 32
+[2025-04-29 11:13:08.679] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:08.684] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:08.689] [0m[0;34mAPP     :INFO :System already busy (SystemStatus = 1) or not in triangle field , waiting transaction
+[2025-04-29 11:13:08.694] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 1
+[2025-04-29 11:13:08.699] [0m
+[2025-04-29 11:13:08.802] [0;32mTMLUWB  :RX < :RECV                :62000048 B83F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 00210000 00640000 64000000 00000003 7F000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:08.810] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:08.817] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:08.823] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:08.831] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:08.837] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=33
+[2025-04-29 11:13:08.844] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 1 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:08.852] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 1 ,(cm/s)
+[2025-04-29 11:13:08.858] [0m[0;34mAPP     :INFO :@ b = 33, c = 45, x = 4, y = 32
+[2025-04-29 11:13:08.864] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:08.869] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:08.873] [0m[0;34mAPP     :INFO :System already busy (SystemStatus = 1) or not in triangle field , waiting transaction
+[2025-04-29 11:13:08.877] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 1
+[2025-04-29 11:13:08.893] [0m
+[2025-04-29 11:13:08.932] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 002C0006 000505CA 2F2C00
+[2025-04-29 11:13:08.940] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:08.946] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=44
+[2025-04-29 11:13:08.952] [0m{"@POSITION": 1, "Master": 33, "Slave": 44, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":4, "User-Y":32, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:09.047] [0;32mTMLUWB  :RX < :RECV                :62000048 B93F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 001F0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:09.053] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:09.059] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:09.063] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:09.067] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:09.071] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=31
+[2025-04-29 11:13:09.078] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 1 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:09.083] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 1 ,(cm/s)
+[2025-04-29 11:13:09.089] [0m[0;34mAPP     :INFO :@ b = 31, c = 44, x = 4, y = 33
+[2025-04-29 11:13:09.095] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:09.099] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:09.104] [0m[0;34mAPP     :INFO :System already busy (SystemStatus = 1) or not in triangle field , waiting transaction
+[2025-04-29 11:13:09.110] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 1
+[2025-04-29 11:13:09.115] [0m
+[2025-04-29 11:13:09.119] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 002D0006 000505CA 2F2B00
+[2025-04-29 11:13:09.124] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:09.129] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=43
+[2025-04-29 11:13:09.136] [0m{"@POSITION": 1, "Master": 31, "Slave": 43, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":4, "User-Y":33, "User-Z":0,"Auth":9, "Trans":4}
+[2025-04-29 11:13:09.308] [0;32mTMLUWB  :RX < :RECV                :62000048 BA3F0000 01000000 00FA0000 00010000 05000001 00000000 01CA2F00 00230000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-04-29 11:13:09.316] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] Keep alive for CA2F = 239
+[2025-04-29 11:13:09.323] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-04-29 11:13:09.329] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-04-29 11:13:09.337] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-04-29 11:13:09.345] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_CA2F=35
+[2025-04-29 11:13:09.353] [0m[0;34mAPP     :INFO :Current User ( ca2f ) status is : SystemStatus = 1 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-04-29 11:13:09.363] [0m[0;34mAPP     :INFO :@@@ User Speed is :( ca2f ) , 1 ,(cm/s)
+[2025-04-29 11:13:09.369] [0m[0;34mAPP     :INFO :@ b = 35, c = 43, x = 3, y = 31
+[2025-04-29 11:13:09.376] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-04-29 11:13:09.383] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-04-29 11:13:09.390] [0m[0;34mAPP     :INFO :System already busy (SystemStatus = 1) or not in triangle field , waiting transaction
+[2025-04-29 11:13:09.396] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 1
+[2025-04-29 11:13:09.401] [0m
+[2025-04-29 11:13:09.406] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 002E0006 000505CA 2F2B00
+[2025-04-29 11:13:09.412] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-04-29 11:13:09.417] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_CA2F=43
+[2025-04-29 11:13:09.423] [0m{"@POSITION": 1, "Master": 35, "Slave": 43, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, [0;31mAPP     :ERROR:@@@ reader_timer_callback( ): Don't Receive Reader data!!! Restart Reader process.
+[2025-04-29 11:13:09.431] [0m[0;34mAPP     :INFO :┌──────────────────────────────────────────────────────────────┐
+[2025-04-29 11:13:09.436] [0m[0;34mAPP     :INFO :│ @@@ Time of Reader CB          = 68:10:735  │ CA2F │
+[2025-04-29 11:13:09.440] [0m[0;34mAPP     :INFO :└──────────────────────────────────────────────────────────────┘
+[2025-04-29 11:13:09.447] [0m[0;34mAPP     :INFO :Previous Transaction State of CA2F was: 4
+[2025-04-29 11:13:09.453] [0m[0;34mAPP     :INFO :New Transaction State of CA2F is: 4
+[2025-04-29 11:13:09.459] [0m"Speed":1, "User-X":3, "User-Y":31, "User-Z":0,"Auth":9, "Trans":4}
