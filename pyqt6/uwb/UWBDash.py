@@ -352,7 +352,7 @@ class MainWindow(QMainWindow):
         self.port_combo2.setMinimumWidth(120)
 
         self.baud_combo2 = QComboBox()
-        self.baud_combo2.addItems(['9600', '115200', '3000000'])
+        self.baud_combo2.addItems(['9600', '115200', '230400', '460800', '3000000'])
         self.baud_combo2.setCurrentText('3000000')
         self.baud_combo2.setStyleSheet(self.port_combo2.styleSheet())
 
@@ -364,8 +364,8 @@ class MainWindow(QMainWindow):
         max_lines_label = QLabel("最大行数")
         max_lines_label.setStyleSheet("background: rgba(36, 42, 56, 0);")
         self.max_lines_spin2 = QSpinBox()
-        self.max_lines_spin2.setRange(50000, 250000)
-        self.max_lines_spin2.setValue(100000)
+        self.max_lines_spin2.setRange(50000, 300000)
+        self.max_lines_spin2.setValue(150000)
         self.max_lines_spin2.setSingleStep(10000)
         self.max_lines_spin2.valueChanged.connect(self.update_max_lines2)
         self.current_lines_label2 = QLabel("当前行数: 0")
@@ -499,7 +499,7 @@ class MainWindow(QMainWindow):
     def create_display_area2(self, layout):
         self.serial_display2 = QTextEdit()
         self.serial_display2.setReadOnly(True)
-        self.serial_display2.document().setMaximumBlockCount(100000)  # 限制最大行数
+        self.serial_display2.document().setMaximumBlockCount(150000)  # 限制最大行数
         self.serial_display2.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # 自动换行
         self.serial_display2.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)  # 允许在任何位置换行
         
@@ -809,7 +809,7 @@ class MainWindow(QMainWindow):
         self.port_combo.setMinimumWidth(120)
 
         self.baud_combo = QComboBox()
-        self.baud_combo.addItems(['9600', '115200', '3000000'])
+        self.baud_combo.addItems(['9600', '115200', '230400', '460800', '3000000'])
         self.baud_combo.setCurrentText('3000000')
         self.baud_combo.setStyleSheet(self.port_combo.styleSheet())
 
@@ -822,8 +822,8 @@ class MainWindow(QMainWindow):
         max_lines_label.setStyleSheet("background:rgba(36, 42, 56, 0);")
         
         self.max_lines_spin = QSpinBox()
-        self.max_lines_spin.setRange(50000, 250000)
-        self.max_lines_spin.setValue(100000)
+        self.max_lines_spin.setRange(50000, 300000)
+        self.max_lines_spin.setValue(150000)
         self.max_lines_spin.setSingleStep(10000)
         self.max_lines_spin.valueChanged.connect(self.update_max_lines)
         self.current_lines_label = QLabel("当前行数: 0")
@@ -970,7 +970,7 @@ class MainWindow(QMainWindow):
         """创建数据显示区域"""
         self.serial_display = QTextEdit()
         self.serial_display.setReadOnly(True)
-        self.serial_display.document().setMaximumBlockCount(100000)  # 限制最大行数
+        self.serial_display.document().setMaximumBlockCount(150000)  # 限制最大行数
         self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # 自动换行
         self.serial_display.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)  # 允许在任何位置换行
         
@@ -1136,7 +1136,7 @@ class MainWindow(QMainWindow):
                 'master'   : QColor("#FF6B6B"),
                 'slave'    : QColor("#4ECDC4"),
                 'nlos'     : QColor("#45B7D1"),
-                'lift_deep': QColor("#96CEB4"),
+                'lift_deep': QColor("#68ecae"),
                 'speed'    : QColor("#FFBE0B")
             }
             series.setColor(colors[key])
@@ -1153,51 +1153,70 @@ class MainWindow(QMainWindow):
             chart.setTitleBrush(colors[key].darker(120))
             chart.setAnimationOptions(QChart.AnimationOption.SeriesAnimations)
             chart.legend().hide()
-            # 优化渐变背景
+            
+            # 优化渐变背景 - 更丰富的渐变效果
             gradient = QLinearGradient(0, 0, 0, 1)
             gradient.setCoordinateMode(QLinearGradient.CoordinateMode.ObjectBoundingMode)
-            gradient.setColorAt(0.0, QColor(60, 62, 68, 130))   # 顶部
-            gradient.setColorAt(1.0, QColor(32, 34, 38, 30))    # 底部
+            gradient.setColorAt(0.0, QColor(60, 62, 68, 150))   # 顶部颜色增强
+            gradient.setColorAt(0.3, QColor(50, 52, 60, 100))   # 添加中间过渡色
+            gradient.setColorAt(0.7, QColor(40, 42, 50, 70))    # 添加中间过渡色
+            gradient.setColorAt(1.0, QColor(32, 34, 38, 40))    # 底部颜色微调
             chart.setBackgroundBrush(gradient)
-            chart.setBackgroundRoundness(8)         # 圆角
-            chart.setMargins(QMargins(6, 6, 6, 6))  # 边距
-
+            chart.setBackgroundRoundness(12)        # 增加圆角
+            chart.setMargins(QMargins(8, 10, 8, 8)) # 调整边距
+            
             # 优化阴影效果
             chart.setDropShadowEnabled(True)
-            # 可选：加一条淡淡的边框
-            chart.setBackgroundPen(QPen(QColor(120, 130, 160, 60), 1))
-
+            # 边框美化
+            chart.setBackgroundPen(QPen(QColor(140, 150, 180, 70), 1.2))
+            
+            # X轴美化
             axis_x = QValueAxis()
             axis_x.setRange(0, 100)
             axis_x.setLabelFormat("%d")
-            axis_x.setLabelsColor(QColor("#E5E9F0"))
+            axis_x.setLabelsColor(QColor("#E5E9F0").lighter(110))  # 稍微提亮标签
             axis_x.setGridLineVisible(True)
-            axis_x.setGridLineColor(QColor(255, 255, 255, 40))
+            axis_x.setGridLineColor(QColor(255, 255, 255, 30))     # 降低网格线不透明度
             axis_x.setMinorGridLineVisible(True)
-            axis_x.setMinorGridLineColor(QColor(255, 255, 255, 20))
+            axis_x.setMinorGridLineColor(QColor(255, 255, 255, 15))
             axis_x.setLabelsFont(QFont("Segoe UI", 9))
-
+            # axis_x.setTitleText("数据点")                          # 添加轴标题
+            axis_x.setTitleFont(QFont("Segoe UI", 9, QFont.Weight.Medium))
+            axis_x.setTitleBrush(QColor("#E5E9F0"))
+            
+            # Y轴美化
             axis_y = QValueAxis()
             axis_y.setRange(-10, 10)
             axis_y.setLabelFormat("%d")
-            axis_y.setLabelsColor(QColor("#E5E9F0"))
+            axis_y.setLabelsColor(QColor("#E5E9F0").lighter(110))  # 稍微提亮标签
             axis_y.setGridLineVisible(True)
-            axis_y.setGridLineColor(QColor(255, 255, 255, 40))
+            axis_y.setGridLineColor(QColor(255, 255, 255, 30))     # 降低网格线不透明度
             axis_y.setMinorGridLineVisible(True)
-            axis_y.setMinorGridLineColor(QColor(255, 255, 255, 20))
+            axis_y.setMinorGridLineColor(QColor(255, 255, 255, 15))
             axis_y.setLabelsFont(QFont("Segoe UI", 9))
-
+            # axis_y.setTitleText("数值")                            # 添加轴标题
+            axis_y.setTitleFont(QFont("Segoe UI", 9, QFont.Weight.Medium))
+            axis_y.setTitleBrush(QColor("#E5E9F0"))
+            
             chart.addAxis(axis_x, Qt.AlignmentFlag.AlignBottom)
             chart.addAxis(axis_y, Qt.AlignmentFlag.AlignLeft)
             series.attachAxis(axis_x)
             series.attachAxis(axis_y)
-
+            
+            # 美化线条
+            if isinstance(series, QLineSeries):
+                pen = series.pen()
+                pen.setWidth(2.5)                                  # 增加线宽
+                series.setPen(pen)
+            
             chart_view = QChartView(chart)
             chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
             chart_view.setStyleSheet("""
                 background   : transparent;
-                border-radius: 12px;
+                border-radius: 14px;                               /* 增加边框圆角 */
+                margin       : 2px;                                /* 添加边距 */
             """)
+
             # 鼠标悬停显示数据点值
             def show_tooltip(point, state, key=key):
                 if state:

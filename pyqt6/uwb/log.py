@@ -81,7 +81,7 @@ class Logger:
             log_path = os.path.join(self.text_log_dir, filename)
             handler = RotatingFileHandler(
                 log_path,
-                maxBytes=10*1024*1024,
+                maxBytes=30*1024*1024,
                 backupCount=5,
                 encoding='utf-8'
             )
