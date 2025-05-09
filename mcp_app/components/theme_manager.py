@@ -47,6 +47,7 @@ class ThemeManager:
                 border-radius: 8px;
                 font-size    : 13px;
             }}
+
             QLineEdit {{
                 background: rgba(255, 255, 255, 0.35);
                 border: 1px solid rgba(0, 0, 0, 0.35);
@@ -59,14 +60,5 @@ class ThemeManager:
                 width: 10px;
                 border: none;
                 margin: 0px 0px 0px 0px;
-            }}
-            QSplitter::handle {{
-                background: transparent;
-                border    : none;
-                min-height: 5px;
-            }}
-            QSplitter::handle:hover {{
-                background: rgba(255, 255, 255, 0.2);
-                width: 1px;
             }}
         """
