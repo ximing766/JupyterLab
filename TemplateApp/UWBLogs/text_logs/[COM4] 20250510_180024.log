@@ -1,0 +1,32 @@
+[2025-05-10 18:00:24.669] TMLUWB  :RX < :RECV                :62000048 FD270000 01000000 00FA0000 00010000 05000001 00000000 0180D700 00820000 00640000 64000000 00000003 92000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-10 18:00:24.695] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 80D7 Keep alive = 239
+[2025-05-10 18:00:24.706] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-10 18:00:24.716] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-10 18:00:24.721] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-10 18:00:24.726] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_80D7=130
+[2025-05-10 18:00:24.729] [0m[0;34mAPP     :INFO :Current User ( 80d7 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-10 18:00:24.731] [0m[0;34mAPP     :INFO :@@@ User Speed is :( 80d7 ) , 13 ,(cm/s)
+[2025-05-10 18:00:24.742] [0m[0;34mAPP     :INFO :@ b = 130, c = 76, x = -55, y = 76
+[2025-05-10 18:00:24.747] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-10 18:00:24.751] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-10 18:00:24.754] [0m
+[2025-05-10 18:00:24.757] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00E70006 00050580 D74900
+[2025-05-10 18:00:24.763] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-05-10 18:00:24.772] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_80D7=73
+[2025-05-10 18:00:24.777] [0m{"@POSITION": 1, "Master": 130, "Slave": 73, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 73, "RedAreaH": 0, "BlueAreaH": 250, "Speed":13, "User-X":-55, "User-Y":76, "User-Z":0,"Auth":9, "Trans":4}
+[2025-05-10 18:00:24.919] [0;32mTMLUWB  :RX < :RECV                :62000048 FE270000 01000000 00FA0000 00010000 05000001 00000000 0180D700 00810000 00640000 64000000 00000003 94000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-10 18:00:24.951] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 80D7 Keep alive = 239
+[2025-05-10 18:00:24.962] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-10 18:00:24.968] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-10 18:00:24.978] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-10 18:00:24.983] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_80D7=129
+[2025-05-10 18:00:24.986] [0m[0;34mAPP     :INFO :Current User ( 80d7 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-10 18:00:24.989] [0m[0;34mAPP     :INFO :@@@ User Speed is :( 80d7 ) , 1 ,(cm/s)
+[2025-05-10 18:00:24.991] [0m[0;34mAPP     :INFO :@ b = 129, c = 73, x = -56, y = 73
+[2025-05-10 18:00:24.993] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-10 18:00:24.996] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-10 18:00:25.003] [0m
+[2025-05-10 18:00:25.006] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00E80006 00050580 D74800
+[2025-05-10 18:00:25.009] [0m[0;34mAPP     :INFO :gMrmSessionHandle!!!
+[2025-05-10 18:00:25.010] [0m[0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_80D7=72
+[2025-05-10 18:00:25.013] [0m{"@POSITION": 1, "Master": 129, "Slave": 72, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 74, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":-56, "User-Y":73, "User-Z":0,"Auth":9, "Trans":4}

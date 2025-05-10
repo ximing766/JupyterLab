@@ -6,6 +6,7 @@ import re
 import datetime
 import time
 import queue
+import random
 from pathlib import Path
 # 串口通信
 import serial
@@ -13,7 +14,7 @@ import serial
 from PyQt6.QtCore import (
     Qt, QSize, QPoint, QUrl, QTimer,
     QDateTime, QThread, QMargins, QPointF,
-    pyqtSignal, QObject
+    pyqtSignal, QObject, QPointF, QRectF
 )
 # Qt界面模块
 from PyQt6.QtWidgets import *
@@ -105,6 +106,20 @@ class MainWindow(QMainWindow):
             Qt.WindowType.WindowMaximizeButtonHint      # 允许最大化
         )
         self.init_ui()
+        self.particle_effect = ParticleEffectWidget(self)
+        self.particle_effect.lower()
+    
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        self.particle_effect.setGeometry(self.rect())
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.particle_effect.start_animation()
+
+    def hideEvent(self, event):
+        super().hideEvent(event)
+        self.particle_effect.stop_animation()
     
     def paintEvent(self, event):
         if not self.background_cache or self.size() != self.last_window_size:
@@ -356,6 +371,18 @@ class MainWindow(QMainWindow):
         self.baud_combo2.setCurrentText('3000000')
         self.baud_combo2.setStyleSheet(self.port_combo2.styleSheet())
 
+        status_widget = QWidget()
+        status_layout = QHBoxLayout(status_widget)
+        status_layout.setContentsMargins(10, 0, 10, 0)
+        status_layout.setSpacing(5)
+        self.status_indicator2 = QLabel("●")
+        self.status_indicator2.setStyleSheet("color: red; font-size: 16px;background:rgba(36, 42, 56, 0);")
+        status_layout.addWidget(self.status_indicator2)
+
+        self.toggle_btn2 = QPushButton("打开串口")
+        self.toggle_btn2.setFixedWidth(90)
+        self.toggle_btn2.clicked.connect(self.toggle_port2)
+
         line_top_1 = QFrame()
         line_top_1.setFrameShape(QFrame.Shape.VLine)
         line_top_1.setFrameShadow(QFrame.Shadow.Sunken)
@@ -371,17 +398,16 @@ class MainWindow(QMainWindow):
         self.current_lines_label2 = QLabel("当前行数: 0")
         self.current_lines_label2.setStyleSheet("background: rgba(36, 42, 56, 0);")
         
-        status_widget = QWidget()
-        status_layout = QHBoxLayout(status_widget)
-        status_layout.setContentsMargins(10, 0, 10, 0)
-        status_layout.setSpacing(5)
-        self.status_indicator2 = QLabel("●")
-        self.status_indicator2.setStyleSheet("color: red; font-size: 16px;background:rgba(36, 42, 56, 0);")
-        status_layout.addWidget(self.status_indicator2)
+        line_top_2 = QFrame()
+        line_top_2.setFrameShape(QFrame.Shape.VLine)
+        line_top_2.setFrameShadow(QFrame.Shadow.Sunken)
+        line_top_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
-        self.toggle_btn2 = QPushButton("打开串口")
-        self.toggle_btn2.setFixedWidth(90)
-        self.toggle_btn2.clicked.connect(self.toggle_port2)
+        self.Address_label_2 = QLabel("0000  -")
+        self.Address_label_2.setStyleSheet("background:rgba(36, 42, 56, 0);")
+       
+        self.Transaction_time_label_2 = QLabel("0000ms")
+        self.Transaction_time_label_2.setStyleSheet("background:rgba(36, 42, 56, 0);")
         
         top_layout.addWidget(self.port_combo2)
         top_layout.addSpacing(10)
@@ -396,6 +422,12 @@ class MainWindow(QMainWindow):
         top_layout.addWidget(self.max_lines_spin2)
         top_layout.addSpacing(10)
         top_layout.addWidget(self.current_lines_label2)
+        top_layout.addSpacing(20)
+        top_layout.addWidget(line_top_2)
+        top_layout.addSpacing(20)
+        top_layout.addWidget(self.Address_label_2)
+        top_layout.addSpacing(5)
+        top_layout.addWidget(self.Transaction_time_label_2)
         top_layout.addStretch()
 
         layout.addWidget(top_widget)
@@ -790,6 +822,20 @@ class MainWindow(QMainWindow):
             text = data.decode('utf-8', errors='ignore')
             self.log_worker.add_log_task("UwbLog2", "info", text.strip())
             text = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
+
+            if "@@@ Time of Write Card End" in text:
+                #"@@@ Time of Write Card End     = 00:14:520  │ 80D7 │  710 ms"
+                match = re.search(r"│\s*([0-9A-Fa-f]+)\s*│\s*(\d+)\s*ms", text)
+                if match:
+                    address = match.group(1)
+                    transaction_time = match.group(2)
+                    
+                    if hasattr(self, 'Address_label_2') and self.Address_label_2 is not None:
+                        self.Address_label_2.setText(f"{address}  -")
+                    
+                    if hasattr(self, 'Transaction_time_label_2') and self.Transaction_time_label_2 is not None:
+                        self.Transaction_time_label_2.setText(f"{transaction_time}ms")
+
             self.data_buffer2.append(text)
         except Exception as e:
             print(f"数据处理错误 (on_data_received): {str(e)}")
@@ -813,6 +859,18 @@ class MainWindow(QMainWindow):
         self.baud_combo.setCurrentText('3000000')
         self.baud_combo.setStyleSheet(self.port_combo.styleSheet())
 
+        status_widget = QWidget()
+        status_layout = QHBoxLayout(status_widget)
+        status_layout.setContentsMargins(10, 0, 10, 0)
+        status_layout.setSpacing(5)
+        self.status_indicator = QLabel("●")
+        self.status_indicator.setStyleSheet("color: red; font-size: 16px;background:rgba(36, 42, 56, 0);")
+        status_layout.addWidget(self.status_indicator)
+
+        self.toggle_btn = QPushButton("打开串口")
+        self.toggle_btn.setFixedWidth(90)
+        self.toggle_btn.clicked.connect(self.toggle_port)
+
         line_top_1 = QFrame()
         line_top_1.setFrameShape(QFrame.Shape.VLine)
         line_top_1.setFrameShadow(QFrame.Shadow.Sunken)
@@ -829,19 +887,17 @@ class MainWindow(QMainWindow):
         self.current_lines_label = QLabel("当前行数: 0")
         self.current_lines_label.setStyleSheet("background:rgba(36, 42, 56, 0);")
 
-        
-        status_widget = QWidget()
-        status_layout = QHBoxLayout(status_widget)
-        status_layout.setContentsMargins(10, 0, 10, 0)
-        status_layout.setSpacing(5)
-        self.status_indicator = QLabel("●")
-        self.status_indicator.setStyleSheet("color: red; font-size: 16px;background:rgba(36, 42, 56, 0);")
-        status_layout.addWidget(self.status_indicator)
+        line_top_2 = QFrame()
+        line_top_2.setFrameShape(QFrame.Shape.VLine)
+        line_top_2.setFrameShadow(QFrame.Shadow.Sunken)
+        line_top_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
-        self.toggle_btn = QPushButton("打开串口")
-        self.toggle_btn.setFixedWidth(90)
-        self.toggle_btn.clicked.connect(self.toggle_port)
-        
+        self.Address_label = QLabel("0000  -")
+        self.Address_label.setStyleSheet("background:rgba(36, 42, 56, 0);")
+       
+        self.Transaction_time_label = QLabel("0000ms")
+        self.Transaction_time_label.setStyleSheet("background:rgba(36, 42, 56, 0);")
+
         top_layout.addWidget(self.port_combo)
         top_layout.addSpacing(10)
         top_layout.addWidget(self.baud_combo)
@@ -855,6 +911,13 @@ class MainWindow(QMainWindow):
         top_layout.addWidget(self.max_lines_spin)
         top_layout.addSpacing(10)
         top_layout.addWidget(self.current_lines_label)
+        top_layout.addSpacing(20)
+        top_layout.addWidget(line_top_2)
+        top_layout.addSpacing(20)
+        top_layout.addWidget(self.Address_label)
+        top_layout.addSpacing(5)
+        top_layout.addWidget(self.Transaction_time_label)
+
         top_layout.addStretch()
 
         layout.addWidget(top_widget)
@@ -1206,7 +1269,7 @@ class MainWindow(QMainWindow):
             # 美化线条
             if isinstance(series, QLineSeries):
                 pen = series.pen()
-                pen.setWidth(2.5)                                  # 增加线宽
+                pen.setWidth(2)                                  # 增加线宽
                 series.setPen(pen)
             
             chart_view = QChartView(chart)
@@ -1621,7 +1684,20 @@ class MainWindow(QMainWindow):
             
             self.log_worker.add_log_task("UwbLog", "info", text.strip())
             text = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
-            self.data_buffer.append(text)   
+            self.data_buffer.append(text)
+
+            if "@@@ Time of Write Card End" in text:
+                #"@@@ Time of Write Card End     = 00:14:520  │ 80D7 │  710 ms"
+                match = re.search(r"│\s*([0-9A-Fa-f]+)\s*│\s*(\d+)\s*ms", text)
+                if match:
+                    address = match.group(1)
+                    transaction_time = match.group(2)
+                    
+                    if hasattr(self, 'Address_label') and self.Address_label is not None:
+                        self.Address_label.setText(f"{address}  -")
+                    
+                    if hasattr(self, 'Transaction_time_label') and self.Transaction_time_label is not None:
+                        self.Transaction_time_label.setText(f"{transaction_time}ms")
             
             if "@POSITION" in text:
                 # print(f'接收到原始数据：{repr(text)}')
@@ -2430,6 +2506,101 @@ class SerialReadThread(QThread):
     def stop(self):
         self.running = False
         self.wait()
+
+class Particle:
+    def __init__(self, bounds_rect):
+        self.bounds = bounds_rect
+        self.reset()
+
+    def reset(self):
+        self.pos = QPointF(random.uniform(0, self.bounds.width()),
+                         random.uniform(0, self.bounds.height()))
+        # 粒子速度
+        self.vel = QPointF(random.uniform(-0.5, 0.5), random.uniform(-0.8, -1.8))
+
+        self.color = QColor(random.randint(100, 200), 
+                          random.randint(100, 200), 
+                          random.randint(200, 255), 
+                          random.randint(30, 120))
+        # 粒子尺寸
+        self.size = random.uniform(3.0, 6.0)
+
+    def update(self):
+        self.pos += self.vel
+        if not self.bounds.contains(self.pos):
+            self.pos = QPointF(random.uniform(0, self.bounds.width()), self.bounds.height() -1)
+            self.vel = QPointF(random.uniform(-0.5, 0.5), random.uniform(-0.8, -1.8))
+
+class ParticleEffectWidget(QWidget):
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.setAttribute(Qt.WidgetAttribute.WA_StyledBackground, True)
+        self.setStyleSheet("background: transparent;")
+        self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, True)
+        self.particles = []
+        self.num_particles = 80
+        self.timer = QTimer(self)
+        self.timer.timeout.connect(self.update_particles_and_repaint)
+        self._particles_initialized = False
+
+    def _initialize_particles(self):
+        if self.width() > 0 and self.height() > 0:
+            bounds = QRectF(0, 0, self.width(), self.height())
+            self.particles = [Particle(bounds) for _ in range(self.num_particles)]
+            self._particles_initialized = True
+
+    def start_animation(self):
+        if not self.isVisible():
+            return
+        if not self._particles_initialized and self.width() > 0 and self.height() > 0:
+            self._initialize_particles()
+        if self._particles_initialized and not self.timer.isActive():
+            self.timer.start(30)
+
+    def stop_animation(self):
+        self.timer.stop()
+
+    def update_particles_and_repaint(self):
+        if not self.isVisible() or not self._particles_initialized:
+            self.stop_animation()
+            return
+        for p in self.particles:
+            p.update()
+        self.update()
+
+    def paintEvent(self, event):
+        if not self._particles_initialized:
+            return
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        for p in self.particles:
+            painter.setBrush(p.color)
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.drawEllipse(p.pos, p.size, p.size)
+        super().paintEvent(event)
+
+    def resizeEvent(self, event):
+        super().resizeEvent(event)
+        if self.width() > 0 and self.height() > 0:
+            new_bounds = QRectF(0, 0, self.width(), self.height())
+            if not self._particles_initialized:
+                self._initialize_particles()
+            else:
+                for p in self.particles:
+                    p.bounds = new_bounds
+                    if not new_bounds.contains(p.pos):
+                        p.reset()
+            if self.isVisible() and not self.timer.isActive():
+                self.start_animation()
+        self.update()
+
+    def showEvent(self, event):
+        super().showEvent(event)
+        self.start_animation()
+
+    def hideEvent(self, event):
+        super().hideEvent(event)
+        self.stop_animation()
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
