@@ -1,0 +1,665 @@
+[2025-05-20 17:52:54.132] [0;32mTMLUWB  :RX < :RECV                :62000048 2BAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 01670000 00640000 64000000 00000003 A1000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:54.133] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:54.133] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:54.133] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:54.133] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   0
+[2025-05-20 17:52:54.133] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=103
+[2025-05-20 17:52:54.133] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:54.133] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:54.133] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 4 ,(cm/s)
+[2025-05-20 17:52:54.134] [0m[0;34mAPP     :INFO :@ b = 103, c = 50, x = -40, y = 50
+[2025-05-20 17:52:54.134] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:54.134] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:54.134] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:54.134] [0m
+[2025-05-20 17:52:54.383] [0;32mTMLUWB  :RX < :RECV                :62000048 2CAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 016A0000 00640000 64000000 00000003 A2000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:54.384] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:54.384] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:54.385] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:54.385] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   0
+[2025-05-20 17:52:54.385] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=106
+[2025-05-20 17:52:54.386] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:54.387] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:54.387] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 3 ,(cm/s)
+[2025-05-20 17:52:54.387] [0m[0;34mAPP     :INFO :@ b = 106, c = 50, x = -43, y = 50
+[2025-05-20 17:52:54.387] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:54.387] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:54.387] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:54.387] [0m
+[2025-05-20 17:52:54.626] [0;32mTMLUWB  :RX < :RECV                :62000048 2DAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006B0000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:54.626] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:54.626] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:54.626] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:54.627] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:54.627] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=107
+[2025-05-20 17:52:54.627] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:54.627] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:54.627] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 1 ,(cm/s)
+[2025-05-20 17:52:54.627] [0m[0;34mAPP     :INFO :@ b = 107, c = 50, x = -44, y = 51
+[2025-05-20 17:52:54.627] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:54.627] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:54.627] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:54.628] [0m
+[2025-05-20 17:52:54.879] [0;32mTMLUWB  :RX < :RECV                :62000048 2EAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006B0000 00640000 64000000 00000003 9D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:54.879] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:54.879] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:54.879] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:54.879] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:54.879] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=107
+[2025-05-20 17:52:54.879] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:54.879] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:54.879] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 4 ,(cm/s)
+[2025-05-20 17:52:54.879] [0m[0;34mAPP     :INFO :@ b = 107, c = 50, x = -44, y = 51
+[2025-05-20 17:52:54.879] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:54.879] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:54.879] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:54.879] [0m
+[2025-05-20 17:52:55.128] [0;32mTMLUWB  :RX < :RECV                :62000048 2FAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006B0000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:55.128] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:55.128] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:55.128] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:55.128] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:55.128] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=107
+[2025-05-20 17:52:55.128] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:55.128] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:55.128] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 1 ,(cm/s)
+[2025-05-20 17:52:55.128] [0m[0;34mAPP     :INFO :@ b = 107, c = 50, x = -44, y = 51
+[2025-05-20 17:52:55.128] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:55.128] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:55.128] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:55.128] [0m
+[2025-05-20 17:52:55.378] [0;32mTMLUWB  :RX < :RECV                :62000048 30AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006D0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:55.379] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:55.379] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:55.379] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:55.379] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:55.379] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=109
+[2025-05-20 17:52:55.379] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:55.379] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:55.379] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:52:55.379] [0m[0;34mAPP     :INFO :@ b = 109, c = 50, x = -46, y = 51
+[2025-05-20 17:52:55.379] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:55.379] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:55.380] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:55.380] [0m
+[2025-05-20 17:52:55.629] [0;32mTMLUWB  :RX < :RECV                :62000048 31AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006F0000 00640000 64000000 00000003 98000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:55.629] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:55.630] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:55.630] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:55.630] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:55.630] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=111
+[2025-05-20 17:52:55.630] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:55.630] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:55.630] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 5 ,(cm/s)
+[2025-05-20 17:52:55.630] [0m[0;34mAPP     :INFO :@ b = 111, c = 50, x = -49, y = 50
+[2025-05-20 17:52:55.630] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:55.630] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:55.630] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:55.630] [0m
+[2025-05-20 17:52:55.875] [0;32mTMLUWB  :RX < :RECV                :62000048 32AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 00700000 00640000 64000000 00000003 98000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:55.875] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:55.876] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:55.876] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:55.876] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:55.876] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=112
+[2025-05-20 17:52:55.876] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:55.876] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:55.876] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 6 ,(cm/s)
+[2025-05-20 17:52:55.876] [0m[0;34mAPP     :INFO :@ b = 112, c = 50, x = -50, y = 50
+[2025-05-20 17:52:55.876] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:55.876] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:55.876] [0m
+[2025-05-20 17:52:56.098] [0;32mTMLUWB  :RX < :RECV                :62000048 33AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006D0000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:56.098] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:56.098] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:56.098] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:56.099] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:56.099] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=109
+[2025-05-20 17:52:56.099] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:56.099] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:56.099] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 0 ,(cm/s)
+[2025-05-20 17:52:56.099] [0m[0;34mAPP     :INFO :@ b = 109, c = 50, x = -46, y = 51
+[2025-05-20 17:52:56.099] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:56.099] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:56.099] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:56.099] [0m
+[2025-05-20 17:52:56.385] [0;32mTMLUWB  :RX < :RECV                :62000048 34AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006F0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:56.385] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:56.385] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:56.385] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:56.385] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:56.386] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=111
+[2025-05-20 17:52:56.386] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:56.386] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:56.386] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 0 ,(cm/s)
+[2025-05-20 17:52:56.386] [0m[0;34mAPP     :INFO :@ b = 111, c = 50, x = -49, y = 50
+[2025-05-20 17:52:56.386] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:56.386] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:56.386] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:56.386] [0m
+[2025-05-20 17:52:56.632] [0;32mTMLUWB  :RX < :RECV                :62000048 35AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006E0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:56.632] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:56.632] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:56.632] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:56.632] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:56.633] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=110
+[2025-05-20 17:52:56.633] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:56.633] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:56.633] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:52:56.633] [0m[0;34mAPP     :INFO :@ b = 110, c = 50, x = -48, y = 49
+[2025-05-20 17:52:56.633] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:56.633] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:56.633] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:56.633] [0m
+[2025-05-20 17:52:56.882] [0;32mTMLUWB  :RX < :RECV                :62000048 36AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006E0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:56.882] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:56.882] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:56.882] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:56.882] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:56.882] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=110
+[2025-05-20 17:52:56.882] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:56.882] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:56.883] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:52:56.883] [0m[0;34mAPP     :INFO :@ b = 110, c = 50, x = -48, y = 49
+[2025-05-20 17:52:56.883] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:56.883] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:56.883] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:56.883] [0m
+[2025-05-20 17:52:57.131] [0;32mTMLUWB  :RX < :RECV                :62000048 37AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 00700000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:57.131] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:57.131] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:57.132] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:57.132] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:57.132] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=112
+[2025-05-20 17:52:57.132] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:57.132] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:57.132] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 1 ,(cm/s)
+[2025-05-20 17:52:57.132] [0m[0;34mAPP     :INFO :@ b = 112, c = 50, x = -50, y = 50
+[2025-05-20 17:52:57.132] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:57.132] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:57.132] [0m
+[2025-05-20 17:52:57.352] [0;32mTMLUWB  :RX < :RECV                :62000048 38AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006D0000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:57.352] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:57.352] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:57.352] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:57.352] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:57.352] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=109
+[2025-05-20 17:52:57.352] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:57.352] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:57.352] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:52:57.352] [0m[0;34mAPP     :INFO :@ b = 109, c = 50, x = -46, y = 51
+[2025-05-20 17:52:57.352] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:57.352] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:57.353] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:57.353] [0m
+[2025-05-20 17:52:57.633] [0;32mTMLUWB  :RX < :RECV                :62000048 39AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 00700000 00640000 64000000 00000003 9C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:57.633] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:57.633] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:57.633] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:57.633] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:57.633] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=112
+[2025-05-20 17:52:57.633] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:57.633] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:57.633] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:52:57.633] [0m[0;34mAPP     :INFO :@ b = 112, c = 50, x = -50, y = 50
+[2025-05-20 17:52:57.633] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:57.633] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:57.633] [0m
+[2025-05-20 17:52:57.850] [0;32mTMLUWB  :RX < :RECV                :62000048 3AAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006B0000 00640000 64000000 00000003 99000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:57.850] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:57.850] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:57.850] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:57.850] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:57.850] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=107
+[2025-05-20 17:52:57.850] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:57.850] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:57.851] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 6 ,(cm/s)
+[2025-05-20 17:52:57.851] [0m[0;34mAPP     :INFO :@ b = 107, c = 50, x = -44, y = 51
+[2025-05-20 17:52:57.851] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:57.851] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:57.851] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:57.851] [0m
+[2025-05-20 17:52:58.131] [0;32mTMLUWB  :RX < :RECV                :62000048 3BAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006D0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:58.132] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:58.132] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:58.132] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:58.132] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:58.132] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=109
+[2025-05-20 17:52:58.132] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:58.132] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:58.132] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 0 ,(cm/s)
+[2025-05-20 17:52:58.132] [0m[0;34mAPP     :INFO :@ b = 109, c = 50, x = -46, y = 51
+[2025-05-20 17:52:58.132] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:58.132] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:58.132] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:58.132] [0m
+[2025-05-20 17:52:58.381] [0;32mTMLUWB  :RX < :RECV                :62000048 3CAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006A0000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:58.381] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:58.382] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:58.382] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:58.382] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:58.382] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=106
+[2025-05-20 17:52:58.382] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:58.382] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:58.382] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 7 ,(cm/s)
+[2025-05-20 17:52:58.382] [0m[0;34mAPP     :INFO :@ b = 106, c = 50, x = -43, y = 50
+[2025-05-20 17:52:58.382] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:58.382] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:58.382] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:58.382] [0m
+[2025-05-20 17:52:58.628] [0;32mTMLUWB  :RX < :RECV                :62000048 3DAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006E0000 00640000 64000000 00000003 9C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:58.628] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:58.628] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:58.628] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:58.628] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:58.628] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=110
+[2025-05-20 17:52:58.628] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:58.628] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:58.628] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 4 ,(cm/s)
+[2025-05-20 17:52:58.628] [0m[0;34mAPP     :INFO :@ b = 110, c = 50, x = -48, y = 49
+[2025-05-20 17:52:58.628] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:58.628] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:58.628] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:58.628] [0m
+[2025-05-20 17:52:58.881] [0;32mTMLUWB  :RX < :RECV                :62000048 3EAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 016C0000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:58.881] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:58.881] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:58.881] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:58.881] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   0
+[2025-05-20 17:52:58.882] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=108
+[2025-05-20 17:52:58.882] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:58.882] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:58.882] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 1 ,(cm/s)
+[2025-05-20 17:52:58.882] [0m[0;34mAPP     :INFO :@ b = 108, c = 50, x = -45, y = 51
+[2025-05-20 17:52:58.882] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:58.882] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:58.882] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:58.882] [0m
+[2025-05-20 17:52:59.131] [0;32mTMLUWB  :RX < :RECV                :62000048 3FAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006C0000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:59.131] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:59.131] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:59.131] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:59.131] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:59.131] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=108
+[2025-05-20 17:52:59.131] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:59.131] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:59.131] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:52:59.131] [0m[0;34mAPP     :INFO :@ b = 108, c = 50, x = -45, y = 51
+[2025-05-20 17:52:59.131] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:59.132] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:59.132] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:59.132] [0m
+[2025-05-20 17:52:59.378] [0;32mTMLUWB  :RX < :RECV                :62000048 40AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006B0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:59.378] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:59.378] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:59.378] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:59.378] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:59.378] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=107
+[2025-05-20 17:52:59.378] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:59.378] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:59.378] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 4 ,(cm/s)
+[2025-05-20 17:52:59.378] [0m[0;34mAPP     :INFO :@ b = 107, c = 50, x = -44, y = 51
+[2025-05-20 17:52:59.378] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:59.379] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:59.379] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:59.379] [0m
+[2025-05-20 17:52:59.627] [0;32mTMLUWB  :RX < :RECV                :62000048 41AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 016C0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:59.627] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:59.627] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:59.627] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:59.627] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   0
+[2025-05-20 17:52:59.627] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=108
+[2025-05-20 17:52:59.627] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:59.627] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:59.627] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 0 ,(cm/s)
+[2025-05-20 17:52:59.627] [0m[0;34mAPP     :INFO :@ b = 108, c = 50, x = -45, y = 51
+[2025-05-20 17:52:59.627] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:59.627] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:59.627] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:59.627] [0m
+[2025-05-20 17:52:59.885] [0;32mTMLUWB  :RX < :RECV                :62000048 42AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006D0000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:52:59.885] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:52:59.885] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:52:59.886] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:52:59.886] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:52:59.886] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=109
+[2025-05-20 17:52:59.886] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:52:59.886] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:52:59.886] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 1 ,(cm/s)
+[2025-05-20 17:52:59.886] [0m[0;34mAPP     :INFO :@ b = 109, c = 50, x = -46, y = 51
+[2025-05-20 17:52:59.886] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:52:59.886] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:52:59.886] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:52:59.886] [0m
+[2025-05-20 17:53:00.133] [0;32mTMLUWB  :RX < :RECV                :62000048 43AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006E0000 00640000 64000000 00000003 99000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:00.134] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:00.134] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:00.134] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:00.134] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:00.134] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=110
+[2025-05-20 17:53:00.134] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:00.134] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:00.134] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 4 ,(cm/s)
+[2025-05-20 17:53:00.134] [0m[0;34mAPP     :INFO :@ b = 110, c = 50, x = -48, y = 49
+[2025-05-20 17:53:00.134] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:00.134] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:00.134] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:00.134] [0m
+[2025-05-20 17:53:00.379] [0;32mTMLUWB  :RX < :RECV                :62000048 44AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 00710000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:00.379] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:00.379] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:00.380] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:00.380] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:00.380] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=113
+[2025-05-20 17:53:00.380] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:00.380] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:00.380] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 6 ,(cm/s)
+[2025-05-20 17:53:00.380] [0m[0;34mAPP     :INFO :@ b = 113, c = 50, x = -51, y = 50
+[2025-05-20 17:53:00.380] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:00.380] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:00.380] [0m
+[2025-05-20 17:53:00.602] [0;32mTMLUWB  :RX < :RECV                :62000048 45AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 00700000 00640000 64000000 00000003 99000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:00.603] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:00.603] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:00.603] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:00.603] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:00.603] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=112
+[2025-05-20 17:53:00.603] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:00.603] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:00.603] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 4 ,(cm/s)
+[2025-05-20 17:53:00.603] [0m[0;34mAPP     :INFO :@ b = 112, c = 50, x = -50, y = 50
+[2025-05-20 17:53:00.603] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:00.603] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:00.603] [0m
+[2025-05-20 17:53:00.883] [0;32mTMLUWB  :RX < :RECV                :62000048 46AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 00720000 00640000 64000000 00000003 98000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:00.883] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:00.883] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:00.883] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:00.883] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:00.883] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=114
+[2025-05-20 17:53:00.883] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:00.885] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:00.885] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 4 ,(cm/s)
+[2025-05-20 17:53:00.885] [0m[0;34mAPP     :INFO :@ b = 114, c = 50, x = -52, y = 50
+[2025-05-20 17:53:00.885] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:00.885] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:00.885] [0m
+[2025-05-20 17:53:01.107] [0;32mTMLUWB  :RX < :RECV                :62000048 47AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006E0000 00640000 64000000 00000003 99000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:01.107] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:01.107] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:01.107] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:01.107] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:01.107] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=110
+[2025-05-20 17:53:01.107] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:01.107] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:01.107] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 3 ,(cm/s)
+[2025-05-20 17:53:01.107] [0m[0;34mAPP     :INFO :@ b = 110, c = 50, x = -48, y = 49
+[2025-05-20 17:53:01.107] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:01.107] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:01.108] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:01.108] [0m
+[2025-05-20 17:53:01.383] [0;32mTMLUWB  :RX < :RECV                :62000048 48AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006C0000 00640000 64000000 00000003 99000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:01.383] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:01.383] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:01.383] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:01.383] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:01.383] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=108
+[2025-05-20 17:53:01.383] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:01.383] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:01.384] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 5 ,(cm/s)
+[2025-05-20 17:53:01.384] [0m[0;34mAPP     :INFO :@ b = 108, c = 50, x = -45, y = 51
+[2025-05-20 17:53:01.384] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:01.384] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:01.384] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:01.384] [0m
+[2025-05-20 17:53:01.626] [0;32mTMLUWB  :RX < :RECV                :62000048 49AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006E0000 00640000 64000000 00000003 99000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:01.626] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:01.626] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:01.626] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:01.627] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:01.627] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=110
+[2025-05-20 17:53:01.627] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:01.627] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:01.627] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 4 ,(cm/s)
+[2025-05-20 17:53:01.627] [0m[0;34mAPP     :INFO :@ b = 110, c = 50, x = -48, y = 49
+[2025-05-20 17:53:01.627] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:01.627] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:01.627] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:01.627] [0m
+[2025-05-20 17:53:01.882] [0;32mTMLUWB  :RX < :RECV                :62000048 4AAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006D0000 00640000 64000000 00000003 99000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:01.882] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:01.883] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:01.883] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:01.883] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:01.883] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=109
+[2025-05-20 17:53:01.883] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:01.883] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:01.883] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:53:01.883] [0m[0;34mAPP     :INFO :@ b = 109, c = 50, x = -46, y = 51
+[2025-05-20 17:53:01.884] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:01.884] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:01.884] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:01.884] [0m
+[2025-05-20 17:53:02.148] [0;32mTMLUWB  :RX < :RECV                :62000048 4BAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006E0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:02.149] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:02.149] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:02.149] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:02.149] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:02.149] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=110
+[2025-05-20 17:53:02.149] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:02.149] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:02.149] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 3 ,(cm/s)
+[2025-05-20 17:53:02.149] [0m[0;34mAPP     :INFO :@ b = 110, c = 50, x = -48, y = 49
+[2025-05-20 17:53:02.149] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:02.149] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:02.149] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:02.149] [0m
+[2025-05-20 17:53:02.377] [0;32mTMLUWB  :RX < :RECV                :62000048 4CAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006E0000 00640000 64000000 00000003 99000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:02.377] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:02.377] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:02.377] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:02.377] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:02.377] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=110
+[2025-05-20 17:53:02.377] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:02.377] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:02.377] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 0 ,(cm/s)
+[2025-05-20 17:53:02.377] [0m[0;34mAPP     :INFO :@ b = 110, c = 50, x = -48, y = 49
+[2025-05-20 17:53:02.377] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:02.377] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:02.377] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:02.377] [0m
+[2025-05-20 17:53:02.632] [0;32mTMLUWB  :RX < :RECV                :62000048 4DAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006E0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:02.632] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:02.632] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:02.632] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:02.632] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:02.632] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=110
+[2025-05-20 17:53:02.632] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:02.632] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:02.633] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:53:02.633] [0m[0;34mAPP     :INFO :@ b = 110, c = 50, x = -48, y = 49
+[2025-05-20 17:53:02.633] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:02.633] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:02.633] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:02.633] [0m
+[2025-05-20 17:53:02.884] [0;32mTMLUWB  :RX < :RECV                :62000048 4EAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006C0000 00640000 64000000 00000003 98000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:02.884] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:02.884] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:02.884] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:02.884] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:02.884] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=108
+[2025-05-20 17:53:02.884] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:02.884] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:02.884] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 3 ,(cm/s)
+[2025-05-20 17:53:02.885] [0m[0;34mAPP     :INFO :@ b = 108, c = 50, x = -45, y = 51
+[2025-05-20 17:53:02.885] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:02.885] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:02.885] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:02.885] [0m
+[2025-05-20 17:53:03.132] [0;32mTMLUWB  :RX < :RECV                :62000048 4FAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 016C0000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:03.132] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:03.132] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:03.132] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:03.132] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   0
+[2025-05-20 17:53:03.132] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=108
+[2025-05-20 17:53:03.132] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:03.133] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:03.133] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 3 ,(cm/s)
+[2025-05-20 17:53:03.133] [0m[0;34mAPP     :INFO :@ b = 108, c = 50, x = -45, y = 51
+[2025-05-20 17:53:03.133] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:03.133] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:03.133] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:03.133] [0m
+[2025-05-20 17:53:03.375] [0;32mTMLUWB  :RX < :RECV                :62000048 50AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 00700000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:03.375] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:03.375] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:03.376] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:03.376] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:03.376] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=112
+[2025-05-20 17:53:03.376] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:03.376] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:03.376] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:53:03.376] [0m[0;34mAPP     :INFO :@ b = 112, c = 50, x = -50, y = 50
+[2025-05-20 17:53:03.376] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:03.376] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:03.376] [0m
+[2025-05-20 17:53:03.632] [0;32mTMLUWB  :RX < :RECV                :62000048 51AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006D0000 00640000 64000000 00000003 9C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:03.632] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:03.632] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:03.632] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:03.632] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:03.632] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=109
+[2025-05-20 17:53:03.632] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:03.632] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:03.632] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 1 ,(cm/s)
+[2025-05-20 17:53:03.632] [0m[0;34mAPP     :INFO :@ b = 109, c = 50, x = -46, y = 51
+[2025-05-20 17:53:03.632] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:03.632] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:03.632] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:03.632] [0m
+[2025-05-20 17:53:03.883] [0;32mTMLUWB  :RX < :RECV                :62000048 52AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006F0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:03.883] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:03.883] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:03.883] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:03.883] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:03.884] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=111
+[2025-05-20 17:53:03.884] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:03.884] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:03.884] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 4 ,(cm/s)
+[2025-05-20 17:53:03.884] [0m[0;34mAPP     :INFO :@ b = 111, c = 50, x = -49, y = 50
+[2025-05-20 17:53:03.884] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:03.884] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:03.885] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:03.885] [0m
+[2025-05-20 17:53:04.128] [0;32mTMLUWB  :RX < :RECV                :62000048 53AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006E0000 00640000 64000000 00000003 98000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:04.128] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:04.128] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:04.128] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:04.128] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:04.128] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=110
+[2025-05-20 17:53:04.128] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:04.128] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:04.128] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:53:04.128] [0m[0;34mAPP     :INFO :@ b = 110, c = 50, x = -48, y = 49
+[2025-05-20 17:53:04.128] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:04.128] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:04.129] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:04.129] [0m
+[2025-05-20 17:53:04.380] [0;32mTMLUWB  :RX < :RECV                :62000048 54AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006D0000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:04.380] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:04.380] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:04.380] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:04.380] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:04.380] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=109
+[2025-05-20 17:53:04.380] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:04.380] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:04.380] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 0 ,(cm/s)
+[2025-05-20 17:53:04.380] [0m[0;34mAPP     :INFO :@ b = 109, c = 50, x = -46, y = 51
+[2025-05-20 17:53:04.381] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:04.381] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:04.381] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:04.381] [0m
+[2025-05-20 17:53:04.632] [0;32mTMLUWB  :RX < :RECV                :62000048 55AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006B0000 00640000 64000000 00000003 9C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:04.632] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:04.632] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:04.632] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:04.632] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:04.632] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=107
+[2025-05-20 17:53:04.632] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:04.632] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:04.632] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 5 ,(cm/s)
+[2025-05-20 17:53:04.632] [0m[0;34mAPP     :INFO :@ b = 107, c = 50, x = -44, y = 51
+[2025-05-20 17:53:04.632] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:04.632] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:04.632] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:04.632] [0m
+[2025-05-20 17:53:04.881] [0;32mTMLUWB  :RX < :RECV                :62000048 56AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006D0000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:04.881] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:04.881] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:04.881] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:04.881] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:04.881] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=109
+[2025-05-20 17:53:04.882] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:04.882] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:04.882] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:53:04.882] [0m[0;34mAPP     :INFO :@ b = 109, c = 50, x = -46, y = 51
+[2025-05-20 17:53:04.882] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:04.882] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:04.882] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:04.882] [0m
+[2025-05-20 17:53:05.127] [0;32mTMLUWB  :RX < :RECV                :62000048 57AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006B0000 00640000 64000000 00000003 9B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:05.127] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:05.127] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:05.127] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:05.127] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:05.127] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=107
+[2025-05-20 17:53:05.127] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:05.127] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:05.127] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:53:05.128] [0m[0;34mAPP     :INFO :@ b = 107, c = 50, x = -44, y = 51
+[2025-05-20 17:53:05.128] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:05.128] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:05.128] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:05.128] [0m
+[2025-05-20 17:53:05.382] [0;32mTMLUWB  :RX < :RECV                :62000048 58AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006D0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:05.382] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:05.382] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:05.382] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:05.382] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:05.382] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=109
+[2025-05-20 17:53:05.382] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:05.382] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:05.382] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:53:05.384] [0m[0;34mAPP     :INFO :@ b = 109, c = 50, x = -46, y = 51
+[2025-05-20 17:53:05.384] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:05.384] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:05.384] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:05.384] [0m
+[2025-05-20 17:53:05.628] [0;32mTMLUWB  :RX < :RECV                :62000048 59AF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006E0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:05.628] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:05.628] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:05.628] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:05.628] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:05.628] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=110
+[2025-05-20 17:53:05.628] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:05.628] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:05.628] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 2 ,(cm/s)
+[2025-05-20 17:53:05.628] [0m[0;34mAPP     :INFO :@ b = 110, c = 50, x = -48, y = 49
+[2025-05-20 17:53:05.628] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:05.628] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:05.628] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:05.628] [0m
+[2025-05-20 17:53:06.046] [0;32mTMLUWB  :RX < :RECV                :62000048 5AAF0100 01000000 00FA0000 00010000 05000001 00000000 01070900 006E0000 00640000 64000000 00000003 9A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-05-20 17:53:06.047] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] 709 Keep alive = 79
+[2025-05-20 17:53:06.047] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-05-20 17:53:06.047] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-05-20 17:53:06.047] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-05-20 17:53:06.047] [0m[0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_709=110
+[2025-05-20 17:53:06.047] [0m[0;34mAPP     :INFO :Current User ( 709 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-05-20 17:53:06.047] [0mKF_predict(): Predicted value = 0, Measurement = 0
+[2025-05-20 17:53:06.048] [0;34mAPP     :INFO :@@@ User Speed is :( 709 ) , 4 ,(cm/s)
+[2025-05-20 17:53:06.048] [0m[0;34mAPP     :INFO :@ b = 110, c = 50, x = -48, y = 49
+[2025-05-20 17:53:06.048] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-05-20 17:53:06.048] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-05-20 17:53:06.048] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-05-20 17:53:06.048] [0m

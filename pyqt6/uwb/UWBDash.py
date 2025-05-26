@@ -14,7 +14,8 @@ import serial
 from PyQt6.QtCore import (
     Qt, QSize, QPoint, QUrl, QTimer,
     QDateTime, QThread, QMargins, QPointF,
-    pyqtSignal, QObject, QPointF, QRectF
+    pyqtSignal, QObject, QPointF, QRectF,
+    QEvent
 )
 # Qt界面模块
 from PyQt6.QtWidgets import *
@@ -34,19 +35,48 @@ from PyQt6.QtCharts import (
 # 自定义模块
 from log import Logger
 
+def time_decorator(func):
+    """
+    函数执行时间decorator
+    """
+    def wrapper(*args, **kwargs):
+        start_time = time.time()
+        result = func(*args, **kwargs)
+        end_time = time.time()
+        print(f"Function {func.__name__} took {(end_time - start_time) * 1000:.4f} ms to execute.")
+        return result
+    return wrapper
+
 class MainWindow(QMainWindow):
+    """
+    UWBDash 主窗口类
+    
+    这是一个基于 PyQt6 的 UWB 数据可视化工具。主要功能包括:
+    - 双串口数据接收和显示
+    - UWB 数据实时图表展示
+    - 自定义主题切换
+    - 日志记录功能
+    """
     theme_changed = pyqtSignal()
 
     def __init__(self):
+        """
+        初始化用户界面
+
+        创建并设置:
+        - 标题栏
+        - 导航栏
+        - 主内容区域
+        - 主题样式
+        """
         super().__init__()
         icon_path = Path(__file__).parent / "logo.ico"
         app_path  = Path(os.getcwd())
         print(f"app_path: {app_path}")
-        self.setWindowIcon(QIcon(str(icon_path)))  
+        self.setWindowIcon(QIcon(str(icon_path)))
         self.current_theme               = ThemeManager.DARK_THEME
-        self.background_images           = ["pic/person1.jpg", "pic/city1.jpg", "pic/carton1.jpg", "pic/landscape1.jpg", "pic/person2.jpg", "pic/landscape2.jpg"]
-        self.background_image_index      = 0
-        self.background_image            = None
+        self.config_path                 = Path(__file__).parent / "config.json"
+        self._load_background_config()
         self.logger                      = Logger(app_path=str(app_path))
         self.csv_title                   = ['Master', 'Slave', 'NLOS', 'RSSI', 'Speed','X', 'Y', 'Z', 'Auth', 'Trans']
         self.highlight_config_path       = str(Path(__file__).parent / "highlight_config.json")
@@ -65,13 +95,13 @@ class MainWindow(QMainWindow):
         self.data_buffer                 = []
         self.data_buffer2                = []
         
-
         self.display_timer = QTimer()
         self.display_timer.timeout.connect(self.update_display)
+    
         self.display_timer.start(250)
 
-        self.display_timer2 = QTimer() 
-        self.display_timer2.timeout.connect(self.update_display2) 
+        self.display_timer2 = QTimer()
+        self.display_timer2.timeout.connect(self.update_display2)
         self.display_timer2.start(250)
 
         self.log_worker = LogWorker(self.logger)
@@ -83,7 +113,7 @@ class MainWindow(QMainWindow):
 
         self.highlight_config_timer = QTimer()
         self.highlight_config_timer.timeout.connect(self.reload_highlight_config)
-        self.highlight_config_timer.start(10000) 
+        self.highlight_config_timer.start(10000)
 
         
         self.uwb_data = {
@@ -106,25 +136,25 @@ class MainWindow(QMainWindow):
             Qt.WindowType.WindowMaximizeButtonHint      # 允许最大化
         )
         self.init_ui()
-        self.particle_effect = ParticleEffectWidget(self)
-        self.particle_effect.lower()
-    
-    def resizeEvent(self, event):
-        super().resizeEvent(event)
-        self.particle_effect.setGeometry(self.rect())
 
-    def showEvent(self, event):
-        super().showEvent(event)
-        self.particle_effect.start_animation()
-
-    def hideEvent(self, event):
-        super().hideEvent(event)
-        self.particle_effect.stop_animation()
     
     def paintEvent(self, event):
         if not self.background_cache or self.size() != self.last_window_size:
             size = self.size()
-            background = QPixmap(str(Path(__file__).parent / "pic/person1.jpg"))
+            background_path = Path(__file__).parent / self.background_image
+            if not background_path.exists(): # Fallback if current image is somehow invalid
+                print(f"Warning: Background image {self.background_image} not found. Falling back to default.")
+                if self.background_images:
+                    self.background_image = self.background_images[0]
+                    self._save_background_config() # Save the fallback
+                    background_path = Path(__file__).parent / self.background_image
+                else: # Ultimate fallback if list is also empty (should not happen with proper config loading)
+                    # You might want to handle this case more gracefully, e.g., by not drawing a background
+                    # or using a solid color. For now, let's assume config loading ensures a valid image.
+                    print("Error: No background images available.")
+                    return # Or handle error appropriately
+
+            background = QPixmap(str(background_path))
             self.background_cache = background.scaled(
                 size, 
                 Qt.AspectRatioMode.KeepAspectRatioByExpanding,
@@ -137,6 +167,69 @@ class MainWindow(QMainWindow):
         x = (self.width() - self.background_cache.width()) // 2
         y = (self.height() - self.background_cache.height()) // 2
         painter.drawPixmap(x, y, self.background_cache)
+    
+    def _load_background_config(self):
+        default_images = [
+            "pic/person1.jpg", "pic/city1.jpg", "pic/carton1.jpg",
+            "pic/landscape1.jpg", "pic/person2.jpg", "pic/landscape2.jpg"
+        ]
+        default_current_image = default_images[0] if default_images else None
+
+        try:
+            if self.config_path.exists():
+                with open(self.config_path, "r", encoding="utf-8") as f:
+                    config_data = json.load(f) 
+                self.background_images = config_data.get("background_images", default_images)
+                self.background_image = config_data.get("current_background_image", default_current_image)
+                if not self.background_images: # Ensure list is not empty
+                    self.background_images = default_images
+                if self.background_image not in self.background_images and self.background_images:
+                    self.background_image = self.background_images[0]
+                elif not self.background_images:
+                     self.background_image = None # No images available
+
+                # Ensure current_background_image is valid and exists in the list
+                if self.background_image not in self.background_images:
+                    self.background_image = self.background_images[0] if self.background_images else default_current_image
+                
+                # Initialize background_image_index based on the loaded current_background_image
+                if self.background_image and self.background_image in self.background_images:
+                    self.background_image_index = self.background_images.index(self.background_image)
+                else:
+                    self.background_image_index = 0 # Default to first image if current is invalid or not found
+                    if self.background_images: # If there are images, set current to the first one
+                        self.background_image = self.background_images[0]
+                    else: # If no images at all, set current to None
+                        self.background_image = None
+
+            else:
+                self.background_images = default_images
+                self.background_image = default_current_image
+                self.background_image_index = 0
+                self._save_background_config() # Create config file with defaults
+        except Exception as e:
+            print(f"Error loading background config: {e}. Using defaults.")
+            self.background_images = default_images
+            self.background_image = default_current_image
+            self.background_image_index = 0
+            # Attempt to save defaults if loading failed, to fix a potentially corrupt file
+            self._save_background_config()
+        
+        # Final check to ensure background_image is set if list is not empty
+        if not self.background_image and self.background_images:
+            self.background_image = self.background_images[0]
+            self.background_image_index = 0
+
+    def _save_background_config(self):
+        config_data = {
+            "background_images": self.background_images,
+            "current_background_image": self.background_image
+        }
+        try:
+            with open(self.config_path, "w", encoding="utf-8") as f:
+                json.dump(config_data, f, indent=2)
+        except Exception as e:
+            print(f"Error saving background config: {e}")
     
     def load_highlight_config(self):
         try:
@@ -241,19 +334,47 @@ class MainWindow(QMainWindow):
     def mousePressEvent(self, event):
         idx = self.stacked_widget.currentIndex()
         count = self.stacked_widget.count()
-        print(f"count: {count} idx: {idx}")
+        # print(f"count: {count} idx: {idx}")
         if event.button() == Qt.MouseButton.XButton2:  
             new_idx = (idx - 1) % count
             self.stacked_widget.setCurrentIndex(new_idx)
             self.nav_list.setCurrentRow(new_idx)
-            print(f"New_idx: {new_idx}")
+            # print(f"New_idx: {new_idx}")
         elif event.button() == Qt.MouseButton.XButton1:  
             new_idx = (idx + 1) % count
             self.stacked_widget.setCurrentIndex(new_idx)
             self.nav_list.setCurrentRow(new_idx)
-            print(f"New_idx: {new_idx}")
+            # print(f"New_idx: {new_idx}")
         else:
             super().mousePressEvent(event)
+    
+    def wheelEvent(self, event):
+        current_idx = self.stacked_widget.currentIndex()
+        # 检测滚轮方向（正值表示向上滚动）
+        delta = event.angleDelta().y()
+        
+        if current_idx == 0:  # COM 1 页面
+            if delta > 0:  # 向上滚动
+                self.auto_scroll.setChecked(True)  
+            elif delta < 0 and not self.auto_scroll.isChecked():  # 向下滚动且自动滚动未启用
+                # 可选：在这里添加额外的向下滚动逻辑
+                pass
+        elif current_idx == 1:  # COM 2 页面
+            if delta > 0:  # 向上滚动
+                self.auto_scroll2.setChecked(True)  
+            elif delta < 0 and not self.auto_scroll2.isChecked():  # 向下滚动且自动滚动未启用
+                # 可选：在这里添加额外的向下滚动逻辑
+                pass
+                
+        # 调用父类方法以保持正常的滚动行为
+        super().wheelEvent(event)
+
+    def eventFilter(self, obj, event):
+        if (obj == self.serial_display or obj == self.serial_display2) and event.type() == QEvent.Type.Wheel:
+            # print(f"Event type: {event.type()}")
+            self.wheelEvent(event)
+            return True # 阻止事件进一步传播
+        return super().eventFilter(obj, event)
 
     def create_title_bar(self):
         title_bar = QWidget()
@@ -280,7 +401,12 @@ class MainWindow(QMainWindow):
         
         self.title_label = QLabel("UWBDash")
         self.title_label.setObjectName("titleLabel")
-        about_btn = QPushButton("关于")
+        
+        help_btn = QPushButton("Help")
+        help_btn.setStyleSheet("background: transparent; border: none;color:#c29500;font-weight:bold;")
+        help_btn.clicked.connect(self.show_help_dialog)
+        
+        about_btn = QPushButton("About")
         about_btn.setStyleSheet("background: transparent; border: none;color:#c29500;font-weight:bold;")
         about_btn.clicked.connect(self.show_about_dialog)
 
@@ -318,6 +444,7 @@ class MainWindow(QMainWindow):
         """)
 
         title_layout.addWidget(self.title_label)
+        title_layout.addWidget(help_btn)
         title_layout.addWidget(about_btn)
         title_layout.addStretch()
         title_layout.addWidget(minimize_btn)
@@ -326,8 +453,68 @@ class MainWindow(QMainWindow):
         
         return title_bar
     
+    def show_help_dialog(self):
+        help_dialog = QDialog(self)
+        help_dialog.setWindowTitle("UWBDash Help")
+        help_dialog.setFixedSize(500, 400)
+
+        layout = QVBoxLayout(help_dialog)
+
+        title_label = QLabel("UWBDash Help Guide")
+        title_label.setStyleSheet("font-size: 24px; font-weight: bold; color: #c29500;")
+        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        # Create a scroll area for the content
+        scroll = QScrollArea()
+        scroll.setWidgetResizable(True)
+        scroll_content = QWidget()
+        scroll_layout = QVBoxLayout(scroll_content)
+
+        # Add help sections
+        sections = [
+            ("Basic Controls", [
+                "• Click and drag the title bar to move the window",
+                "• Ctrl + F to open the search box",
+                "• Select the message box and press Space to stop the scrolling"
+            ]),
+            ("Data Visualization", [
+                "• Slave anchor needs to be connected for transmitting json data",
+                "• Real-time UWB positioning data display",
+                "• Interactive charts for key param monitoring",
+            ]),
+            ("Configuration", [
+                "• Set up serial port parameters in the settings panel",
+                "• Customize highlight colors for different message types"
+            ]),
+            ("Logging", [
+                "• A log file will be created automatically in the app directory when the '打开串口' button is clicked every time",
+            ])
+        ]
+
+        for section_title, items in sections:
+            section_label = QLabel(section_title)
+            section_label.setStyleSheet("font-size: 16px; font-weight: bold; color: #666; margin-top: 10px;")
+            scroll_layout.addWidget(section_label)
+
+            for item in items:
+                item_label = QLabel(item)
+                # item_label.setStyleSheet("font-size: 12px; color: #333; margin-left: 20px;")
+                item_label.setWordWrap(True)
+                scroll_layout.addWidget(item_label)
+
+        scroll_layout.addStretch()
+        scroll.setWidget(scroll_content)
+        layout.addWidget(title_label)
+        layout.addWidget(scroll)
+
+        # Add OK button
+        ok_button = QPushButton("OK")
+        ok_button.clicked.connect(help_dialog.accept)
+        layout.addWidget(ok_button)
+        help_dialog.exec()
+
     def show_about_dialog(self):
-        QMessageBox.about(self, "关于", "UWBDashboard APP\nCardShare@QLL")
+        QMessageBox.about(self, "关于", "UWBDash APP\nCardShare@QLL")
     
     def open_highlight_config_dialog(self):
         dialog = HighlightConfigDialog(self.highlight_config, self)
@@ -531,6 +718,8 @@ class MainWindow(QMainWindow):
     def create_display_area2(self, layout):
         self.serial_display2 = QTextEdit()
         self.serial_display2.setReadOnly(True)
+        self.serial_display2.setFocusPolicy(Qt.FocusPolicy.StrongFocus) # 确保能接收键盘事件
+        self.serial_display2.installEventFilter(self) # 安装事件过滤器
         self.serial_display2.document().setMaximumBlockCount(150000)  # 限制最大行数
         self.serial_display2.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # 自动换行
         self.serial_display2.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)  # 允许在任何位置换行
@@ -639,7 +828,12 @@ class MainWindow(QMainWindow):
             self.auto_scroll2.setChecked(not self.auto_scroll2.isChecked())
         elif event.modifiers() & Qt.KeyboardModifier.ControlModifier:
             if event.key() == Qt.Key.Key_F:
+                cursor = self.serial_display2.textCursor()
+                selected_text = cursor.selectedText()
                 self.show_find_dialog2()
+                if selected_text:
+                    self.find_input2.setText(selected_text)
+                    self.find_input2.selectAll()
                 event.accept()
                 return
         
@@ -651,9 +845,11 @@ class MainWindow(QMainWindow):
         dialog_x = display_pos.x() - self.find_dialog2.width() - 10  # 距离右边界10像素
         dialog_y = display_pos.y() + 10  # 距离顶部10像素
         self.find_dialog2.move(dialog_x, dialog_y)
+        
         self.find_dialog2.show()
         self.find_input2.setFocus()
         self.find_input2.selectAll()
+        
     
     def update_find_count2(self):
         """增量更新查找结果计数"""
@@ -744,7 +940,6 @@ class MainWindow(QMainWindow):
 
         self._last_highlight2 = (pos, length)
         self.count_label2.setText(f"{current+1}/{total}")
-        
     
     def refresh_ports2(self):
         import serial.tools.list_ports
@@ -822,6 +1017,7 @@ class MainWindow(QMainWindow):
             text = data.decode('utf-8', errors='ignore')
             self.log_worker.add_log_task("UwbLog2", "info", text.strip())
             text = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
+            self.data_buffer2.append(text)
 
             if "@@@ Time of Write Card End" in text:
                 #"@@@ Time of Write Card End     = 00:14:520  │ 80D7 │  710 ms"
@@ -836,7 +1032,6 @@ class MainWindow(QMainWindow):
                     if hasattr(self, 'Transaction_time_label_2') and self.Transaction_time_label_2 is not None:
                         self.Transaction_time_label_2.setText(f"{transaction_time}ms")
 
-            self.data_buffer2.append(text)
         except Exception as e:
             print(f"数据处理错误 (on_data_received): {str(e)}")
         
@@ -1036,6 +1231,7 @@ class MainWindow(QMainWindow):
         self.serial_display.document().setMaximumBlockCount(150000)  # 限制最大行数
         self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # 自动换行
         self.serial_display.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)  # 允许在任何位置换行
+        self.serial_display.installEventFilter(self) # 安装事件过滤器
         
         # 优化显示性能
         self.serial_display.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
@@ -1364,12 +1560,17 @@ class MainWindow(QMainWindow):
             # 计算查找框显示在serial_display右上角
             parent_pos = self.serial_display.mapToGlobal(self.serial_display.rect().topRight())
             dlg_geom = self.find_dialog.geometry()
+
+            cursor = self.serial_display.textCursor()
+            selected_text = cursor.selectedText()
             # 让查找框右上角与显示区右上角对齐
             self.find_dialog.move(parent_pos.x() - dlg_geom.width(), parent_pos.y())
             self.find_dialog.show()
             self.find_input.setFocus()
             self.find_input.selectAll()
             self.auto_scroll.setChecked(True)
+            if selected_text:
+                self.find_input.setText(selected_text)
         # 调用原始的键盘事件处理
         QTextEdit.keyPressEvent(self.serial_display, event)
     
@@ -1678,6 +1879,7 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print(f"Error updating chart: {str(e)}")
 
+    # @time_decorator
     def handle_serial_data(self, data):
         try:
             text = data.decode('utf-8')
@@ -1920,6 +2122,7 @@ class MainWindow(QMainWindow):
                 Qt.TransformationMode.SmoothTransformation
             )
             self.last_window_size = self.size()
+        self._save_background_config()
         self.update()
     
     def apply_theme(self):
@@ -2538,7 +2741,7 @@ class ParticleEffectWidget(QWidget):
         self.setStyleSheet("background: transparent;")
         self.setAttribute(Qt.WidgetAttribute.WA_TransparentForMouseEvents, True)
         self.particles = []
-        self.num_particles = 80
+        self.num_particles = 100
         self.timer = QTimer(self)
         self.timer.timeout.connect(self.update_particles_and_repaint)
         self._particles_initialized = False

@@ -1,0 +1,12 @@
+{
+  "background_images": [
+    "pic/person1.jpg",
+    "pic/city1.jpg",
+    "pic/carton1.jpg",
+    "pic/landscape1.jpg",
+    "pic/person2.jpg",
+    "pic/landscape2.jpg",
+    "pic/person8.png"
+  ],
+  "current_background_image": "pic/person8.png"
+}

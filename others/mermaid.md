@@ -31,7 +31,6 @@ flowchart TB
     subgraph RED["🚩 红区交易"]
         direction TB
         C1(["📱进入红区"]):::process
-        C2["➕ Reader加入"]:::process
         C3["UWB发送卡信息"]:::process
         C4{"Reader验证"}:::decision
         C5["下发8050/80DCAPDU"]:::success
@@ -62,7 +61,7 @@ flowchart TB
     B1 --> B2 --> B3 --> B4
     B4 -- 有效 --> B5 --> B6 --> C1
     B4 -- 无效 --> B2
-    C1 --> C2 --> C3 --> C4
+    C1 --> C3 --> C4
     C4 -- 通过 --> C5 --> C19 --> C6 --> C20 --> C7
     C4 -- 不通过 --> C3
     C7 -- 失败 --> C8 --> B2

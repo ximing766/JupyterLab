@@ -30,24 +30,24 @@ class Logger:
             fmt=self.csv_format
         )
 
-        # 基础配置（移除文件处理器，只保留控制台输出）
-        logging.basicConfig(
-            level=log_level,
-            format=self.text_format,
-            datefmt='%Y-%m-%d %H:%M:%S',
-            handlers=[
-                RichHandler(rich_tracebacks=True)
-            ]
-        )
+        # 控制台输出
+        # logging.basicConfig(
+        #     level=log_level,
+        #     format=self.text_format,
+        #     datefmt='%Y-%m-%d %H:%M:%S',
+        #     handlers=[
+        #         RichHandler(rich_tracebacks=True)
+        #     ]
+        # )
 
         # 获取logger
         self.log = logging.getLogger(name)
         self.log.setLevel(log_level)
 
         # 添加控制台输出
-        console_handler = RichHandler(rich_tracebacks=True)
-        console_handler.setFormatter(self.text_formatter)  # 使用 text_formatter
-        self.log.addHandler(console_handler)
+        # console_handler = RichHandler(rich_tracebacks=True)
+        # console_handler.setFormatter(self.text_formatter)  # 使用 text_formatter
+        # self.log.addHandler(console_handler)
 
         # 存储不同用途的logger
         self.loggers = {}
