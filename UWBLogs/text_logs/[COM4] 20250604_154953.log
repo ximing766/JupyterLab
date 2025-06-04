@@ -1,0 +1,883 @@
+[2025-06-04 15:49:53.322] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 009B0006 000505FC A45C00
+[2025-06-04 15:49:53.322] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:53.330] [0mMaster_Distance_to_Slave=92
+[2025-06-04 15:49:53.330] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=92
+[2025-06-04 15:49:53.330] [0m{"@POSITION": 1, "Master": 126, "Slave": 92, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 88, "RedAreaH": 110, "BlueAreaH": 250, "Speed":15, "User-X":-43, "User-Y":85, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:53.543] [0;32mTMLUWB  :RX < :RECV                :62000048 B5150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01840000 00640000 64000000 00000002 AC000000 00000000 00000000 0E000000 00010300 01032121 06CA80CA
+[2025-06-04 15:49:53.545] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 78
+[2025-06-04 15:49:53.545] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:53.545] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:53.545] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:53.545] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:53.545] [0mMaster_Distance_to_FCA4=132
+[2025-06-04 15:49:53.548] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=132
+[2025-06-04 15:49:53.548] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:53.549] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 5 ,(cm/s)
+[2025-06-04 15:49:53.549] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:53.549] [0m[0;34mAPP     :INFO :@ b = 132, c = 92, x = -44, y = 92
+[2025-06-04 15:49:53.549] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:53.549] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:53.549] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:53.549] [0m
+[2025-06-04 15:49:53.549] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 009C0006 000505FC A45A00
+[2025-06-04 15:49:53.549] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:53.549] [0mMaster_Distance_to_Slave=90
+[2025-06-04 15:49:53.549] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=90
+[2025-06-04 15:49:53.549] [0m{"@POSITION": 1, "Master": 132, "Slave": 90, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":5, "User-X":-44, "User-Y":92, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:53.774] [0;32mTMLUWB  :RX < :RECV                :62000023 B6150000 01000000 00FA0000 00010000 05000001 00000000 00080000 00000103 000103
+[2025-06-04 15:49:53.775] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:53.777] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:53.777] [0m
+[2025-06-04 15:49:53.777] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 009D0006 000505FC A45900
+[2025-06-04 15:49:53.778] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:53.778] [0mMaster_Distance_to_Slave=89
+[2025-06-04 15:49:53.778] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=89
+[2025-06-04 15:49:53.778] [0m{"@POSITION": 1, "Master": 132, "Slave": 89, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":5, "User-X":-44, "User-Y":92, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:54.032] [0;32mTMLUWB  :RX < :RECV                :62000048 B7150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01890000 00000000 00000000 0000000B AA000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:54.032] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 78
+[2025-06-04 15:49:54.032] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:54.032] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:54.032] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:54.032] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:54.033] [0mMaster_Distance_to_FCA4=137
+[2025-06-04 15:49:54.033] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=137
+[2025-06-04 15:49:54.033] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:54.034] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 15 ,(cm/s)
+[2025-06-04 15:49:54.034] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:54.034] [0m[0;34mAPP     :INFO :@ b = 137, c = 89, x = -54, y = 89
+[2025-06-04 15:49:54.034] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:54.034] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:54.035] [0m
+[2025-06-04 15:49:54.035] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 009E0006 000505FC A45B00
+[2025-06-04 15:49:54.035] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:54.035] [0mMaster_Distance_to_Slave=91
+[2025-06-04 15:49:54.035] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=91
+[2025-06-04 15:49:54.035] [0m{"@POSITION": 1, "Master": 137, "Slave": 91, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 85, "RedAreaH": 110, "BlueAreaH": 250, "Speed":15, "User-X":-54, "User-Y":89, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:54.293] [0;32mTMLUWB  :RX < :RECV                :62000048 B8150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01810000 00640000 64000000 00000003 AE000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:54.293] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:54.294] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:54.294] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:54.294] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:54.294] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:54.294] [0mMaster_Distance_to_FCA4=129
+[2025-06-04 15:49:54.294] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=129
+[2025-06-04 15:49:54.295] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:54.295] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 6 ,(cm/s)
+[2025-06-04 15:49:54.295] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:54.295] [0m[0;34mAPP     :INFO :@ b = 129, c = 91, x = -41, y = 91
+[2025-06-04 15:49:54.295] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:54.295] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:54.295] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:54.295] [0m
+[2025-06-04 15:49:54.295] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 009F0006 000505FC A45B00
+[2025-06-04 15:49:54.295] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:54.295] [0mMaster_Distance_to_Slave=91
+[2025-06-04 15:49:54.295] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=91
+[2025-06-04 15:49:54.295] [0m{"@POSITION": 1, "Master": 129, "Slave": 91, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 87, "RedAreaH": 110, "BlueAreaH": 250, "Speed":6, "User-X":-41, "User-Y":91, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:54.543] [0;32mTMLUWB  :RX < :RECV                :62000048 B9150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01850000 00640000 64000000 00000003 AD000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:54.543] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:54.543] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:54.545] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:54.545] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:54.545] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:54.545] [0mMaster_Distance_to_FCA4=133
+[2025-06-04 15:49:54.545] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=133
+[2025-06-04 15:49:54.545] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:54.545] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 3 ,(cm/s)
+[2025-06-04 15:49:54.545] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:54.545] [0m[0;34mAPP     :INFO :@ b = 133, c = 91, x = -47, y = 90
+[2025-06-04 15:49:54.546] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:54.546] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:54.546] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:54.546] [0m
+[2025-06-04 15:49:54.546] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00A00006 000505FC A45B00
+[2025-06-04 15:49:54.546] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:54.546] [0mMaster_Distance_to_Slave=91
+[2025-06-04 15:49:54.546] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=91
+[2025-06-04 15:49:54.546] [0m{"@POSITION": 1, "Master": 133, "Slave": 91, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":3, "User-X":-47, "User-Y":90, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:54.789] [0;32mTMLUWB  :RX < :RECV                :62000048 BA150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01840000 00640000 64000000 00000003 AB000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:54.791] [0mMaster_Distance_to_FCA4=132
+[2025-06-04 15:49:54.791] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=132
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 9 ,(cm/s)
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :@ b = 132, c = 91, x = -45, y = 91
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:54.791] [0m
+[2025-06-04 15:49:54.791] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00A10006 000505FC A45C00
+[2025-06-04 15:49:54.791] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:54.791] [0mMaster_Distance_to_Slave=92
+[2025-06-04 15:49:54.792] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=92
+[2025-06-04 15:49:54.792] [0m{"@POSITION": 1, "Master": 132, "Slave": 92, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 85, "RedAreaH": 110, "BlueAreaH": 250, "Speed":9, "User-X":-45, "User-Y":91, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:55.055] [0;32mTMLUWB  :RX < :RECV                :62000048 BB150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01870000 00640000 64000000 00000003 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:55.055] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:55.055] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:55.055] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:55.055] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:55.055] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:55.056] [0mMaster_Distance_to_FCA4=135
+[2025-06-04 15:49:55.056] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=135
+[2025-06-04 15:49:55.056] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:55.056] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 7 ,(cm/s)
+[2025-06-04 15:49:55.056] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:55.056] [0m[0;34mAPP     :INFO :@ b = 135, c = 92, x = -48, y = 92
+[2025-06-04 15:49:55.056] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:55.056] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:55.056] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:55.056] [0m
+[2025-06-04 15:49:55.056] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00A20006 000505FC A45D00
+[2025-06-04 15:49:55.056] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:55.056] [0mMaster_Distance_to_Slave=93
+[2025-06-04 15:49:55.056] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=93
+[2025-06-04 15:49:55.056] [0m{"@POSITION": 1, "Master": 135, "Slave": 93, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":7, "User-X":-48, "User-Y":92, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:55.280] [0;32mTMLUWB  :RX < :RECV                :62000023 BC150000 01000000 00FA0000 00010000 05000001 00000000 00080000 00000103 000103
+[2025-06-04 15:49:55.280] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:55.280] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:55.280] [0m
+[2025-06-04 15:49:55.280] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00A30006 000505FC A45F00
+[2025-06-04 15:49:55.280] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:55.280] [0mMaster_Distance_to_Slave=95
+[2025-06-04 15:49:55.280] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=95
+[2025-06-04 15:49:55.280] [0m{"@POSITION": 1, "Master": 135, "Slave": 95, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":7, "User-X":-48, "User-Y":92, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:55.550] [0;32mTMLUWB  :RX < :RECV                :62000023 BD150000 01000000 00FA0000 00010000 05000001 00000000 00080000 00000103 000103
+[2025-06-04 15:49:55.550] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 78
+[2025-06-04 15:49:55.550] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:55.551] [0m
+[2025-06-04 15:49:55.551] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00A40006 000505FC A45E00
+[2025-06-04 15:49:55.551] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:55.551] [0mMaster_Distance_to_Slave=94
+[2025-06-04 15:49:55.551] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=94
+[2025-06-04 15:49:55.551] [0m{"@POSITION": 1, "Master": 135, "Slave": 94, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":7, "User-X":-48, "User-Y":92, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:55.811] [0;32mTMLUWB  :RX < :RECV                :62000048 BE150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 017F0000 00640000 64000000 00000005 AB000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:55.812] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 77
+[2025-06-04 15:49:55.812] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:55.812] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:55.812] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:55.812] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:55.813] [0mMaster_Distance_to_FCA4=127
+[2025-06-04 15:49:55.813] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=127
+[2025-06-04 15:49:55.813] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:55.813] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 11 ,(cm/s)
+[2025-06-04 15:49:55.813] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:55.813] [0m[0;34mAPP     :INFO :@ b = 127, c = 94, x = -36, y = 93
+[2025-06-04 15:49:55.813] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:55.813] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:55.813] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:55.813] [0m
+[2025-06-04 15:49:55.813] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00A50006 000505FC A45800
+[2025-06-04 15:49:55.813] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:55.813] [0mMaster_Distance_to_Slave=88
+[2025-06-04 15:49:55.813] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=88
+[2025-06-04 15:49:55.813] [0m{"@POSITION": 1, "Master": 127, "Slave": 88, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 85, "RedAreaH": 110, "BlueAreaH": 250, "Speed":11, "User-X":-36, "User-Y":93, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:56.044] [0;32mTMLUWB  :RX < :RECV                :62000048 BF150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01820000 00640000 64000000 00000003 AD000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:56.044] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:56.045] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:56.045] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:56.046] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:56.046] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:56.046] [0mMaster_Distance_to_FCA4=130
+[2025-06-04 15:49:56.046] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=130
+[2025-06-04 15:49:56.046] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:56.046] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 3 ,(cm/s)
+[2025-06-04 15:49:56.046] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:56.046] [0m[0;34mAPP     :INFO :@ b = 130, c = 88, x = -45, y = 88
+[2025-06-04 15:49:56.047] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:56.047] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:56.047] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:56.047] [0m
+[2025-06-04 15:49:56.047] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00A60006 000505FC A45800
+[2025-06-04 15:49:56.047] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:56.047] [0mMaster_Distance_to_Slave=88
+[2025-06-04 15:49:56.047] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=88
+[2025-06-04 15:49:56.047] [0m{"@POSITION": 1, "Master": 130, "Slave": 88, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":3, "User-X":-45, "User-Y":88, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:56.309] [0;32mTMLUWB  :RX < :RECV                :62000048 C0150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01840000 00640000 64000000 00000003 AD000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:56.310] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:56.310] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:56.310] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:56.310] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:56.310] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:56.310] [0mMaster_Distance_to_FCA4=132
+[2025-06-04 15:49:56.310] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=132
+[2025-06-04 15:49:56.310] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:56.310] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 4 ,(cm/s)
+[2025-06-04 15:49:56.310] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:56.310] [0m[0;34mAPP     :INFO :@ b = 132, c = 88, x = -48, y = 88
+[2025-06-04 15:49:56.310] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:56.310] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:56.310] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:56.310] [0m
+[2025-06-04 15:49:56.311] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00A70006 000505FC A45400
+[2025-06-04 15:49:56.311] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:56.311] [0mMaster_Distance_to_Slave=84
+[2025-06-04 15:49:56.311] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=84
+[2025-06-04 15:49:56.311] [0m{"@POSITION": 1, "Master": 132, "Slave": 84, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":4, "User-X":-48, "User-Y":88, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:56.538] [0;32mTMLUWB  :RX < :RECV                :62000048 C1150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01810000 00640000 64000000 00000003 AB000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:56.538] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:56.538] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:56.538] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:56.539] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:56.539] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:56.539] [0mMaster_Distance_to_FCA4=129
+[2025-06-04 15:49:56.539] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=129
+[2025-06-04 15:49:56.539] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:56.539] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 13 ,(cm/s)
+[2025-06-04 15:49:56.539] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:56.539] [0m[0;34mAPP     :INFO :@ b = 129, c = 84, x = -47, y = 85
+[2025-06-04 15:49:56.539] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:56.539] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:56.539] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:56.540] [0m
+[2025-06-04 15:49:56.540] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00A80006 000505FC A45800
+[2025-06-04 15:49:56.540] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:56.540] [0mMaster_Distance_to_Slave=88
+[2025-06-04 15:49:56.540] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=88
+[2025-06-04 15:49:56.540] [0m{"@POSITION": 1, "Master": 129, "Slave": 88, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 85, "RedAreaH": 110, "BlueAreaH": 250, "Speed":13, "User-X":-47, "User-Y":85, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:56.801] [0;32mTMLUWB  :RX < :RECV                :62000048 C2150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01810000 00640000 64000000 00000003 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:56.801] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:56.801] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:56.801] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:56.802] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:56.802] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:56.802] [0mMaster_Distance_to_FCA4=129
+[2025-06-04 15:49:56.802] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=129
+[2025-06-04 15:49:56.802] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:56.802] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 1 ,(cm/s)
+[2025-06-04 15:49:56.802] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:56.802] [0m[0;34mAPP     :INFO :@ b = 129, c = 88, x = -44, y = 88
+[2025-06-04 15:49:56.802] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:56.802] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:56.802] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:56.802] [0m
+[2025-06-04 15:49:56.802] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00A90006 000505FC A45900
+[2025-06-04 15:49:56.802] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:56.802] [0mMaster_Distance_to_Slave=89
+[2025-06-04 15:49:56.802] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=89
+[2025-06-04 15:49:56.802] [0m{"@POSITION": 1, "Master": 129, "Slave": 89, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":1, "User-X":-44, "User-Y":88, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:57.126] [0;32mTMLUWB  :RX < :RECV                :62000048 C3150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01820000 00640000 64000000 00000003 AB000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:57.127] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:57.127] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:57.127] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:57.127] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:57.127] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:57.127] [0mMaster_Distance_to_FCA4=130
+[2025-06-04 15:49:57.127] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=130
+[2025-06-04 15:49:57.127] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:57.127] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 4 ,(cm/s)
+[2025-06-04 15:49:57.127] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:57.127] [0m[0;34mAPP     :INFO :@ b = 130, c = 89, x = -44, y = 89
+[2025-06-04 15:49:57.127] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:57.127] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:57.127] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:57.127] [0m
+[2025-06-04 15:49:57.127] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00AA0006 000505FC A45400
+[2025-06-04 15:49:57.128] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:57.128] [0mMaster_Distance_to_Slave=84
+[2025-06-04 15:49:57.128] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=84
+[2025-06-04 15:49:57.128] [0m{"@POSITION": 1, "Master": 130, "Slave": 84, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 85, "RedAreaH": 110, "BlueAreaH": 250, "Speed":4, "User-X":-44, "User-Y":89, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:57.292] [0;32mTMLUWB  :RX < :RECV                :62000048 C4150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01820000 00640000 64000000 00000003 AA000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:57.293] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:57.293] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:57.293] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:57.293] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:57.293] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:57.293] [0mMaster_Distance_to_FCA4=130
+[2025-06-04 15:49:57.293] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=130
+[2025-06-04 15:49:57.293] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:57.293] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 2 ,(cm/s)
+[2025-06-04 15:49:57.295] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:57.295] [0m[0;34mAPP     :INFO :@ b = 130, c = 84, x = -49, y = 84
+[2025-06-04 15:49:57.295] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:57.295] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:57.295] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:57.295] [0m
+[2025-06-04 15:49:57.295] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00AB0006 000505FC A45C00
+[2025-06-04 15:49:57.295] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:57.295] [0mMaster_Distance_to_Slave=92
+[2025-06-04 15:49:57.295] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=92
+[2025-06-04 15:49:57.295] [0m{"@POSITION": 1, "Master": 130, "Slave": 92, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 85, "RedAreaH": 110, "BlueAreaH": 250, "Speed":2, "User-X":-49, "User-Y":84, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:57.533] [0;32mTMLUWB  :RX < :RECV                :62000048 C5150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01820000 00640000 64000000 00000003 AB000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:57.533] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:57.533] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:57.533] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:57.534] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:57.534] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:57.534] [0mMaster_Distance_to_FCA4=130
+[2025-06-04 15:49:57.534] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=130
+[2025-06-04 15:49:57.534] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:57.534] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 3 ,(cm/s)
+[2025-06-04 15:49:57.535] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:57.535] [0m[0;34mAPP     :INFO :@ b = 130, c = 92, x = -42, y = 91
+[2025-06-04 15:49:57.535] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:57.535] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:57.535] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:57.535] [0m
+[2025-06-04 15:49:57.535] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00AC0006 000505FC A45A00
+[2025-06-04 15:49:57.535] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:57.536] [0mMaster_Distance_to_Slave=90
+[2025-06-04 15:49:57.536] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=90
+[2025-06-04 15:49:57.538] [0m{"@POSITION": 1, "Master": 130, "Slave": 90, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 85, "RedAreaH": 110, "BlueAreaH": 250, "Speed":3, "User-X":-42, "User-Y":91, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:57.787] [0;32mTMLUWB  :RX < :RECV                :62000048 C6150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01800000 00640000 64000000 00000003 A8000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:57.787] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:57.788] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:57.789] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:57.789] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:57.789] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:57.789] [0mMaster_Distance_to_FCA4=128
+[2025-06-04 15:49:57.789] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=128
+[2025-06-04 15:49:57.789] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:57.789] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 3 ,(cm/s)
+[2025-06-04 15:49:57.789] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:57.789] [0m[0;34mAPP     :INFO :@ b = 128, c = 90, x = -41, y = 90
+[2025-06-04 15:49:57.789] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:57.789] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:57.789] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:57.789] [0m
+[2025-06-04 15:49:57.789] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00AD0006 000505FC A46100
+[2025-06-04 15:49:57.789] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:57.789] [0mMaster_Distance_to_Slave=97
+[2025-06-04 15:49:57.789] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=97
+[2025-06-04 15:49:57.789] [0m{"@POSITION": 1, "Master": 128, "Slave": 97, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 84, "RedAreaH": 110, "BlueAreaH": 250, "Speed":3, "User-X":-41, "User-Y":90, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:58.032] [0;32mTMLUWB  :RX < :RECV                :62000048 C7150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01810000 00640000 64000000 00000003 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:58.032] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:58.033] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:58.033] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:58.033] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:58.033] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:58.033] [0mMaster_Distance_to_FCA4=129
+[2025-06-04 15:49:58.033] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=129
+[2025-06-04 15:49:58.033] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:58.033] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 17 ,(cm/s)
+[2025-06-04 15:49:58.034] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:58.034] [0m[0;34mAPP     :INFO :@ b = 129, c = 97, x = -36, y = 96
+[2025-06-04 15:49:58.034] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:58.034] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:58.034] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:58.034] [0m
+[2025-06-04 15:49:58.034] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00AE0006 000505FC A45900
+[2025-06-04 15:49:58.035] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:58.035] [0mMaster_Distance_to_Slave=89
+[2025-06-04 15:49:58.035] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=89
+[2025-06-04 15:49:58.035] [0m{"@POSITION": 1, "Master": 129, "Slave": 89, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":17, "User-X":-36, "User-Y":96, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:58.297] [0;32mTMLUWB  :RX < :RECV                :62000023 C8150000 01000000 00FA0000 00010000 05000001 00000000 00080000 00000103 000103
+[2025-06-04 15:49:58.297] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:58.297] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:58.297] [0m
+[2025-06-04 15:49:58.299] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00AF0006 000505FC A45D00
+[2025-06-04 15:49:58.299] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:58.299] [0mMaster_Distance_to_Slave=93
+[2025-06-04 15:49:58.299] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=93
+[2025-06-04 15:49:58.299] [0m{"@POSITION": 1, "Master": 129, "Slave": 93, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":17, "User-X":-36, "User-Y":96, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:58.626] [0;32mTMLUWB  :RX < :RECV                :62000048 C9150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01820000 00640000 64000000 00000002 AD000000 00000000 00000000 0E000000 00010300 01032020 1ECA80CA
+[2025-06-04 15:49:58.626] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 78
+[2025-06-04 15:49:58.626] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:58.626] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:58.626] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:58.626] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:58.626] [0mMaster_Distance_to_FCA4=130
+[2025-06-04 15:49:58.626] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=130
+[2025-06-04 15:49:58.626] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:58.626] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 1 ,(cm/s)
+[2025-06-04 15:49:58.626] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:58.626] [0m[0;34mAPP     :INFO :@ b = 130, c = 93, x = -41, y = 92
+[2025-06-04 15:49:58.626] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:58.626] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:58.626] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:58.627] [0m
+[2025-06-04 15:49:58.627] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00B00006 000505FC A45B00
+[2025-06-04 15:49:58.627] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:58.627] [0mMaster_Distance_to_Slave=91
+[2025-06-04 15:49:58.627] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=91
+[2025-06-04 15:49:58.627] [0m{"@POSITION": 1, "Master": 130, "Slave": 91, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":1, "User-X":-41, "User-Y":92, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:58.824] [0;32mTMLUWB  :RX < :RECV                :62000048 CA150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01850000 00640000 64000000 00000003 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:58.824] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:58.824] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:58.824] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:58.824] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:58.824] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:58.825] [0mMaster_Distance_to_FCA4=133
+[2025-06-04 15:49:58.825] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=133
+[2025-06-04 15:49:58.825] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:58.825] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 6 ,(cm/s)
+[2025-06-04 15:49:58.825] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:58.825] [0m[0;34mAPP     :INFO :@ b = 133, c = 91, x = -47, y = 90
+[2025-06-04 15:49:58.825] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:58.825] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:58.825] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:58.825] [0m
+[2025-06-04 15:49:58.825] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00B10006 000505FC A45E00
+[2025-06-04 15:49:58.825] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:58.825] [0mMaster_Distance_to_Slave=94
+[2025-06-04 15:49:58.825] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=94
+[2025-06-04 15:49:58.825] [0m{"@POSITION": 1, "Master": 133, "Slave": 94, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":6, "User-X":-47, "User-Y":90, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:59.134] [0;32mTMLUWB  :RX < :RECV                :62000048 CB150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01840000 00640000 64000000 00000003 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:59.134] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:59.134] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:59.134] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:59.134] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:59.134] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:59.134] [0mMaster_Distance_to_FCA4=132
+[2025-06-04 15:49:59.134] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=132
+[2025-06-04 15:49:59.134] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:59.134] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 6 ,(cm/s)
+[2025-06-04 15:49:59.135] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:59.135] [0m[0;34mAPP     :INFO :@ b = 132, c = 94, x = -42, y = 94
+[2025-06-04 15:49:59.135] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:59.135] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:59.135] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:59.135] [0m
+[2025-06-04 15:49:59.135] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00B20006 000505FC A45B00
+[2025-06-04 15:49:59.135] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:59.136] [0mMaster_Distance_to_Slave=91
+[2025-06-04 15:49:59.136] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=91
+[2025-06-04 15:49:59.136] [0m{"@POSITION": 1, "Master": 132, "Slave": 91, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":6, "User-X":-42, "User-Y":94, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:59.369] [0;32mTMLUWB  :RX < :RECV                :62000048 CC150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01850000 00640000 64000000 00000003 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:59.369] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:59.370] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:59.370] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:59.370] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:59.370] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:59.370] [0mMaster_Distance_to_FCA4=133
+[2025-06-04 15:49:59.370] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=133
+[2025-06-04 15:49:59.370] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:59.370] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 6 ,(cm/s)
+[2025-06-04 15:49:59.370] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:59.370] [0m[0;34mAPP     :INFO :@ b = 133, c = 91, x = -47, y = 90
+[2025-06-04 15:49:59.370] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:59.370] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:59.370] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:59.370] [0m
+[2025-06-04 15:49:59.371] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00B30006 000505FC A45E00
+[2025-06-04 15:49:59.371] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:59.371] [0mMaster_Distance_to_Slave=94
+[2025-06-04 15:49:59.371] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=94
+[2025-06-04 15:49:59.371] [0m{"@POSITION": 1, "Master": 133, "Slave": 94, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":6, "User-X":-47, "User-Y":90, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:59.631] [0;32mTMLUWB  :RX < :RECV                :62000023 CD150000 01000000 00FA0000 00010000 05000001 00000000 00080000 00000103 000103
+[2025-06-04 15:49:59.633] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:49:59.633] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:59.633] [0m
+[2025-06-04 15:49:59.633] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00B40006 000505FC A45E00
+[2025-06-04 15:49:59.633] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:59.633] [0mMaster_Distance_to_Slave=94
+[2025-06-04 15:49:59.633] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=94
+[2025-06-04 15:49:59.633] [0m{"@POSITION": 1, "Master": 133, "Slave": 94, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":6, "User-X":-47, "User-Y":90, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:49:59.890] [0;32mTMLUWB  :RX < :RECV                :62000048 CE150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01810000 00640000 64000000 00000005 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:49:59.890] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 78
+[2025-06-04 15:49:59.890] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:49:59.890] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:49:59.890] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:49:59.890] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:49:59.890] [0mMaster_Distance_to_FCA4=129
+[2025-06-04 15:49:59.890] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=129
+[2025-06-04 15:49:59.890] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:49:59.891] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 8 ,(cm/s)
+[2025-06-04 15:49:59.891] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:49:59.891] [0m[0;34mAPP     :INFO :@ b = 129, c = 94, x = -39, y = 93
+[2025-06-04 15:49:59.891] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:49:59.891] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:49:59.891] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:49:59.891] [0m
+[2025-06-04 15:49:59.891] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00B50006 000505FC A45800
+[2025-06-04 15:49:59.891] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:49:59.891] [0mMaster_Distance_to_Slave=88
+[2025-06-04 15:49:59.891] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=88
+[2025-06-04 15:49:59.891] [0m{"@POSITION": 1, "Master": 129, "Slave": 88, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":8, "User-X":-39, "User-Y":93, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:00.156] [0;32mTMLUWB  :RX < :RECV                :62000048 CF150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01820000 00640000 64000000 00000003 AB000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:00.156] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:00.156] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:00.156] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:00.156] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:00.156] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:00.156] [0mMaster_Distance_to_FCA4=130
+[2025-06-04 15:50:00.156] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=130
+[2025-06-04 15:50:00.156] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:00.156] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 6 ,(cm/s)
+[2025-06-04 15:50:00.157] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:00.157] [0m[0;34mAPP     :INFO :@ b = 130, c = 88, x = -45, y = 88
+[2025-06-04 15:50:00.157] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:00.157] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:00.157] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:00.157] [0m
+[2025-06-04 15:50:00.157] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00B60006 000505FC A45B00
+[2025-06-04 15:50:00.157] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:00.157] [0mMaster_Distance_to_Slave=91
+[2025-06-04 15:50:00.157] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=91
+[2025-06-04 15:50:00.157] [0m{"@POSITION": 1, "Master": 130, "Slave": 91, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 85, "RedAreaH": 110, "BlueAreaH": 250, "Speed":6, "User-X":-45, "User-Y":88, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:00.308] [0;32mTMLUWB  :RX < :RECV                :62000048 D0150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01820000 00640000 64000000 00000003 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:00.309] [0mMaster_Distance_to_FCA4=130
+[2025-06-04 15:50:00.309] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=130
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 4 ,(cm/s)
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :@ b = 130, c = 91, x = -43, y = 90
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:00.309] [0m
+[2025-06-04 15:50:00.309] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00B70006 000505FC A45A00
+[2025-06-04 15:50:00.309] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:00.309] [0mMaster_Distance_to_Slave=90
+[2025-06-04 15:50:00.309] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=90
+[2025-06-04 15:50:00.309] [0m{"@POSITION": 1, "Master": 130, "Slave": 90, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":4, "User-X":-43, "User-Y":90, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:00.567] [0;32mTMLUWB  :RX < :RECV                :62000023 D1150000 01000000 00FA0000 00010000 05000001 00000000 00080000 00000103 000103
+[2025-06-04 15:50:00.568] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:00.568] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:00.568] [0m
+[2025-06-04 15:50:00.568] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00B80006 000505FC A45800
+[2025-06-04 15:50:00.568] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:00.568] [0mMaster_Distance_to_Slave=88
+[2025-06-04 15:50:00.568] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=88
+[2025-06-04 15:50:00.568] [0m{"@POSITION": 1, "Master": 130, "Slave": 88, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":4, "User-X":-43, "User-Y":90, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:00.800] [0;32mTMLUWB  :RX < :RECV                :62000023 D2150000 01000000 00FA0000 00010000 05000001 00000000 00080000 00000103 000103
+[2025-06-04 15:50:00.800] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 78
+[2025-06-04 15:50:00.801] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:00.802] [0m
+[2025-06-04 15:50:00.802] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00B90006 000505FC A45900
+[2025-06-04 15:50:00.806] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:00.806] [0mMaster_Distance_to_Slave=89
+[2025-06-04 15:50:00.806] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=89
+[2025-06-04 15:50:00.806] [0m{"@POSITION": 1, "Master": 130, "Slave": 89, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":4, "User-X":-43, "User-Y":90, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:01.078] [0;32mTMLUWB  :RX < :RECV                :62000048 D3150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01820000 00640000 64000000 00000007 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:01.078] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 77
+[2025-06-04 15:50:01.078] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:01.078] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:01.078] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:01.079] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:01.079] [0mMaster_Distance_to_FCA4=130
+[2025-06-04 15:50:01.079] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=130
+[2025-06-04 15:50:01.079] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:01.079] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 6 ,(cm/s)
+[2025-06-04 15:50:01.079] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:01.079] [0m[0;34mAPP     :INFO :@ b = 130, c = 89, x = -44, y = 89
+[2025-06-04 15:50:01.079] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:01.080] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:01.080] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:01.080] [0m
+[2025-06-04 15:50:01.080] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00BA0006 000505FC A46200
+[2025-06-04 15:50:01.080] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:01.080] [0mMaster_Distance_to_Slave=98
+[2025-06-04 15:50:01.080] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=98
+[2025-06-04 15:50:01.080] [0m{"@POSITION": 1, "Master": 130, "Slave": 98, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":6, "User-X":-44, "User-Y":89, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:01.330] [0;32mTMLUWB  :RX < :RECV                :62000048 D4150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01880000 00640000 64000000 00000003 AD000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:01.331] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:01.331] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:01.331] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:01.331] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:01.331] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:01.331] [0mMaster_Distance_to_FCA4=136
+[2025-06-04 15:50:01.331] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=136
+[2025-06-04 15:50:01.331] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:01.331] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 10 ,(cm/s)
+[2025-06-04 15:50:01.332] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:01.332] [0m[0;34mAPP     :INFO :@ b = 136, c = 98, x = -44, y = 98
+[2025-06-04 15:50:01.332] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:01.332] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:01.332] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:01.332] [0m
+[2025-06-04 15:50:01.332] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00BB0006 000505FC A45A00
+[2025-06-04 15:50:01.332] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:01.332] [0mMaster_Distance_to_Slave=90
+[2025-06-04 15:50:01.332] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=90
+[2025-06-04 15:50:01.332] [0m{"@POSITION": 1, "Master": 136, "Slave": 90, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":10, "User-X":-44, "User-Y":98, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:01.595] [0;32mTMLUWB  :RX < :RECV                :62000023 D5150000 01000000 00FA0000 00010000 05000001 00000000 00080000 00000103 000103
+[2025-06-04 15:50:01.595] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:01.595] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:01.596] [0m
+[2025-06-04 15:50:01.596] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00BC0006 000505FC A45B00
+[2025-06-04 15:50:01.596] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:01.596] [0mMaster_Distance_to_Slave=91
+[2025-06-04 15:50:01.596] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=91
+[2025-06-04 15:50:01.596] [0m{"@POSITION": 1, "Master": 136, "Slave": 91, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":10, "User-X":-44, "User-Y":98, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:01.848] [0;32mTMLUWB  :RX < :RECV                :62000048 D6150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01800000 00640000 64000000 00000007 AE000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:01.849] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 78
+[2025-06-04 15:50:01.849] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:01.849] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:01.849] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:01.849] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:01.849] [0mMaster_Distance_to_FCA4=128
+[2025-06-04 15:50:01.849] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=128
+[2025-06-04 15:50:01.849] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:01.849] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 3 ,(cm/s)
+[2025-06-04 15:50:01.849] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:01.849] [0m[0;34mAPP     :INFO :@ b = 128, c = 91, x = -40, y = 91
+[2025-06-04 15:50:01.849] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:01.849] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:01.849] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:01.850] [0m
+[2025-06-04 15:50:01.850] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00BD0006 000505FC A45F00
+[2025-06-04 15:50:01.850] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:01.850] [0mMaster_Distance_to_Slave=95
+[2025-06-04 15:50:01.850] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=95
+[2025-06-04 15:50:01.850] [0m{"@POSITION": 1, "Master": 128, "Slave": 95, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 87, "RedAreaH": 110, "BlueAreaH": 250, "Speed":3, "User-X":-40, "User-Y":91, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:02.114] [0;32mTMLUWB  :RX < :RECV                :62000023 D7150000 01000000 00FA0000 00010000 05000001 00000000 00080000 00000103 000103
+[2025-06-04 15:50:02.114] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:02.114] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:02.114] [0m
+[2025-06-04 15:50:02.114] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00BE0006 000505FC A45300
+[2025-06-04 15:50:02.114] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:02.114] [0mMaster_Distance_to_Slave=83
+[2025-06-04 15:50:02.115] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=83
+[2025-06-04 15:50:02.115] [0m{"@POSITION": 1, "Master": 128, "Slave": 83, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 87, "RedAreaH": 110, "BlueAreaH": 250, "Speed":3, "User-X":-40, "User-Y":91, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:02.324] [0;32mTMLUWB  :RX < :RECV                :62000048 D8150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01870000 00640000 64000000 00000006 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:02.324] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 78
+[2025-06-04 15:50:02.324] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:02.324] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:02.324] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:02.324] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:02.324] [0mMaster_Distance_to_FCA4=135
+[2025-06-04 15:50:02.325] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=135
+[2025-06-04 15:50:02.325] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:02.325] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 13 ,(cm/s)
+[2025-06-04 15:50:02.325] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:02.325] [0m[0;34mAPP     :INFO :@ b = 135, c = 83, x = -56, y = 83
+[2025-06-04 15:50:02.325] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:02.325] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:02.325] [0m
+[2025-06-04 15:50:02.325] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00BF0006 000505FC A45900
+[2025-06-04 15:50:02.325] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:02.325] [0mMaster_Distance_to_Slave=89
+[2025-06-04 15:50:02.325] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=89
+[2025-06-04 15:50:02.325] [0m{"@POSITION": 1, "Master": 135, "Slave": 89, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":13, "User-X":-56, "User-Y":83, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:02.549] [0;32mTMLUWB  :RX < :RECV                :62000048 D9150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01840000 00640000 64000000 00000003 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:02.550] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:02.550] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:02.550] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:02.550] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:02.550] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:02.550] [0mMaster_Distance_to_FCA4=132
+[2025-06-04 15:50:02.550] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=132
+[2025-06-04 15:50:02.550] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:02.550] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 9 ,(cm/s)
+[2025-06-04 15:50:02.550] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:02.550] [0m[0;34mAPP     :INFO :@ b = 132, c = 89, x = -47, y = 89
+[2025-06-04 15:50:02.550] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:02.550] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:02.552] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:02.552] [0m
+[2025-06-04 15:50:02.552] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00C00006 000505FC A45900
+[2025-06-04 15:50:02.552] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:02.552] [0mMaster_Distance_to_Slave=89
+[2025-06-04 15:50:02.552] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=89
+[2025-06-04 15:50:02.552] [0m{"@POSITION": 1, "Master": 132, "Slave": 89, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":9, "User-X":-47, "User-Y":89, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:02.786] [0;32mTMLUWB  :RX < :RECV                :62000048 DA150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01800000 00640000 64000000 00000003 AF000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:02.787] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:02.787] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:02.788] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:02.788] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:02.788] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:02.788] [0mMaster_Distance_to_FCA4=128
+[2025-06-04 15:50:02.788] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=128
+[2025-06-04 15:50:02.788] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:02.788] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 3 ,(cm/s)
+[2025-06-04 15:50:02.788] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:02.788] [0m[0;34mAPP     :INFO :@ b = 128, c = 89, x = -42, y = 88
+[2025-06-04 15:50:02.788] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:02.788] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:02.788] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:02.788] [0m
+[2025-06-04 15:50:02.788] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00C10006 000505FC A45D00
+[2025-06-04 15:50:02.789] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:02.789] [0mMaster_Distance_to_Slave=93
+[2025-06-04 15:50:02.789] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=93
+[2025-06-04 15:50:02.789] [0m{"@POSITION": 1, "Master": 128, "Slave": 93, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 87, "RedAreaH": 110, "BlueAreaH": 250, "Speed":3, "User-X":-42, "User-Y":88, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:03.039] [0;32mTMLUWB  :RX < :RECV                :62000023 DB150000 01000000 00FA0000 00010000 05000001 00000000 00080000 00000103 000103
+[2025-06-04 15:50:03.041] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:03.041] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:03.041] [0m
+[2025-06-04 15:50:03.041] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00C20006 000505FC A45B00
+[2025-06-04 15:50:03.041] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:03.041] [0mMaster_Distance_to_Slave=91
+[2025-06-04 15:50:03.042] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=91
+[2025-06-04 15:50:03.042] [0m{"@POSITION": 1, "Master": 128, "Slave": 91, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 87, "RedAreaH": 110, "BlueAreaH": 250, "Speed":3, "User-X":-42, "User-Y":88, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:03.296] [0;32mTMLUWB  :RX < :RECV                :62000048 DC150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 017B0000 00640000 64000000 00000002 A9000000 00000000 00000000 0E000000 00010300 01032020 E2C940CA
+[2025-06-04 15:50:03.296] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 78
+[2025-06-04 15:50:03.296] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:03.296] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:03.296] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:03.296] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:03.296] [0mMaster_Distance_to_FCA4=123
+[2025-06-04 15:50:03.297] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=123
+[2025-06-04 15:50:03.297] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:03.298] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 22 ,(cm/s)
+[2025-06-04 15:50:03.298] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:03.298] [0m[0;34mAPP     :INFO :@ b = 123, c = 91, x = -34, y = 89
+[2025-06-04 15:50:03.298] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:03.298] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:03.298] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:03.298] [0m
+[2025-06-04 15:50:03.298] [0;32mTMLUWB  :RX < :RECV                :02001300 02000002 00BBBB00 00000000 00C30002 000105
+[2025-06-04 15:50:03.534] [0m[0;32mTMLUWB  :RX < :RECV                :62000023 DD150000 01000000 00FA0000 00010000 05000001 00000000 00080000 00000103 000103
+[2025-06-04 15:50:03.535] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:03.535] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:03.535] [0m
+[2025-06-04 15:50:03.535] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00C40006 000505FC A45800
+[2025-06-04 15:50:03.535] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:03.535] [0mMaster_Distance_to_Slave=88
+[2025-06-04 15:50:03.536] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=88
+[2025-06-04 15:50:03.536] [0m{"@POSITION": 1, "Master": 123, "Slave": 88, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 84, "RedAreaH": 110, "BlueAreaH": 250, "Speed":22, "User-X":-34, "User-Y":89, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:03.790] [0;32mTMLUWB  :RX < :RECV                :62000023 DE150000 01000000 00FA0000 00010000 05000001 00000000 00080000 00000103 000103
+[2025-06-04 15:50:03.790] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 78
+[2025-06-04 15:50:03.791] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:03.791] [0m
+[2025-06-04 15:50:03.791] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00C50006 000505FC A45B00
+[2025-06-04 15:50:03.791] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:03.791] [0mMaster_Distance_to_Slave=91
+[2025-06-04 15:50:03.791] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=91
+[2025-06-04 15:50:03.791] [0m{"@POSITION": 1, "Master": 123, "Slave": 91, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 84, "RedAreaH": 110, "BlueAreaH": 250, "Speed":22, "User-X":-34, "User-Y":89, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:04.053] [0;32mTMLUWB  :RX < :RECV                :62000048 DF150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01850000 00640000 64000000 0000000A AB000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:04.053] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 77
+[2025-06-04 15:50:04.053] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:04.053] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:04.054] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:04.054] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:04.054] [0mMaster_Distance_to_FCA4=133
+[2025-06-04 15:50:04.054] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=133
+[2025-06-04 15:50:04.054] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:04.054] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 1 ,(cm/s)
+[2025-06-04 15:50:04.054] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:04.054] [0m[0;34mAPP     :INFO :@ b = 133, c = 91, x = -47, y = 90
+[2025-06-04 15:50:04.054] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:04.054] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:04.054] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:04.054] [0m
+[2025-06-04 15:50:04.054] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00C60006 000505FC A46100
+[2025-06-04 15:50:04.054] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:04.054] [0mMaster_Distance_to_Slave=97
+[2025-06-04 15:50:04.054] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=97
+[2025-06-04 15:50:04.054] [0m{"@POSITION": 1, "Master": 133, "Slave": 97, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 85, "RedAreaH": 110, "BlueAreaH": 250, "Speed":1, "User-X":-47, "User-Y":90, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:04.293] [0;32mTMLUWB  :RX < :RECV                :62000048 E0150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01840000 00640000 64000000 00000003 AD000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:04.293] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:04.293] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:04.293] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:04.293] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:04.293] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:04.293] [0mMaster_Distance_to_FCA4=132
+[2025-06-04 15:50:04.294] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=132
+[2025-06-04 15:50:04.294] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:04.294] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 8 ,(cm/s)
+[2025-06-04 15:50:04.294] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:04.294] [0m[0;34mAPP     :INFO :@ b = 132, c = 97, x = -40, y = 96
+[2025-06-04 15:50:04.294] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:04.294] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:04.294] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:04.294] [0m
+[2025-06-04 15:50:04.294] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00C70006 000505FC A45A00
+[2025-06-04 15:50:04.294] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:04.294] [0mMaster_Distance_to_Slave=90
+[2025-06-04 15:50:04.294] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=90
+[2025-06-04 15:50:04.294] [0m{"@POSITION": 1, "Master": 132, "Slave": 90, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":8, "User-X":-40, "User-Y":96, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:04.549] [0;32mTMLUWB  :RX < :RECV                :62000048 E1150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01840000 00640000 64000000 00000003 AD000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:04.550] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:04.550] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:04.550] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:04.550] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:04.550] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:04.550] [0mMaster_Distance_to_FCA4=132
+[2025-06-04 15:50:04.550] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=132
+[2025-06-04 15:50:04.550] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:04.550] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 12 ,(cm/s)
+[2025-06-04 15:50:04.550] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:04.550] [0m[0;34mAPP     :INFO :@ b = 132, c = 90, x = -46, y = 90
+[2025-06-04 15:50:04.550] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:04.550] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:04.551] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:04.551] [0m
+[2025-06-04 15:50:04.551] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00C80006 000505FC A45C00
+[2025-06-04 15:50:04.551] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:04.551] [0mMaster_Distance_to_Slave=92
+[2025-06-04 15:50:04.551] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=92
+[2025-06-04 15:50:04.551] [0m{"@POSITION": 1, "Master": 132, "Slave": 92, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":12, "User-X":-46, "User-Y":90, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:04.796] [0;32mTMLUWB  :RX < :RECV                :62000048 E2150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01810000 00640000 64000000 00000003 AE000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:04.796] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:04.796] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:04.796] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:04.796] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:04.797] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:04.797] [0mMaster_Distance_to_FCA4=129
+[2025-06-04 15:50:04.797] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=129
+[2025-06-04 15:50:04.797] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:04.797] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 7 ,(cm/s)
+[2025-06-04 15:50:04.797] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:04.797] [0m[0;34mAPP     :INFO :@ b = 129, c = 92, x = -40, y = 92
+[2025-06-04 15:50:04.797] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:04.799] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:04.799] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:04.805] [0m
+[2025-06-04 15:50:04.812] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00C90006 000505FC A45900
+[2025-06-04 15:50:04.812] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:04.812] [0mMaster_Distance_to_Slave=89
+[2025-06-04 15:50:04.812] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=89
+[2025-06-04 15:50:04.812] [0m{"@POSITION": 1, "Master": 129, "Slave": 89, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 87, "RedAreaH": 110, "BlueAreaH": 250, "Speed":7, "User-X":-40, "User-Y":92, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:05.049] [0;32mTMLUWB  :RX < :RECV                :62000048 E3150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 017D0000 00640000 64000000 00000003 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:05.049] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:05.050] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:05.050] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:05.050] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:05.050] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:05.050] [0mMaster_Distance_to_FCA4=125
+[2025-06-04 15:50:05.050] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=125
+[2025-06-04 15:50:05.050] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:05.051] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 8 ,(cm/s)
+[2025-06-04 15:50:05.051] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:05.057] [0m[0;34mAPP     :INFO :@ b = 125, c = 89, x = -38, y = 88
+[2025-06-04 15:50:05.064] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:05.064] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:05.064] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:05.064] [0m
+[2025-06-04 15:50:05.064] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00CA0006 000505FC A46100
+[2025-06-04 15:50:05.065] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:05.065] [0mMaster_Distance_to_Slave=97
+[2025-06-04 15:50:05.065] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=97
+[2025-06-04 15:50:05.065] [0m{"@POSITION": 1, "Master": 125, "Slave": 97, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":8, "User-X":-38, "User-Y":88, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:05.289] [0;32mTMLUWB  :RX < :RECV                :62000048 E4150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01830000 00640000 64000000 00000003 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:05.290] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:05.294] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:05.297] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:05.298] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:05.298] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:05.298] [0mMaster_Distance_to_FCA4=131
+[2025-06-04 15:50:05.298] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=131
+[2025-06-04 15:50:05.298] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:05.298] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 10 ,(cm/s)
+[2025-06-04 15:50:05.298] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:05.298] [0m[0;34mAPP     :INFO :@ b = 131, c = 97, x = -38, y = 97
+[2025-06-04 15:50:05.298] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:05.298] [0m[0;34mAPP     :INFO :################################### into blue area...##################################################
+[2025-06-04 15:50:05.298] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:05.298] [0m
+[2025-06-04 15:50:05.298] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00CB0006 000505FC A45700
+[2025-06-04 15:50:05.298] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:05.299] [0mMaster_Distance_to_Slave=87
+[2025-06-04 15:50:05.299] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=87
+[2025-06-04 15:50:05.299] [0m{"@POSITION": 1, "Master": 131, "Slave": 87, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":10, "User-X":-38, "User-Y":97, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-04 15:50:05.533] [0;32mTMLUWB  :RX < :RECV                :62000048 E5150000 01000000 00FA0000 00010000 05000001 00000000 01FCA400 01850000 00640000 64000000 00000003 AC000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-04 15:50:05.533] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FCA4 Keep alive = 79
+[2025-06-04 15:50:05.534] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-04 15:50:05.534] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-04 15:50:05.534] [0m[0;34mAPP     :INFO :Measure_NLOS = 1, Classification_NLOS =   1
+[2025-06-04 15:50:05.534] [0m[0;34mAPP     :INFO :@@@ nLos_bais = 35
+[2025-06-04 15:50:05.534] [0mMaster_Distance_to_FCA4=133
+[2025-06-04 15:50:05.538] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FCA4=133
+[2025-06-04 15:50:05.538] [0m[0;34mAPP     :INFO :Current User ( fca4 ) status is : SystemStatus = 0 , DiscoverStatus = 4 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-04 15:50:05.538] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fca4 ) , 11 ,(cm/s)
+[2025-06-04 15:50:05.538] [0m[0;34mAPP     :INFO :@@@ User nLos is 1 , the red area and blue area Radius will be expanded 35cm
+[2025-06-04 15:50:05.538] [0m[0;34mAPP     :INFO :@ b = 133, c = 87, x = -50, y = 87
+[2025-06-04 15:50:05.538] [0m[0;34mAPP     :INFO :@ a = 100, d = 145, m = 285, Gate = 100
+[2025-06-04 15:50:05.538] [0m[0;34mAPP     :INFO :No User to r or w | SystemStatus = 0
+[2025-06-04 15:50:05.538] [0m
+[2025-06-04 15:50:05.538] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00CC0006 000505FC A45E00
+[2025-06-04 15:50:05.538] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-04 15:50:05.538] [0mMaster_Distance_to_Slave=94
+[2025-06-04 15:50:05.538] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FCA4=94
+[2025-06-04 15:50:05.538] [0m{"@POSITION": 1, "Master": 133, "Slave": 94, "Gate": 100, "nLos": 1, "idx": 0, "LiftDeep": 86, "RedAreaH": 110, "BlueAreaH": 250, "Speed":11, "User-X":-50, "User-Y":87, "User-Z":0,"Auth":9, "Trans":4}

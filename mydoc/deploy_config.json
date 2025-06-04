@@ -1,0 +1,38 @@
+{
+  "projects": {
+    "github.io": {
+      "path": "github.io",
+      "branch": "master",
+      "description": "main project",
+      "build_command": null,
+      "deploy_to_pages": true
+    },
+    "UwbKnowledgePoints": {
+      "path": "UwbKnowledgePoints",
+      "branch": "master",
+      "description": "UWB知识点文档",
+      "build_command": "mkdocs build",
+      "deploy_to_pages": true
+    },
+    "UWB_Application_Plan": {
+      "path": "UWB_Application_Plan",
+      "branch": "master",
+      "description": "UWB-Reader应用方案",
+      "build_command": "mkdocs build",
+      "deploy_to_pages": true
+    },
+    "my-project-doc": {
+      "path": "my-project-doc",
+      "branch": "main",
+      "description": "文档模板",
+      "build_command": "mkdocs build",
+      "deploy_to_pages": true
+    }
+  },
+  "global_settings": {
+    "default_commit_message": "docs: 更新文档内容",
+    "auto_add_all": true,
+    "push_after_commit": true,
+    "deploy_to_gh_pages": true
+  }
+}

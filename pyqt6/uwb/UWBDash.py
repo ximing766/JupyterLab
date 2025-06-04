@@ -15,7 +15,7 @@ from PyQt6.QtCore import (
     Qt, QSize, QPoint, QUrl, QTimer,
     QDateTime, QThread, QMargins, QPointF,
     pyqtSignal, QObject, QPointF, QRectF,
-    QEvent
+    QEvent, QRect
 )
 # Qt界面模块
 from PyQt6.QtWidgets import *
@@ -60,15 +60,6 @@ class MainWindow(QMainWindow):
     theme_changed = pyqtSignal()
 
     def __init__(self):
-        """
-        初始化用户界面
-
-        创建并设置:
-        - 标题栏
-        - 导航栏
-        - 主内容区域
-        - 主题样式
-        """
         super().__init__()
         icon_path = Path(__file__).parent / "logo.ico"
         app_path  = Path(os.getcwd())
@@ -84,6 +75,8 @@ class MainWindow(QMainWindow):
         self.background_cache            = None         # 添加背景缓存
         self.last_window_size            = QSize()      # 添加窗口尺寸记录
         self.drag_pos                    = QPoint()
+        self.red_length                  = 0
+        self.blue_length                 = 0
         self.data_bits                   = 8
         self.parity                      = 'N'          # N-无校验
         self.stop_bits                   = 1
@@ -1368,7 +1361,7 @@ class MainWindow(QMainWindow):
         bottom_right = QWidget()
         bottom_right_layout = QVBoxLayout(bottom_right)
         bottom_right_layout.setContentsMargins(5, 5, 5, 5)
-        self.position_view = PositionView()
+        self.position_view = PositionView(self)
         bottom_right_layout.addWidget(self.position_view)
         # bottom_right.setStyleSheet("background-color: rgba(255, 255, 255, 0.1); border-radius: 5px;")
         return bottom_right
@@ -1515,14 +1508,33 @@ class MainWindow(QMainWindow):
         self.data_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         top_table_layout.addWidget(self.data_table)
 
-        # 下部分 - Test 区域
+        # 下部分 - 闸机动画区域
         bottom_space = QWidget()
-        # bottom_space.setStyleSheet("background: rgba(255, 255, 255, 0.05);")
-
+        bottom_space.setStyleSheet("background: rgba(255, 255, 255, 0.05); border-radius: 10px;")
+        bottom_layout = QVBoxLayout(bottom_space)
+        bottom_layout.setContentsMargins(10, 10, 10, 10)
+        
+        # 添加标题
+        
+        # 创建闸机动画组件
+        self.gate_animation = SubwayGateAnimation()
+        bottom_layout.addWidget(self.gate_animation)
+        
+        # 添加控制按钮
+        # control_layout = QHBoxLayout()
+        
+        # self.trigger_btn = QPushButton("触发开门")
+        # self.trigger_btn.clicked.connect(self.gate_animation.trigger_gate_animation)
+        
+        # control_layout.addStretch()
+        # control_layout.addWidget(self.trigger_btn)
+        # control_layout.addStretch()
+        
+        # bottom_layout.addLayout(control_layout)
 
         form_splitter.addWidget(top_table)
         form_splitter.addWidget(bottom_space)
-        form_splitter.setSizes([100, 0])
+        form_splitter.setSizes([100, 300])
 
         bottom_left_layout.addWidget(form_splitter)
         return bottom_left
@@ -1661,10 +1673,36 @@ class MainWindow(QMainWindow):
         self.count_label.setText(f"{current+1}/{total}")
 
     def refresh_ports(self):
-        """刷新可用串口列表"""
+        """刷新可用串口列表，使用注册表方式获取所有串口，包括虚拟串口"""
         try:
-            from serial.tools import list_ports
-            ports = [port.device for port in list_ports.comports()]
+            import winreg
+            ports = []
+            
+            # 方法1：从注册表获取串口信息
+            try:
+                path = 'HARDWARE\\DEVICEMAP\\SERIALCOMM'
+                key = winreg.OpenKey(winreg.HKEY_LOCAL_MACHINE, path)
+                
+                for i in range(256):
+                    try:
+                        val = winreg.EnumValue(key, i)
+                        # val[1]是串口名称，如COM1
+                        ports.append(val[1])
+                    except:
+                        break
+                
+                winreg.CloseKey(key)
+                # print(f"注册表方式找到串口: {ports}")
+                
+            except Exception as reg_error:
+                print(f"注册表方式获取串口失败: {str(reg_error)}")
+            
+            # 如果两种方式都没找到串口
+            if not ports:
+                print("未找到任何串口")
+                ports = []
+            
+            # 检查串口列表是否有变化
             if set(ports) == set(self.current_ports):
                 return
                 
@@ -1681,8 +1719,20 @@ class MainWindow(QMainWindow):
                 if index >= 0:
                     self.port_combo.setCurrentIndex(index)
                     
+            print(f"最终串口列表: {ports}")
+                    
         except Exception as e:
             print(f"获取串口列表失败: {str(e)}")
+            # 出错时尝试使用原来的pyserial方式作为后备
+            try:
+                from serial.tools import list_ports
+                ports = [port.device for port in list_ports.comports()]
+                self.current_ports = ports
+                self.port_combo.clear()
+                for port in ports:
+                    self.port_combo.addItem(port)
+            except:
+                self.current_ports = []
 
     def toggle_port(self):
         """切换串口开关状态"""
@@ -1888,8 +1938,9 @@ class MainWindow(QMainWindow):
             text = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
             self.data_buffer.append(text)
 
-            if "@@@ Time of Write Card End" in text:
+            if "Write Card End" in text:
                 #"@@@ Time of Write Card End     = 00:14:520  │ 80D7 │  710 ms"
+                print("open door")
                 match = re.search(r"│\s*([0-9A-Fa-f]+)\s*│\s*(\d+)\s*ms", text)
                 if match:
                     address = match.group(1)
@@ -1900,6 +1951,9 @@ class MainWindow(QMainWindow):
                     
                     if hasattr(self, 'Transaction_time_label') and self.Transaction_time_label is not None:
                         self.Transaction_time_label.setText(f"{transaction_time}ms")
+                    
+                    if hasattr(self, 'gate_animation') and self.gate_animation is not None:
+                        self.gate_animation.trigger_gate_animation()
             
             if "@POSITION" in text:
                 # print(f'接收到原始数据：{repr(text)}')
@@ -1912,6 +1966,12 @@ class MainWindow(QMainWindow):
                 user_x = float(json_data.get('User-X', 0))
                 user_y = float(json_data.get('User-Y', 0))
                 user_z = float(json_data.get('User-Z', 0))
+                self.red_length = int(json_data.get('RedAreaH', 0)) / 2
+                self.blue_length = int(json_data.get('BlueAreaH', 0))
+                
+                # 刷新位置视图中的红蓝区域
+                if hasattr(self, 'position_view'):
+                    self.position_view.refresh_areas()
                 
                 # Map JSON keys to chart keys
                 key_mapping = {
@@ -2541,25 +2601,31 @@ class PositionView(QWidget):
         self.last_position    = None
         self.scale            = 2
         self.origin_offset_y  = -200
+        self.main_window      = parent  # 保存主窗口引用
         
         # 创建静态内容缓存
         self.static_content   = None
         
     def draw_static_content(self, painter, center_x, center_y):
-        # 红色感应区（对称分布在原点上下）
-        red_gradient = QLinearGradient(center_x, center_y, center_x, center_y + 50)
+        # 获取动态长度值
+        red_height = int(self.main_window.red_length * self.scale) if self.main_window else 100
+        blue_height = int(self.main_window.blue_length ) if self.main_window else 300
+        
+        # 红色感应区（从原点开始向下）
+        red_gradient = QLinearGradient(center_x, center_y, center_x, center_y + red_height)
         red_gradient.setColorAt(0, QColor(255, 0, 0, 70))  # 增加红色透明度
         red_gradient.setColorAt(1, QColor(255, 0, 0, 30))
         painter.setBrush(red_gradient)
         painter.setPen(Qt.PenStyle.NoPen)
-        painter.drawRect(int(center_x - 100), int(center_y), 200, 100)
+        painter.drawRect(int(center_x - 100), int(center_y), 200, red_height)
         
-        # 蓝色区域（与红色区域等宽）
-        blue_gradient = QLinearGradient(center_x, center_y + 50, center_x, center_y + 300)
+        # 蓝色区域（紧接红色区域，不重叠）
+        blue_start_y = center_y + red_height
+        blue_gradient = QLinearGradient(center_x, blue_start_y, center_x, blue_start_y + blue_height - red_height)
         blue_gradient.setColorAt(0, QColor(0, 140, 255, 60))  # 增加蓝色透明度和饱和度
         blue_gradient.setColorAt(1, QColor(0, 140, 255, 30))
         painter.setBrush(blue_gradient)
-        painter.drawRect(int(center_x - 100), int(center_y + 100), 200, 250)
+        painter.drawRect(int(center_x - 100), int(blue_start_y), 200, blue_height)
         
         # 绘制闸机（左侧）
         painter.setPen(QPen(QColor("#333333"), 2))
@@ -2612,6 +2678,11 @@ class PositionView(QWidget):
         self.last_position = self.current_position
         self.current_position = (x, y)
         self.update()
+        
+    def refresh_areas(self):
+        """刷新红蓝区域，当长度值变化时调用"""
+        self.static_content = None  # 清除缓存
+        self.update()  # 触发重绘
         
     def paintEvent(self, event):
         painter = QPainter(self)
@@ -2673,6 +2744,469 @@ class PositionView(QWidget):
         painter.setPen(QPen(QColor("#4a90e2"), 2))
         painter.setBrush(QColor(74, 144, 226, 255))
         painter.drawEllipse(int(screen_x) - 6, int(screen_y) - 6, 12, 12)  # 增大点的大小
+
+class SubwayGateAnimation(QWidget):
+    """地铁闸机开门关门动画组件"""
+    
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        # self.setMinimumSize(300, 200)
+        
+        self.gate_state = "closed"  # closed, opening, open, closing
+        self.left_door_angle = 0    # 左门角度 (0-90)
+        self.right_door_angle = 0   # 右门角度 (0-90)
+        
+        self.animation_timer = QTimer()
+        self.animation_timer.timeout.connect(self.update_animation)
+        
+        self.animation_speed = 2.5  # 帧
+        self.open_duration = 2000   # 开门保持时间(ms)
+        self.open_timer = QTimer()
+        self.open_timer.timeout.connect(self.start_closing)
+        self.open_timer.setSingleShot(True)
+        
+        self.glow_intensity = 0.0  # 发光强度
+        self.scan_line_pos = 0     # 扫描线位置
+        self.particle_timer = QTimer()
+        self.particle_timer.timeout.connect(self.update_particles)
+        self.particles = []        # 粒子列表
+        self.frame_count = 0       # 帧计数器
+        
+    def trigger_gate_animation(self):
+        """触发闸机开门动画"""
+        if self.gate_state == "closed":
+            self.gate_state = "opening"
+            self.animation_timer.start(16)  # ~60fps
+            self.glow_intensity = 1.0       # 开始发光效果
+            self.particle_timer.start(100)  # 10fps
+            self.generate_particles()       # 生成粒子特效
+            
+    def update_animation(self):
+        """更新动画帧"""
+        import math
+        
+        if self.gate_state == "opening":
+            # 使用缓动函数使动画更流畅
+            progress = self.left_door_angle / 90.0
+            eased_progress = 1 - math.pow(1 - progress, 3)  # ease-out cubic
+            
+            self.left_door_angle += self.animation_speed
+            self.right_door_angle += self.animation_speed
+            
+            # 发光效果渐强
+            self.glow_intensity = min(1.0, self.glow_intensity + 0.05)
+            
+            if self.left_door_angle >= 90:
+                self.left_door_angle = 90
+                self.right_door_angle = 90
+                self.gate_state = "open"
+                self.animation_timer.stop()
+                self.open_timer.start(self.open_duration)
+                
+        elif self.gate_state == "closing":
+            self.left_door_angle -= self.animation_speed
+            self.right_door_angle -= self.animation_speed
+            
+            # 发光效果渐弱
+            self.glow_intensity = max(0.0, self.glow_intensity - 0.03)
+            
+            if self.left_door_angle <= 0:
+                self.left_door_angle = 0
+                self.right_door_angle = 0
+                self.gate_state = "closed"
+                self.animation_timer.stop()
+                self.particle_timer.stop()
+                self.glow_intensity = 0.0
+                
+        # 更新扫描线位置
+        self.scan_line_pos = (self.scan_line_pos + 2) % self.height()
+        self.frame_count += 1
+        
+        self.update()
+        
+    def start_closing(self):
+        """开始关门动画"""
+        self.gate_state = "closing"
+        self.animation_timer.start(16)
+        self.generate_particles()
+        
+    def paintEvent(self, event):
+        painter = QPainter(self)
+        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
+        painter.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
+        
+        self.draw_tech_background(painter)
+        
+        # 计算中心位置
+        center_x = self.width() // 2
+        center_y = self.height() // 2
+        
+        # 绘制闸机框架
+        self.draw_tech_frame(painter, center_x, center_y)
+        
+        # 绘制闸机门
+        self.draw_gate_doors(painter, center_x, center_y)
+        
+        if self.gate_state != "closed":
+            self.draw_particles(painter)
+            self.draw_scan_lines(painter)
+            if self.glow_intensity > 0:
+                self.draw_glow_effect(painter, center_x, center_y)
+        
+    def draw_gate_doors(self, painter, center_x, center_y):
+        """绘制横向地铁闸机门"""
+        door_width = 80   # 横向门的宽度
+        door_height = 15  # 横向门的高度
+        
+        import math
+        
+        # 计算门的横向偏移（基于角度）
+        left_offset = math.sin(math.radians(self.left_door_angle)) * 60
+        right_offset = math.sin(math.radians(self.right_door_angle)) * 60
+        
+        # 绘制左右两扇横向门
+        for door_side in ['left', 'right']:
+            if door_side == 'left':
+                door_x = int(center_x - door_width - left_offset)
+                door_y = center_y - door_height // 2
+            else:
+                door_x = int(center_x + right_offset)
+                door_y = center_y - door_height // 2
+            
+            # 创建门的渐变效果（横向渐变）
+            door_gradient = QLinearGradient(door_x, door_y, door_x + door_width, door_y)
+            
+            if self.gate_state in ["open", "opening"]:
+                # 开启状态 - 蓝绿渐变
+                door_gradient.setColorAt(0, QColor(0, 180, 255, 220))
+                door_gradient.setColorAt(0.5, QColor(0, 220, 180, 240))
+                door_gradient.setColorAt(1, QColor(0, 255, 150, 240))
+                border_color = QColor(0, 255, 200, 200)
+            else:
+                # 关闭状态 - 深蓝灰渐变
+                door_gradient.setColorAt(0, QColor(108, 92, 231, 220))
+                door_gradient.setColorAt(0.5, QColor(74, 74, 74, 240))
+                door_gradient.setColorAt(1, QColor(53, 59, 64, 240))
+                border_color = QColor(108, 92, 231, 150)
+            
+            painter.setBrush(door_gradient)
+            painter.setPen(QPen(border_color, 2))
+            
+            # 绘制横向门体
+            door_rect = QRect(door_x, door_y, door_width, door_height)
+            painter.drawRoundedRect(door_rect, 6, 6)
+            
+            # 横向中央线
+            painter.setPen(QPen(QColor(255, 255, 255, 120), 1))
+            painter.drawLine(door_x + 10, door_y + door_height // 2, door_x + door_width - 10, door_y + door_height // 2)
+            
+            # 绘制门端传感器
+            sensor_size = 8
+            if door_side == 'left':
+                sensor_x = door_x + door_width - sensor_size // 2
+            else:
+                sensor_x = door_x - sensor_size // 2
+            sensor_y = center_y - sensor_size // 2
+            
+            # 传感器发光效果
+            sensor_gradient = QLinearGradient(sensor_x, sensor_y, sensor_x + sensor_size, sensor_y + sensor_size)
+            if self.gate_state in ["open", "opening"]:
+                sensor_gradient.setColorAt(0, QColor(0, 255, 200, 255))
+                sensor_gradient.setColorAt(1, QColor(0, 150, 255, 200))
+            else:
+                sensor_gradient.setColorAt(0, QColor(108, 92, 231, 255))
+                sensor_gradient.setColorAt(1, QColor(74, 74, 74, 200))
+                
+            painter.setBrush(sensor_gradient)
+            painter.setPen(QPen(QColor(255, 255, 255, 180), 1))
+            painter.drawEllipse(sensor_x, sensor_y, sensor_size, sensor_size)
+            
+            # 传感器中心点
+            painter.setBrush(QColor(255, 255, 255, 200))
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.drawEllipse(sensor_x + 2, sensor_y + 2, 4, 4)
+            
+            # 绘制门的阴影效果
+            shadow_offset = 2
+            shadow_color = QColor(0, 0, 0, 60)
+            painter.setBrush(shadow_color)
+            painter.setPen(Qt.PenStyle.NoPen)
+            shadow_rect = QRect(door_x, door_y + shadow_offset, door_width, door_height)
+            painter.drawRoundedRect(shadow_rect, 6, 6)
+        
+    def draw_tech_background(self, painter):
+        """绘制高科技背景"""
+        import math
+        
+        # 动态深色渐变背景
+        bg_gradient = QLinearGradient(0, 0, self.width(), self.height())
+        
+        # 根据状态调整背景色调
+        if self.gate_state in ["open", "opening"]:
+            bg_gradient.setColorAt(0, QColor(10, 25, 35, 180))
+            bg_gradient.setColorAt(0.3, QColor(15, 35, 45, 200))
+            bg_gradient.setColorAt(0.7, QColor(20, 40, 50, 200))
+            bg_gradient.setColorAt(1, QColor(10, 25, 35, 180))
+            grid_color = QColor(0, 180, 255, 40)
+        else:
+            bg_gradient.setColorAt(0, QColor(45, 52, 54, 180))
+            bg_gradient.setColorAt(0.3, QColor(53, 59, 64, 200))
+            bg_gradient.setColorAt(0.7, QColor(74, 74, 74, 200))
+            bg_gradient.setColorAt(1, QColor(45, 52, 54, 180))
+            grid_color = QColor(108, 92, 231, 40)
+        
+        painter.setBrush(bg_gradient)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.drawRect(self.rect())
+        
+        # 绘制动态网格背景
+        grid_size = 25
+        grid_alpha = int(30 + 20 * math.sin(self.frame_count * 0.05))
+        painter.setPen(QPen(QColor(grid_color.red(), grid_color.green(), grid_color.blue(), grid_alpha), 1))
+        
+        # 垂直网格线
+        for x in range(0, self.width(), grid_size):
+            # 添加闪烁效果
+            line_alpha = int(grid_alpha + 30 * math.sin(self.frame_count * 0.1 + x * 0.01))
+            painter.setPen(QPen(QColor(grid_color.red(), grid_color.green(), grid_color.blue(), max(0, min(255, line_alpha))), 1))
+            painter.drawLine(x, 0, x, self.height())
+            
+        # 水平网格线
+        for y in range(0, self.height(), grid_size):
+            line_alpha = int(grid_alpha + 30 * math.sin(self.frame_count * 0.1 + y * 0.01))
+            painter.setPen(QPen(QColor(grid_color.red(), grid_color.green(), grid_color.blue(), max(0, min(255, line_alpha))), 1))
+            painter.drawLine(0, y, self.width(), y)
+        
+        # 绘制数据流线条
+        painter.setPen(QPen(grid_color, 2))
+        flow_speed = 3
+        for i in range(5):
+            flow_x = (self.frame_count * flow_speed + i * 50) % (self.width() + 100) - 50
+            flow_y = 30 + i * 40
+            if flow_y < self.height():
+                # 数据流点
+                for j in range(8):
+                    dot_x = flow_x - j * 15
+                    if 0 <= dot_x <= self.width():
+                        dot_alpha = int(200 * (1 - j / 8.0))
+                        painter.setBrush(QColor(grid_color.red(), grid_color.green(), grid_color.blue(), dot_alpha))
+                        painter.setPen(Qt.PenStyle.NoPen)
+                        painter.drawEllipse(dot_x - 2, flow_y - 1, 4, 2)
+    
+    def draw_tech_frame(self, painter, center_x, center_y):
+        """绘制闸机框架"""
+        import math
+        
+        # 动态颜色根据状态变化
+        if self.gate_state in ["open", "opening"]:
+            primary_color = QColor(0, 180, 255)
+            secondary_color = QColor(0, 255, 200)
+            accent_color = QColor(0, 255, 150)
+        else:
+            primary_color = QColor(74, 74, 74)
+            secondary_color = QColor(108, 92, 231)
+            accent_color = QColor(53, 59, 64)
+        
+        # 绘制底座平台
+        base_gradient = QLinearGradient(center_x - 100, center_y + 60, center_x + 100, center_y + 80)
+        base_gradient.setColorAt(0, QColor(40, 50, 70, 200))
+        base_gradient.setColorAt(0.5, QColor(60, 70, 90, 240))
+        base_gradient.setColorAt(1, QColor(40, 50, 70, 200))
+        
+        painter.setBrush(base_gradient)
+        painter.setPen(QPen(primary_color, 2))
+        painter.drawRoundedRect(center_x - 100, center_y + 60, 200, 20, 10, 10)
+        
+        # 左侧立柱 
+        left_pillar_gradient = QLinearGradient(center_x - 90, center_y - 70, center_x - 70, center_y + 70)
+        left_pillar_gradient.setColorAt(0, QColor(80, 100, 140, 220))
+        left_pillar_gradient.setColorAt(0.3, QColor(100, 120, 160, 250))
+        left_pillar_gradient.setColorAt(0.7, QColor(90, 110, 150, 250))
+        left_pillar_gradient.setColorAt(1, QColor(70, 90, 130, 220))
+        
+        painter.setBrush(left_pillar_gradient)
+        painter.setPen(QPen(primary_color, 3))
+        painter.drawRoundedRect(center_x - 90, center_y - 70, 25, 140, 8, 8)
+        
+        # 右侧立柱 
+        right_pillar_gradient = QLinearGradient(center_x + 65, center_y - 70, center_x + 90, center_y + 70)
+        right_pillar_gradient.setColorAt(0, QColor(80, 100, 140, 220))
+        right_pillar_gradient.setColorAt(0.3, QColor(100, 120, 160, 250))
+        right_pillar_gradient.setColorAt(0.7, QColor(90, 110, 150, 250))
+        right_pillar_gradient.setColorAt(1, QColor(70, 90, 130, 220))
+        
+        painter.setBrush(right_pillar_gradient)
+        painter.setPen(QPen(primary_color, 3))
+        painter.drawRoundedRect(center_x + 65, center_y - 70, 25, 140, 8, 8)
+        
+        # 装饰线条 
+        glow_alpha = int(100 + 30 * math.sin(self.frame_count * 0.1))
+        painter.setPen(QPen(QColor(secondary_color.red(), secondary_color.green(), secondary_color.blue(), glow_alpha), 1))
+        
+        # 立柱中央线条
+        painter.drawLine(center_x - 77, center_y - 50, center_x - 77, center_y + 50)
+        painter.drawLine(center_x + 77, center_y - 50, center_x + 77, center_y + 50)
+        
+        # 在立柱顶部绘制状态指示LED
+        led_size = 6
+        led_positions = [(center_x - 77, center_y - 60), (center_x + 77, center_y - 60)]
+        
+        for i, (led_x, led_y) in enumerate(led_positions):
+            # LED发光效果
+            if self.gate_state in ["open", "opening"]:
+                led_color = accent_color
+                led_alpha = 255
+            elif self.gate_state == "closing":
+                led_color = QColor(255, 200, 0)  # 黄色警告
+                led_alpha = 200
+            else:
+                led_color = QColor(100, 100, 100)
+                led_alpha = 100
+                
+            painter.setBrush(QColor(led_color.red(), led_color.green(), led_color.blue(), led_alpha))
+            painter.setPen(QPen(QColor(255, 255, 255, 150), 1))
+            painter.drawEllipse(led_x - led_size//2, led_y - led_size//2, led_size, led_size)
+        
+        # 绘制传感器阵列
+        sensor_positions = [
+            (center_x - 82, center_y - 30),
+            (center_x - 82, center_y),
+            (center_x - 82, center_y + 30),
+            (center_x + 82, center_y - 30),
+            (center_x + 82, center_y),
+            (center_x + 82, center_y + 30)
+        ]
+        
+        for i, (sx, sy) in enumerate(sensor_positions):
+            # 传感器闪烁效果
+            blink_alpha = int(100 + 100 * math.sin(self.frame_count * 0.15 + i * 0.5))
+            sensor_color = QColor(accent_color.red(), accent_color.green(), accent_color.blue(), blink_alpha)
+            
+            painter.setBrush(sensor_color)
+            painter.setPen(QPen(QColor(255, 255, 255, 180), 1))
+            painter.drawEllipse(sx - 3, sy - 3, 6, 6)
+    
+    def draw_scan_lines(self, painter):
+        """绘制扫描线效果"""
+        import math
+        
+        # 根据状态调整扫描线颜色
+        if self.gate_state in ["open", "opening"]:
+            scan_color = QColor(0, 255, 200)
+        else:
+            scan_color = QColor(255, 150, 100)
+        
+        # 主扫描线 - 水平移动
+        scan_alpha = int(120 + 80 * math.sin(self.frame_count * 0.15))
+        painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), scan_alpha), 3))
+        
+        # 主扫描线
+        main_scan_y = self.scan_line_pos
+        painter.drawLine(0, main_scan_y, self.width(), main_scan_y)
+        
+        # 副扫描线
+        secondary_scan_y = (self.scan_line_pos + self.height()//2) % self.height()
+        painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), scan_alpha//2), 2))
+        painter.drawLine(0, secondary_scan_y, self.width(), secondary_scan_y)
+        
+        # 垂直扫描线 - 左右移动
+        vertical_scan_x = (self.frame_count * 3) % (self.width() + 100) - 50
+        if 0 <= vertical_scan_x <= self.width():
+            painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), scan_alpha//3), 2))
+            painter.drawLine(vertical_scan_x, 0, vertical_scan_x, self.height())
+        
+        # 雷达扫描效果（圆形）
+        center_x = self.width() // 2
+        center_y = self.height() // 2
+        radar_radius = int(50 + 30 * math.sin(self.frame_count * 0.08))
+        
+        painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), 60), 2))
+        painter.setBrush(Qt.BrushStyle.NoBrush)
+        painter.drawEllipse(center_x - radar_radius, center_y - radar_radius, 
+                           radar_radius * 2, radar_radius * 2)
+        
+        # 雷达扫描臂
+        radar_angle = (self.frame_count * 4) % 360
+        radar_end_x = center_x + radar_radius * math.cos(math.radians(radar_angle))
+        radar_end_y = center_y + radar_radius * math.sin(math.radians(radar_angle))
+        
+        painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), 150), 3))
+        painter.drawLine(center_x, center_y, int(radar_end_x), int(radar_end_y))
+        
+        # 扫描点效果
+        for i in range(3):
+            point_radius = 20 + i * 15
+            point_alpha = int(100 - i * 30)
+            painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), point_alpha), 1))
+            painter.drawEllipse(int(radar_end_x) - point_radius, int(radar_end_y) - point_radius,
+                               point_radius * 2, point_radius * 2)
+    
+    def draw_glow_effect(self, painter, center_x, center_y):
+        """绘制发光效果"""
+        import math
+        
+        # 创建径向渐变发光
+        glow_radius = 100 * self.glow_intensity
+        glow_gradient = QLinearGradient(center_x - glow_radius, center_y - glow_radius,
+                                       center_x + glow_radius, center_y + glow_radius)
+        
+        if self.gate_state in ["open", "opening"]:
+            glow_color = QColor(0, 255, 150, int(50 * self.glow_intensity))
+        else:
+            glow_color = QColor(255, 100, 100, int(50 * self.glow_intensity))
+            
+        glow_gradient.setColorAt(0, glow_color)
+        glow_gradient.setColorAt(1, QColor(0, 0, 0, 0))
+        
+        painter.setBrush(glow_gradient)
+        painter.setPen(Qt.PenStyle.NoPen)
+        painter.drawEllipse(int(center_x - glow_radius), int(center_y - glow_radius),
+                   int(glow_radius * 2), int(glow_radius * 2))
+    
+    def generate_particles(self):
+        """生成粒子特效"""
+        import random
+        
+        for _ in range(15):
+            particle = {
+                'x': random.randint(0, self.width()),
+                'y': random.randint(0, self.height()),
+                'vx': random.uniform(-2, 2),
+                'vy': random.uniform(-2, 2),
+                'life': random.uniform(0.5, 1.0),
+                'size': random.uniform(2, 5)
+            }
+            self.particles.append(particle)
+    
+    def update_particles(self):
+        """更新粒子状态"""
+        for particle in self.particles[:]:
+            particle['x'] += particle['vx']
+            particle['y'] += particle['vy']
+            particle['life'] -= 0.02
+            
+            if (particle['life'] <= 0 or 
+                particle['x'] < 0 or particle['x'] > self.width() or
+                particle['y'] < 0 or particle['y'] > self.height()):
+                self.particles.remove(particle)
+        
+        self.update()
+    
+    def draw_particles(self, painter):
+        """绘制粒子效果"""
+        for particle in self.particles:
+            alpha = int(255 * particle['life'])
+            if self.gate_state in ["open", "opening"]:
+                color = QColor(0, 255, 150, alpha)
+            else:
+                color = QColor(255, 100, 100, alpha)
+                
+            painter.setBrush(color)
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.drawEllipse(int(particle['x']), int(particle['y']),
+                               int(particle['size']), int(particle['size']))
+        
+    
 
 class SerialReadThread(QThread):
     data_received = pyqtSignal(bytes)
