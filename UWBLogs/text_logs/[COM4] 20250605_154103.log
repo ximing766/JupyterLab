@@ -1,0 +1,1524 @@
+[2025-06-05 15:41:03.711] [0;32mTMLUWB  :RX < :RECV                :62000048 280E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 00220000 00640000 64000000 00000003 78000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:03.712] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:03.725] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:03.725] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:03.725] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:03.726] [0mMaster_Distance_to_FFF7=34
+[2025-06-05 15:41:03.726] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=34
+[2025-06-05 15:41:03.726] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:03.726] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 3 ,(cm/s)
+[2025-06-05 15:41:03.726] [0m[0;34mAPP     :INFO :@ b = 34, c = 64, x = 14, y = 11
+[2025-06-05 15:41:03.726] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:03.726] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:03.726] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:03.727] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:03.727] [0m
+[2025-06-05 15:41:03.727] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00260006 000505FF F74300
+[2025-06-05 15:41:03.727] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:03.727] [0mMaster_Distance_to_Slave=67
+[2025-06-05 15:41:03.727] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=67
+[2025-06-05 15:41:03.727] [0m{"@POSITION": 1, "Master": 34, "Slave": 67, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 60, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":14, "User-Y":11, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:03.969] [0;32mTMLUWB  :RX < :RECV                :62000048 290E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 00200000 00640000 64000000 00000003 7A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:03.970] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:03.973] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:03.973] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:03.974] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:03.974] [0mMaster_Distance_to_FFF7=32
+[2025-06-05 15:41:03.974] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=32
+[2025-06-05 15:41:03.974] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:03.974] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 8 ,(cm/s)
+[2025-06-05 15:41:03.974] [0m[0;34mAPP     :INFO :@ b = 32, c = 67, x = 17, y = 8
+[2025-06-05 15:41:03.974] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:03.974] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:03.974] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:03.974] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:03.974] [0m
+[2025-06-05 15:41:03.975] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00270006 000505FF F74200
+[2025-06-05 15:41:03.975] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:03.975] [0mMaster_Distance_to_Slave=66
+[2025-06-05 15:41:03.975] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=66
+[2025-06-05 15:41:03.975] [0m{"@POSITION": 1, "Master": 32, "Slave": 66, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 61, "RedAreaH": 0, "BlueAreaH": 250, "Speed":8, "User-X":17, "User-Y":8, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:04.252] [0;32mTMLUWB  :RX < :RECV                :62000048 2A0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 00210000 00640000 64000000 00000003 7B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:04.252] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:04.252] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:04.253] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:04.253] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:04.253] [0mMaster_Distance_to_FFF7=33
+[2025-06-05 15:41:04.253] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=33
+[2025-06-05 15:41:04.253] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:04.253] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 8 ,(cm/s)
+[2025-06-05 15:41:04.253] [0m[0;34mAPP     :INFO :@ b = 33, c = 66, x = 16, y = 8
+[2025-06-05 15:41:04.253] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:04.254] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:04.254] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:04.254] [0m[0;34mAPP     :INFO :┌──────────────────────────────────────────────────────────────┐
+[2025-06-05 15:41:04.254] [0m[0;34mAPP     :INFO :│ @@@ Time of Write Card Start:  = 15:18:810  │ FFF7 │
+[2025-06-05 15:41:04.254] [0m[0;34mAPP     :INFO :└──────────────────────────────────────────────────────────────┘
+[2025-06-05 15:41:04.254] [0m[0;34mAPP     :INFO :System Is set to Busy by FFF7
+[2025-06-05 15:41:04.254] [0m[0;34mAPP     :INFO :startTransaction( ): preMacAddress = FFF7 EndUserDetected Mac = FFF7, areaCheck = 0
+[2025-06-05 15:41:04.254] [0m[0;34mAPP     :INFO :no user switching, no need to do AddUserInDTPML
+[2025-06-05 15:41:04.254] [0m[0;34mAPP     :INFO :switchtoDynamicSTS uiDeviceIndex = FFF7
+[2025-06-05 15:41:04.255] [0m[0;34mAPP     :INFO :Auth search begin index = 0, detected index = 0
+[2025-06-05 15:41:04.255] [0m[0;34mAPP     :INFO :AuthDoneUsers[authIndex].DynamicSTSstarted = 1
+[2025-06-05 15:41:04.255] [0m[0;33mAPP     :WARN :@@@ Same user, no need to apply RDS and return.
+[2025-06-05 15:41:04.255] [0m[0;34mAPP     :INFO :@@@ Simple consumption to Write Card
+[2025-06-05 15:41:04.255] [0m[0;34mAPP     :INFO :Previous Transaction State of FFF7 was: 4
+[2025-06-05 15:41:04.255] [0m[0;34mAPP     :INFO :New Transaction State of FFF7 is: 5
+[2025-06-05 15:41:04.255] [0m[0;34mAPP     :INFO :Send data to SE :   :02850080 DC12D080 27127D01 01000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 1901023B 72270000 00000000 00000000 00000000 00000000 00000000 15008054 01000F00 00000120 24082118 5844E814 D13F08
+[2025-06-05 15:41:04.255] [0m[0;34mTMLUWB  :TX > :SEND                :0300AF00 03000002 FFF70000 00000000 02009F00 02850080 DC12D080 27127D01 01000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 1901023B 72270000 00000000 00000000 00000000 00000000 00000000 15008054 01000F00 00000120 24082118 5844E814 D13F08
+[2025-06-05 15:41:04.256] [0m[0;32mTMLUWB  :RX < :RECV                :62040005 03000002 00
+[2025-06-05 15:41:04.256] [0m[0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00280006 000505FF F74000
+[2025-06-05 15:41:04.256] [0m[0;32mTMLUWB  :RX < :RECV                :62050008 03000002 00000101
+[2025-06-05 15:41:04.257] [0m[0;32mTMLUWB  :RX < :RECV                :62040005 03000002 01
+[2025-06-05 15:41:04.257] [0m[0;34mAPP     :INFO :common_start_quick_timer enter: timeout: 100 ms
+[2025-06-05 15:41:04.258] [0m
+[2025-06-05 15:41:04.258] [0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:04.258] [0mMaster_Distance_to_Slave=64
+[2025-06-05 15:41:04.258] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=64
+[2025-06-05 15:41:04.258] [0m{"@POSITION": 1, "Master": 33, "Slave": 64, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 61, "RedAreaH": 0, "BlueAreaH": 250, "Speed":8, "User-X":16, "User-Y":8, "User-Z":0,"Auth":9, "Trans":5}
+[2025-06-05 15:41:04.317] [0;32mTMLUWB  :RX < :RECV                :02002200 03000002 00FFF700 00000000 00B70011 00020200 90000A00 296698E1 41E7EC1A 9000
+[2025-06-05 15:41:04.318] [0m[0;34mAPP     :INFO :gDtxSessionHandle!!!
+[2025-06-05 15:41:04.318] [0m[0;34mAPP     :INFO :uiCheckValidateState enter,CurrentSystemStatus.SystemStatus=1,CurrentSystemStatus.uiMacddressProcess=FFF7
+[2025-06-05 15:41:04.318] [0m[0;34mAPP     :INFO :uiAddressSource = fff7, uiUserIndex = 0
+[2025-06-05 15:41:04.318] [0m[0;34mAPP     :INFO :TransactionState = 5, authentication state = 9
+[2025-06-05 15:41:04.318] [0m[0;34mAPP     :INFO :Secure Data received from FFF7  = 9000
+[2025-06-05 15:41:04.318] [0m[0;34mAPP     :INFO :common_stop_quick_timer=102: enter
+[2025-06-05 15:41:04.318] [0m[0;34mAPP     :INFO :@@@ RECEIVE CARD INFO : :02020090 000A0029 6698E141 E7EC1A90 00
+[2025-06-05 15:41:04.318] [0m{"@CARDINFO": 1, "CardNumber": "3104870494120264165", "Balance": 11828}
+[2025-06-05 15:41:04.318] [0;34mAPP     :INFO :Previous Transaction State of FFF7 was: 5
+[2025-06-05 15:41:04.318] [0m[0;34mAPP     :INFO :New Transaction State of FFF7 is: 1
+[2025-06-05 15:41:04.318] [0m[0;34mAPP     :INFO :System Is set to Free by FFF7
+[2025-06-05 15:41:04.318] [0m
+[2025-06-05 15:41:04.496] [0;32mTMLUWB  :RX < :RECV                :62000048 2B0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:04.496] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:04.496] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:04.496] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:04.498] [0m[0;34mAPP     :INFO :┌──────────────────────────────────────────────────────────────┐
+[2025-06-05 15:41:04.498] [0m[0;34mAPP     :INFO :│ @@@ Time of Write Card End:    = 15:19:050  │ FFF7 │  240 ms
+[2025-06-05 15:41:04.499] [0m[0;34mAPP     :INFO :└──────────────────────────────────────────────────────────────┘
+[2025-06-05 15:41:04.499] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:04.499] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:04.500] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:04.500] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 1 , AuthenticationState = 9
+[2025-06-05 15:41:04.501] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 7 ,(cm/s)
+[2025-06-05 15:41:04.501] [0m[0;34mAPP     :INFO :@ b = 30, c = 64, x = 15, y = 18
+[2025-06-05 15:41:04.502] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:04.502] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:04.502] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:04.502] [0m[0;33mAPP     :WARN :Into Red Area, But TransactionState != ReadCard_compelete. Starting Read Card...
+[2025-06-05 15:41:04.502] [0m[0;34mAPP     :INFO :┌──────────────────────────────────────────────────────────────┐
+[2025-06-05 15:41:04.502] [0m[0;34mAPP     :INFO :│ @@@ Time of Read Card Start:   = 15:19:065  │ FFF7 │
+[2025-06-05 15:41:04.502] [0m[0;34mAPP     :INFO :└──────────────────────────────────────────────────────────────┘
+[2025-06-05 15:41:04.502] [0m[0;34mAPP     :INFO :System Is set to Busy by FFF7
+[2025-06-05 15:41:04.502] [0m[0;34mAPP     :INFO :startTransaction( ): preMacAddress = FFF7 EndUserDetected Mac = FFF7, areaCheck = 1
+[2025-06-05 15:41:04.502] [0m[0;34mAPP     :INFO :no user switching, no need to do AddUserInDTPML
+[2025-06-05 15:41:04.502] [0m[0;34mAPP     :INFO :switchtoDynamicSTS uiDeviceIndex = FFF7
+[2025-06-05 15:41:04.502] [0m[0;34mAPP     :INFO :Auth search begin index = 0, detected index = 0
+[2025-06-05 15:41:04.503] [0m[0;34mAPP     :INFO :AuthDoneUsers[authIndex].DynamicSTSstarted = 1
+[2025-06-05 15:41:04.503] [0m[0;33mAPP     :WARN :@@@ Same user, no need to apply RDS and return.
+[2025-06-05 15:41:04.503] [0m[0;34mAPP     :INFO :@@@ Simple consumption to Read Card
+[2025-06-05 15:41:04.503] [0m[0;34mAPP     :INFO :Previous Transaction State of FFF7 was: 1
+[2025-06-05 15:41:04.503] [0m[0;34mAPP     :INFO :New Transaction State of FFF7 is: 2
+[2025-06-05 15:41:04.503] [0m[0;34mAPP     :INFO :Send data to SE :   :04130000 A404000E 32504159 2E535953 2E444446 30310D00 00A40400 08A00000 06320101 05050000 B095001C 11008050 03020B01 00000001 04090001 00010F
+[2025-06-05 15:41:04.503] [0m[0;34mTMLUWB  :TX > :SEND                :03004F00 03000002 FFF70000 00000000 02003F00 04130000 A404000E 32504159 2E535953 2E444446 30310D00 00A40400 08A00000 06320101 05050000 B095001C 11008050 03020B01 00000001 04090001 00010F
+[2025-06-05 15:41:04.503] [0m[0;32mTMLUWB  :RX < :RECV                :62040005 03000002 00
+[2025-06-05 15:41:04.503] [0m[0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00290006 000505FF F74200
+[2025-06-05 15:41:04.503] [0m[0;32mTMLUWB  :RX < :RECV                :62050008 03000002 00000101
+[2025-06-05 15:41:04.503] [0m[0;32mTMLUWB  :RX < :RECV                :62040005 03000002 01
+[2025-06-05 15:41:04.503] [0m[0;34mAPP     :INFO :common_start_quick_timer enter: timeout: 100 ms
+[2025-06-05 15:41:04.503] [0m
+[2025-06-05 15:41:04.503] [0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:04.503] [0mMaster_Distance_to_Slave=66
+[2025-06-05 15:41:04.503] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=66
+[2025-06-05 15:41:04.684] [0m{"@POSITION": 1, "Master": 30, "Slave": 66, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":7, "User-X":15, "User-Y":18, "User-Z":0,"Auth":9, "Trans":2}
+[2025-06-05 15:41:04.687] [0;32mTMLUWB  :RX < :RECV                :0200A100 03000002 00FFF700 00000000 00B80090 00041E00 6F1A840E 32504159 2E535953 2E444446 3031A508 9F080231 30890102 90003A00 6F368408 A0000006 32010105 A5269F08 0200309F 0C1E0221 5840FFFF FFFF0201 03104870 49412026 41652023 10312053 10310000 00000000 90001E00 02215840 FFFFFFFF 02010310 48704941 20264165 20231031 20531031 90001100 00002E33 1EA20000 000100D6 27188B90 00
+[2025-06-05 15:41:04.689] [0m[0;34mAPP     :INFO :gDtxSessionHandle!!!
+[2025-06-05 15:41:04.689] [0m[0;34mAPP     :INFO :uiCheckValidateState enter,CurrentSystem
+[2025-06-05 15:41:04.715] [0;32mTMLUWB  :RX < :RECV                :62000048 2C0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001F0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:04.716] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:04.716] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:04.716] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:04.716] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:04.716] [0mMaster_Distance_to_FFF7=31
+[2025-06-05 15:41:04.717] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=31
+[2025-06-05 15:41:04.717] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:04.717] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 5 ,(cm/s)
+[2025-06-05 15:41:04.717] [0m[0;34mAPP     :INFO :@ b = 31, c = 66, x = 16, y = 13
+[2025-06-05 15:41:04.717] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:04.717] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:04.717] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:04.719] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:04.719] [0m
+[2025-06-05 15:41:04.720] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 002A0006 000505FF F74600
+[2025-06-05 15:41:04.720] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:04.721] [0mMaster_Distance_to_Slave=70
+[2025-06-05 15:41:04.721] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=70
+[2025-06-05 15:41:04.721] [0m{"@POSITION": 1, "Master": 31, "Slave": 70, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":5, "User-X":16, "User-Y":13, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:04.964] [0;32mTMLUWB  :RX < :RECV                :62000048 2D0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001F0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:04.965] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:04.965] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:04.965] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:04.966] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:04.966] [0mMaster_Distance_to_FFF7=31
+[2025-06-05 15:41:04.966] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=31
+[2025-06-05 15:41:04.966] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:04.966] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 8 ,(cm/s)
+[2025-06-05 15:41:04.966] [0m[0;34mAPP     :INFO :@ b = 31, c = 70, x = 19, y = 0
+[2025-06-05 15:41:04.966] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:04.968] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:04.968] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:04.968] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:04.969] [0m
+[2025-06-05 15:41:04.969] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 002B0006 000505FF F73D00
+[2025-06-05 15:41:04.969] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:04.969] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:04.969] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:04.969] [0m{"@POSITION": 1, "Master": 31, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":8, "User-X":19, "User-Y":0, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:05.214] [0;32mTMLUWB  :RX < :RECV                :62000048 2E0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:05.214] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:05.214] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:05.214] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:05.214] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:05.216] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:05.216] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:05.216] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:05.216] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 3 ,(cm/s)
+[2025-06-05 15:41:05.218] [0m[0;34mAPP     :INFO :@ b = 29, c = 61, x = 14, y = 21
+[2025-06-05 15:41:05.218] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:05.218] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:05.218] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:05.218] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:05.218] [0m
+[2025-06-05 15:41:05.218] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 002C0006 000505FF F73900
+[2025-06-05 15:41:05.218] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:05.218] [0mMaster_Distance_to_Slave=57
+[2025-06-05 15:41:05.218] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=57
+[2025-06-05 15:41:05.218] [0m{"@POSITION": 1, "Master": 29, "Slave": 57, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":14, "User-Y":21, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:05.460] [0;32mTMLUWB  :RX < :RECV                :62000048 2F0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:05.460] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:05.461] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:05.463] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:05.463] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:05.463] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:05.463] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:05.463] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:05.463] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 12 ,(cm/s)
+[2025-06-05 15:41:05.463] [0m[0;34mAPP     :INFO :@ b = 30, c = 57, x = 11, y = 24
+[2025-06-05 15:41:05.463] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:05.463] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:05.463] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:05.463] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:05.463] [0m
+[2025-06-05 15:41:05.463] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 002D0006 000505FF F73700
+[2025-06-05 15:41:05.463] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:05.463] [0mMaster_Distance_to_Slave=55
+[2025-06-05 15:41:05.463] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=55
+[2025-06-05 15:41:05.463] [0m{"@POSITION": 1, "Master": 30, "Slave": 55, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 61, "RedAreaH": 0, "BlueAreaH": 250, "Speed":12, "User-X":11, "User-Y":24, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:05.711] [0;32mTMLUWB  :RX < :RECV                :62000048 300E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:05.711] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:05.711] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:05.711] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:05.711] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:05.711] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:05.712] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:05.712] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:05.712] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 27 ,(cm/s)
+[2025-06-05 15:41:05.712] [0m[0;34mAPP     :INFO :@ b = 30, c = 55, x = 10, y = 26
+[2025-06-05 15:41:05.712] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:05.712] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:05.712] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:05.712] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:05.712] [0m
+[2025-06-05 15:41:05.712] [0;32mTMLUWB  :RX < :RECV                :02001300 02000002 00BBBB00 00000000 002E0002 000105
+[2025-06-05 15:41:05.961] [0m[0;32mTMLUWB  :RX < :RECV                :62000048 310E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001F0000 00640000 64000000 00000003 7B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:05.961] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:05.962] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:05.962] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:05.962] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:05.962] [0mMaster_Distance_to_FFF7=31
+[2025-06-05 15:41:05.962] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=31
+[2025-06-05 15:41:05.963] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:05.963] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 5 ,(cm/s)
+[2025-06-05 15:41:05.963] [0m[0;34mAPP     :INFO :@ b = 31, c = 55, x = 10, y = 25
+[2025-06-05 15:41:05.963] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:05.963] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:05.963] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:05.963] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:05.963] [0m
+[2025-06-05 15:41:05.963] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 002F0006 000505FF F73B00
+[2025-06-05 15:41:05.963] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:05.963] [0mMaster_Distance_to_Slave=59
+[2025-06-05 15:41:05.964] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=59
+[2025-06-05 15:41:05.964] [0m{"@POSITION": 1, "Master": 31, "Slave": 59, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 61, "RedAreaH": 0, "BlueAreaH": 250, "Speed":5, "User-X":10, "User-Y":25, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:06.213] [0;32mTMLUWB  :RX < :RECV                :62000048 320E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:06.214] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:06.214] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:06.214] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:06.215] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:06.215] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:06.215] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:06.215] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:06.215] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 1 ,(cm/s)
+[2025-06-05 15:41:06.215] [0m[0;34mAPP     :INFO :@ b = 30, c = 59, x = 12, y = 23
+[2025-06-05 15:41:06.216] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:06.216] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:06.217] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:06.217] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:06.219] [0m
+[2025-06-05 15:41:06.219] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00300006 000505FF F73A00
+[2025-06-05 15:41:06.219] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:06.220] [0mMaster_Distance_to_Slave=58
+[2025-06-05 15:41:06.220] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=58
+[2025-06-05 15:41:06.220] [0m{"@POSITION": 1, "Master": 30, "Slave": 58, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 61, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":12, "User-Y":23, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:06.468] [0;32mTMLUWB  :RX < :RECV                :62000048 330E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:06.468] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:06.468] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:06.468] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:06.469] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:06.469] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:06.469] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:06.469] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:06.469] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:06.469] [0m[0;34mAPP     :INFO :@ b = 29, c = 58, x = 12, y = 24
+[2025-06-05 15:41:06.471] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:06.471] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:06.472] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:06.472] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:06.472] [0m
+[2025-06-05 15:41:06.472] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00310006 000505FF F73900
+[2025-06-05 15:41:06.472] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:06.472] [0mMaster_Distance_to_Slave=57
+[2025-06-05 15:41:06.472] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=57
+[2025-06-05 15:41:06.472] [0m{"@POSITION": 1, "Master": 29, "Slave": 57, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":12, "User-Y":24, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:06.715] [0;32mTMLUWB  :RX < :RECV                :62000048 340E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:06.716] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:06.716] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:06.716] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:06.716] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:06.716] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:06.716] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:06.716] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:06.716] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 1 ,(cm/s)
+[2025-06-05 15:41:06.716] [0m[0;34mAPP     :INFO :@ b = 30, c = 57, x = 11, y = 24
+[2025-06-05 15:41:06.716] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:06.716] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:06.716] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:06.716] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:06.717] [0m
+[2025-06-05 15:41:06.717] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00320006 000505FF F73A00
+[2025-06-05 15:41:06.717] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:06.717] [0mMaster_Distance_to_Slave=58
+[2025-06-05 15:41:06.717] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=58
+[2025-06-05 15:41:06.717] [0m{"@POSITION": 1, "Master": 30, "Slave": 58, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":11, "User-Y":24, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:06.965] [0;32mTMLUWB  :RX < :RECV                :62000048 350E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:06.967] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:06.967] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:06.967] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:06.967] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:06.968] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:06.970] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:06.970] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:06.970] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 0 ,(cm/s)
+[2025-06-05 15:41:06.970] [0m[0;34mAPP     :INFO :@ b = 30, c = 58, x = 12, y = 23
+[2025-06-05 15:41:06.971] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:06.971] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:06.971] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:06.971] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:06.971] [0m
+[2025-06-05 15:41:06.971] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00330006 000505FF F73E00
+[2025-06-05 15:41:06.971] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:06.971] [0mMaster_Distance_to_Slave=62
+[2025-06-05 15:41:06.971] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=62
+[2025-06-05 15:41:06.971] [0m{"@POSITION": 1, "Master": 30, "Slave": 62, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":0, "User-X":12, "User-Y":23, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:07.214] [0;32mTMLUWB  :RX < :RECV                :62000048 360E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:07.214] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:07.214] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:07.216] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:07.216] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:07.216] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:07.216] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:07.216] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:07.216] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 5 ,(cm/s)
+[2025-06-05 15:41:07.216] [0m[0;34mAPP     :INFO :@ b = 30, c = 62, x = 14, y = 19
+[2025-06-05 15:41:07.216] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:07.216] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:07.216] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:07.217] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:07.218] [0m
+[2025-06-05 15:41:07.218] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00340006 000505FF F73C00
+[2025-06-05 15:41:07.218] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:07.218] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:07.218] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:07.218] [0m{"@POSITION": 1, "Master": 30, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":5, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:07.463] [0;32mTMLUWB  :RX < :RECV                :62000048 370E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:07.463] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:07.463] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:07.463] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:07.464] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:07.464] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:07.464] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:07.465] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:07.465] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 3 ,(cm/s)
+[2025-06-05 15:41:07.465] [0m[0;34mAPP     :INFO :@ b = 30, c = 60, x = 13, y = 21
+[2025-06-05 15:41:07.465] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:07.465] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:07.465] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:07.465] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:07.465] [0m
+[2025-06-05 15:41:07.465] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00350006 000505FF F73E00
+[2025-06-05 15:41:07.465] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:07.465] [0mMaster_Distance_to_Slave=62
+[2025-06-05 15:41:07.465] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=62
+[2025-06-05 15:41:07.465] [0m{"@POSITION": 1, "Master": 30, "Slave": 62, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":13, "User-Y":21, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:07.716] [0;32mTMLUWB  :RX < :RECV                :62000048 380E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 78000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:07.716] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:07.717] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:07.717] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:07.717] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:07.718] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:07.718] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:07.718] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:07.719] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 4 ,(cm/s)
+[2025-06-05 15:41:07.719] [0m[0;34mAPP     :INFO :@ b = 30, c = 62, x = 14, y = 19
+[2025-06-05 15:41:07.719] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:07.720] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:07.720] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:07.720] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:07.720] [0m
+[2025-06-05 15:41:07.720] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00360006 000505FF F73D00
+[2025-06-05 15:41:07.720] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:07.721] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:07.721] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:07.721] [0m{"@POSITION": 1, "Master": 30, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 60, "RedAreaH": 0, "BlueAreaH": 250, "Speed":4, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:07.959] [0;32mTMLUWB  :RX < :RECV                :62000048 390E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001F0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:07.959] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:07.961] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:07.962] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:07.962] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:07.962] [0mMaster_Distance_to_FFF7=31
+[2025-06-05 15:41:07.962] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=31
+[2025-06-05 15:41:07.962] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:07.962] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 1 ,(cm/s)
+[2025-06-05 15:41:07.962] [0m[0;34mAPP     :INFO :@ b = 31, c = 61, x = 13, y = 20
+[2025-06-05 15:41:07.962] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:07.962] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:07.962] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:07.962] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:07.962] [0m
+[2025-06-05 15:41:07.962] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00370006 000505FF F73A00
+[2025-06-05 15:41:07.962] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:07.962] [0mMaster_Distance_to_Slave=58
+[2025-06-05 15:41:07.962] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=58
+[2025-06-05 15:41:07.962] [0m{"@POSITION": 1, "Master": 31, "Slave": 58, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":13, "User-Y":20, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:08.212] [0;32mTMLUWB  :RX < :RECV                :62000048 3A0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:08.213] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:08.213] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:08.213] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:08.213] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:08.213] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:08.213] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:08.215] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:08.215] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:08.215] [0m[0;34mAPP     :INFO :@ b = 30, c = 58, x = 12, y = 23
+[2025-06-05 15:41:08.215] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:08.215] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:08.215] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:08.215] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:08.215] [0m
+[2025-06-05 15:41:08.215] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00380006 000505FF F73D00
+[2025-06-05 15:41:08.215] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:08.215] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:08.215] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:08.215] [0m{"@POSITION": 1, "Master": 30, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":12, "User-Y":23, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:08.461] [0;32mTMLUWB  :RX < :RECV                :62000048 3B0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:08.461] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:08.462] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:08.462] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:08.462] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:08.462] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:08.462] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:08.462] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:08.462] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 0 ,(cm/s)
+[2025-06-05 15:41:08.462] [0m[0;34mAPP     :INFO :@ b = 30, c = 61, x = 14, y = 19
+[2025-06-05 15:41:08.462] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:08.462] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:08.462] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:08.463] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:08.463] [0m
+[2025-06-05 15:41:08.463] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00390006 000505FF F73C00
+[2025-06-05 15:41:08.463] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:08.463] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:08.463] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:08.463] [0m{"@POSITION": 1, "Master": 30, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":0, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:08.717] [0;32mTMLUWB  :RX < :RECV                :62000048 3C0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001C0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:08.717] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:08.717] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:08.717] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:08.718] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:08.718] [0mMaster_Distance_to_FFF7=28
+[2025-06-05 15:41:08.721] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=28
+[2025-06-05 15:41:08.721] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:08.721] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:08.721] [0m[0;34mAPP     :INFO :@ b = 28, c = 60, x = 14, y = 22
+[2025-06-05 15:41:08.721] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:08.721] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:08.721] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:08.721] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:08.722] [0m
+[2025-06-05 15:41:08.722] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 003A0006 000505FF F73D00
+[2025-06-05 15:41:08.722] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:08.722] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:08.722] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:08.723] [0m{"@POSITION": 1, "Master": 28, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":14, "User-Y":22, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:08.962] [0;32mTMLUWB  :RX < :RECV                :62000048 3D0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:08.963] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:08.963] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:08.964] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:08.964] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:08.965] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:08.965] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:08.965] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:08.965] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:08.965] [0m[0;34mAPP     :INFO :@ b = 29, c = 61, x = 14, y = 21
+[2025-06-05 15:41:08.965] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:08.965] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:08.965] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:08.965] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:08.965] [0m
+[2025-06-05 15:41:08.965] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 003B0006 000505FF F73D00
+[2025-06-05 15:41:08.965] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:08.965] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:08.965] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:08.965] [0m{"@POSITION": 1, "Master": 29, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":14, "User-Y":21, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:09.215] [0;32mTMLUWB  :RX < :RECV                :62000048 3E0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:09.215] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:09.215] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:09.215] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:09.215] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:09.215] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:09.215] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:09.216] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:09.216] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 0 ,(cm/s)
+[2025-06-05 15:41:09.216] [0m[0;34mAPP     :INFO :@ b = 30, c = 61, x = 14, y = 19
+[2025-06-05 15:41:09.216] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:09.216] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:09.216] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:09.216] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:09.216] [0m
+[2025-06-05 15:41:09.216] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 003C0006 000505FF F73B00
+[2025-06-05 15:41:09.216] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:09.216] [0mMaster_Distance_to_Slave=59
+[2025-06-05 15:41:09.216] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=59
+[2025-06-05 15:41:09.216] [0m{"@POSITION": 1, "Master": 30, "Slave": 59, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":0, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:09.466] [0;32mTMLUWB  :RX < :RECV                :62000048 3F0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:09.466] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:09.466] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:09.468] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:09.468] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:09.468] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:09.469] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:09.469] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:09.469] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:09.469] [0m[0;34mAPP     :INFO :@ b = 30, c = 59, x = 12, y = 23
+[2025-06-05 15:41:09.469] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:09.469] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:09.469] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:09.469] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:09.469] [0m
+[2025-06-05 15:41:09.469] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 003D0006 000505FF F73900
+[2025-06-05 15:41:09.469] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:09.469] [0mMaster_Distance_to_Slave=57
+[2025-06-05 15:41:09.469] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=57
+[2025-06-05 15:41:09.469] [0m{"@POSITION": 1, "Master": 30, "Slave": 57, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 61, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":12, "User-Y":23, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:09.715] [0;32mTMLUWB  :RX < :RECV                :62000048 400E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:09.716] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:09.716] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:09.716] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:09.716] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:09.716] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:09.716] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:09.716] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:09.716] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 3 ,(cm/s)
+[2025-06-05 15:41:09.716] [0m[0;34mAPP     :INFO :@ b = 29, c = 57, x = 12, y = 24
+[2025-06-05 15:41:09.716] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:09.716] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:09.717] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:09.717] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:09.717] [0m
+[2025-06-05 15:41:09.717] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 003E0006 000505FF F73D00
+[2025-06-05 15:41:09.717] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:09.717] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:09.717] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:09.717] [0m{"@POSITION": 1, "Master": 29, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":12, "User-Y":24, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:09.967] [0;32mTMLUWB  :RX < :RECV                :62000048 410E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:09.968] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:09.968] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:09.969] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:09.969] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:09.969] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:09.969] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:09.969] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:09.969] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:09.969] [0m[0;34mAPP     :INFO :@ b = 29, c = 61, x = 14, y = 21
+[2025-06-05 15:41:09.969] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:09.969] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:09.970] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:09.970] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:09.970] [0m
+[2025-06-05 15:41:09.970] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 003F0006 000505FF F73D00
+[2025-06-05 15:41:09.970] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:09.970] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:09.970] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:09.970] [0m{"@POSITION": 1, "Master": 29, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":14, "User-Y":21, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:10.216] [0;32mTMLUWB  :RX < :RECV                :62000048 420E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:10.216] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:10.216] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:10.217] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:10.217] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:10.217] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:10.217] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:10.218] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:10.218] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 4 ,(cm/s)
+[2025-06-05 15:41:10.218] [0m[0;34mAPP     :INFO :@ b = 30, c = 61, x = 14, y = 19
+[2025-06-05 15:41:10.218] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:10.218] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:10.218] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:10.218] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:10.218] [0m
+[2025-06-05 15:41:10.218] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00400006 000505FF F73D00
+[2025-06-05 15:41:10.218] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:10.219] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:10.219] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:10.219] [0m{"@POSITION": 1, "Master": 30, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 61, "RedAreaH": 0, "BlueAreaH": 250, "Speed":4, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:10.465] [0;32mTMLUWB  :RX < :RECV                :62000048 430E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001C0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:10.465] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:10.466] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:10.466] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:10.466] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:10.466] [0mMaster_Distance_to_FFF7=28
+[2025-06-05 15:41:10.466] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=28
+[2025-06-05 15:41:10.466] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:10.466] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:10.466] [0m[0;34mAPP     :INFO :@ b = 28, c = 61, x = 14, y = 22
+[2025-06-05 15:41:10.466] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:10.466] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:10.466] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:10.466] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:10.466] [0m
+[2025-06-05 15:41:10.466] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00410006 000505FF F74000
+[2025-06-05 15:41:10.466] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:10.466] [0mMaster_Distance_to_Slave=64
+[2025-06-05 15:41:10.466] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=64
+[2025-06-05 15:41:10.466] [0m{"@POSITION": 1, "Master": 28, "Slave": 64, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":14, "User-Y":22, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:10.721] [0;32mTMLUWB  :RX < :RECV                :62000048 440E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:10.722] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:10.722] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:10.722] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:10.722] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:10.722] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:10.722] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:10.722] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:10.722] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 4 ,(cm/s)
+[2025-06-05 15:41:10.722] [0m[0;34mAPP     :INFO :@ b = 29, c = 64, x = 16, y = 17
+[2025-06-05 15:41:10.722] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:10.722] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:10.723] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:10.723] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:10.723] [0m
+[2025-06-05 15:41:10.723] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00420006 000505FF F73C00
+[2025-06-05 15:41:10.723] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:10.723] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:10.723] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:10.723] [0m{"@POSITION": 1, "Master": 29, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":4, "User-X":16, "User-Y":17, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:10.966] [0;32mTMLUWB  :RX < :RECV                :62000048 450E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001C0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:10.966] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:10.966] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:10.966] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:10.966] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:10.966] [0mMaster_Distance_to_FFF7=28
+[2025-06-05 15:41:10.966] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=28
+[2025-06-05 15:41:10.966] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:10.966] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 3 ,(cm/s)
+[2025-06-05 15:41:10.966] [0m[0;34mAPP     :INFO :@ b = 28, c = 60, x = 14, y = 22
+[2025-06-05 15:41:10.966] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:10.966] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:10.966] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:10.966] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:10.966] [0m
+[2025-06-05 15:41:10.966] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00430006 000505FF F73C00
+[2025-06-05 15:41:10.968] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:10.968] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:10.968] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:10.968] [0m{"@POSITION": 1, "Master": 28, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":14, "User-Y":22, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:11.237] [0;32mTMLUWB  :RX < :RECV                :62000048 460E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:11.238] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:11.239] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:11.239] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:11.239] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:11.239] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:11.239] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:11.239] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:11.239] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 1 ,(cm/s)
+[2025-06-05 15:41:11.239] [0m[0;34mAPP     :INFO :@ b = 30, c = 60, x = 13, y = 21
+[2025-06-05 15:41:11.240] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:11.240] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:11.240] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:11.240] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:11.240] [0m
+[2025-06-05 15:41:11.240] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00440006 000505FF F73D00
+[2025-06-05 15:41:11.240] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:11.240] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:11.240] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:11.240] [0m{"@POSITION": 1, "Master": 30, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 61, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":13, "User-Y":21, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:11.470] [0;32mTMLUWB  :RX < :RECV                :62000048 470E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:11.471] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:11.471] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:11.471] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:11.471] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:11.472] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:11.472] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:11.472] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:11.472] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:11.472] [0m[0;34mAPP     :INFO :@ b = 30, c = 61, x = 14, y = 19
+[2025-06-05 15:41:11.472] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:11.472] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:11.472] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:11.472] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:11.472] [0m
+[2025-06-05 15:41:11.472] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00450006 000505FF F73C00
+[2025-06-05 15:41:11.472] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:11.472] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:11.472] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:11.473] [0m{"@POSITION": 1, "Master": 30, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:11.716] [0;32mTMLUWB  :RX < :RECV                :62000048 480E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:11.716] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:11.716] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:11.716] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:11.716] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:11.716] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:11.716] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:11.716] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:11.716] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 1 ,(cm/s)
+[2025-06-05 15:41:11.716] [0m[0;34mAPP     :INFO :@ b = 30, c = 60, x = 13, y = 21
+[2025-06-05 15:41:11.716] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:11.716] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:11.718] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:11.718] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:11.718] [0m
+[2025-06-05 15:41:11.718] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00460006 000505FF F73D00
+[2025-06-05 15:41:11.718] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:11.718] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:11.718] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:11.718] [0m{"@POSITION": 1, "Master": 30, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":13, "User-Y":21, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:11.966] [0;32mTMLUWB  :RX < :RECV                :62000048 490E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 00210000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:11.967] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:11.967] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:11.967] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:11.967] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:11.967] [0mMaster_Distance_to_FFF7=33
+[2025-06-05 15:41:11.967] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=33
+[2025-06-05 15:41:11.967] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:11.967] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 5 ,(cm/s)
+[2025-06-05 15:41:11.967] [0m[0;34mAPP     :INFO :@ b = 33, c = 61, x = 13, y = 16
+[2025-06-05 15:41:11.968] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:11.968] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:11.968] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:11.968] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:11.968] [0m
+[2025-06-05 15:41:11.968] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00470006 000505FF F73D00
+[2025-06-05 15:41:11.969] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:11.969] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:11.970] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:11.970] [0m{"@POSITION": 1, "Master": 33, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":5, "User-X":13, "User-Y":16, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:12.224] [0;32mTMLUWB  :RX < :RECV                :62000048 4A0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:12.225] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:12.225] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:12.225] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:12.225] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:12.226] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:12.226] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:12.226] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:12.226] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 0 ,(cm/s)
+[2025-06-05 15:41:12.226] [0m[0;34mAPP     :INFO :@ b = 30, c = 61, x = 14, y = 19
+[2025-06-05 15:41:12.226] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:12.226] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:12.226] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:12.226] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:12.226] [0m
+[2025-06-05 15:41:12.226] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00480006 000505FF F73C00
+[2025-06-05 15:41:12.226] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:12.226] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:12.226] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:12.226] [0m{"@POSITION": 1, "Master": 30, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":0, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:12.464] [0;32mTMLUWB  :RX < :RECV                :62000048 4B0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:12.465] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:12.465] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:12.465] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:12.465] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:12.465] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:12.465] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:12.465] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:12.465] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 0 ,(cm/s)
+[2025-06-05 15:41:12.465] [0m[0;34mAPP     :INFO :@ b = 30, c = 60, x = 13, y = 21
+[2025-06-05 15:41:12.465] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:12.465] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:12.466] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:12.466] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:12.466] [0m
+[2025-06-05 15:41:12.466] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00490006 000505FF F73D00
+[2025-06-05 15:41:12.466] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:12.466] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:12.467] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:12.467] [0m{"@POSITION": 1, "Master": 30, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 61, "RedAreaH": 0, "BlueAreaH": 250, "Speed":0, "User-X":13, "User-Y":21, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:12.716] [0;32mTMLUWB  :RX < :RECV                :62000048 4C0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:12.716] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:12.716] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:12.716] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:12.716] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:12.716] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:12.716] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:12.716] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:12.718] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 5 ,(cm/s)
+[2025-06-05 15:41:12.718] [0m[0;34mAPP     :INFO :@ b = 29, c = 61, x = 14, y = 21
+[2025-06-05 15:41:12.718] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:12.718] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:12.718] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:12.718] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:12.718] [0m
+[2025-06-05 15:41:12.718] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 004A0006 000505FF F73C00
+[2025-06-05 15:41:12.718] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:12.718] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:12.718] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:12.718] [0m{"@POSITION": 1, "Master": 29, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":5, "User-X":14, "User-Y":21, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:12.966] [0;32mTMLUWB  :RX < :RECV                :62000048 4D0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:12.966] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:12.966] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:12.969] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:12.969] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:12.969] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:12.969] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:12.969] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:12.969] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:12.969] [0m[0;34mAPP     :INFO :@ b = 30, c = 60, x = 13, y = 21
+[2025-06-05 15:41:12.969] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:12.969] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:12.969] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:12.969] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:12.969] [0m
+[2025-06-05 15:41:12.970] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 004B0006 000505FF F73C00
+[2025-06-05 15:41:12.970] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:12.970] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:12.970] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:12.970] [0m{"@POSITION": 1, "Master": 30, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":13, "User-Y":21, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:13.236] [0;32mTMLUWB  :RX < :RECV                :62000048 4E0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:13.236] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:13.237] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:13.237] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:13.237] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:13.237] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:13.237] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:13.237] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:13.237] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 1 ,(cm/s)
+[2025-06-05 15:41:13.237] [0m[0;34mAPP     :INFO :@ b = 29, c = 60, x = 13, y = 22
+[2025-06-05 15:41:13.237] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:13.237] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:13.237] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:13.237] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:13.237] [0m
+[2025-06-05 15:41:13.237] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 004C0006 000505FF F73C00
+[2025-06-05 15:41:13.237] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:13.238] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:13.238] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:13.238] [0m{"@POSITION": 1, "Master": 29, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":13, "User-Y":22, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:13.488] [0;32mTMLUWB  :RX < :RECV                :62000048 4F0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:13.489] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:13.489] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:13.489] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:13.489] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:13.489] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:13.489] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:13.489] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:13.489] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 1 ,(cm/s)
+[2025-06-05 15:41:13.489] [0m[0;34mAPP     :INFO :@ b = 30, c = 60, x = 13, y = 21
+[2025-06-05 15:41:13.489] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:13.489] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:13.489] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:13.489] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:13.489] [0m
+[2025-06-05 15:41:13.489] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 004D0006 000505FF F73E00
+[2025-06-05 15:41:13.490] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:13.490] [0mMaster_Distance_to_Slave=62
+[2025-06-05 15:41:13.490] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=62
+[2025-06-05 15:41:13.490] [0m{"@POSITION": 1, "Master": 30, "Slave": 62, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":13, "User-Y":21, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:13.719] [0;32mTMLUWB  :RX < :RECV                :62000048 500E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001F0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:13.719] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:13.719] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:13.719] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:13.719] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:13.720] [0mMaster_Distance_to_FFF7=31
+[2025-06-05 15:41:13.720] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=31
+[2025-06-05 15:41:13.720] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:13.720] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 3 ,(cm/s)
+[2025-06-05 15:41:13.723] [0m[0;34mAPP     :INFO :@ b = 31, c = 62, x = 14, y = 18
+[2025-06-05 15:41:13.724] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:13.724] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:13.724] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:13.724] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:13.724] [0m
+[2025-06-05 15:41:13.724] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 004E0006 000505FF F74000
+[2025-06-05 15:41:13.724] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:13.724] [0mMaster_Distance_to_Slave=64
+[2025-06-05 15:41:13.724] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=64
+[2025-06-05 15:41:13.724] [0m{"@POSITION": 1, "Master": 31, "Slave": 64, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":14, "User-Y":18, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:13.967] [0;32mTMLUWB  :RX < :RECV                :62000048 510E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 00200000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:13.968] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:13.968] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:13.969] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:13.969] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:13.969] [0mMaster_Distance_to_FFF7=32
+[2025-06-05 15:41:13.969] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=32
+[2025-06-05 15:41:13.969] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:13.969] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 8 ,(cm/s)
+[2025-06-05 15:41:13.970] [0m[0;34mAPP     :INFO :@ b = 32, c = 64, x = 15, y = 14
+[2025-06-05 15:41:13.970] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:13.970] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:13.970] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:13.970] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:13.970] [0m
+[2025-06-05 15:41:13.970] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 004F0006 000505FF F73F00
+[2025-06-05 15:41:13.970] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:13.970] [0mMaster_Distance_to_Slave=63
+[2025-06-05 15:41:13.970] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=63
+[2025-06-05 15:41:13.970] [0m{"@POSITION": 1, "Master": 32, "Slave": 63, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":8, "User-X":15, "User-Y":14, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:14.212] [0;32mTMLUWB  :RX < :RECV                :62000048 520E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 79000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:14.214] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:14.214] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:14.214] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:14.214] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:14.214] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:14.214] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:14.215] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:14.215] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 3 ,(cm/s)
+[2025-06-05 15:41:14.215] [0m[0;34mAPP     :INFO :@ b = 30, c = 63, x = 15, y = 18
+[2025-06-05 15:41:14.217] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:14.218] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:14.218] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:14.218] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:14.218] [0m
+[2025-06-05 15:41:14.218] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00500006 000505FF F73D00
+[2025-06-05 15:41:14.218] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:14.218] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:14.218] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:14.218] [0m{"@POSITION": 1, "Master": 30, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 60, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":15, "User-Y":18, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:14.571] [0;32mTMLUWB  :RX < :RECV                :62000048 530E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:14.572] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:14.572] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:14.572] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:14.572] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:14.572] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:14.572] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:14.572] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:14.573] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 3 ,(cm/s)
+[2025-06-05 15:41:14.573] [0m[0;34mAPP     :INFO :@ b = 29, c = 61, x = 14, y = 21
+[2025-06-05 15:41:14.573] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:14.573] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:14.573] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:14.573] [0m[0;34mAPP     :INFO :┌──────────────────────────────────────────────────────────────┐
+[2025-06-05 15:41:14.573] [0m[0;34mAPP     :INFO :│ @@@ Time of Write Card Start:  = 15:29:060  │ FFF7 │
+[2025-06-05 15:41:14.573] [0m[0;34mAPP     :INFO :└──────────────────────────────────────────────────────────────┘
+[2025-06-05 15:41:14.573] [0m[0;34mAPP     :INFO :System Is set to Busy by FFF7
+[2025-06-05 15:41:14.573] [0m[0;34mAPP     :INFO :startTransaction( ): preMacAddress = FFF7 EndUserDetected Mac = FFF7, areaCheck = 0
+[2025-06-05 15:41:14.573] [0m[0;34mAPP     :INFO :no user switching, no need to do AddUserInDTPML
+[2025-06-05 15:41:14.573] [0m[0;34mAPP     :INFO :switchtoDynamicSTS uiDeviceIndex = FFF7
+[2025-06-05 15:41:14.574] [0m[0;34mAPP     :INFO :Auth search begin index = 0, detected index = 0
+[2025-06-05 15:41:14.574] [0m[0;34mAPP     :INFO :AuthDoneUsers[authIndex].DynamicSTSstarted = 1
+[2025-06-05 15:41:14.574] [0m[0;33mAPP     :WARN :@@@ Same user, no need to apply RDS and return.
+[2025-06-05 15:41:14.574] [0m[0;34mAPP     :INFO :@@@ Simple consumption to Write Card
+[2025-06-05 15:41:14.574] [0m[0;34mAPP     :INFO :Previous Transaction State of FFF7 was: 4
+[2025-06-05 15:41:14.574] [0m[0;34mAPP     :INFO :New Transaction State of FFF7 is: 5
+[2025-06-05 15:41:14.574] [0m[0;34mAPP     :INFO :Send data to SE :   :02850080 DC12D080 27127D01 01000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 1901023B 72270000 00000000 00000000 00000000 00000000 00000000 15008054 01000F00 00000120 24082118 5844A42E 1C2F08
+[2025-06-05 15:41:14.574] [0m[0;34mTMLUWB  :TX > :SEND                :0300AF00 03000002 FFF70000 00000000 02009F00 02850080 DC12D080 27127D01 01000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 00000000 1901023B 72270000 00000000 00000000 00000000 00000000 00000000 15008054 01000F00 00000120 24082118 5844A42E 1C2F08
+[2025-06-05 15:41:14.575] [0m[0;32mTMLUWB  :RX < :RECV                :62040005 03000002 00
+[2025-06-05 15:41:14.575] [0m[0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00510006 000505FF F73D00
+[2025-06-05 15:41:14.575] [0m[0;32mTMLUWB  :RX < :RECV                :62050008 03000002 00000101
+[2025-06-05 15:41:14.575] [0m[0;32mTMLUWB  :RX < :RECV                :62040005 03000002 01
+[2025-06-05 15:41:14.575] [0m[0;34mAPP     :INFO :common_start_quick_timer enter: timeout: 100 ms
+[2025-06-05 15:41:14.575] [0m
+[2025-06-05 15:41:14.575] [0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:14.575] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:14.575] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:14.575] [0m{"@POSITION": 1, "Master": 29, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":14, "User-Y":21, "User-Z":0,"Auth":9, "Trans":5}
+[2025-06-05 15:41:14.575] [0;32mTMLUWB  :RX < :RECV                :02002200 03000002 00FFF700 00000000 00B90011 00020200 90000A00 296698E1 5B5C99CD 9000
+[2025-06-05 15:41:14.575] [0m[0;34mAPP     :INFO :gDtxSessionHandle!!!
+[2025-06-05 15:41:14.575] [0m[0;34mAPP     :INFO :uiCheckValidateState enter,CurrentSystemStatus.SystemStatus=1,CurrentSystemStatus.uiMacddressProcess=FFF7
+[2025-06-05 15:41:14.575] [0m[0;34mAPP     :INFO :uiAddressSource = fff7, uiUserIndex = 0
+[2025-06-05 15:41:14.575] [0m[0;34mAPP     :INFO :TransactionState = 5, authentication state = 9
+[2025-06-05 15:41:14.575] [0m[0;34mAPP     :INFO :Secure Data received from FFF7  = 9000
+[2025-06-05 15:41:14.575] [0m[0;34mAPP     :INFO :common_stop_quick_timer=102: enter
+[2025-06-05 15:41:14.575] [0m[0;34mAPP     :INFO :@@@ RECEIVE CARD INFO : :02020090 000A0029 6698E15B 5C99CD90 00
+[2025-06-05 15:41:14.575] [0m{"@CARDINFO": 1, "CardNumber": "3104870494120264165", "Balance": 11827}
+[2025-06-05 15:41:14.575] [0;34mAPP     :INFO :Previous Transaction State of FFF7 was: 5
+[2025-06-05 15:41:14.575] [0m[0;34mAPP     :INFO :New Transaction State of FFF7 is: 1
+[2025-06-05 15:41:14.575] [0m[0;34mAPP     :INFO :System Is set to Free by FFF7
+[2025-06-05 15:41:14.575] [0m
+[2025-06-05 15:41:14.772] [0;32mTMLUWB  :RX < :RECV                :62000048 540E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:14.772] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :┌──────────────────────────────────────────────────────────────┐
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :│ @@@ Time of Write Card End:    = 15:29:300  │ FFF7 │  240 ms
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :└──────────────────────────────────────────────────────────────┘
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:14.773] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:14.773] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 1 , AuthenticationState = 9
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 5 ,(cm/s)
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :@ b = 30, c = 61, x = 14, y = 19
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:14.773] [0m[0;33mAPP     :WARN :Into Red Area, But TransactionState != ReadCard_compelete. Starting Read Card...
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :┌──────────────────────────────────────────────────────────────┐
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :│ @@@ Time of Read Card Start:   = 15:29:315  │ FFF7 │
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :└──────────────────────────────────────────────────────────────┘
+[2025-06-05 15:41:14.773] [0m[0;34mAPP     :INFO :System Is set to Busy by FFF7
+[2025-06-05 15:41:14.774] [0m[0;34mAPP     :INFO :startTransaction( ): preMacAddress = FFF7 EndUserDetected Mac = FFF7, areaCheck = 1
+[2025-06-05 15:41:14.774] [0m[0;34mAPP     :INFO :no user switching, no need to do AddUserInDTPML
+[2025-06-05 15:41:14.774] [0m[0;34mAPP     :INFO :switchtoDynamicSTS uiDeviceIndex = FFF7
+[2025-06-05 15:41:14.774] [0m[0;34mAPP     :INFO :Auth search begin index = 0, detected index = 0
+[2025-06-05 15:41:14.774] [0m[0;34mAPP     :INFO :AuthDoneUsers[authIndex].DynamicSTSstarted = 1
+[2025-06-05 15:41:14.774] [0m[0;33mAPP     :WARN :@@@ Same user, no need to apply RDS and return.
+[2025-06-05 15:41:14.774] [0m[0;34mAPP     :INFO :@@@ Simple consumption to Read Card
+[2025-06-05 15:41:14.774] [0m[0;34mAPP     :INFO :Previous Transaction State of FFF7 was: 1
+[2025-06-05 15:41:14.774] [0m[0;34mAPP     :INFO :New Transaction State of FFF7 is: 2
+[2025-06-05 15:41:14.774] [0m[0;34mAPP     :INFO :Send data to SE :   :04130000 A404000E 32504159 2E535953 2E444446 30310D00 00A40400 08A00000 06320101 05050000 B095001C 11008050 03020B01 00000001 04090001 00010F
+[2025-06-05 15:41:14.774] [0m[0;34mTMLUWB  :TX > :SEND                :03004F00 03000002 FFF70000 00000000 02003F00 04130000 A404000E 32504159 2E535953 2E444446 30310D00 00A40400 08A00000 06320101 05050000 B095001C 11008050 03020B01 00000001 04090001 00010F
+[2025-06-05 15:41:14.774] [0m[0;32mTMLUWB  :RX < :RECV                :62040005 03000002 00
+[2025-06-05 15:41:14.774] [0m[0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00520006 000505FF F74000
+[2025-06-05 15:41:14.774] [0m[0;32mTMLUWB  :RX < :RECV                :62050008 03000002 00000101
+[2025-06-05 15:41:14.774] [0m[0;32mTMLUWB  :RX < :RECV                :62040005 03000002 01
+[2025-06-05 15:41:14.774] [0m[0;34mAPP     :INFO :common_start_quick_timer enter: timeout: 100 ms
+[2025-06-05 15:41:14.774] [0m
+[2025-06-05 15:41:14.774] [0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:14.774] [0mMaster_Distance_to_Slave=64
+[2025-06-05 15:41:14.774] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=64
+[2025-06-05 15:41:14.842] [0m{"@POSITION": 1, "Master": 30, "Slave": 64, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":5, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":2}
+[2025-06-05 15:41:14.843] [0;32mTMLUWB  :RX < :RECV                :0200A100 03000002 00FFF700 00000000 00BA0090 00041E00 6F1A840E 32504159 2E535953 2E444446 3031A508 9F080231 30890102 90003A00 6F368408 A0000006 32010105 A5269F08 0200309F 0C1E0221 5840FFFF FFFF0201 03104870 49412026 41652023 10312053 10310000 00000000 90001E00 02215840 FFFFFFFF 02010310 48704941 20264165 20231031 20531031 90001100 00002E32 1EA30000 0001007F 9CF7B590 00
+[2025-06-05 15:41:14.843] [0m[0;34mAPP     :INFO :gDtxSessionHandle!!!
+[2025-06-05 15:41:14.843] [0m[0;34mAPP     :INFO :uiCheckValidateState enter,CurrentSystem
+[2025-06-05 15:41:14.978] [0;32mTMLUWB  :RX < :RECV                :62000048 550E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:14.979] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:14.979] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:14.979] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:14.979] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:14.979] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:14.979] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:14.979] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:14.979] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 0 ,(cm/s)
+[2025-06-05 15:41:14.979] [0m[0;34mAPP     :INFO :@ b = 30, c = 64, x = 15, y = 18
+[2025-06-05 15:41:14.979] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:14.980] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:14.980] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:14.980] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:14.980] [0m
+[2025-06-05 15:41:14.980] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00530006 000505FF F73B00
+[2025-06-05 15:41:14.980] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:14.980] [0mMaster_Distance_to_Slave=59
+[2025-06-05 15:41:14.980] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=59
+[2025-06-05 15:41:14.980] [0m{"@POSITION": 1, "Master": 30, "Slave": 59, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":0, "User-X":15, "User-Y":18, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:15.240] [0;32mTMLUWB  :RX < :RECV                :62000048 560E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001C0000 00640000 64000000 00000003 7A000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:15.240] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:15.240] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:15.240] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:15.240] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:15.240] [0mMaster_Distance_to_FFF7=28
+[2025-06-05 15:41:15.240] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=28
+[2025-06-05 15:41:15.240] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:15.240] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 3 ,(cm/s)
+[2025-06-05 15:41:15.241] [0m[0;34mAPP     :INFO :@ b = 28, c = 59, x = 13, y = 24
+[2025-06-05 15:41:15.241] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:15.241] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:15.241] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:15.241] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:15.241] [0m
+[2025-06-05 15:41:15.241] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00540006 000505FF F73D00
+[2025-06-05 15:41:15.241] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:15.241] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:15.241] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:15.241] [0m{"@POSITION": 1, "Master": 28, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 61, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":13, "User-Y":24, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:15.504] [0;32mTMLUWB  :RX < :RECV                :62000048 570E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:15.505] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:15.505] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:15.505] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:15.505] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:15.505] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:15.505] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:15.505] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:15.505] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 0 ,(cm/s)
+[2025-06-05 15:41:15.505] [0m[0;34mAPP     :INFO :@ b = 30, c = 61, x = 14, y = 19
+[2025-06-05 15:41:15.505] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:15.505] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:15.505] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:15.505] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:15.505] [0m
+[2025-06-05 15:41:15.506] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00550006 000505FF F73B00
+[2025-06-05 15:41:15.506] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:15.506] [0mMaster_Distance_to_Slave=59
+[2025-06-05 15:41:15.506] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=59
+[2025-06-05 15:41:15.506] [0m{"@POSITION": 1, "Master": 30, "Slave": 59, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":0, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:15.749] [0;32mTMLUWB  :RX < :RECV                :62000048 580E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:15.749] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:15.750] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:15.750] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:15.751] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:15.751] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:15.751] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:15.751] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:15.751] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 5 ,(cm/s)
+[2025-06-05 15:41:15.751] [0m[0;34mAPP     :INFO :@ b = 30, c = 59, x = 12, y = 23
+[2025-06-05 15:41:15.751] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:15.751] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:15.751] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:15.751] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:15.751] [0m
+[2025-06-05 15:41:15.751] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00560006 000505FF F73E00
+[2025-06-05 15:41:15.751] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:15.751] [0mMaster_Distance_to_Slave=62
+[2025-06-05 15:41:15.751] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=62
+[2025-06-05 15:41:15.751] [0m{"@POSITION": 1, "Master": 30, "Slave": 62, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":5, "User-X":12, "User-Y":23, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:16.004] [0;32mTMLUWB  :RX < :RECV                :62000048 590E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001F0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:16.005] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:16.005] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:16.005] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:16.005] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:16.005] [0mMaster_Distance_to_FFF7=31
+[2025-06-05 15:41:16.005] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=31
+[2025-06-05 15:41:16.005] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:16.005] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 6 ,(cm/s)
+[2025-06-05 15:41:16.005] [0m[0;34mAPP     :INFO :@ b = 31, c = 62, x = 14, y = 18
+[2025-06-05 15:41:16.005] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:16.005] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:16.005] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:16.005] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:16.005] [0m
+[2025-06-05 15:41:16.005] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00570006 000505FF F73E00
+[2025-06-05 15:41:16.005] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:16.007] [0mMaster_Distance_to_Slave=62
+[2025-06-05 15:41:16.007] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=62
+[2025-06-05 15:41:16.007] [0m{"@POSITION": 1, "Master": 31, "Slave": 62, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":6, "User-X":14, "User-Y":18, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:16.218] [0;32mTMLUWB  :RX < :RECV                :62000048 5A0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7C000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:16.218] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:16.218] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:16.218] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:16.218] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:16.219] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:16.219] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:16.219] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:16.219] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 0 ,(cm/s)
+[2025-06-05 15:41:16.219] [0m[0;34mAPP     :INFO :@ b = 30, c = 62, x = 14, y = 19
+[2025-06-05 15:41:16.219] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:16.219] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:16.219] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:16.219] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:16.219] [0m
+[2025-06-05 15:41:16.219] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00580006 000505FF F73C00
+[2025-06-05 15:41:16.219] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:16.219] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:16.219] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:16.219] [0m{"@POSITION": 1, "Master": 30, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":0, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:16.511] [0;32mTMLUWB  :RX < :RECV                :62000048 5B0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 79000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:16.512] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:16.512] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:16.512] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:16.512] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:16.512] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:16.512] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:16.512] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:16.512] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:16.512] [0m[0;34mAPP     :INFO :@ b = 30, c = 60, x = 13, y = 21
+[2025-06-05 15:41:16.512] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:16.512] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:16.514] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:16.515] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:16.517] [0m
+[2025-06-05 15:41:16.517] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00590006 000505FF F73E00
+[2025-06-05 15:41:16.517] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:16.517] [0mMaster_Distance_to_Slave=62
+[2025-06-05 15:41:16.517] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=62
+[2025-06-05 15:41:16.517] [0m{"@POSITION": 1, "Master": 30, "Slave": 62, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 60, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":13, "User-Y":21, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:16.746] [0;32mTMLUWB  :RX < :RECV                :62000048 5C0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:16.748] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:16.748] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:16.748] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:16.748] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:16.748] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:16.748] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:16.748] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:16.748] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 1 ,(cm/s)
+[2025-06-05 15:41:16.748] [0m[0;34mAPP     :INFO :@ b = 30, c = 62, x = 14, y = 19
+[2025-06-05 15:41:16.748] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:16.748] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:16.748] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:16.749] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:16.749] [0m
+[2025-06-05 15:41:16.749] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 005A0006 000505FF F73E00
+[2025-06-05 15:41:16.749] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:16.749] [0mMaster_Distance_to_Slave=62
+[2025-06-05 15:41:16.749] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=62
+[2025-06-05 15:41:16.749] [0m{"@POSITION": 1, "Master": 30, "Slave": 62, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:17.016] [0;32mTMLUWB  :RX < :RECV                :62000048 5D0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001F0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:17.016] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:17.016] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:17.017] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:17.017] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:17.017] [0mMaster_Distance_to_FFF7=31
+[2025-06-05 15:41:17.017] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=31
+[2025-06-05 15:41:17.017] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:17.017] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 1 ,(cm/s)
+[2025-06-05 15:41:17.017] [0m[0;34mAPP     :INFO :@ b = 31, c = 62, x = 14, y = 18
+[2025-06-05 15:41:17.017] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:17.017] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:17.017] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:17.018] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:17.018] [0m
+[2025-06-05 15:41:17.018] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 005B0006 000505FF F73B00
+[2025-06-05 15:41:17.018] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:17.018] [0mMaster_Distance_to_Slave=59
+[2025-06-05 15:41:17.018] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=59
+[2025-06-05 15:41:17.018] [0m{"@POSITION": 1, "Master": 31, "Slave": 59, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":14, "User-Y":18, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:17.236] [0;32mTMLUWB  :RX < :RECV                :62000048 5E0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:17.236] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:17.237] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:17.237] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:17.237] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:17.237] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:17.237] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:17.237] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:17.237] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:17.237] [0m[0;34mAPP     :INFO :@ b = 30, c = 59, x = 12, y = 23
+[2025-06-05 15:41:17.237] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:17.237] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:17.237] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:17.237] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:17.238] [0m
+[2025-06-05 15:41:17.238] [0;32mTMLUWB  :RX < :RECV                :02001300 02000002 00BBBB00 00000000 005C0002 000105
+[2025-06-05 15:41:17.483] [0m[0;32mTMLUWB  :RX < :RECV                :62000048 5F0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:17.483] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:17.483] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:17.483] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:17.483] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:17.483] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:17.483] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:17.483] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:17.483] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 3 ,(cm/s)
+[2025-06-05 15:41:17.483] [0m[0;34mAPP     :INFO :@ b = 29, c = 59, x = 13, y = 22
+[2025-06-05 15:41:17.483] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:17.484] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:17.484] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:17.484] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:17.484] [0m
+[2025-06-05 15:41:17.484] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 005D0006 000505FF F74400
+[2025-06-05 15:41:17.484] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:17.484] [0mMaster_Distance_to_Slave=68
+[2025-06-05 15:41:17.484] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=68
+[2025-06-05 15:41:17.484] [0m{"@POSITION": 1, "Master": 29, "Slave": 68, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":13, "User-Y":22, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:17.733] [0;32mTMLUWB  :RX < :RECV                :62000048 600E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:17.733] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:17.733] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:17.733] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:17.733] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:17.733] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:17.734] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:17.734] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:17.734] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 6 ,(cm/s)
+[2025-06-05 15:41:17.734] [0m[0;34mAPP     :INFO :@ b = 29, c = 68, x = 18, y = 13
+[2025-06-05 15:41:17.734] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:17.734] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:17.734] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:17.734] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:17.734] [0m
+[2025-06-05 15:41:17.734] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 005E0006 000505FF F74000
+[2025-06-05 15:41:17.734] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:17.734] [0mMaster_Distance_to_Slave=64
+[2025-06-05 15:41:17.734] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=64
+[2025-06-05 15:41:17.734] [0m{"@POSITION": 1, "Master": 29, "Slave": 64, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 61, "RedAreaH": 0, "BlueAreaH": 250, "Speed":6, "User-X":18, "User-Y":13, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:17.995] [0;32mTMLUWB  :RX < :RECV                :62000048 610E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001B0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:17.995] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:17.995] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:17.995] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:17.995] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:17.996] [0mMaster_Distance_to_FFF7=27
+[2025-06-05 15:41:17.996] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=27
+[2025-06-05 15:41:17.996] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:17.996] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 5 ,(cm/s)
+[2025-06-05 15:41:17.996] [0m[0;34mAPP     :INFO :@ b = 27, c = 64, x = 16, y = 20
+[2025-06-05 15:41:17.996] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:17.996] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:17.996] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:17.996] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:17.996] [0m
+[2025-06-05 15:41:17.996] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 005F0006 000505FF F73F00
+[2025-06-05 15:41:17.997] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:17.997] [0mMaster_Distance_to_Slave=63
+[2025-06-05 15:41:17.997] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=63
+[2025-06-05 15:41:17.997] [0m{"@POSITION": 1, "Master": 27, "Slave": 63, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":5, "User-X":16, "User-Y":20, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:18.238] [0;32mTMLUWB  :RX < :RECV                :62000048 620E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001F0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:18.239] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:18.239] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:18.239] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:18.239] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:18.239] [0mMaster_Distance_to_FFF7=31
+[2025-06-05 15:41:18.239] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=31
+[2025-06-05 15:41:18.239] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:18.239] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 6 ,(cm/s)
+[2025-06-05 15:41:18.239] [0m[0;34mAPP     :INFO :@ b = 31, c = 63, x = 15, y = 16
+[2025-06-05 15:41:18.239] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:18.239] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:18.239] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:18.240] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:18.240] [0m
+[2025-06-05 15:41:18.240] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00600006 000505FF F74000
+[2025-06-05 15:41:18.240] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:18.240] [0mMaster_Distance_to_Slave=64
+[2025-06-05 15:41:18.240] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=64
+[2025-06-05 15:41:18.240] [0m{"@POSITION": 1, "Master": 31, "Slave": 64, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":6, "User-X":15, "User-Y":16, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:18.471] [0;32mTMLUWB  :RX < :RECV                :62000048 630E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:18.471] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:18.471] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:18.471] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:18.471] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:18.471] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:18.471] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:18.471] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:18.471] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 4 ,(cm/s)
+[2025-06-05 15:41:18.471] [0m[0;34mAPP     :INFO :@ b = 29, c = 64, x = 16, y = 17
+[2025-06-05 15:41:18.472] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:18.472] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:18.472] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:18.472] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:18.472] [0m
+[2025-06-05 15:41:18.472] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00610006 000505FF F73D00
+[2025-06-05 15:41:18.472] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:18.472] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:18.472] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:18.472] [0m{"@POSITION": 1, "Master": 29, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":4, "User-X":16, "User-Y":17, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:18.773] [0;32mTMLUWB  :RX < :RECV                :62000048 640E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:18.773] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:18.774] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:18.774] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:18.774] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:18.774] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:18.774] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:18.774] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:18.774] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:18.774] [0m[0;34mAPP     :INFO :@ b = 30, c = 61, x = 14, y = 19
+[2025-06-05 15:41:18.774] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:18.774] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:18.775] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:18.776] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:18.776] [0m
+[2025-06-05 15:41:18.776] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00620006 000505FF F73C00
+[2025-06-05 15:41:18.776] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:18.776] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:18.776] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:18.776] [0m{"@POSITION": 1, "Master": 30, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:18.975] [0;32mTMLUWB  :RX < :RECV                :62000048 650E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:18.975] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:18.975] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:18.977] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:18.977] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:18.977] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:18.977] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:18.977] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:18.978] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 5 ,(cm/s)
+[2025-06-05 15:41:18.978] [0m[0;34mAPP     :INFO :@ b = 30, c = 60, x = 13, y = 21
+[2025-06-05 15:41:18.978] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:18.978] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:18.978] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:18.978] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:18.978] [0m
+[2025-06-05 15:41:18.978] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00630006 000505FF F73F00
+[2025-06-05 15:41:18.978] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:18.979] [0mMaster_Distance_to_Slave=63
+[2025-06-05 15:41:18.979] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=63
+[2025-06-05 15:41:18.979] [0m{"@POSITION": 1, "Master": 30, "Slave": 63, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":5, "User-X":13, "User-Y":21, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:19.219] [0;32mTMLUWB  :RX < :RECV                :62000048 660E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:19.219] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:19.219] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:19.219] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:19.220] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:19.220] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:19.220] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:19.220] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:19.220] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 1 ,(cm/s)
+[2025-06-05 15:41:19.220] [0m[0;34mAPP     :INFO :@ b = 30, c = 63, x = 15, y = 18
+[2025-06-05 15:41:19.220] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:19.220] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:19.220] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:19.221] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:19.221] [0m
+[2025-06-05 15:41:19.221] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00640006 000505FF F73C00
+[2025-06-05 15:41:19.221] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:19.221] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:19.221] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:19.221] [0m{"@POSITION": 1, "Master": 30, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":15, "User-Y":18, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:19.485] [0;32mTMLUWB  :RX < :RECV                :62000048 670E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001D0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:19.485] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:19.485] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:19.485] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:19.485] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:19.485] [0mMaster_Distance_to_FFF7=29
+[2025-06-05 15:41:19.485] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=29
+[2025-06-05 15:41:19.485] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:19.485] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 3 ,(cm/s)
+[2025-06-05 15:41:19.486] [0m[0;34mAPP     :INFO :@ b = 29, c = 60, x = 13, y = 22
+[2025-06-05 15:41:19.486] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:19.486] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:19.486] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:19.486] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:19.486] [0m
+[2025-06-05 15:41:19.486] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00650006 000505FF F73E00
+[2025-06-05 15:41:19.486] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:19.486] [0mMaster_Distance_to_Slave=62
+[2025-06-05 15:41:19.487] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=62
+[2025-06-05 15:41:19.487] [0m{"@POSITION": 1, "Master": 29, "Slave": 62, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":3, "User-X":13, "User-Y":22, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:19.757] [0;32mTMLUWB  :RX < :RECV                :62000048 680E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:19.758] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:19.758] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:19.758] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:19.758] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:19.759] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:19.759] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:19.759] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:19.759] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:19.759] [0m[0;34mAPP     :INFO :@ b = 30, c = 62, x = 14, y = 19
+[2025-06-05 15:41:19.759] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:19.759] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:19.760] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:19.760] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:19.760] [0m
+[2025-06-05 15:41:19.760] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00660006 000505FF F73C00
+[2025-06-05 15:41:19.760] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:19.760] [0mMaster_Distance_to_Slave=60
+[2025-06-05 15:41:19.760] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=60
+[2025-06-05 15:41:19.760] [0m{"@POSITION": 1, "Master": 30, "Slave": 60, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":14, "User-Y":19, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:19.981] [0;32mTMLUWB  :RX < :RECV                :62000048 690E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001F0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:19.983] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:19.983] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:19.983] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:19.983] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:19.983] [0mMaster_Distance_to_FFF7=31
+[2025-06-05 15:41:19.983] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=31
+[2025-06-05 15:41:19.983] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:19.983] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:19.983] [0m[0;34mAPP     :INFO :@ b = 31, c = 60, x = 13, y = 20
+[2025-06-05 15:41:19.983] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:19.983] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:19.983] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:19.983] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:19.984] [0m
+[2025-06-05 15:41:19.984] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00670006 000505FF F73D00
+[2025-06-05 15:41:19.984] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:19.984] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:19.984] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:19.984] [0m{"@POSITION": 1, "Master": 31, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":13, "User-Y":20, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:20.227] [0;32mTMLUWB  :RX < :RECV                :62000048 6A0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001F0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:20.228] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:20.228] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:20.228] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:20.228] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:20.228] [0mMaster_Distance_to_FFF7=31
+[2025-06-05 15:41:20.228] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=31
+[2025-06-05 15:41:20.228] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:20.228] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:20.228] [0m[0;34mAPP     :INFO :@ b = 31, c = 61, x = 13, y = 20
+[2025-06-05 15:41:20.228] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:20.228] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:20.228] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:20.228] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:20.229] [0m
+[2025-06-05 15:41:20.229] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00680006 000505FF F73D00
+[2025-06-05 15:41:20.229] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:20.229] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:20.229] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:20.229] [0m{"@POSITION": 1, "Master": 31, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":13, "User-Y":20, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:20.472] [0;32mTMLUWB  :RX < :RECV                :62000048 6B0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001F0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:20.472] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:20.472] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:20.472] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:20.472] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:20.472] [0mMaster_Distance_to_FFF7=31
+[2025-06-05 15:41:20.472] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=31
+[2025-06-05 15:41:20.472] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:20.472] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 1 ,(cm/s)
+[2025-06-05 15:41:20.472] [0m[0;34mAPP     :INFO :@ b = 31, c = 61, x = 13, y = 20
+[2025-06-05 15:41:20.472] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:20.473] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:20.473] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:20.473] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:20.473] [0m
+[2025-06-05 15:41:20.473] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 00690006 000505FF F74100
+[2025-06-05 15:41:20.473] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:20.473] [0mMaster_Distance_to_Slave=65
+[2025-06-05 15:41:20.473] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=65
+[2025-06-05 15:41:20.473] [0m{"@POSITION": 1, "Master": 31, "Slave": 65, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":1, "User-X":13, "User-Y":20, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:20.748] [0;32mTMLUWB  :RX < :RECV                :62000048 6C0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7E000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:20.749] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:20.749] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:20.749] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:20.749] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:20.749] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:20.749] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:20.749] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:20.749] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 5 ,(cm/s)
+[2025-06-05 15:41:20.749] [0m[0;34mAPP     :INFO :@ b = 30, c = 65, x = 16, y = 16
+[2025-06-05 15:41:20.749] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:20.749] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:20.749] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:20.749] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:20.749] [0m
+[2025-06-05 15:41:20.749] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 006A0006 000505FF F74000
+[2025-06-05 15:41:20.749] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:20.750] [0mMaster_Distance_to_Slave=64
+[2025-06-05 15:41:20.750] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=64
+[2025-06-05 15:41:20.750] [0m{"@POSITION": 1, "Master": 30, "Slave": 64, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 63, "RedAreaH": 0, "BlueAreaH": 250, "Speed":5, "User-X":16, "User-Y":16, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:21.023] [0;32mTMLUWB  :RX < :RECV                :62000048 6D0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001E0000 00640000 64000000 00000003 7B000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:21.023] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:21.023] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:21.023] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:21.023] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:21.023] [0mMaster_Distance_to_FFF7=30
+[2025-06-05 15:41:21.023] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=30
+[2025-06-05 15:41:21.023] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:21.023] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 2 ,(cm/s)
+[2025-06-05 15:41:21.023] [0m[0;34mAPP     :INFO :@ b = 30, c = 64, x = 15, y = 18
+[2025-06-05 15:41:21.023] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:21.023] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:21.023] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:21.023] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:21.023] [0m
+[2025-06-05 15:41:21.024] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 006B0006 000505FF F73D00
+[2025-06-05 15:41:21.024] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:21.024] [0mMaster_Distance_to_Slave=61
+[2025-06-05 15:41:21.024] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=61
+[2025-06-05 15:41:21.024] [0m{"@POSITION": 1, "Master": 30, "Slave": 61, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 61, "RedAreaH": 0, "BlueAreaH": 250, "Speed":2, "User-X":15, "User-Y":18, "User-Z":0,"Auth":9, "Trans":4}
+[2025-06-05 15:41:21.209] [0;32mTMLUWB  :RX < :RECV                :62000048 6E0E0000 01000000 00FA0000 00010000 05000001 00000000 01FFF700 001F0000 00640000 64000000 00000003 7D000000 00000000 00000000 0E000000 00010300 01030000 00000000
+[2025-06-05 15:41:21.210] [0m[0;34mAPP     :INFO :@@@ updateKeepAlive( ): User[1] FFF7 Keep alive = 79
+[2025-06-05 15:41:21.210] [0m[0;34mAPP     :INFO :gCapSessionHandle!!!.
+[2025-06-05 15:41:21.212] [0m[0;34mAPP     :INFO :@@@ gNumberOfUserinDTPCM = 2, pRangingData->no_of_measurements = 1,i=0
+[2025-06-05 15:41:21.212] [0m[0;34mAPP     :INFO :Measure_NLOS = 0, Classification_NLOS =   0
+[2025-06-05 15:41:21.212] [0mMaster_Distance_to_FFF7=31
+[2025-06-05 15:41:21.212] [0;34mAPP     :INFO :Conten_Distance_MasterAnchor_to_FFF7=31
+[2025-06-05 15:41:21.212] [0m[0;34mAPP     :INFO :Current User ( fff7 ) status is : SystemStatus = 0 , DiscoverStatus = 5 , TransactionState = 4 , AuthenticationState = 9
+[2025-06-05 15:41:21.212] [0m[0;34mAPP     :INFO :@@@ User Speed is :( fff7 ) , 0 ,(cm/s)
+[2025-06-05 15:41:21.212] [0m[0;34mAPP     :INFO :@ b = 31, c = 61, x = 13, y = 20
+[2025-06-05 15:41:21.212] [0m[0;34mAPP     :INFO :@ a = 100, d = 100, m = 250, Gate = 100
+[2025-06-05 15:41:21.212] [0m[0;34mAPP     :INFO :################################### into red area...##################################################
+[2025-06-05 15:41:21.212] [0m[0;34mAPP     :INFO :Only 1 valid card detected, started transaction
+[2025-06-05 15:41:21.212] [0m[0;33mAPP     :WARN : Write Card Time < 10s. Return.
+[2025-06-05 15:41:21.212] [0m
+[2025-06-05 15:41:21.212] [0;32mTMLUWB  :RX < :RECV                :02001700 02000002 00BBBB00 00000000 006C0006 000505FF F73B00
+[2025-06-05 15:41:21.212] [0m[0;34mAPP     :INFO :gMrmSessionHandle_Test!!!
+[2025-06-05 15:41:21.212] [0mMaster_Distance_to_Slave=59
+[2025-06-05 15:41:21.213] [0;34mAPP     :INFO :Conten_Distance_SlaveAnchor[BBBB]_to_FFF7=59
+[2025-06-05 15:41:21.213] [0m{"@POSITION": 1, "Master": 31, "Slave": 59, "Gate": 100, "nLos": 0, "idx": 0, "LiftDeep": 62, "RedAreaH": 0, "BlueAreaH": 250, "Speed":0, "User-X":13, "User-Y":20, "User-Z":0,"Auth":9, "Trans":4}

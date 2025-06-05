@@ -1,7 +1,7 @@
 [project]
 name = "parameter-chart"
 version = "0.1.0"
-description = "CSV/Excel文件参数可视化工具"
+description = "CSV/Excel file parameter visualization tool"
 readme = "README.md"
 requires-python = ">=3.11"
 dependencies = [
@@ -11,5 +11,7 @@ dependencies = [
     "pyqt6-webengine>=6.5.0",
     "pyecharts>=2.0.0",
     "snapshot-phantomjs>=0.0.1",
-    "openpyxl>=3.1.0",  # 用于Excel文件读取
+    "openpyxl>=3.1.0", # For Excel file reading
+    "nuitka>=2.7.6",
+    "imageio>=2.37.0",
 ]

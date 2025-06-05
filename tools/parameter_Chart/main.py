@@ -6,7 +6,8 @@ import webbrowser
 from PyQt6.QtWidgets import (QApplication, QMainWindow, QPushButton, QVBoxLayout, QHBoxLayout, 
                              QWidget, QFileDialog, QLabel, QListWidget, QListWidgetItem,
                              QProgressBar, QMessageBox, QSplitter, QFrame, QTableView,
-                             QGroupBox, QComboBox, QTabWidget, QTextEdit, QSizePolicy, QStyleFactory)
+                             QGroupBox, QComboBox, QTabWidget, QTextEdit, QSizePolicy, QStyleFactory, QAbstractItemView, QHeaderView,
+                             QDialog, QFormLayout, QSpinBox, QCheckBox, QColorDialog, QSlider)
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QMimeData, QAbstractTableModel
 from PyQt6.QtGui import QDragEnterEvent, QDropEvent, QIcon, QColor, QFont
 
@@ -14,7 +15,7 @@ import pyecharts.options as opts
 from pyecharts.charts import Line, Boxplot, Bar, Scatter
 from pyecharts.globals import ThemeType
 
-# 数据表格模型
+# Data table model
 class DataTableModel(QAbstractTableModel):
     def __init__(self, data):
         super().__init__()
@@ -43,66 +44,67 @@ class DataTableModel(QAbstractTableModel):
                 return str(section + 1)
         return None
 
-# 数据处理线程
+# Data processing thread
 class DataProcessThread(QThread):
     progress_signal = pyqtSignal(int)
     finished_signal = pyqtSignal(list)
     error_signal = pyqtSignal(str)
     
-    def __init__(self, file_path, selected_columns, html_dir, chart_type):
+    def __init__(self, file_path, selected_columns, html_dir, chart_type, style_config):
         super().__init__()
         self.file_path = file_path
         self.selected_columns = selected_columns
         self.html_dir = html_dir
         self.chart_type = chart_type
+        self.style_config = style_config
         
     def run(self):
         try:
-            # 根据文件扩展名读取数据
+            # Read data based on file extension
             file_ext = os.path.splitext(self.file_path)[1].lower()
             if file_ext == '.csv':
                 data = pd.read_csv(self.file_path, sep=',', header=0)
             elif file_ext in ['.xlsx', '.xls']:
                 data = pd.read_excel(self.file_path)
             else:
-                self.error_signal.emit(f"不支持的文件格式: {file_ext}")
+                self.error_signal.emit(f"Unsupported file format: {file_ext}")
                 return
                 
-            # 检查数据是否为空
+            # Check if data is empty
             if data.empty:
-                self.error_signal.emit("数据为空")
+                self.error_signal.emit("Data is empty")
                 return
                 
-            # 确保HTML目录存在
+            # Ensure HTML directory exists
             os.makedirs(self.html_dir, exist_ok=True)
             
-            # 生成的HTML文件路径列表
+            # List of generated HTML file paths
             html_files = []
             
-            # 处理每个选定的列
+            # Process each selected column
             total_columns = len(self.selected_columns)
             
-            # 初始进度
+            # Initial progress
             self.progress_signal.emit(5)
-            self.msleep(200)  # 延时200毫秒
+            self.msleep(200)  # Delay 200ms
             
             for i, column in enumerate(self.selected_columns):
                 if column not in data.columns:
                     continue
                     
-                # 开始处理当前列的进度 (5% 到 85%)
+                # Progress for current column (5% to 85%)
                 start_progress = int(5 + (i / total_columns) * 80)
                 self.progress_signal.emit(start_progress)
-                self.msleep(300)  # 延时300毫秒
+                self.msleep(300)  # Delay 300ms
                 
-                # 根据图表类型创建图表
-                if self.chart_type == "折线图":
+                # Create chart based on chart type
+                if self.chart_type == "Line Chart":
                     html_path = self.create_line_chart(data, column)
-                elif self.chart_type == "柱状图":
+                elif self.chart_type == "Bar Chart":
                     html_path = self.create_bar_chart(data, column)
-                elif self.chart_type == "散点图":
+                elif self.chart_type == "Scatter Chart":
                     html_path = self.create_scatter_chart(data, column)
-                elif self.chart_type == "箱线图":
+                elif self.chart_type == "Box Chart":
                     html_path = self.create_box_chart(data, column)
                 else:
                     html_path = self.create_line_chart(data, column)
@@ -110,45 +112,70 @@ class DataProcessThread(QThread):
                 if html_path:
                     html_files.append(html_path)
                 
-                # 图表生成完成后更新进度
+                # Update progress after chart generation
                 end_progress = int(5 + ((i + 1) / total_columns) * 80)
                 self.progress_signal.emit(end_progress)
-                self.msleep(200)  # 延时200毫秒
+                self.msleep(200)  # Delay 200ms
                 
-            # 最终完成进度
+            # Final completion progress
             self.progress_signal.emit(95)
             self.msleep(300)
             self.progress_signal.emit(100)
-            self.msleep(500)  # 完成后保持一段时间
+            self.msleep(500)  # Hold for a while after completion
             self.finished_signal.emit(html_files)
             
         except Exception as e:
-            self.error_signal.emit(f"处理数据时出错: {str(e)}")
+            self.error_signal.emit(f"Error processing data: {str(e)}")
     
     def create_line_chart(self, data, column):
         try:
             x_data = list(range(len(data)))
             y_data = data[column].tolist()
             
+            # Get theme
+            theme_map = {
+                'MACARONS': ThemeType.MACARONS,
+                'INFOGRAPHIC': ThemeType.INFOGRAPHIC,
+                'LIGHT': ThemeType.LIGHT,
+                'DARK': ThemeType.DARK,
+                'ROMANTIC': ThemeType.ROMANTIC,
+                'SHINE': ThemeType.SHINE,
+                'VINTAGE': ThemeType.VINTAGE
+            }
+            theme = theme_map.get(self.style_config['theme'], ThemeType.MACARONS)
+            
             c = (
-                Line(init_opts=opts.InitOpts(width="800px", height="500px", theme=ThemeType.MACARONS))
+                Line(init_opts=opts.InitOpts(
+                    width=f"{self.style_config['width']}px", 
+                    height=f"{self.style_config['height']}px", 
+                    theme=theme,
+                    animation_opts=opts.AnimationOpts(animation=self.style_config['animation'])
+                ))
                 .add_xaxis(xaxis_data=x_data)
                 .add_yaxis(
                     series_name=column,
                     y_axis=y_data,
-                    is_smooth=True,
-                    areastyle_opts=opts.AreaStyleOpts(opacity=0.3),
-                    label_opts=opts.LabelOpts(is_show=False),  # 隐藏数据点标签
+                    is_smooth=self.style_config['line_smooth'],
+                    areastyle_opts=opts.AreaStyleOpts(opacity=self.style_config['area_opacity']),
+                    label_opts=opts.LabelOpts(is_show=self.style_config['show_labels']),
                 )
                 .set_global_opts(
-                    title_opts=opts.TitleOpts(title=f"{column}"),
-                    xaxis_opts=opts.AxisOpts(name="索引"),
+                    title_opts=opts.TitleOpts(title=f"{column}" if self.style_config['show_title'] else ""),
+                    xaxis_opts=opts.AxisOpts(name="Index"),
                     yaxis_opts=opts.AxisOpts(name=column),
-                    datazoom_opts=[opts.DataZoomOpts()],
+                    datazoom_opts=[opts.DataZoomOpts()] if self.style_config['show_datazoom'] else None,
                     tooltip_opts=opts.TooltipOpts(trigger="axis"),
-                    toolbox_opts=opts.ToolboxOpts(is_show=True, 
-                                                feature=opts.ToolBoxFeatureOpts(save_as_image=opts.ToolBoxFeatureSaveAsImageOpts(background_color="white",pixel_ratio=3))),
-                    visualmap_opts=opts.VisualMapOpts(is_show=True),
+                    toolbox_opts=opts.ToolboxOpts(
+                        is_show=self.style_config['show_toolbox'], 
+                        feature=opts.ToolBoxFeatureOpts(
+                            save_as_image=opts.ToolBoxFeatureSaveAsImageOpts(
+                                background_color=self.style_config['background_color'],
+                                pixel_ratio=3
+                            )
+                        )
+                    ) if self.style_config['show_toolbox'] else None,
+                    visualmap_opts=opts.VisualMapOpts(is_show=self.style_config['show_visualmap']) if self.style_config['show_visualmap'] else None,
+                    legend_opts=opts.LegendOpts(is_show=True),
                 )
             )
             
@@ -157,7 +184,7 @@ class DataProcessThread(QThread):
             c.render(html_path)
             return html_path
         except Exception as e:
-            self.error_signal.emit(f"创建折线图时出错 {column}: {str(e)}")
+            self.error_signal.emit(f"Error creating line chart {column}: {str(e)}")
             return None
     
     def create_bar_chart(self, data, column):
@@ -165,19 +192,48 @@ class DataProcessThread(QThread):
             x_data = list(range(len(data)))
             y_data = data[column].tolist()
             
+            # Get theme
+            theme_map = {
+                'MACARONS': ThemeType.MACARONS,
+                'INFOGRAPHIC': ThemeType.INFOGRAPHIC,
+                'LIGHT': ThemeType.LIGHT,
+                'DARK': ThemeType.DARK,
+                'ROMANTIC': ThemeType.ROMANTIC,
+                'SHINE': ThemeType.SHINE,
+                'VINTAGE': ThemeType.VINTAGE
+            }
+            theme = theme_map.get(self.style_config['theme'], ThemeType.MACARONS)
+            
             c = (
-                Bar(init_opts=opts.InitOpts(width="800px", height="500px", theme=ThemeType.MACARONS))
+                Bar(init_opts=opts.InitOpts(
+                    width=f"{self.style_config['width']}px", 
+                    height=f"{self.style_config['height']}px", 
+                    theme=theme,
+                    animation_opts=opts.AnimationOpts(animation=self.style_config['animation'])
+                ))
                 .add_xaxis(xaxis_data=x_data)
-                .add_yaxis(series_name=column, y_axis=y_data, label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis(
+                    series_name=column, 
+                    y_axis=y_data, 
+                    label_opts=opts.LabelOpts(is_show=self.style_config['show_labels'])
+                )
                 .set_global_opts(
-                    title_opts=opts.TitleOpts(title=f"{column}"),
-                    xaxis_opts=opts.AxisOpts(name="索引"),
+                    title_opts=opts.TitleOpts(title=f"{column}" if self.style_config['show_title'] else ""),
+                    xaxis_opts=opts.AxisOpts(name="Index"),
                     yaxis_opts=opts.AxisOpts(name=column),
-                    datazoom_opts=[opts.DataZoomOpts()],
+                    datazoom_opts=[opts.DataZoomOpts()] if self.style_config['show_datazoom'] else None,
                     tooltip_opts=opts.TooltipOpts(trigger="axis"),
-                    toolbox_opts=opts.ToolboxOpts(is_show=True, 
-                                                feature=opts.ToolBoxFeatureOpts(save_as_image=opts.ToolBoxFeatureSaveAsImageOpts(background_color="white",pixel_ratio=3))),
-                    visualmap_opts=opts.VisualMapOpts(is_show=True),
+                    toolbox_opts=opts.ToolboxOpts(
+                        is_show=self.style_config['show_toolbox'], 
+                        feature=opts.ToolBoxFeatureOpts(
+                            save_as_image=opts.ToolBoxFeatureSaveAsImageOpts(
+                                background_color=self.style_config['background_color'],
+                                pixel_ratio=3
+                            )
+                        )
+                    ) if self.style_config['show_toolbox'] else None,
+                    visualmap_opts=opts.VisualMapOpts(is_show=self.style_config['show_visualmap']) if self.style_config['show_visualmap'] else None,
+                    legend_opts=opts.LegendOpts(is_show=True),
                 )
             )
             
@@ -186,7 +242,7 @@ class DataProcessThread(QThread):
             c.render(html_path)
             return html_path
         except Exception as e:
-            self.error_signal.emit(f"创建柱状图时出错 {column}: {str(e)}")
+            self.error_signal.emit(f"Error creating bar chart {column}: {str(e)}")
             return None
     
     def create_scatter_chart(self, data, column):
@@ -195,19 +251,48 @@ class DataProcessThread(QThread):
             y_data = data[column].tolist()
             scatter_data = list(zip(x_data, y_data))
             
+            # Get theme
+            theme_map = {
+                'MACARONS': ThemeType.MACARONS,
+                'INFOGRAPHIC': ThemeType.INFOGRAPHIC,
+                'LIGHT': ThemeType.LIGHT,
+                'DARK': ThemeType.DARK,
+                'ROMANTIC': ThemeType.ROMANTIC,
+                'SHINE': ThemeType.SHINE,
+                'VINTAGE': ThemeType.VINTAGE
+            }
+            theme = theme_map.get(self.style_config['theme'], ThemeType.MACARONS)
+            
             c = (
-                Scatter(init_opts=opts.InitOpts(width="800px", height="500px", theme=ThemeType.MACARONS))
+                Scatter(init_opts=opts.InitOpts(
+                    width=f"{self.style_config['width']}px", 
+                    height=f"{self.style_config['height']}px", 
+                    theme=theme,
+                    animation_opts=opts.AnimationOpts(animation=self.style_config['animation'])
+                ))
                 .add_xaxis(xaxis_data=x_data)
-                .add_yaxis(series_name=column, y_axis=y_data, label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis(
+                    series_name=column, 
+                    y_axis=y_data, 
+                    label_opts=opts.LabelOpts(is_show=self.style_config['show_labels'])
+                )
                 .set_global_opts(
-                    title_opts=opts.TitleOpts(title=f"{column}"),
-                    xaxis_opts=opts.AxisOpts(name="索引"),
+                    title_opts=opts.TitleOpts(title=f"{column}" if self.style_config['show_title'] else ""),
+                    xaxis_opts=opts.AxisOpts(name="Index"),
                     yaxis_opts=opts.AxisOpts(name=column),
-                    datazoom_opts=[opts.DataZoomOpts()],
+                    datazoom_opts=[opts.DataZoomOpts()] if self.style_config['show_datazoom'] else None,
                     tooltip_opts=opts.TooltipOpts(trigger="item"),
-                    toolbox_opts=opts.ToolboxOpts(is_show=True, 
-                                                feature=opts.ToolBoxFeatureOpts(save_as_image=opts.ToolBoxFeatureSaveAsImageOpts(background_color="white",pixel_ratio=3))),
-                    visualmap_opts=opts.VisualMapOpts(is_show=True),
+                    toolbox_opts=opts.ToolboxOpts(
+                        is_show=self.style_config['show_toolbox'], 
+                        feature=opts.ToolBoxFeatureOpts(
+                            save_as_image=opts.ToolBoxFeatureSaveAsImageOpts(
+                                background_color=self.style_config['background_color'],
+                                pixel_ratio=3
+                            )
+                        )
+                    ) if self.style_config['show_toolbox'] else None,
+                    visualmap_opts=opts.VisualMapOpts(is_show=self.style_config['show_visualmap']) if self.style_config['show_visualmap'] else None,
+                    legend_opts=opts.LegendOpts(is_show=True),
                 )
             )
             
@@ -216,23 +301,52 @@ class DataProcessThread(QThread):
             c.render(html_path)
             return html_path
         except Exception as e:
-            self.error_signal.emit(f"创建散点图时出错 {column}: {str(e)}")
+            self.error_signal.emit(f"Error creating scatter chart {column}: {str(e)}")
             return None
     
     def create_box_chart(self, data, column):
         try:
             y_data = data[column].tolist()
             
+            # Get theme
+            theme_map = {
+                'MACARONS': ThemeType.MACARONS,
+                'INFOGRAPHIC': ThemeType.INFOGRAPHIC,
+                'LIGHT': ThemeType.LIGHT,
+                'DARK': ThemeType.DARK,
+                'ROMANTIC': ThemeType.ROMANTIC,
+                'SHINE': ThemeType.SHINE,
+                'VINTAGE': ThemeType.VINTAGE
+            }
+            theme = theme_map.get(self.style_config['theme'], ThemeType.MACARONS)
+            
             c = (
-                Boxplot(init_opts=opts.InitOpts(width="800px", height="500px", theme=ThemeType.MACARONS))
+                Boxplot(init_opts=opts.InitOpts(
+                    width=f"{self.style_config['width']}px", 
+                    height=f"{self.style_config['height']}px", 
+                    theme=theme,
+                    animation_opts=opts.AnimationOpts(animation=self.style_config['animation'])
+                ))
                 .add_xaxis([column])
-                .add_yaxis(series_name=column, y_axis=[y_data], label_opts=opts.LabelOpts(is_show=False))
+                .add_yaxis(
+                    series_name=column, 
+                    y_axis=[y_data], 
+                    label_opts=opts.LabelOpts(is_show=self.style_config['show_labels'])
+                )
                 .set_global_opts(
-                    title_opts=opts.TitleOpts(title=f"{column}"),
+                    title_opts=opts.TitleOpts(title=f"{column}" if self.style_config['show_title'] else ""),
                     tooltip_opts=opts.TooltipOpts(trigger="item"),
-                    toolbox_opts=opts.ToolboxOpts(is_show=True, 
-                                                feature=opts.ToolBoxFeatureOpts(save_as_image=opts.ToolBoxFeatureSaveAsImageOpts(background_color="white",pixel_ratio=3))),
-                    visualmap_opts=opts.VisualMapOpts(is_show=True),
+                    toolbox_opts=opts.ToolboxOpts(
+                        is_show=self.style_config['show_toolbox'], 
+                        feature=opts.ToolBoxFeatureOpts(
+                            save_as_image=opts.ToolBoxFeatureSaveAsImageOpts(
+                                background_color=self.style_config['background_color'],
+                                pixel_ratio=3
+                            )
+                        )
+                    ) if self.style_config['show_toolbox'] else None,
+                    visualmap_opts=opts.VisualMapOpts(is_show=self.style_config['show_visualmap']) if self.style_config['show_visualmap'] else None,
+                    legend_opts=opts.LegendOpts(is_show=True),
                 )
             )
             
@@ -241,10 +355,169 @@ class DataProcessThread(QThread):
             c.render(html_path)
             return html_path
         except Exception as e:
-            self.error_signal.emit(f"创建箱线图时出错 {column}: {str(e)}")
+            self.error_signal.emit(f"Error creating box chart {column}: {str(e)}")
             return None
 
-# 主窗口类
+# Style configuration dialog
+class StyleConfigDialog(QDialog):
+    def __init__(self, parent=None, config=None):
+        super().__init__(parent)
+        self.config = config.copy() if config else {}
+        self.init_ui()
+        
+    def init_ui(self):
+        self.setWindowTitle("Style Config")
+        self.setFixedSize(400, 500)
+        self.setModal(True)
+        
+        layout = QVBoxLayout()
+        form_layout = QFormLayout()
+        
+        # Chart size settings
+        size_group = QGroupBox("Chart Size")
+        size_layout = QFormLayout()
+        
+        self.width_spin = QSpinBox()
+        self.width_spin.setRange(400, 1920)
+        self.width_spin.setValue(self.config.get('width', 800))
+        self.width_spin.setSuffix(" px")
+        self.width_spin.setSingleStep(50)
+        size_layout.addRow("Width:", self.width_spin)
+        
+        self.height_spin = QSpinBox()
+        self.height_spin.setRange(300, 1080)
+        self.height_spin.setValue(self.config.get('height', 500))
+        self.height_spin.setSuffix(" px")
+        self.height_spin.setSingleStep(50)
+        size_layout.addRow("Height:", self.height_spin)
+        
+        size_group.setLayout(size_layout)
+        layout.addWidget(size_group)
+        
+        # Theme settings
+        theme_group = QGroupBox("Theme Style")
+        theme_layout = QFormLayout()
+        
+        self.theme_combo = QComboBox()
+        themes = ['MACARONS', 'INFOGRAPHIC', 'LIGHT', 'DARK', 'ROMANTIC', 'SHINE', 'VINTAGE']
+        self.theme_combo.addItems(themes)
+        current_theme = self.config.get('theme', 'MACARONS')
+        if current_theme in themes:
+            self.theme_combo.setCurrentText(current_theme)
+        theme_layout.addRow("Theme:", self.theme_combo)
+        
+        theme_group.setLayout(theme_layout)
+        layout.addWidget(theme_group)
+        
+        # Display components settings
+        display_group = QGroupBox("Display Components")
+        display_layout = QFormLayout()
+        
+        self.show_title_check = QCheckBox()
+        self.show_title_check.setChecked(self.config.get('show_title', True))
+        display_layout.addRow("Show Title:", self.show_title_check)
+        
+        self.show_toolbox_check = QCheckBox()
+        self.show_toolbox_check.setChecked(self.config.get('show_toolbox', True))
+        display_layout.addRow("Show Toolbox:", self.show_toolbox_check)
+        
+        self.show_datazoom_check = QCheckBox()
+        self.show_datazoom_check.setChecked(self.config.get('show_datazoom', True))
+        display_layout.addRow("Show Zoom:", self.show_datazoom_check)
+        
+        self.show_visualmap_check = QCheckBox()
+        self.show_visualmap_check.setChecked(self.config.get('show_visualmap', True))
+        display_layout.addRow("Show Visual Map:", self.show_visualmap_check)
+        
+        self.show_labels_check = QCheckBox()
+        self.show_labels_check.setChecked(self.config.get('show_labels', False))
+        display_layout.addRow("Show Labels:", self.show_labels_check)
+        
+        self.animation_check = QCheckBox()
+        self.animation_check.setChecked(self.config.get('animation', True))
+        display_layout.addRow("Enable Animation:", self.animation_check)
+        
+        display_group.setLayout(display_layout)
+        layout.addWidget(display_group)
+        
+        # Line chart special settings
+        line_group = QGroupBox("Line Chart Settings")
+        line_layout = QFormLayout()
+        
+        self.line_smooth_check = QCheckBox()
+        self.line_smooth_check.setChecked(self.config.get('line_smooth', True))
+        line_layout.addRow("Smooth Curve:", self.line_smooth_check)
+        
+        self.area_opacity_slider = QSlider(Qt.Orientation.Horizontal)
+        self.area_opacity_slider.setRange(0, 100)
+        self.area_opacity_slider.setValue(int(self.config.get('area_opacity', 0.3) * 100))
+        self.area_opacity_label = QLabel(f"{self.area_opacity_slider.value()}%")
+        self.area_opacity_slider.valueChanged.connect(
+            lambda v: self.area_opacity_label.setText(f"{v}%")
+        )
+        
+        area_layout = QHBoxLayout()
+        area_layout.addWidget(self.area_opacity_slider)
+        area_layout.addWidget(self.area_opacity_label)
+        area_widget = QWidget()
+        area_widget.setLayout(area_layout)
+        line_layout.addRow("Area Opacity:", area_widget)
+        
+        line_group.setLayout(line_layout)
+        layout.addWidget(line_group)
+        
+        # Buttons
+        button_layout = QHBoxLayout()
+        
+        self.ok_button = QPushButton("OK")
+        self.ok_button.clicked.connect(self.accept)
+        
+        self.cancel_button = QPushButton("Cancel")
+        self.cancel_button.clicked.connect(self.reject)
+        
+        self.reset_button = QPushButton("Reset")
+        self.reset_button.clicked.connect(self.reset_config)
+        
+        button_layout.addWidget(self.reset_button)
+        button_layout.addStretch()
+        button_layout.addWidget(self.cancel_button)
+        button_layout.addWidget(self.ok_button)
+        
+        layout.addLayout(button_layout)
+        self.setLayout(layout)
+        
+    def get_config(self):
+        """Get current configuration"""
+        return {
+            'width': self.width_spin.value(),
+            'height': self.height_spin.value(),
+            'theme': self.theme_combo.currentText(),
+            'show_title': self.show_title_check.isChecked(),
+            'show_toolbox': self.show_toolbox_check.isChecked(),
+            'show_datazoom': self.show_datazoom_check.isChecked(),
+            'show_visualmap': self.show_visualmap_check.isChecked(),
+            'line_smooth': self.line_smooth_check.isChecked(),
+            'area_opacity': self.area_opacity_slider.value() / 100.0,
+            'show_labels': self.show_labels_check.isChecked(),
+            'animation': self.animation_check.isChecked(),
+            'background_color': 'white'
+        }
+        
+    def reset_config(self):
+        """Reset to default configuration"""
+        self.width_spin.setValue(800)
+        self.height_spin.setValue(500)
+        self.theme_combo.setCurrentText('MACARONS')
+        self.show_title_check.setChecked(True)
+        self.show_toolbox_check.setChecked(True)
+        self.show_datazoom_check.setChecked(True)
+        self.show_visualmap_check.setChecked(True)
+        self.line_smooth_check.setChecked(True)
+        self.area_opacity_slider.setValue(30)
+        self.show_labels_check.setChecked(False)
+        self.animation_check.setChecked(True)
+
+# Main application class
 class ParameterChartApp(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -254,10 +527,31 @@ class ParameterChartApp(QMainWindow):
         self.html_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), "HTML")
         os.makedirs(self.html_dir, exist_ok=True)
         
+        # Default style configuration values
+        self.style_config = {
+            'width': 800,
+            'height': 500,
+            'theme': 'MACARONS',
+            'show_title': True,
+            'show_toolbox': True,
+            'show_datazoom': True,
+            'show_visualmap': True,
+            'line_smooth': True,
+            'area_opacity': 0.3,
+            'show_labels': False,
+            'animation': True,
+            'background_color': 'white'
+        }
+        
     def init_ui(self):
-        # 设置窗口属性和样式
-        self.setWindowTitle("参数报告生成")
+        # Set window properties and styles
+        self.setWindowTitle("Parameter Chart Generator")
         self.setGeometry(100, 100, 630, 350)
+        
+        # Set window icon
+        icon_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), "logo.ico")
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
         self.setStyleSheet("""
             QMainWindow {
                 background-color: #f8f9fa;
@@ -281,10 +575,9 @@ class ParameterChartApp(QMainWindow):
                 font-weight: bold;
             }
             QPushButton {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                    stop:0 #4a90e2, stop:1 #357abd);
-                border: 2px solid #357abd;
-                color: white;
+                background: #acc8e8;
+                border: 2px solid #acc8e8;
+                color: black;
                 border-radius: 8px;
                 font-size: 12px;
                 font-family: "Microsoft YaHei UI", "Microsoft YaHei", "PingFang SC", "Helvetica Neue", Arial, sans-serif;
@@ -298,19 +591,11 @@ class ParameterChartApp(QMainWindow):
                     stop:0 #5ba0f2, stop:1 #4a90e2);
                 border: 2px solid #4a90e2;
             }
-            QPushButton:pressed {
-                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                    stop:0 #357abd, stop:1 #2968a3);
-                border: 2px solid #2968a3;
-            }
             QPushButton:disabled {
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                     stop:0 #a0a0a0, stop:1 #808080);
                 border: 2px solid #808080;
                 color: #f0f0f0;
-            }
-            QPushButton:focus {
-                border: 2px solid #66afe9;
             }
             QComboBox {
                 border: 1px solid #ced4da;
@@ -382,71 +667,83 @@ class ParameterChartApp(QMainWindow):
             }
         """)
         
-        # 创建主布局
+        # Create main layout
         main_layout = QVBoxLayout()
         
-        # 文件选择区域（极简紧凑布局）
-        file_group = QGroupBox("文件选择")
-        file_group.setMaximumHeight(60)  # 限制最大高度
+        # File selection area (minimalist compact layout)
+        file_group = QGroupBox("File Selection")
+        file_group.setMaximumHeight(60)  # Limit maximum height
         file_layout = QHBoxLayout(file_group)
-        file_layout.setContentsMargins(5, 5, 5, 5)  # 减少边距
+        file_layout.setContentsMargins(5, 5, 5, 5)  # Reduce margins
         file_layout.setSpacing(8)
         
-        self.file_label = QLabel("未选择文件")
+        self.file_label = QLabel("No file selected")
         self.file_label.setWordWrap(True)
         self.file_label.setStyleSheet("color: #6c757d; font-size: 11px;")
         
-        self.browse_button = QPushButton("浏览")
-        self.browse_button.setFixedSize(50, 20)  # 固定按钮大小
+        self.browse_button = QPushButton("open")
+        self.browse_button.setFixedSize(50, 20)  # Fixed button size
         self.browse_button.clicked.connect(self.browse_file)
         
         file_layout.addWidget(self.file_label, 1)
         file_layout.addWidget(self.browse_button, 0)
         
-        # 数据预览区域（核心位置，增大高度）
-        preview_group = QGroupBox("数据预览")
+        # Data preview area (core position, increased height)
+        preview_group = QGroupBox("Data Preview")
         preview_layout = QVBoxLayout(preview_group)
         preview_layout.setContentsMargins(8, 8, 8, 8)
         
-        self.info_label = QLabel("请选择文件以查看数据信息")
+        self.info_label = QLabel("Please select a file to view data information")
         self.info_label.setStyleSheet("color: #6c757d; font-style: italic; font-size: 11px;")
         preview_layout.addWidget(self.info_label)
         
         self.table_view = QTableView()
-        self.table_view.setMinimumHeight(250)  # 增加表格最小高度
+        self.table_view.setMinimumHeight(250)  # Increase table minimum height
         self.table_view.hide()
+        # Allow column selection by clicking table header
+        self.table_view.horizontalHeader().setSectionsClickable(True)
+        self.table_view.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectColumns)
+        self.table_view.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
         preview_layout.addWidget(self.table_view)
         
-        # 控制区域（紧凑布局）
-        control_group = QGroupBox("图表设置")
-        control_group.setMaximumHeight(80)  # 限制控制区域高度
+        # Control area (compact layout)
+        control_group = QGroupBox("Chart Settings")
+        control_group.setMaximumHeight(80)  # Limit control area height
         control_layout = QVBoxLayout(control_group)
         control_layout.setContentsMargins(8, 5, 8, 5)
         control_layout.setSpacing(5)
         
-        # 列选择和图表类型在同一行
+        # Column selection and chart type on the same row
         settings_layout = QHBoxLayout()
         settings_layout.setSpacing(10)
         
-        # 列选择（使用下拉框代替列表）
-        settings_layout.addWidget(QLabel("选择列:"))
-        self.columns_combo = QComboBox()
-        self.columns_combo.setMinimumWidth(120)
-        settings_layout.addWidget(self.columns_combo)
+        # Remove QListWidget related code
+        # settings_layout.addWidget(QLabel("Select columns:"))
+        # self.columns_list_widget = QListWidget()
+        # self.columns_list_widget.setSelectionMode(QAbstractItemView.SelectionMode.MultiSelection)
+        # self.columns_list_widget.setMinimumWidth(120)
+        # self.columns_list_widget.setMaximumHeight(50) # Limit height to fit original layout
+        # settings_layout.addWidget(self.columns_list_widget)
         
-        settings_layout.addWidget(QLabel("图表类型:"))
+        settings_layout.addWidget(QLabel("Chart Type:"))
         self.chart_type_combo = QComboBox()
-        self.chart_type_combo.addItems(["折线图", "柱状图", "散点图", "箱线图"])
+        self.chart_type_combo.addItems(["Line Chart", "Bar Chart", "Scatter Chart", "Box Chart"])
         self.chart_type_combo.setMinimumWidth(100)
         settings_layout.addWidget(self.chart_type_combo)
+        
+        # Style settings button
+        self.style_button = QPushButton("🎨")
+        self.style_button.clicked.connect(self.open_style_dialog)
+        self.style_button.setMinimumWidth(80)
+        settings_layout.addWidget(self.style_button)
         
         settings_layout.addStretch()
         control_layout.addLayout(settings_layout)
         
-        # 生成按钮和进度条
+        # Generate button and progress bar
         action_layout = QHBoxLayout()
         
-        self.generate_button = QPushButton("生成图表")
+        self.generate_button = QPushButton("Generate Charts")
         self.generate_button.clicked.connect(self.generate_charts)
         self.generate_button.setEnabled(False)
         
@@ -464,22 +761,29 @@ class ParameterChartApp(QMainWindow):
         
         control_layout.addLayout(action_layout)
         
-        # 添加到主布局，设置拉伸因子
-        main_layout.addWidget(file_group, 0)  # 文件选择区域不拉伸
-        main_layout.addWidget(preview_group, 1)  # 预览区域占主要空间
-        main_layout.addWidget(control_group, 0)  # 控制区域不拉伸
+        # Add to main layout, set stretch factors
+        main_layout.addWidget(file_group, 0)  # File selection area no stretch
+        main_layout.addWidget(preview_group, 1)  # Preview area takes main space
+        main_layout.addWidget(control_group, 0)  # Control area no stretch
         
-        # 创建中央窗口部件
+        # Create central widget
         central_widget = QWidget()
         central_widget.setLayout(main_layout)
         self.setCentralWidget(central_widget)
         
-        # 设置拖放支持
+        # Set drag and drop support
         self.setAcceptDrops(True)
+        
+    def open_style_dialog(self):
+        """Open style configuration dialog"""
+        dialog = StyleConfigDialog(self, self.style_config)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self.style_config = dialog.get_config()
+            QMessageBox.information(self, "Info", "Style configuration updated!")
         
     def browse_file(self):
         file_path, _ = QFileDialog.getOpenFileName(
-            self, "选择CSV或Excel文件", "", "数据文件 (*.csv *.xlsx *.xls)"
+            self, "Select CSV or Excel file", "", "Data files (*.csv *.xlsx *.xls)"
         )
         
         if file_path:
@@ -487,129 +791,129 @@ class ParameterChartApp(QMainWindow):
     
     def load_file(self, file_path):
         try:
-            # 根据文件扩展名读取数据
+            # Read data based on file extension
             file_ext = os.path.splitext(file_path)[1].lower()
             if file_ext == '.csv':
                 self.data = pd.read_csv(file_path, sep=',', header=0)
             elif file_ext in ['.xlsx', '.xls']:
                 self.data = pd.read_excel(file_path)
             else:
-                QMessageBox.warning(self, "错误", f"不支持的文件格式: {file_ext}")
+                QMessageBox.warning(self, "Error", f"Unsupported file format: {file_ext}")
                 return
             
-            # 更新UI
+            # Update UI
             self.current_file = file_path
             self.file_label.setText(os.path.basename(file_path))
             
-            # 更新列下拉框
-            self.columns_combo.clear()
-            self.columns_combo.addItems(self.data.columns.tolist())
+            # Clear and populate column selection list - no longer needed as we select from header
+            # self.columns_list_widget.clear()
+            # self.columns_list_widget.addItems(self.data.columns)
             
-            # 启用生成按钮
+            # Enable generate button
             self.generate_button.setEnabled(True)
             
-            # 显示数据预览
+            # Show data preview
             self.show_data_preview()
             
         except Exception as e:
-            QMessageBox.critical(self, "错误", f"加载文件时出错: {str(e)}")
+            QMessageBox.critical(self, "Error", f"Error loading file: {str(e)}")
     
     def show_data_preview(self):
         if self.data is None:
             return
             
-        # 更新信息标签
-        info_text = f"文件: {os.path.basename(self.current_file)} | "
-        info_text += f"行数: {len(self.data)} | "
-        info_text += f"列数: {len(self.data.columns)}"
+        # Update info label
+        info_text = f"File: {os.path.basename(self.current_file)} | "
+        info_text += f"Rows: {len(self.data)} | "
+        info_text += f"Columns: {len(self.data.columns)}"
         self.info_label.setText(info_text)
         self.info_label.setStyleSheet("color: #2c3e50; font-weight: bold;")
         
-        # 创建表格模型并设置到视图
-        preview_data = self.data.head(10)  # 只显示前10行
+        # Create table model and set to view
+        preview_data = self.data.head(10)  # Show only first 10 rows
         model = DataTableModel(preview_data)
         self.table_view.setModel(model)
         
-        # 调整列宽
+        # Adjust column width
         self.table_view.resizeColumnsToContents()
         
-        # 显示表格
+        # Show table
         self.table_view.show()
     
     def generate_charts(self):
-        # 获取选中的列
-        selected_column = self.columns_combo.currentText()
+        # Get columns selected through table header
+        selected_column_indices = sorted(list(set(index.column() for index in self.table_view.selectedIndexes())))
         
-        if not selected_column:
-            QMessageBox.warning(self, "警告", "请选择一列进行可视化")
+        if not selected_column_indices:
+            QMessageBox.warning(self, "Warning", "Please select at least one column in the data preview table for visualization")
             return
         
-        selected_columns = [selected_column]
+        selected_columns = [self.data.columns[i] for i in selected_column_indices]
         
-        # 获取选中的图表类型
+        # Get selected chart type
         chart_type = self.chart_type_combo.currentText()
         
-        # 创建并启动数据处理线程
-        self.thread = DataProcessThread(self.current_file, selected_columns, self.html_dir, chart_type)
+        # Create and start data processing thread
+        self.thread = DataProcessThread(self.current_file, selected_columns, self.html_dir, chart_type, self.style_config)
         self.thread.progress_signal.connect(self.update_progress)
         self.thread.finished_signal.connect(self.show_results)
         self.thread.error_signal.connect(self.show_error)
         
-        # 禁用生成按钮
+        # Disable generate button
         self.generate_button.setEnabled(False)
         self.progress_bar.setValue(0)
         
-        # 启动线程
+        # Start thread
         self.thread.start()
     
     def update_progress(self, value):
         self.progress_bar.setValue(value)
     
     def show_results(self, html_files):
-        # 重新启用生成按钮
+        # Re-enable generate button
         self.generate_button.setEnabled(True)
-        # 重置进度条
+        # Reset progress bar
         self.progress_bar.setValue(0)
         
         if not html_files:
-            QMessageBox.warning(self, "警告", "没有生成任何图表")
+            QMessageBox.warning(self, "Warning", "No charts were generated")
             return
         
-        # 显示成功消息并询问是否打开文件
+        # Show success message and ask whether to open file
         reply = QMessageBox.question(
-            self, "成功", 
-            f"已生成 {len(html_files)} 个图表，保存在 {self.html_dir} 目录\n\n是否在浏览器中打开查看？",
+            self, "Success", 
+            f"Generated {len(html_files)} charts, saved in {self.html_dir} directory\n\nOpen in browser to view?",
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
         )
         
         if reply == QMessageBox.StandardButton.Yes:
-            # 在系统默认浏览器中打开第一个HTML文件
+            # Open first HTML file in system default browser
             if html_files and os.path.exists(html_files[0]):
                 webbrowser.open(f'file://{html_files[0]}')
                 
-            # 如果有多个文件，询问是否打开HTML目录
+            # If multiple files, ask whether to open HTML directory
             if len(html_files) > 1:
                 reply2 = QMessageBox.question(
-                    self, "打开目录", 
-                    f"还有 {len(html_files)-1} 个图表文件，是否打开HTML目录查看所有文件？",
+                    self, "Open Directory", 
+                    f"There are {len(html_files)-1} more chart files. Open HTML directory to view all files?",
                     QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
                 )
                 if reply2 == QMessageBox.StandardButton.Yes:
                     webbrowser.open(f'file://{self.html_dir}')
     
     def show_error(self, error_message):
-        # 重新启用生成按钮
+        # Re-enable generate button
         self.generate_button.setEnabled(True)
         
-        # 显示错误消息
-        QMessageBox.critical(self, "错误", error_message)
+        # Show error message
+        QMessageBox.critical(self, "Error", error_message)
     
     def open_html_dir(self):
-        # 打开HTML目录
+        # Open HTML directory
         if os.path.exists(self.html_dir):
             webbrowser.open(f'file://{self.html_dir}')
         else:
-            QMessageBox.warning(self, "警告", "HTML目录不存在")
+            QMessageBox.warning(self, "Warning", "HTML directory does not exist")
     
     def dragEnterEvent(self, event: QDragEnterEvent):
         if event.mimeData().hasUrls():
@@ -623,7 +927,7 @@ class ParameterChartApp(QMainWindow):
             if file_ext in ['.csv', '.xlsx', '.xls']:
                 self.load_file(file_path)
 
-# 应用程序入口
+# Application entry point
 def main():
     app = QApplication(sys.argv)
     window = ParameterChartApp()

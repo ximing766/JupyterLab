@@ -75,8 +75,8 @@ class MainWindow(QMainWindow):
         self.background_cache            = None         # 添加背景缓存
         self.last_window_size            = QSize()      # 添加窗口尺寸记录
         self.drag_pos                    = QPoint()
-        self.red_length                  = 0
-        self.blue_length                 = 0
+        self.red_length                  = 0  # 设置默认红区长度
+        self.blue_length                 = 0  # 设置默认蓝区长度
         self.data_bits                   = 8
         self.parity                      = 'N'          # N-无校验
         self.stop_bits                   = 1
@@ -1363,7 +1363,9 @@ class MainWindow(QMainWindow):
         bottom_right_layout.setContentsMargins(5, 5, 5, 5)
         self.position_view = PositionView(self)
         bottom_right_layout.addWidget(self.position_view)
-        # bottom_right.setStyleSheet("background-color: rgba(255, 255, 255, 0.1); border-radius: 5px;")
+        # 初始化时刷新红蓝区域
+        self.position_view.refresh_areas()
+        print("create_position_area")
         return bottom_right
     
     def create_chart_area(self):
@@ -1966,11 +1968,16 @@ class MainWindow(QMainWindow):
                 user_x = float(json_data.get('User-X', 0))
                 user_y = float(json_data.get('User-Y', 0))
                 user_z = float(json_data.get('User-Z', 0))
-                self.red_length = int(json_data.get('RedAreaH', 0)) / 2
-                self.blue_length = int(json_data.get('BlueAreaH', 0))
                 
-                # 刷新位置视图中的红蓝区域
-                if hasattr(self, 'position_view'):
+                new_red_length = int(json_data.get('RedAreaH', 0)) / 2
+                new_blue_length = int(json_data.get('BlueAreaH', 0))
+                refresh_needed = (getattr(self, 'red_length', None) != new_red_length) or (getattr(self, 'blue_length', None) != new_blue_length)
+                self.red_length = new_red_length
+                self.blue_length = new_blue_length
+
+                # 仅当值发生变化时刷新位置视图
+                if hasattr(self, 'position_view') and refresh_needed:
+                    print("refresh areas")
                     self.position_view.refresh_areas()
                 
                 # Map JSON keys to chart keys
@@ -2608,24 +2615,26 @@ class PositionView(QWidget):
         
     def draw_static_content(self, painter, center_x, center_y):
         # 获取动态长度值
-        red_height = int(self.main_window.red_length * self.scale) if self.main_window else 100
-        blue_height = int(self.main_window.blue_length ) if self.main_window else 300
+        red_height = int(self.main_window.red_length * self.scale) if self.main_window.red_length != 0 else 100
+        blue_height = int(self.main_window.blue_length ) if self.main_window.blue_length != 0 else 300
+        print(f'red_height: {red_height}, blue_height: {blue_height}')
         
         # 红色感应区（从原点开始向下）
         red_gradient = QLinearGradient(center_x, center_y, center_x, center_y + red_height)
         red_gradient.setColorAt(0, QColor(255, 0, 0, 70))  # 增加红色透明度
-        red_gradient.setColorAt(1, QColor(255, 0, 0, 30))
+        red_gradient.setColorAt(1, QColor(255, 0, 0, 80))
         painter.setBrush(red_gradient)
         painter.setPen(Qt.PenStyle.NoPen)
         painter.drawRect(int(center_x - 100), int(center_y), 200, red_height)
         
         # 蓝色区域（紧接红色区域，不重叠）
         blue_start_y = center_y + red_height
-        blue_gradient = QLinearGradient(center_x, blue_start_y, center_x, blue_start_y + blue_height - red_height)
-        blue_gradient.setColorAt(0, QColor(0, 140, 255, 60))  # 增加蓝色透明度和饱和度
-        blue_gradient.setColorAt(1, QColor(0, 140, 255, 30))
+        blue_rect_height = blue_height - red_height if blue_height > red_height else blue_height
+        blue_gradient = QLinearGradient(center_x, blue_start_y, center_x, blue_start_y + blue_rect_height)
+        blue_gradient.setColorAt(0, QColor(0, 140, 255, 100))  # 增加蓝色透明度和饱和度
+        blue_gradient.setColorAt(1, QColor(0, 140, 255, 70))
         painter.setBrush(blue_gradient)
-        painter.drawRect(int(center_x - 100), int(blue_start_y), 200, blue_height)
+        painter.drawRect(int(center_x - 100), int(blue_start_y), 200, blue_rect_height)
         
         # 绘制闸机（左侧）
         painter.setPen(QPen(QColor("#333333"), 2))
