@@ -2613,6 +2613,12 @@ class PositionView(QWidget):
         # 创建静态内容缓存
         self.static_content   = None
         
+        # 滤波和异常值检测相关参数
+        self.position_history = []  # 存储最近的位置历史
+        self.history_max_size = 3   # 历史记录最大长度
+        self.max_jump_distance = 50  # 最大允许跳变距离
+        self.smoothing_factor = 0.5  # 平滑因子 (0-1)，越小越平滑
+        
     def draw_static_content(self, painter, center_x, center_y):
         # 获取动态长度值
         red_height = int(self.main_window.red_length * self.scale) if self.main_window.red_length != 0 else 100
@@ -2683,9 +2689,57 @@ class PositionView(QWidget):
         painter.end()
         
     def update_position(self, x, y):
-        """更新位置并触发重绘"""
-        self.last_position = self.current_position
-        self.current_position = (x, y)
+        """更新位置并触发重绘，包含滤波和异常值检测"""
+        # 如果是第一个点，直接接受
+        if self.current_position is None:
+            self.current_position = (x, y)
+            self.position_history.append((x, y))
+            self.update()
+            return
+            
+        # 计算与上一个点的距离
+        last_x, last_y = self.current_position
+        distance = ((x - last_x) ** 2 + (y - last_y) ** 2) ** 0.5
+        
+        # 异常值检测 - 如果距离太大，可能是异常值
+        if distance > self.max_jump_distance:
+            print(f"异常值检测: 距离 {distance:.1f} 超过阈值 {self.max_jump_distance}")
+            
+            # 限制移动距离，沿着相同方向但限制距离
+            direction_x = (x - last_x) / distance if distance > 0 else 0
+            direction_y = (y - last_y) / distance if distance > 0 else 0
+
+            x = last_x + direction_x * self.max_jump_distance
+            y = last_y + direction_y * self.max_jump_distance
+
+            distance_new = ((x - last_x) ** 2 + (y - last_y) ** 2) ** 0.5
+        
+        # 移动平均滤波
+        if self.position_history:
+            # 添加当前点到历史
+            self.position_history.append((x, y))
+            
+            # 保持历史记录在指定长度内
+            if len(self.position_history) > self.history_max_size:
+                self.position_history.pop(0)
+            
+            # 计算历史点的平均位置
+            avg_x = sum(pos[0] for pos in self.position_history) / len(self.position_history)
+            avg_y = sum(pos[1] for pos in self.position_history) / len(self.position_history)
+            
+            # 应用平滑因子 - 在当前测量值和平均值之间插值
+            smoothed_x = x * self.smoothing_factor + avg_x * (1 - self.smoothing_factor)
+            smoothed_y = y * self.smoothing_factor + avg_y * (1 - self.smoothing_factor)
+            
+            # 更新位置
+            self.last_position = self.current_position
+            self.current_position = (smoothed_x, smoothed_y)
+        else:
+            # 如果没有历史记录，直接使用当前值
+            self.last_position = self.current_position
+            self.current_position = (x, y)
+            self.position_history.append((x, y))
+        
         self.update()
         
     def refresh_areas(self):
@@ -2739,8 +2793,8 @@ class PositionView(QWidget):
             
             # 使用渐变色绘制轨迹
             gradient = QLinearGradient(last_screen_x, last_screen_y, screen_x, screen_y)
-            gradient.setColorAt(0, QColor(74, 144, 226, 25))  # 起点颜色（较淡）
-            gradient.setColorAt(1, QColor(74, 144, 226, 200))  # 终点颜色（较深）
+            gradient.setColorAt(0, QColor(180, 120, 220, 25))  # 起点颜色（浅紫色较淡）
+            gradient.setColorAt(1, QColor(180, 120, 220, 200))  # 终点颜色（浅紫色较深）
             
             pen = QPen()
             pen.setBrush(gradient)
@@ -2750,8 +2804,8 @@ class PositionView(QWidget):
                            int(screen_x), int(screen_y))
         
         # 绘制当前位置点
-        painter.setPen(QPen(QColor("#4a90e2"), 2))
-        painter.setBrush(QColor(74, 144, 226, 255))
+        painter.setPen(QPen(QColor("#b478dc"), 2))
+        painter.setBrush(QColor(180, 120, 220, 255))
         painter.drawEllipse(int(screen_x) - 6, int(screen_y) - 6, 12, 12)  # 增大点的大小
 
 class SubwayGateAnimation(QWidget):
