@@ -1,0 +1,13 @@
+[project]
+name = "gate-classify"
+version = "0.1.0"
+description = "门禁闸机状态识别系统 - 使用MobileNetV2进行迁移学习的二分类任务"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "tensorflow-cpu==2.12.0",
+    "tensorflow-io-gcs-filesystem==0.31.0",
+    "opencv-python>=4.8.0",
+    "numpy>=1.22.0,<1.24.0",
+    "matplotlib>=3.7.0",
+]

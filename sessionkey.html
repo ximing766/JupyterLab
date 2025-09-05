@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<title>UWB SessionKey 密钥协商流程</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+:root {
+  --color-device: #ff5722;
+  --color-gate: #2196f3;
+  --color-se: #4caf50;
+  --color-uwb: #9c27b0;
+  --bg: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  --card-bg: rgba(255, 255, 255, 0.95);
+  --shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  --shadow-hover: 0 12px 40px rgba(0, 0, 0, 0.15);
+  --border-radius: 12px;
+  --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  background: var(--bg);
+  color: #333;
+  min-height: 100vh;
+  padding: 20px 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 20px;
+}
+
+h1 {
+  text-align: center;
+  margin: 40px 0;
+  font-size: 2.5em;
+  font-weight: 700;
+  color: white;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  letter-spacing: -0.5px;
+}
+
+.subtitle {
+  text-align: center;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 1.1em;
+  margin-bottom: 50px;
+  font-weight: 300;
+}
+
+.timeline {
+  position: relative;
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 0;
+}
+
+.timeline::after {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: 0;
+  bottom: 0;
+  width: 4px;
+  background: linear-gradient(to bottom, var(--color-gate), var(--color-device));
+  margin-left: -2px;
+  border-radius: 2px;
+  z-index: 1;
+}
+
+.step {
+  position: relative;
+  padding: 25px 50px;
+  width: 50%;
+  opacity: 0;
+  transform: translateY(30px);
+  animation: fadeInUp 0.6s ease forwards;
+}
+
+.step:nth-child(1) { animation-delay: 0.1s; }
+.step:nth-child(2) { animation-delay: 0.2s; }
+.step:nth-child(3) { animation-delay: 0.3s; }
+.step:nth-child(4) { animation-delay: 0.4s; }
+.step:nth-child(5) { animation-delay: 0.5s; }
+.step:nth-child(6) { animation-delay: 0.6s; }
+
+@keyframes fadeInUp {
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.step:nth-child(odd) {
+  left: 0;
+  padding-right: 70px;
+  text-align: right;
+}
+
+.step:nth-child(even) {
+  left: 50%;
+  padding-left: 70px;
+}
+
+.step::after {
+  content: attr(data-step);
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: 1.1em;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  border: 3px solid white;
+  z-index: 2;
+}
+
+.step:hover::after {
+  transform: scale(1.1);
+  box-shadow: var(--shadow-hover);
+}
+
+.step:nth-child(odd)::after {
+  right: -22px;
+  background: linear-gradient(135deg, var(--color-gate), #1976d2);
+}
+
+.step:nth-child(even)::after {
+  left: -22px;
+  background: linear-gradient(135deg, var(--color-device), #d84315);
+}
+
+.step-content {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 25px 30px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.step-content:hover {
+  transform: translateY(-5px);
+  box-shadow: var(--shadow-hover);
+}
+
+.step h3 {
+  margin: 0 0 12px;
+  font-size: 1.3em;
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.step p {
+  margin: 0;
+  font-size: 0.95em;
+  line-height: 1.6;
+  color: #555;
+}
+
+.step strong {
+  color: var(--color-se);
+  font-weight: 600;
+  padding: 2px 6px;
+  background: rgba(76, 175, 80, 0.1);
+  border-radius: 4px;
+}
+
+.keys {
+  margin: 60px auto;
+  max-width: 1000px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 25px;
+  padding: 0 20px;
+}
+
+.key-card {
+  background: var(--card-bg);
+  border-radius: var(--border-radius);
+  padding: 30px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+}
+
+.key-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, var(--color-se), var(--color-uwb));
+}
+
+.key-card:hover {
+  transform: translateY(-8px);
+  box-shadow: var(--shadow-hover);
+}
+
+.key-card h4 {
+  margin: 0 0 15px;
+  color: var(--color-se);
+  font-size: 1.4em;
+  font-weight: 600;
+}
+
+.key-card ul {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.key-card li {
+  padding: 8px 0;
+  font-size: 0.95em;
+  color: #666;
+  position: relative;
+  padding-left: 20px;
+}
+
+.key-card li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  color: var(--color-se);
+  font-weight: bold;
+}
+
+.legend {
+  margin: 40px auto;
+  max-width: 800px;
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  font-size: 0.95em;
+  flex-wrap: wrap;
+}
+
+.legend span {
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
+  padding: 12px 20px;
+  border-radius: 25px;
+  box-shadow: var(--shadow);
+  transition: var(--transition);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  color: #333;
+  font-weight: 500;
+}
+
+.legend span:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-hover);
+}
+
+.legend .dot {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  margin-right: 10px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+@media (max-width: 768px) {
+  h1 {
+    font-size: 2em;
+    margin: 20px 0;
+  }
+  
+  .timeline::after {
+    left: 30px;
+  }
+  
+  .step {
+    width: 100%;
+    padding-left: 80px;
+    padding-right: 20px;
+    text-align: left;
+  }
+  
+  .step:nth-child(even) {
+    left: 0;
+  }
+  
+  .step:nth-child(odd)::after,
+  .step:nth-child(even)::after {
+    left: 8px;
+  }
+  
+  .keys {
+    grid-template-columns: 1fr;
+    gap: 20px;
+  }
+  
+  .legend {
+    gap: 20px;
+  }
+  
+  .legend span {
+    padding: 10px 16px;
+    font-size: 0.9em;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 0 15px;
+  }
+  
+  .step {
+    padding-left: 70px;
+    padding-right: 15px;
+  }
+  
+  .step-content {
+    padding: 20px;
+  }
+  
+  .key-card {
+    padding: 25px;
+  }
+}
+
+/* 添加滚动动画效果 */
+@media (prefers-reduced-motion: no-preference) {
+  .step {
+    transition: var(--transition);
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="container">
+  <h1>UWB SessionKey</h1>
+  <p class="subtitle">超宽带安全密钥协商流程图解</p>
+
+  <!-- 时间轴 -->
+  <div class="timeline">
+    <div class="step" data-step="①">
+      <div class="step-content">
+        <h3>手机靠近闸机</h3>
+        <p>UWB 射频建立物理链路，闸机 SE 产生 <strong>RandA</strong>。</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="②">
+      <div class="step-content">
+        <h3>随机数交换</h3>
+        <p>闸机 → 手机：<strong>RandA</strong><br>
+           手机 SE 产生 <strong>RandB</strong>。</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="③">
+      <div class="step-content">
+        <h3>手机回传身份</h3>
+        <p>手机计算 <strong>CipherID = AES(PrivacyKey, UWB_ID)</strong><br>
+           发送：<strong>CipherID ∥ RandB</strong></p>
+      </div>
+    </div>
+
+    <div class="step" data-step="④">
+      <div class="step-content">
+        <h3>双方独立算密钥</h3>
+        <p>闸机 SE：<br>
+           ① DeviceKey = KDF(RootKey, UWB_ID)<br>
+           ② SessionKey = KDF(DeviceKey, RandA∥RandB)<br><br>
+           手机 SE：<br>
+           直接取本地 DeviceKey → SessionKey</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="⑤">
+      <div class="step-content">
+        <h3>动态 STS 交易</h3>
+        <p>所有 Read/Write/Commit 命令用 <strong>SessionKey</strong> 加密 + MAC；<br>
+           测距失败则交易终止。</p>
+      </div>
+    </div>
+
+    <div class="step" data-step="⑥">
+      <div class="step-content">
+        <h3>交易结束</h3>
+        <p><strong>SessionKey 丢弃</strong>，下次过闸重新生成。</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- 密钥关系卡 -->
+  <div class="keys">
+    <div class="key-card">
+      <h4>UWB_ID</h4>
+      <ul>
+        <li>手机独有身份证号</li>
+        <li>终身不变</li>
+      </ul>
+    </div>
+    <div class="key-card">
+      <h4>RootKey</h4>
+      <ul>
+        <li>闸机 SE 独有母钥</li>
+        <li>用于派生所有 DeviceKey</li>
+      </ul>
+    </div>
+    <div class="key-card">
+      <h4>PrivacyKey</h4>
+      <ul>
+        <li>手机 & 闸机预共享</li>
+        <li>加密 UWB_ID，防跟踪</li>
+      </ul>
+    </div>
+    <div class="key-card">
+      <h4>DeviceKey</h4>
+      <ul>
+        <li>手机: SE 长期存储</li>
+        <li>闸机: RootKey × UWB_ID 派生</li>
+      </ul>
+    </div>
+    <div class="key-card">
+      <h4>SessionKey</h4>
+      <ul>
+        <li>每次交易临时生成</li>
+        <li>DeviceKey × RandA∥RandB</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- 图例 -->
+  <div class="legend">
+    <span><i class="dot" style="background:#2196f3"></i>闸机侧</span>
+    <span><i class="dot" style="background:#ff5722"></i>手机侧</span>
+    <span><i class="dot" style="background:#4caf50"></i>SE 安全元件</span>
+    <span><i class="dot" style="background:#9c27b0"></i>UWB 射频</span>
+  </div>
+</div>
+
+</body>
+</html>

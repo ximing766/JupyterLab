@@ -1,0 +1,39 @@
+[2025-07-05 12:56:12.867] [0;34mAPP     :INFO :System Is set to Free 00
+[2025-07-05 12:56:12.867] [0m#################################################
+[2025-07-05 12:56:12.867] ## Transit Demo: HUS Controlee : SR150
+[2025-07-05 12:56:12.867] ## UWBIOT_v05.05.03
+[2025-07-05 12:56:12.867] #################################################
+[2025-07-05 12:56:12.867] [0;34mAPP     :INFO :Anchor Index: 1
+[2025-07-05 12:56:12.867] [0m[0;34mAPP     :INFO :ENTRY Gate anchor
+[2025-07-05 12:56:12.867] [0m[0;34mAPP     :INFO :Transaction handling ENABLED
+[2025-07-05 12:56:12.867] [0m[0;34msss     :INFO :atr                 :01A00000 03960403 E800FE02 0B03E800 01000000 00641388 0A006553 45303531 000000
+[2025-07-05 12:56:12.868] [0m[0;34mFWDNLD  :INFO :FWDL Directly from host
+[2025-07-05 12:56:12.868] [0m[0;34mHALUCI  :INFO :Starting FW download
+[2025-07-05 12:56:13.432] [0m[0;34mHALUCI  :INFO :FW Download done.
+[2025-07-05 12:56:13.590] [0m[0;33mHALUCI  :WARN :hal_extns_write_rsp_timeout_cb - write timeout!!!
+[2025-07-05 12:56:13.591] [0m[0;33mUWBAPI  :WARN :processProprietaryNtf: unhandled oid 0x6
+[2025-07-05 12:56:13.591] [0m[0;33mUCICORE :WARN :Retrying last sent command
+[2025-07-05 12:56:13.591] [0m[0;33mUWBAPI  :WARN :parseCapabilityInfo: unknown param Id 0xA0
+[2025-07-05 12:56:13.591] [0m[0;33mUWBAPI  :WARN :parseCapabilityInfo: unknown param Id 0xA1
+[2025-07-05 12:56:13.591] [0m[0;33mUWBAPI  :WARN :parseCapabilityInfo: unknown param Id 0xA2
+[2025-07-05 12:56:13.591] [0m[0;33mUWBAPI  :WARN :parseCapabilityInfo: unknown param Id 0xA3
+[2025-07-05 12:56:13.591] [0m[0;33mUWBAPI  :WARN :parseCapabilityInfo: unknown param Id 0xA4
+[2025-07-05 12:56:13.591] [0m[0;33mUWBAPI  :WARN :parseCapabilityInfo: unknown param Id 0xA5
+[2025-07-05 12:56:13.591] [0m[0;33mUWBAPI  :WARN :parseCapabilityInfo: unknown param Id 0xA6
+[2025-07-05 12:56:13.591] [0m[0;33mUWBAPI  :WARN :parseCapabilityInfo: unknown param Id 0xA7
+[2025-07-05 12:56:13.591] [0m[0;33mUWBAPI  :WARN :parseDeviceInfo: unknown param Id 0xA0
+[2025-07-05 12:56:13.591] [0m[0;33mUWBAPI  :WARN :parseDeviceInfo: unknown param Id 0xA1
+[2025-07-05 12:56:13.591] [0m[0;33mUWBAPI  :WARN :parseDeviceInfo: unknown param Id 0xA2
+[2025-07-05 12:56:13.591] [0m[0;34mAPP     :INFO :Device Name                    : SR150_PROD_IOT_ROW
+[2025-07-05 12:56:13.591] [0m[0;34mAPP     :INFO :Firmware Version               : EE.5F.C6
+[2025-07-05 12:56:13.650] [0m[0;34mhostLib :INFO :Select Command Response:6F1A8409 A0000008 67535553 00A50DBF 0C0A9F7E 0202004C 03000000
+[2025-07-05 12:56:13.650] [0m[0;34mhostLib :INFO :Fira Consortium Compliant SUS applet is present and selected
+[2025-07-05 12:56:13.650] [0m[0;34mSE_WRAPPER:INFO :Applet is Selected successfully!!!! .
+[2025-07-05 12:56:13.651] [0m[0;33mUWBAPI  :WARN :Already in Locked State 2
+[2025-07-05 12:56:13.810] [0m[0;33mhostLib :WARN :Fira AID Consortium CSML Compliant FiraLite applet is selected
+[2025-07-05 12:56:13.810] [0m[0;34mSE_WRAPPER:INFO :Applet is Selected successfully!!!! .
+[2025-07-05 12:56:13.810] [0m[0;31mhostLib :ERROR:Command Failed!!!
+[2025-07-05 12:56:13.810] [0m[0;33mSE_WRAPPER:WARN :nxEnsure:'SM_OK == smStatus' failed. At Line:645 Function:Se_API_InitiateTransaction
+[2025-07-05 12:56:13.810] [0m[0;33mAPP     :WARN :nxEnsure:'se_status == SE_STATUS_OK' failed. At Line:1398 Function:uiInitiateSE051WTransaction
+[2025-07-05 12:56:13.810] [0m[0;31mAPP     :ERROR:uiInitiateSE051WTransaction Failed
+[2025-07-05 12:56:13.810] [0m[0;31mAPP     :ERROR:Finished demo_transit.c : Failed!

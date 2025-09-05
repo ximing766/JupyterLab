@@ -307,6 +307,7 @@ class MainWindow(QMainWindow):
         self.nav_list.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.nav_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         
+        # nav_items = ["COM 1", "COM 2", "CHART", "Parking"] 
         nav_items = ["COM 1", "COM 2", "CHART"] 
         for item in nav_items:
             list_item = QListWidgetItem(item)
@@ -527,10 +528,12 @@ class MainWindow(QMainWindow):
         COM1_page  = self.create_COM_page()
         COM2_page  = self.create_COM_page2()
         Chart_page = self.create_Chart_page()
+        Parking_page = self.create_parking_page()
 
         self.stacked_widget.addWidget(COM1_page)
         self.stacked_widget.addWidget(COM2_page)
         self.stacked_widget.addWidget(Chart_page)
+        self.stacked_widget.addWidget(Parking_page)
     
     def create_COM_page2(self):
         COM2_page = QWidget()
@@ -1540,6 +1543,312 @@ class MainWindow(QMainWindow):
 
         bottom_left_layout.addWidget(form_splitter)
         return bottom_left
+    
+    def create_parking_page(self):
+        """Create parking fee page"""
+        parking_page = QWidget()
+        parking_page.setStyleSheet("background: rgba(36, 42, 56, 0);")
+        
+        main_layout = QVBoxLayout(parking_page)
+        main_layout.setContentsMargins(40, 30, 40, 30)
+        main_layout.setSpacing(30)
+        
+        # Simplified title
+        title_label = QLabel("🚗 Parking Fee")
+        title_label.setStyleSheet("""
+            QLabel {
+                font-size: 32px;
+                font-weight: bold;
+                color: #4a90e2;
+                background: transparent;
+                margin-bottom: 20px;
+            }
+        """)
+        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        main_layout.addWidget(title_label)
+        
+        # 简化的内容区域 - 去掉边框
+        content_widget = QWidget()
+        # content_widget.setMaximumWidth(700)
+        content_widget.setMinimumWidth(600)
+        content_widget.setStyleSheet("""
+            QWidget {
+                background: rgba(255, 255, 255, 0.98);
+                border-radius: 15px;
+            }
+        """)
+        
+        content_layout = QVBoxLayout(content_widget)
+        content_layout.setContentsMargins(30, 30, 30, 30)
+        content_layout.setSpacing(20)
+        
+        # 简化的输入字段样式 - 去掉边框
+        input_style = """
+            QLineEdit {
+                font-size: 16px;
+                padding: 14px 18px;
+                border: none;
+                border-radius: 8px;
+                background: rgba(74, 144, 226, 0.08);
+                color: #2c3e50;
+            }
+            QLineEdit:focus {
+                background: rgba(74, 144, 226, 0.15);
+            }
+        """
+        
+        # 创建输入字段组合函数
+        def create_input_group(icon, label_text, placeholder, default_value):
+            group_layout = QVBoxLayout()
+            group_layout.setSpacing(6)
+            
+            label = QLabel(f"{icon} {label_text}")
+            label.setStyleSheet("""
+                QLabel {
+                    font-size: 14px;
+                    font-weight: 600;
+                    color: #34495e;
+                    background: transparent;
+                }
+            """)
+            
+            input_field = QLineEdit()
+            input_field.setPlaceholderText(placeholder)
+            input_field.setText(default_value)
+            input_field.setStyleSheet(input_style)
+            
+            group_layout.addWidget(label)
+            group_layout.addWidget(input_field)
+            return group_layout, input_field
+        
+        # Create input fields
+        plate_layout, self.plate_input = create_input_group(
+            "🚙", "License Plate", "e.g.: 粤B12345", "粤B12345")
+        content_layout.addLayout(plate_layout)
+        
+        amount_layout, self.amount_input = create_input_group(
+            "💰", "Parking Fee", "e.g.: 15.50", "15.50")
+        content_layout.addLayout(amount_layout)
+        
+        # Entry time display - simplified style
+        time_label = QLabel("🕐 Entry Time")
+        time_label.setStyleSheet("""
+            QLabel {
+                font-size: 14px;
+                font-weight: 600;
+                color: #34495e;
+                background: transparent;
+            }
+        """)
+        
+        self.entry_time_display = QLabel()
+        current_time = QDateTime.currentDateTime().toString("yyyy-MM-dd hh:mm")
+        self.entry_time_display.setText(current_time)
+        self.entry_time_display.setStyleSheet("""
+            QLabel {
+                font-size: 16px;
+                padding: 14px 18px;
+                border-radius: 8px;
+                background: rgba(52, 152, 219, 0.1);
+                color: #2c3e50;
+            }
+        """)
+        
+        content_layout.addWidget(time_label)
+        content_layout.addWidget(self.entry_time_display)
+        
+        # Simplified send button
+        self.send_parking_btn = QPushButton("Confirm Payment")
+        self.send_parking_btn.setStyleSheet("""
+            QPushButton {
+                font-size: 16px;
+                font-weight: bold;
+                padding: 16px;
+                background: #4a90e2;
+                color: white;
+                border: none;
+                border-radius: 10px;
+                margin-top: 15px;
+            }
+            QPushButton:hover {
+                background: #357abd;
+            }
+            QPushButton:pressed {
+                background: #2968a3;
+            }
+        """)
+        self.send_parking_btn.clicked.connect(self.send_parking_data)
+        content_layout.addWidget(self.send_parking_btn)
+        
+        # Simplified status display
+        self.status_label = QLabel("Ready to send")
+        self.status_label.setStyleSheet("""
+            QLabel {
+                font-size: 13px;
+                padding: 8px;
+                background: rgba(52, 152, 219, 0.1);
+                border-radius: 6px;
+                color: #7f8c8d;
+                text-align: center;
+            }
+        """)
+        self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        content_layout.addWidget(self.status_label)
+        
+        # 居中显示内容
+        center_layout = QHBoxLayout()
+        center_layout.addStretch()
+        center_layout.addWidget(content_widget)
+        center_layout.addStretch()
+        
+        main_layout.addLayout(center_layout)
+        main_layout.addStretch()
+        
+        return parking_page
+    
+    def send_parking_data(self):
+        """Send parking fee data in hexadecimal format"""
+        try:
+            # Get input data
+            plate_number = self.plate_input.text().strip()
+            amount = self.amount_input.text().strip()
+            
+            # Validate required fields
+            if not plate_number or not amount:
+                self.status_label.setText("License plate and amount are required")
+                self.status_label.setStyleSheet("""
+                    QLabel {
+                        font-size: 13px;
+                        padding: 8px;
+                        background: rgba(231, 76, 60, 0.1);
+                        border-radius: 6px;
+                        color: #e74c3c;
+                        text-align: center;
+                    }
+                """)
+                return
+            
+            # Convert data to hexadecimal format
+            hex_data = self.convert_to_hex_protocol(plate_number, amount)
+            
+            # Check if COM2 serial port is connected
+            if hasattr(self, 'serial2') and self.serial2 and self.serial2.is_open:
+                # Send hexadecimal data
+                hex_bytes = bytes.fromhex(hex_data)
+                self.serial2.write(hex_bytes)
+                
+                self.status_label.setText(f"{plate_number}  :  ${amount}\nHex: {hex_data}")
+                self.status_label.setStyleSheet("""
+                    QLabel {
+                        font-size: 13px;
+                        padding: 8px;
+                        background: rgba(46, 204, 113, 0.1);
+                        border-radius: 6px;
+                        color: #27ae60;
+                        text-align: center;
+                    }
+                """)
+                    
+            else:
+                self.status_label.setText("COM2 port not connected")
+                self.status_label.setStyleSheet("""
+                    QLabel {
+                        font-size: 13px;
+                        padding: 8px;
+                        background: rgba(231, 76, 60, 0.1);
+                        border-radius: 6px;
+                        color: #e74c3c;
+                        text-align: center;
+                    }
+                """)
+                
+        except Exception as e:
+            self.status_label.setText(f"Send failed: {str(e)}")
+            self.status_label.setStyleSheet("""
+                QLabel {
+                    font-size: 13px;
+                    padding: 8px;
+                    background: rgba(231, 76, 60, 0.1);
+                    border-radius: 6px;
+                    color: #e74c3c;
+                    text-align: center;
+                }
+            """)
+            print(f"Parking fee data send error: {str(e)}")
+    
+    def convert_to_hex_protocol(self, plate_number, amount):
+        """
+        Convert parking data to hexadecimal protocol format
+        
+        New Protocol format:
+        [Header/Preamble(3)] [Length(2)] [SADDR(6)] [TADDR(6)] [SNQ(1)] [cmd_type(1)] [result(1)] [apdu_count(1)] [data(N)] [DCS(1)] [End(1)]
+        
+        Args:
+            plate_number (str): License plate number (supports Chinese characters, e.g., "粤B12345")
+            amount (str): Parking fee amount (e.g., "15.50")
+            
+        Returns:
+            str: Hexadecimal string ready to send to MCU
+            
+        Example:
+            Input: plate_number="粤B12345", amount="15.50"
+            - Plate UTF-8 bytes: [0xE7, 0xB2, 0xA4, 0x42, 0x31, 0x32, 0x33, 0x34, 0x35] (9 bytes)
+            - Amount in cents: 1550 (0x060E)
+            - Data: E7B2A442313233343506OE
+        """
+        try:
+            # 1. Header/Preamble (fixed)
+            header_preamble = "0000FF"
+            
+            # 2. Convert plate number to UTF-8 bytes then to hex
+            # This handles Chinese characters properly (e.g., "粤B12345")
+            plate_bytes = plate_number.encode('utf-8')
+            plate_hex = plate_bytes.hex().upper()
+            
+            # 3. Convert amount to cents (multiply by 100) then to 2-byte hex
+            # e.g., "15.50" -> 1550 -> "060E"
+            amount_cents = int(float(amount) * 100)
+            amount_hex = f"{amount_cents:04X}"
+            
+            # 4. Build data field (plate + amount)
+            data_field = plate_hex + amount_hex
+            
+            # 5. Fixed protocol fields
+            saddr = "05FFFFFFFFFF"      # SADDR
+            taddr = "06FFFFFFFFFF"      # TADDR  
+            snq = "01"                  # SNQ
+            cmd_type = "C2"             # cmd_type
+            result = "00"               # result
+            apdu_count = "01"           # apdu_count
+            
+            # 6. Calculate total data length (little endian)
+            # Length includes: SADDR(6) + TADDR(6) + SNQ(1) + cmd_type(1) + result(1) + apdu_count(1) + data(N)
+            total_data_length = 6 + 6 + 1 + 1 + 1 + 1 + len(data_field)//2
+            length_hex = f"{total_data_length:02X}00"  # Little endian format
+            
+            # 7. Build payload for DCS calculation (everything except Header/Preamble and Length)
+            payload_for_dcs = saddr + taddr + snq + cmd_type + result + apdu_count + data_field
+            
+            # 8. Calculate DCS (checksum)
+            # DCS calculation: sum of all bytes from SADDR to data, then DCS = 0x100 - (sum & 0xFF)
+            dcs_sum = 0
+            for i in range(0, len(payload_for_dcs), 2):
+                dcs_sum += int(payload_for_dcs[i:i+2], 16)
+            dcs = (0x100 - (dcs_sum & 0xFF)) & 0xFF
+            dcs_hex = f"{dcs:02X}"
+            
+            # 9. End byte
+            end_byte = "00"
+            
+            # 10. Assemble complete protocol
+            complete_hex = header_preamble + length_hex + payload_for_dcs + dcs_hex + end_byte
+            
+            return complete_hex
+            
+        except Exception as e:
+            print(f"Error converting to hex protocol: {str(e)}")
+            # Fallback to simple format if conversion fails
+            return f"ERROR{str(e)[:10]}".encode('utf-8').hex().upper()
     
     def on_display_wheel(self, event):
         """处理显示区域的鼠标滚轮事件"""

@@ -109,10 +109,10 @@ class AgentB(Agent):
         
     def estimate_target_position(self, distance_to_a: float, a_real_pos: Point = None) -> List[Point]:
         """基于距离估计A的可能位置（圆周上的点）"""
-        possible_positions = []
+        possible_positions = []    #可能的位置合集，30度有12个点
         # 在以B为圆心，距离为半径的圆周上生成可能位置
         for angle in range(0, 360, 30):  # 每30度一个点
-            rad = math.radians(angle)
+            rad = math.radians(angle)    #XXX 弧度
             pos = Point(
                 self.position.x + distance_to_a * math.cos(rad),
                 self.position.y + distance_to_a * math.sin(rad)
@@ -163,16 +163,18 @@ class AgentB(Agent):
         
         # 如果距离已经很接近目标，微调移动
         if abs(distance_error) < 8:
+            print("微调")
             if self.last_a_position:
                 # 计算垂直于连线的方向，进行轨道调整
                 to_a = Point(self.last_a_position.x - self.position.x, 
                            self.last_a_position.y - self.position.y)
                 perpendicular = math.atan2(to_a.y, to_a.x) + math.pi/2
                 return perpendicular
-            return self.last_successful_direction
+            return self.last_successful_direction   #如果找不到方向就用上次的方向
         
         # 方法1：直接朝向估计的A位置移动
         if self.last_a_position:
+            print("方案1")
             if distance_error > 0:  # 距离太远，需要靠近
                 direction_to_a = math.atan2(
                     self.last_a_position.y - self.position.y,
@@ -188,6 +190,7 @@ class AgentB(Agent):
         
         # 方法2：基于距离变化率的方向调整
         if len(self.distance_history) >= 2:
+            print("方案2")
             distance_change_rate = self.distance_history[-1] - self.distance_history[-2]
             
             # 如果距离在增加且当前距离大于目标距离，需要向A靠近
@@ -222,6 +225,7 @@ class AgentB(Agent):
             predicted_a_pos = self.last_a_position + predicted_movement
             
             if distance_error > 0:
+                print("方案3")
                 # 计算朝向预测位置的方向
                 direction_to_predicted = math.atan2(
                     predicted_a_pos.y - self.position.y,
@@ -233,7 +237,7 @@ class AgentB(Agent):
         self.exploration_angle += math.pi / 8  # 每次增加22.5度
         if self.exploration_angle > 2 * math.pi:
             self.exploration_angle = 0
-        
+        print("方案4")
         # 如果距离太远，向内移动；如果太近，向外移动
         if distance_error > 0:
             # 距离太远，需要靠近，使用探索角度
@@ -246,19 +250,22 @@ class AgentB(Agent):
         """基于距离信息移动"""
         # 计算最优移动方向
         optimal_direction = self.calculate_optimal_direction(distance_to_a, a_real_pos)
+        # print(f'optimal_direction: {optimal_direction}')
         
         # 应用惯性
         actual_direction = (
             self.inertia_factor * self.last_successful_direction +
             (1 - self.inertia_factor) * optimal_direction
         )
+        # print(f'actual_direction: {actual_direction}')
         
         # 计算移动速度（距离误差越大，速度越快）
         distance_error = abs(distance_to_a - self.target_distance)
         speed_factor = min(1.0, distance_error / 30.0)  # 归一化速度因子
         actual_speed = self.max_speed * (0.4 + 0.6 * speed_factor)  # 最小40%速度
+        # print(f'actual_speed: {actual_speed}')
         
-        # 计算新位置
+        # 计算新位置 极坐标转直角坐标
         new_x = self.position.x + actual_speed * math.cos(actual_direction)
         new_y = self.position.y + actual_speed * math.sin(actual_direction)
         
@@ -609,7 +616,6 @@ class ControlPanel(QWidget):
             f"B位置: ({agent_b.position.x:.0f}, {agent_b.position.y:.0f})\n"
         )
         self.stats_text.setPlainText(stats_info)
-
 
 class BottomControlBar(QWidget):
     """底部控制栏"""
