@@ -34,6 +34,7 @@ from PyQt6.QtCharts import (
 )
 # 自定义模块
 from log import Logger
+from position_view import PositionView
 
 def time_decorator(func):
     """
@@ -307,7 +308,6 @@ class MainWindow(QMainWindow):
         self.nav_list.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.nav_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         
-        # nav_items = ["COM 1", "COM 2", "CHART", "Parking"] 
         nav_items = ["COM 1", "COM 2", "CHART"] 
         for item in nav_items:
             list_item = QListWidgetItem(item)
@@ -524,16 +524,14 @@ class MainWindow(QMainWindow):
             self.showMaximized()
             self.maximize_btn.setText("❐")
 
-    def create_pages(self):
+    def create_pages(self): # BOOKMARK: 创建页面
         COM1_page  = self.create_COM_page()
         COM2_page  = self.create_COM_page2()
         Chart_page = self.create_Chart_page()
-        Parking_page = self.create_parking_page()
 
         self.stacked_widget.addWidget(COM1_page)
         self.stacked_widget.addWidget(COM2_page)
         self.stacked_widget.addWidget(Chart_page)
-        self.stacked_widget.addWidget(Parking_page)
     
     def create_COM_page2(self):
         COM2_page = QWidget()
@@ -1008,7 +1006,7 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 QMessageBox.warning(self, "错误", f"关闭串口失败: {str(e)}")
     
-    def handle_serial_2_data(self, data):
+    def handle_serial_2_data(self, data): # BOOKMARK: COM2数据处理
         try:
             text = data.decode('utf-8', errors='ignore')
             self.log_worker.add_log_task("UwbLog2", "info", text.strip())
@@ -1350,8 +1348,50 @@ class MainWindow(QMainWindow):
 
         table_widget = self.create_test_area()  # 这里包含了表格和预留区域
         canvas_splitter.addWidget(table_widget)
-        position_widget = self.create_position_area()
-        canvas_splitter.addWidget(position_widget)
+        
+        # 创建位置区域
+        bottom_right = QWidget()
+        bottom_right_layout = QVBoxLayout(bottom_right)
+        bottom_right_layout.setContentsMargins(5, 5, 5, 5)
+        
+        # 添加切换按钮
+        button_layout = QHBoxLayout()
+        button_layout.addStretch()  # 推到右边
+        self.layout_toggle_btn = QPushButton("⚡")
+        self.layout_toggle_btn.setFixedSize(50, 30)
+        self.layout_toggle_btn.setStyleSheet("""
+            QPushButton {
+                background: rgba(45, 52, 54, 0.8);
+                border: 1px solid #2c3e50;
+                border-radius: 15px;
+                color: #ecf0f1;
+                font-size: 14px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background: rgba(52, 73, 94, 0.9);
+                border: 1px solid #34495e;
+            }
+            QPushButton:pressed {
+                background: rgba(44, 62, 80, 1.0);
+            }
+        """)
+        self.layout_toggle_btn.clicked.connect(self.toggle_layout_mode)
+        button_layout.addWidget(self.layout_toggle_btn)
+        bottom_right_layout.addLayout(button_layout)
+        
+        self.position_view = PositionView(self)
+        bottom_right_layout.addWidget(self.position_view)
+        # 初始化时刷新红蓝区域
+        self.position_view.refresh_areas()
+        canvas_splitter.addWidget(bottom_right)
+        
+        # 保存splitter引用以便后续控制
+        self.main_splitter = main_splitter
+        self.canvas_splitter = canvas_splitter
+        self.chart_widget = chart_widget
+        self.table_widget = table_widget
+        self.is_expanded_mode = False
 
         canvas_splitter.setSizes([100, 100])
         main_splitter.addWidget(canvas_splitter)
@@ -1360,16 +1400,55 @@ class MainWindow(QMainWindow):
         layout.addWidget(main_splitter)
         return Chart_page
     
-    def create_position_area(self):
-        bottom_right = QWidget()
-        bottom_right_layout = QVBoxLayout(bottom_right)
-        bottom_right_layout.setContentsMargins(5, 5, 5, 5)
-        self.position_view = PositionView(self)
-        bottom_right_layout.addWidget(self.position_view)
-        # 初始化时刷新红蓝区域
-        self.position_view.refresh_areas()
-        print("create_position_area")
-        return bottom_right
+    def toggle_layout_mode(self):
+        """切换布局模式：正常模式 <-> 扩展模式"""
+        if not self.is_expanded_mode:
+            # 切换到扩展模式：隐藏图表和表格区域
+            self.chart_widget.hide()
+            
+            # 隐藏表格区域（保留动画区域）
+            if hasattr(self, 'data_table'):
+                # 找到包含data_table的top_table widget并隐藏
+                table_widget = self.data_table.parent()
+                if table_widget:
+                    table_widget.hide()
+            
+            # 调整splitter比例，让动画区域和位置区域按1:2显示
+            self.canvas_splitter.setSizes([50, 100])  # 动画区域:位置区域 = 1:2
+            self.main_splitter.setSizes([0, 300])     # 隐藏图表区域
+            
+            # 设置扩展模式下的显示缩放为1.5倍
+            if hasattr(self, 'gate_animation'):
+                self.gate_animation.set_display_scale(1.5)
+            if hasattr(self, 'position_view'):
+                self.position_view.set_display_scale(1.5)
+            
+            self.layout_toggle_btn.setText("📊")
+            self.is_expanded_mode = True
+        else:
+            # 切换回正常模式：显示所有区域
+            self.chart_widget.show()
+            
+            # 显示表格区域
+            if hasattr(self, 'data_table'):
+                table_widget = self.data_table.parent()
+                if table_widget:
+                    table_widget.show()
+            
+            # 恢复原始比例
+            self.canvas_splitter.setSizes([100, 100])
+            self.main_splitter.setSizes([100, 200])
+            
+            # 恢复正常模式下的显示缩放为1.0倍
+            if hasattr(self, 'gate_animation'):
+                self.gate_animation.set_display_scale(1.0)
+            if hasattr(self, 'position_view'):
+                self.position_view.set_display_scale(1.0)
+            
+            self.layout_toggle_btn.setText("⚡")
+            self.is_expanded_mode = False
+    
+
     
     def create_chart_area(self):
         top_widget = QWidget()
@@ -1519,23 +1598,11 @@ class MainWindow(QMainWindow):
         bottom_layout = QVBoxLayout(bottom_space)
         bottom_layout.setContentsMargins(10, 10, 10, 10)
         
-        # 添加标题
         
         # 创建闸机动画组件
         self.gate_animation = SubwayGateAnimation()
         bottom_layout.addWidget(self.gate_animation)
         
-        # 添加控制按钮
-        # control_layout = QHBoxLayout()
-        
-        # self.trigger_btn = QPushButton("触发开门")
-        # self.trigger_btn.clicked.connect(self.gate_animation.trigger_gate_animation)
-        
-        # control_layout.addStretch()
-        # control_layout.addWidget(self.trigger_btn)
-        # control_layout.addStretch()
-        
-        # bottom_layout.addLayout(control_layout)
 
         form_splitter.addWidget(top_table)
         form_splitter.addWidget(bottom_space)
@@ -1543,312 +1610,6 @@ class MainWindow(QMainWindow):
 
         bottom_left_layout.addWidget(form_splitter)
         return bottom_left
-    
-    def create_parking_page(self):
-        """Create parking fee page"""
-        parking_page = QWidget()
-        parking_page.setStyleSheet("background: rgba(36, 42, 56, 0);")
-        
-        main_layout = QVBoxLayout(parking_page)
-        main_layout.setContentsMargins(40, 30, 40, 30)
-        main_layout.setSpacing(30)
-        
-        # Simplified title
-        title_label = QLabel("🚗 Parking Fee")
-        title_label.setStyleSheet("""
-            QLabel {
-                font-size: 32px;
-                font-weight: bold;
-                color: #4a90e2;
-                background: transparent;
-                margin-bottom: 20px;
-            }
-        """)
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        main_layout.addWidget(title_label)
-        
-        # 简化的内容区域 - 去掉边框
-        content_widget = QWidget()
-        # content_widget.setMaximumWidth(700)
-        content_widget.setMinimumWidth(600)
-        content_widget.setStyleSheet("""
-            QWidget {
-                background: rgba(255, 255, 255, 0.98);
-                border-radius: 15px;
-            }
-        """)
-        
-        content_layout = QVBoxLayout(content_widget)
-        content_layout.setContentsMargins(30, 30, 30, 30)
-        content_layout.setSpacing(20)
-        
-        # 简化的输入字段样式 - 去掉边框
-        input_style = """
-            QLineEdit {
-                font-size: 16px;
-                padding: 14px 18px;
-                border: none;
-                border-radius: 8px;
-                background: rgba(74, 144, 226, 0.08);
-                color: #2c3e50;
-            }
-            QLineEdit:focus {
-                background: rgba(74, 144, 226, 0.15);
-            }
-        """
-        
-        # 创建输入字段组合函数
-        def create_input_group(icon, label_text, placeholder, default_value):
-            group_layout = QVBoxLayout()
-            group_layout.setSpacing(6)
-            
-            label = QLabel(f"{icon} {label_text}")
-            label.setStyleSheet("""
-                QLabel {
-                    font-size: 14px;
-                    font-weight: 600;
-                    color: #34495e;
-                    background: transparent;
-                }
-            """)
-            
-            input_field = QLineEdit()
-            input_field.setPlaceholderText(placeholder)
-            input_field.setText(default_value)
-            input_field.setStyleSheet(input_style)
-            
-            group_layout.addWidget(label)
-            group_layout.addWidget(input_field)
-            return group_layout, input_field
-        
-        # Create input fields
-        plate_layout, self.plate_input = create_input_group(
-            "🚙", "License Plate", "e.g.: 粤B12345", "粤B12345")
-        content_layout.addLayout(plate_layout)
-        
-        amount_layout, self.amount_input = create_input_group(
-            "💰", "Parking Fee", "e.g.: 15.50", "15.50")
-        content_layout.addLayout(amount_layout)
-        
-        # Entry time display - simplified style
-        time_label = QLabel("🕐 Entry Time")
-        time_label.setStyleSheet("""
-            QLabel {
-                font-size: 14px;
-                font-weight: 600;
-                color: #34495e;
-                background: transparent;
-            }
-        """)
-        
-        self.entry_time_display = QLabel()
-        current_time = QDateTime.currentDateTime().toString("yyyy-MM-dd hh:mm")
-        self.entry_time_display.setText(current_time)
-        self.entry_time_display.setStyleSheet("""
-            QLabel {
-                font-size: 16px;
-                padding: 14px 18px;
-                border-radius: 8px;
-                background: rgba(52, 152, 219, 0.1);
-                color: #2c3e50;
-            }
-        """)
-        
-        content_layout.addWidget(time_label)
-        content_layout.addWidget(self.entry_time_display)
-        
-        # Simplified send button
-        self.send_parking_btn = QPushButton("Confirm Payment")
-        self.send_parking_btn.setStyleSheet("""
-            QPushButton {
-                font-size: 16px;
-                font-weight: bold;
-                padding: 16px;
-                background: #4a90e2;
-                color: white;
-                border: none;
-                border-radius: 10px;
-                margin-top: 15px;
-            }
-            QPushButton:hover {
-                background: #357abd;
-            }
-            QPushButton:pressed {
-                background: #2968a3;
-            }
-        """)
-        self.send_parking_btn.clicked.connect(self.send_parking_data)
-        content_layout.addWidget(self.send_parking_btn)
-        
-        # Simplified status display
-        self.status_label = QLabel("Ready to send")
-        self.status_label.setStyleSheet("""
-            QLabel {
-                font-size: 13px;
-                padding: 8px;
-                background: rgba(52, 152, 219, 0.1);
-                border-radius: 6px;
-                color: #7f8c8d;
-                text-align: center;
-            }
-        """)
-        self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        content_layout.addWidget(self.status_label)
-        
-        # 居中显示内容
-        center_layout = QHBoxLayout()
-        center_layout.addStretch()
-        center_layout.addWidget(content_widget)
-        center_layout.addStretch()
-        
-        main_layout.addLayout(center_layout)
-        main_layout.addStretch()
-        
-        return parking_page
-    
-    def send_parking_data(self):
-        """Send parking fee data in hexadecimal format"""
-        try:
-            # Get input data
-            plate_number = self.plate_input.text().strip()
-            amount = self.amount_input.text().strip()
-            
-            # Validate required fields
-            if not plate_number or not amount:
-                self.status_label.setText("License plate and amount are required")
-                self.status_label.setStyleSheet("""
-                    QLabel {
-                        font-size: 13px;
-                        padding: 8px;
-                        background: rgba(231, 76, 60, 0.1);
-                        border-radius: 6px;
-                        color: #e74c3c;
-                        text-align: center;
-                    }
-                """)
-                return
-            
-            # Convert data to hexadecimal format
-            hex_data = self.convert_to_hex_protocol(plate_number, amount)
-            
-            # Check if COM2 serial port is connected
-            if hasattr(self, 'serial2') and self.serial2 and self.serial2.is_open:
-                # Send hexadecimal data
-                hex_bytes = bytes.fromhex(hex_data)
-                self.serial2.write(hex_bytes)
-                
-                self.status_label.setText(f"{plate_number}  :  ${amount}\nHex: {hex_data}")
-                self.status_label.setStyleSheet("""
-                    QLabel {
-                        font-size: 13px;
-                        padding: 8px;
-                        background: rgba(46, 204, 113, 0.1);
-                        border-radius: 6px;
-                        color: #27ae60;
-                        text-align: center;
-                    }
-                """)
-                    
-            else:
-                self.status_label.setText("COM2 port not connected")
-                self.status_label.setStyleSheet("""
-                    QLabel {
-                        font-size: 13px;
-                        padding: 8px;
-                        background: rgba(231, 76, 60, 0.1);
-                        border-radius: 6px;
-                        color: #e74c3c;
-                        text-align: center;
-                    }
-                """)
-                
-        except Exception as e:
-            self.status_label.setText(f"Send failed: {str(e)}")
-            self.status_label.setStyleSheet("""
-                QLabel {
-                    font-size: 13px;
-                    padding: 8px;
-                    background: rgba(231, 76, 60, 0.1);
-                    border-radius: 6px;
-                    color: #e74c3c;
-                    text-align: center;
-                }
-            """)
-            print(f"Parking fee data send error: {str(e)}")
-    
-    def convert_to_hex_protocol(self, plate_number, amount):
-        """
-        Convert parking data to hexadecimal protocol format
-        
-        New Protocol format:
-        [Header/Preamble(3)] [Length(2)] [SADDR(6)] [TADDR(6)] [SNQ(1)] [cmd_type(1)] [result(1)] [apdu_count(1)] [data(N)] [DCS(1)] [End(1)]
-        
-        Args:
-            plate_number (str): License plate number (supports Chinese characters, e.g., "粤B12345")
-            amount (str): Parking fee amount (e.g., "15.50")
-            
-        Returns:
-            str: Hexadecimal string ready to send to MCU
-            
-        Example:
-            Input: plate_number="粤B12345", amount="15.50"
-            - Plate UTF-8 bytes: [0xE7, 0xB2, 0xA4, 0x42, 0x31, 0x32, 0x33, 0x34, 0x35] (9 bytes)
-            - Amount in cents: 1550 (0x060E)
-            - Data: E7B2A442313233343506OE
-        """
-        try:
-            # 1. Header/Preamble (fixed)
-            header_preamble = "0000FF"
-            
-            # 2. Convert plate number to UTF-8 bytes then to hex
-            # This handles Chinese characters properly (e.g., "粤B12345")
-            plate_bytes = plate_number.encode('utf-8')
-            plate_hex = plate_bytes.hex().upper()
-            
-            # 3. Convert amount to cents (multiply by 100) then to 2-byte hex
-            # e.g., "15.50" -> 1550 -> "060E"
-            amount_cents = int(float(amount) * 100)
-            amount_hex = f"{amount_cents:04X}"
-            
-            # 4. Build data field (plate + amount)
-            data_field = plate_hex + amount_hex
-            
-            # 5. Fixed protocol fields
-            saddr = "05FFFFFFFFFF"      # SADDR
-            taddr = "06FFFFFFFFFF"      # TADDR  
-            snq = "01"                  # SNQ
-            cmd_type = "C2"             # cmd_type
-            result = "00"               # result
-            apdu_count = "01"           # apdu_count
-            
-            # 6. Calculate total data length (little endian)
-            # Length includes: SADDR(6) + TADDR(6) + SNQ(1) + cmd_type(1) + result(1) + apdu_count(1) + data(N)
-            total_data_length = 6 + 6 + 1 + 1 + 1 + 1 + len(data_field)//2
-            length_hex = f"{total_data_length:02X}00"  # Little endian format
-            
-            # 7. Build payload for DCS calculation (everything except Header/Preamble and Length)
-            payload_for_dcs = saddr + taddr + snq + cmd_type + result + apdu_count + data_field
-            
-            # 8. Calculate DCS (checksum)
-            # DCS calculation: sum of all bytes from SADDR to data, then DCS = 0x100 - (sum & 0xFF)
-            dcs_sum = 0
-            for i in range(0, len(payload_for_dcs), 2):
-                dcs_sum += int(payload_for_dcs[i:i+2], 16)
-            dcs = (0x100 - (dcs_sum & 0xFF)) & 0xFF
-            dcs_hex = f"{dcs:02X}"
-            
-            # 9. End byte
-            end_byte = "00"
-            
-            # 10. Assemble complete protocol
-            complete_hex = header_preamble + length_hex + payload_for_dcs + dcs_hex + end_byte
-            
-            return complete_hex
-            
-        except Exception as e:
-            print(f"Error converting to hex protocol: {str(e)}")
-            # Fallback to simple format if conversion fails
-            return f"ERROR{str(e)[:10]}".encode('utf-8').hex().upper()
     
     def on_display_wheel(self, event):
         """处理显示区域的鼠标滚轮事件"""
@@ -2265,18 +2026,22 @@ class MainWindow(QMainWindow):
                     
                     if hasattr(self, 'gate_animation') and self.gate_animation is not None:
                         self.gate_animation.trigger_gate_animation()
-            
+            # BOOKMARK: COM1数据处理
             if "@POSITION" in text:
                 # print(f'接收到原始数据：{repr(text)}')
                 try:
-                    json_data = json.loads(text)
+                    # Fix unquoted hex values in JSON (e.g., "mac": F4A6 -> "mac": "F4A6")
+                    fixed_text = re.sub(r'"mac":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"mac": "\1"', text)
+                    json_data = json.loads(fixed_text)
                 except json.JSONDecodeError as e:
                     print(f"JSON解析错误: {e}")
+                    print(f"原始数据: {text}")
                     return
-                # 提取用户坐标
+                # 提取用户坐标和MAC地址
                 user_x = float(json_data.get('User-X', 0))
                 user_y = float(json_data.get('User-Y', 0))
                 user_z = float(json_data.get('User-Z', 0))
+                user_mac = json_data.get('mac', 'default')  # 获取用户MAC地址
                 
                 new_red_length = int(json_data.get('RedAreaH', 0)) / 2
                 new_blue_length = int(json_data.get('BlueAreaH', 0))
@@ -2335,12 +2100,18 @@ class MainWindow(QMainWindow):
                     self.pending_table_rows = []
                 self.pending_table_rows.append(data_values)
 
-                # 更新用户位置显示（仅当有明显偏移时）
+                # 更新多用户位置显示
                 if hasattr(self, 'position_view'):
-                    last_pos = getattr(self.position_view, "current_position", None)
-                    threshold = 2  # 例如5米或5像素，根据你的scale调整
-                    if last_pos is None or ((user_x - last_pos[0]) ** 2 + (user_y - last_pos[1]) ** 2) ** 0.5 > threshold:
-                        self.position_view.update_position(user_x, user_y)
+                    # 直接使用单用户更新方法，避免不必要的循环开销
+                    self.position_view.update_position(user_x, user_y, user_mac)
+                    
+                    # 定期清理不活跃的用户（每100次更新检查一次）
+                    if not hasattr(self, '_cleanup_counter'):
+                        self._cleanup_counter = 0
+                    self._cleanup_counter += 1
+                    if self._cleanup_counter >= 100:
+                        self.position_view.user_manager.remove_inactive_users(timeout_seconds=30.0)
+                        self._cleanup_counter = 0
                         
         except Exception as e:
             print(f"Error processing serial data: {str(e)}")
@@ -2910,216 +2681,8 @@ class FindThread(QThread):
                     current = total - 1  # 循环到最后一个
         self.result_ready.emit(current, total, positions)
 
-class PositionView(QWidget):
-    def __init__(self, parent=None):
-        super().__init__(parent)
-        self.current_position = None
-        self.last_position    = None
-        self.scale            = 2
-        self.origin_offset_y  = -200
-        self.main_window      = parent  # 保存主窗口引用
-        
-        # 创建静态内容缓存
-        self.static_content   = None
-        
-        # 滤波和异常值检测相关参数
-        self.position_history = []  # 存储最近的位置历史
-        self.history_max_size = 3   # 历史记录最大长度
-        self.max_jump_distance = 50  # 最大允许跳变距离
-        self.smoothing_factor = 0.5  # 平滑因子 (0-1)，越小越平滑
-        
-    def draw_static_content(self, painter, center_x, center_y):
-        # 获取动态长度值
-        red_height = int(self.main_window.red_length * self.scale) if self.main_window.red_length != 0 else 100
-        blue_height = int(self.main_window.blue_length ) if self.main_window.blue_length != 0 else 300
-        print(f'red_height: {red_height}, blue_height: {blue_height}')
-        
-        # 红色感应区（从原点开始向下）
-        red_gradient = QLinearGradient(center_x, center_y, center_x, center_y + red_height)
-        red_gradient.setColorAt(0, QColor(255, 0, 0, 70))  # 增加红色透明度
-        red_gradient.setColorAt(1, QColor(255, 0, 0, 80))
-        painter.setBrush(red_gradient)
-        painter.setPen(Qt.PenStyle.NoPen)
-        painter.drawRect(int(center_x - 100), int(center_y), 200, red_height)
-        
-        # 蓝色区域（紧接红色区域，不重叠）
-        blue_start_y = center_y + red_height
-        blue_rect_height = blue_height - red_height if blue_height > red_height else blue_height
-        blue_gradient = QLinearGradient(center_x, blue_start_y, center_x, blue_start_y + blue_rect_height)
-        blue_gradient.setColorAt(0, QColor(0, 140, 255, 100))  # 增加蓝色透明度和饱和度
-        blue_gradient.setColorAt(1, QColor(0, 140, 255, 70))
-        painter.setBrush(blue_gradient)
-        painter.drawRect(int(center_x - 100), int(blue_start_y), 200, blue_rect_height)
-        
-        # 绘制闸机（左侧）
-        painter.setPen(QPen(QColor("#333333"), 2))
-        painter.setBrush(QColor("#444444"))
-        painter.drawRect(int(center_x - 100), int(center_y - 40), 20, 80)  # 修改为-100
-        # 闸机装饰
-        painter.setPen(QPen(QColor("#666666"), 1))
-        painter.drawLine(int(center_x - 95), int(center_y - 30), int(center_x - 85), int(center_y - 30))  # 对应调整装饰线
-        painter.drawLine(int(center_x - 95), int(center_y), int(center_x - 85), int(center_y))
-        painter.drawLine(int(center_x - 95), int(center_y + 30), int(center_x - 85), int(center_y + 30))
-        
-        # 绘制闸机（右侧）
-        painter.setPen(QPen(QColor("#333333"), 2))
-        painter.setBrush(QColor("#444444"))
-        painter.drawRect(int(center_x + 80), int(center_y - 40), 20, 80)  # 修改为+80，考虑闸机宽度20
-        # 闸机装饰
-        painter.setPen(QPen(QColor("#666666"), 1))
-        painter.drawLine(int(center_x + 85), int(center_y - 30), int(center_x + 95), int(center_y - 30))  # 对应调整装饰线
-        painter.drawLine(int(center_x + 85), int(center_y), int(center_x + 95), int(center_y))
-        painter.drawLine(int(center_x + 85), int(center_y + 30), int(center_x + 95), int(center_y + 30))
-        
-        # 绘制坐标轴
-        painter.setPen(QPen(QColor("#666666"), 1))
-        painter.drawLine(0, int(center_y), self.width(), int(center_y))
-        painter.drawLine(int(center_x), 0, int(center_x), self.height())
-        
-        # 绘制原点（红色）
-        painter.setPen(QPen(QColor("#FF0000"), 2))
-        painter.setBrush(QColor("#FF0000"))
-        painter.drawEllipse(int(center_x) - 2, int(center_y) - 2, 4, 4)
-        
-    def create_static_content(self):
-        """创建静态内容缓存"""
-        self.static_content = QPixmap(self.size())
-        self.static_content.fill(Qt.GlobalColor.transparent)
-        
-        painter = QPainter(self.static_content)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        
-        # 获取窗口中心
-        center_x = self.width() / 2
-        center_y = self.height() / 2 + self.origin_offset_y
-        
-        # 绘制静态内容
-        self.draw_static_content(painter, center_x, center_y)
-        painter.end()
-        
-    def update_position(self, x, y):
-        """更新位置并触发重绘，包含滤波和异常值检测"""
-        # 如果是第一个点，直接接受
-        if self.current_position is None:
-            self.current_position = (x, y)
-            self.position_history.append((x, y))
-            self.update()
-            return
-            
-        # 计算与上一个点的距离
-        last_x, last_y = self.current_position
-        distance = ((x - last_x) ** 2 + (y - last_y) ** 2) ** 0.5
-        
-        # 异常值检测 - 如果距离太大，可能是异常值
-        if distance > self.max_jump_distance:
-            print(f"异常值检测: 距离 {distance:.1f} 超过阈值 {self.max_jump_distance}")
-            
-            # 限制移动距离，沿着相同方向但限制距离
-            direction_x = (x - last_x) / distance if distance > 0 else 0
-            direction_y = (y - last_y) / distance if distance > 0 else 0
-
-            x = last_x + direction_x * self.max_jump_distance
-            y = last_y + direction_y * self.max_jump_distance
-
-            distance_new = ((x - last_x) ** 2 + (y - last_y) ** 2) ** 0.5
-        
-        # 移动平均滤波
-        if self.position_history:
-            # 添加当前点到历史
-            self.position_history.append((x, y))
-            
-            # 保持历史记录在指定长度内
-            if len(self.position_history) > self.history_max_size:
-                self.position_history.pop(0)
-            
-            # 计算历史点的平均位置
-            avg_x = sum(pos[0] for pos in self.position_history) / len(self.position_history)
-            avg_y = sum(pos[1] for pos in self.position_history) / len(self.position_history)
-            
-            # 应用平滑因子 - 在当前测量值和平均值之间插值
-            smoothed_x = x * self.smoothing_factor + avg_x * (1 - self.smoothing_factor)
-            smoothed_y = y * self.smoothing_factor + avg_y * (1 - self.smoothing_factor)
-            
-            # 更新位置
-            self.last_position = self.current_position
-            self.current_position = (smoothed_x, smoothed_y)
-        else:
-            # 如果没有历史记录，直接使用当前值
-            self.last_position = self.current_position
-            self.current_position = (x, y)
-            self.position_history.append((x, y))
-        
-        self.update()
-        
-    def refresh_areas(self):
-        """刷新红蓝区域，当长度值变化时调用"""
-        self.static_content = None  # 清除缓存
-        self.update()  # 触发重绘
-        
-    def paintEvent(self, event):
-        painter = QPainter(self)
-        painter.setRenderHint(QPainter.RenderHint.Antialiasing)
-        
-        # 如果静态内容不存在或窗口大小改变，重新创建
-        if self.static_content is None or \
-           self.static_content.size() != self.size():
-            self.create_static_content()
-        
-        # 绘制静态内容
-        painter.drawPixmap(0, 0, self.static_content)
-            
-        # 如果没有位置数据，到此结束
-        if not self.current_position:
-            return
-            
-        # 获取窗口中心（用于动态内容）
-        center_x = self.width() / 2
-        center_y = self.height() / 2 + self.origin_offset_y
-        
-        # 绘制动态内容（位置点和轨迹）
-        x, y = self.current_position
-        screen_x = center_x + x * self.scale
-        screen_y = center_y + y * self.scale
-
-        # 绘制坐标文本背景
-        coord_text = f"X: {int(x)}, Y: {int(y)}"
-        bg_rect = painter.fontMetrics().boundingRect(coord_text)
-        bg_rect.adjust(-15, -5, 15, 5)  # 扩大背景区域
-        bg_rect.moveTopLeft(QPoint(10, 5))
-        painter.setPen(Qt.PenStyle.NoPen)
-        painter.setBrush(QColor(0, 0, 0, 120))  # 半透明黑色背景
-        painter.drawRoundedRect(bg_rect, 5, 5)  # 圆角矩形背景
-        
-        # 绘制坐标文本
-        painter.setPen(QPen(QColor("#ffffff"), 2))  # 白色文本
-        painter.setFont(QFont("Segoe UI", 12, QFont.Weight.Bold))  # 加粗字体
-        painter.drawText(15, 23, coord_text)
-        
-        if self.last_position:
-            last_x, last_y = self.last_position
-            last_screen_x = center_x + last_x * self.scale
-            last_screen_y = center_y + last_y * self.scale
-            
-            # 使用渐变色绘制轨迹
-            gradient = QLinearGradient(last_screen_x, last_screen_y, screen_x, screen_y)
-            gradient.setColorAt(0, QColor(180, 120, 220, 25))  # 起点颜色（浅紫色较淡）
-            gradient.setColorAt(1, QColor(180, 120, 220, 200))  # 终点颜色（浅紫色较深）
-            
-            pen = QPen()
-            pen.setBrush(gradient)
-            pen.setWidth(5)  # 增加线条宽度
-            painter.setPen(pen)
-            painter.drawLine(int(last_screen_x), int(last_screen_y), 
-                           int(screen_x), int(screen_y))
-        
-        # 绘制当前位置点
-        painter.setPen(QPen(QColor("#b478dc"), 2))
-        painter.setBrush(QColor(180, 120, 220, 255))
-        painter.drawEllipse(int(screen_x) - 6, int(screen_y) - 6, 12, 12)  # 增大点的大小
-
 class SubwayGateAnimation(QWidget):
     """地铁闸机开门关门动画组件"""
-    
     def __init__(self, parent=None):
         super().__init__(parent)
         # self.setMinimumSize(300, 200)
@@ -3127,6 +2690,7 @@ class SubwayGateAnimation(QWidget):
         self.gate_state = "closed"  # closed, opening, open, closing
         self.left_door_angle = 0    # 左门角度 (0-90)
         self.right_door_angle = 0   # 右门角度 (0-90)
+        self.display_scale = 1.0    # 显示缩放因子，用于扩展模式
         
         self.animation_timer = QTimer()
         self.animation_timer.timeout.connect(self.update_animation)
@@ -3143,6 +2707,11 @@ class SubwayGateAnimation(QWidget):
         self.particle_timer.timeout.connect(self.update_particles)
         self.particles = []        # 粒子列表
         self.frame_count = 0       # 帧计数器
+        
+    def set_display_scale(self, scale):
+        """设置显示缩放因子"""
+        self.display_scale = scale
+        self.update()
         
     def trigger_gate_animation(self):
         """触发闸机开门动画"""
@@ -3227,14 +2796,15 @@ class SubwayGateAnimation(QWidget):
         
     def draw_gate_doors(self, painter, center_x, center_y):
         """绘制横向地铁闸机门"""
-        door_width = 80   # 横向门的宽度
-        door_height = 15  # 横向门的高度
+        # 应用显示缩放
+        door_width = int(80 * self.display_scale)   # 横向门的宽度
+        door_height = int(15 * self.display_scale)  # 横向门的高度
         
         import math
         
         # 计算门的横向偏移（基于角度）
-        left_offset = math.sin(math.radians(self.left_door_angle)) * 60
-        right_offset = math.sin(math.radians(self.right_door_angle)) * 60
+        left_offset = math.sin(math.radians(self.left_door_angle)) * (60 * self.display_scale)
+        right_offset = math.sin(math.radians(self.right_door_angle)) * (60 * self.display_scale)
         
         # 绘制左右两扇横向门
         for door_side in ['left', 'right']:
@@ -3262,18 +2832,20 @@ class SubwayGateAnimation(QWidget):
                 border_color = QColor(108, 92, 231, 150)
             
             painter.setBrush(door_gradient)
-            painter.setPen(QPen(border_color, 2))
+            painter.setPen(QPen(border_color, int(2 * self.display_scale)))
             
             # 绘制横向门体
             door_rect = QRect(door_x, door_y, door_width, door_height)
-            painter.drawRoundedRect(door_rect, 6, 6)
+            corner_radius = int(6 * self.display_scale)
+            painter.drawRoundedRect(door_rect, corner_radius, corner_radius)
             
             # 横向中央线
-            painter.setPen(QPen(QColor(255, 255, 255, 120), 1))
-            painter.drawLine(door_x + 10, door_y + door_height // 2, door_x + door_width - 10, door_y + door_height // 2)
+            line_margin = int(10 * self.display_scale)
+            painter.setPen(QPen(QColor(255, 255, 255, 120), max(1, int(1 * self.display_scale))))
+            painter.drawLine(door_x + line_margin, door_y + door_height // 2, door_x + door_width - line_margin, door_y + door_height // 2)
             
             # 绘制门端传感器
-            sensor_size = 8
+            sensor_size = int(8 * self.display_scale)
             if door_side == 'left':
                 sensor_x = door_x + door_width - sensor_size // 2
             else:
@@ -3290,21 +2862,23 @@ class SubwayGateAnimation(QWidget):
                 sensor_gradient.setColorAt(1, QColor(74, 74, 74, 200))
                 
             painter.setBrush(sensor_gradient)
-            painter.setPen(QPen(QColor(255, 255, 255, 180), 1))
+            painter.setPen(QPen(QColor(255, 255, 255, 180), max(1, int(1 * self.display_scale))))
             painter.drawEllipse(sensor_x, sensor_y, sensor_size, sensor_size)
             
             # 传感器中心点
+            center_size = int(4 * self.display_scale)
+            center_offset = int(2 * self.display_scale)
             painter.setBrush(QColor(255, 255, 255, 200))
             painter.setPen(Qt.PenStyle.NoPen)
-            painter.drawEllipse(sensor_x + 2, sensor_y + 2, 4, 4)
+            painter.drawEllipse(sensor_x + center_offset, sensor_y + center_offset, center_size, center_size)
             
             # 绘制门的阴影效果
-            shadow_offset = 2
+            shadow_offset = int(2 * self.display_scale)
             shadow_color = QColor(0, 0, 0, 60)
             painter.setBrush(shadow_color)
             painter.setPen(Qt.PenStyle.NoPen)
             shadow_rect = QRect(door_x, door_y + shadow_offset, door_width, door_height)
-            painter.drawRoundedRect(shadow_rect, 6, 6)
+            painter.drawRoundedRect(shadow_rect, corner_radius, corner_radius)
         
     def draw_tech_background(self, painter):
         """绘制高科技背景"""
@@ -3331,39 +2905,47 @@ class SubwayGateAnimation(QWidget):
         painter.setPen(Qt.PenStyle.NoPen)
         painter.drawRect(self.rect())
         
-        # 绘制动态网格背景
-        grid_size = 25
+        # 绘制动态网格背景（应用缩放）
+        grid_size = int(25 * self.display_scale)
         grid_alpha = int(30 + 20 * math.sin(self.frame_count * 0.05))
-        painter.setPen(QPen(QColor(grid_color.red(), grid_color.green(), grid_color.blue(), grid_alpha), 1))
+        grid_line_width = max(1, int(1 * self.display_scale))
+        painter.setPen(QPen(QColor(grid_color.red(), grid_color.green(), grid_color.blue(), grid_alpha), grid_line_width))
         
         # 垂直网格线
         for x in range(0, self.width(), grid_size):
             # 添加闪烁效果
             line_alpha = int(grid_alpha + 30 * math.sin(self.frame_count * 0.1 + x * 0.01))
-            painter.setPen(QPen(QColor(grid_color.red(), grid_color.green(), grid_color.blue(), max(0, min(255, line_alpha))), 1))
+            painter.setPen(QPen(QColor(grid_color.red(), grid_color.green(), grid_color.blue(), max(0, min(255, line_alpha))), grid_line_width))
             painter.drawLine(x, 0, x, self.height())
             
         # 水平网格线
         for y in range(0, self.height(), grid_size):
             line_alpha = int(grid_alpha + 30 * math.sin(self.frame_count * 0.1 + y * 0.01))
-            painter.setPen(QPen(QColor(grid_color.red(), grid_color.green(), grid_color.blue(), max(0, min(255, line_alpha))), 1))
+            painter.setPen(QPen(QColor(grid_color.red(), grid_color.green(), grid_color.blue(), max(0, min(255, line_alpha))), grid_line_width))
             painter.drawLine(0, y, self.width(), y)
         
-        # 绘制数据流线条
-        painter.setPen(QPen(grid_color, 2))
+        # 绘制数据流线条（应用缩放）
+        flow_line_width = max(1, int(2 * self.display_scale))
+        painter.setPen(QPen(grid_color, flow_line_width))
         flow_speed = 3
+        flow_spacing = int(50 * self.display_scale)
+        flow_y_spacing = int(40 * self.display_scale)
+        flow_y_start = int(30 * self.display_scale)
         for i in range(5):
-            flow_x = (self.frame_count * flow_speed + i * 50) % (self.width() + 100) - 50
-            flow_y = 30 + i * 40
+            flow_x = (self.frame_count * flow_speed + i * flow_spacing) % (self.width() + 100) - 50
+            flow_y = flow_y_start + i * flow_y_spacing
             if flow_y < self.height():
-                # 数据流点
+                # 数据流点（应用缩放）
+                dot_spacing = int(15 * self.display_scale)
+                dot_size = int(4 * self.display_scale)
+                dot_height = int(2 * self.display_scale)
                 for j in range(8):
-                    dot_x = flow_x - j * 15
+                    dot_x = flow_x - j * dot_spacing
                     if 0 <= dot_x <= self.width():
                         dot_alpha = int(200 * (1 - j / 8.0))
                         painter.setBrush(QColor(grid_color.red(), grid_color.green(), grid_color.blue(), dot_alpha))
                         painter.setPen(Qt.PenStyle.NoPen)
-                        painter.drawEllipse(dot_x - 2, flow_y - 1, 4, 2)
+                        painter.drawEllipse(dot_x - dot_size//2, flow_y - dot_height//2, dot_size, dot_height)
     
     def draw_tech_frame(self, painter, center_x, center_y):
         """绘制闸机框架"""
@@ -3379,49 +2961,72 @@ class SubwayGateAnimation(QWidget):
             secondary_color = QColor(108, 92, 231)
             accent_color = QColor(53, 59, 64)
         
-        # 绘制底座平台
-        base_gradient = QLinearGradient(center_x - 100, center_y + 60, center_x + 100, center_y + 80)
+        # 绘制底座平台（应用缩放）
+        base_width = int(200 * self.display_scale)
+        base_height = int(20 * self.display_scale)
+        base_y_offset = int(60 * self.display_scale)
+        base_half_width = int(100 * self.display_scale)
+        
+        base_gradient = QLinearGradient(center_x - base_half_width, center_y + base_y_offset, 
+                                       center_x + base_half_width, center_y + base_y_offset + base_height)
         base_gradient.setColorAt(0, QColor(40, 50, 70, 200))
         base_gradient.setColorAt(0.5, QColor(60, 70, 90, 240))
         base_gradient.setColorAt(1, QColor(40, 50, 70, 200))
         
         painter.setBrush(base_gradient)
-        painter.setPen(QPen(primary_color, 2))
-        painter.drawRoundedRect(center_x - 100, center_y + 60, 200, 20, 10, 10)
+        painter.setPen(QPen(primary_color, int(2 * self.display_scale)))
+        base_radius = int(10 * self.display_scale)
+        painter.drawRoundedRect(center_x - base_half_width, center_y + base_y_offset, 
+                               base_width, base_height, base_radius, base_radius)
+        
+        # 立柱尺寸（应用缩放）
+        pillar_width = int(25 * self.display_scale)
+        pillar_height = int(140 * self.display_scale)
+        pillar_y_offset = int(70 * self.display_scale)
+        pillar_radius = int(8 * self.display_scale)
+        left_pillar_x = int(center_x - 90 * self.display_scale)
+        right_pillar_x = int(center_x + 65 * self.display_scale)
         
         # 左侧立柱 
-        left_pillar_gradient = QLinearGradient(center_x - 90, center_y - 70, center_x - 70, center_y + 70)
+        left_pillar_gradient = QLinearGradient(left_pillar_x, center_y - pillar_y_offset, 
+                                              left_pillar_x + pillar_width, center_y + pillar_y_offset)
         left_pillar_gradient.setColorAt(0, QColor(80, 100, 140, 220))
         left_pillar_gradient.setColorAt(0.3, QColor(100, 120, 160, 250))
         left_pillar_gradient.setColorAt(0.7, QColor(90, 110, 150, 250))
         left_pillar_gradient.setColorAt(1, QColor(70, 90, 130, 220))
         
         painter.setBrush(left_pillar_gradient)
-        painter.setPen(QPen(primary_color, 3))
-        painter.drawRoundedRect(center_x - 90, center_y - 70, 25, 140, 8, 8)
+        painter.setPen(QPen(primary_color, int(3 * self.display_scale)))
+        painter.drawRoundedRect(left_pillar_x, center_y - pillar_y_offset, 
+                               pillar_width, pillar_height, pillar_radius, pillar_radius)
         
         # 右侧立柱 
-        right_pillar_gradient = QLinearGradient(center_x + 65, center_y - 70, center_x + 90, center_y + 70)
+        right_pillar_gradient = QLinearGradient(right_pillar_x, center_y - pillar_y_offset, 
+                                               right_pillar_x + pillar_width, center_y + pillar_y_offset)
         right_pillar_gradient.setColorAt(0, QColor(80, 100, 140, 220))
         right_pillar_gradient.setColorAt(0.3, QColor(100, 120, 160, 250))
         right_pillar_gradient.setColorAt(0.7, QColor(90, 110, 150, 250))
         right_pillar_gradient.setColorAt(1, QColor(70, 90, 130, 220))
         
         painter.setBrush(right_pillar_gradient)
-        painter.setPen(QPen(primary_color, 3))
-        painter.drawRoundedRect(center_x + 65, center_y - 70, 25, 140, 8, 8)
+        painter.setPen(QPen(primary_color, int(3 * self.display_scale)))
+        painter.drawRoundedRect(right_pillar_x, center_y - pillar_y_offset, 
+                               pillar_width, pillar_height, pillar_radius, pillar_radius)
         
         # 装饰线条 
         glow_alpha = int(100 + 30 * math.sin(self.frame_count * 0.1))
-        painter.setPen(QPen(QColor(secondary_color.red(), secondary_color.green(), secondary_color.blue(), glow_alpha), 1))
+        painter.setPen(QPen(QColor(secondary_color.red(), secondary_color.green(), secondary_color.blue(), glow_alpha), max(1, int(1 * self.display_scale))))
         
-        # 立柱中央线条
-        painter.drawLine(center_x - 77, center_y - 50, center_x - 77, center_y + 50)
-        painter.drawLine(center_x + 77, center_y - 50, center_x + 77, center_y + 50)
+        # 立柱中央线条（应用缩放）
+        line_offset_x = int(77 * self.display_scale)
+        line_offset_y = int(50 * self.display_scale)
+        painter.drawLine(center_x - line_offset_x, center_y - line_offset_y, center_x - line_offset_x, center_y + line_offset_y)
+        painter.drawLine(center_x + line_offset_x, center_y - line_offset_y, center_x + line_offset_x, center_y + line_offset_y)
         
-        # 在立柱顶部绘制状态指示LED
-        led_size = 6
-        led_positions = [(center_x - 77, center_y - 60), (center_x + 77, center_y - 60)]
+        # 在立柱顶部绘制状态指示LED（应用缩放）
+        led_size = int(6 * self.display_scale)
+        led_y_offset = int(60 * self.display_scale)
+        led_positions = [(center_x - line_offset_x, center_y - led_y_offset), (center_x + line_offset_x, center_y - led_y_offset)]
         
         for i, (led_x, led_y) in enumerate(led_positions):
             # LED发光效果
@@ -3436,17 +3041,19 @@ class SubwayGateAnimation(QWidget):
                 led_alpha = 100
                 
             painter.setBrush(QColor(led_color.red(), led_color.green(), led_color.blue(), led_alpha))
-            painter.setPen(QPen(QColor(255, 255, 255, 150), 1))
+            painter.setPen(QPen(QColor(255, 255, 255, 150), max(1, int(1 * self.display_scale))))
             painter.drawEllipse(led_x - led_size//2, led_y - led_size//2, led_size, led_size)
         
-        # 绘制传感器阵列
+        # 绘制传感器阵列（应用缩放）
+        sensor_offset_x = int(82 * self.display_scale)
+        sensor_offset_y = int(30 * self.display_scale)
         sensor_positions = [
-            (center_x - 82, center_y - 30),
-            (center_x - 82, center_y),
-            (center_x - 82, center_y + 30),
-            (center_x + 82, center_y - 30),
-            (center_x + 82, center_y),
-            (center_x + 82, center_y + 30)
+            (center_x - sensor_offset_x, center_y - sensor_offset_y),
+            (center_x - sensor_offset_x, center_y),
+            (center_x - sensor_offset_x, center_y + sensor_offset_y),
+            (center_x + sensor_offset_x, center_y - sensor_offset_y),
+            (center_x + sensor_offset_x, center_y),
+            (center_x + sensor_offset_x, center_y + sensor_offset_y)
         ]
         
         for i, (sx, sy) in enumerate(sensor_positions):
@@ -3455,8 +3062,11 @@ class SubwayGateAnimation(QWidget):
             sensor_color = QColor(accent_color.red(), accent_color.green(), accent_color.blue(), blink_alpha)
             
             painter.setBrush(sensor_color)
-            painter.setPen(QPen(QColor(255, 255, 255, 180), 1))
-            painter.drawEllipse(sx - 3, sy - 3, 6, 6)
+            painter.setPen(QPen(QColor(255, 255, 255, 180), max(1, int(1 * self.display_scale))))
+            # 应用缩放的传感器大小
+            sensor_size = int(6 * self.display_scale)
+            sensor_half_size = int(3 * self.display_scale)
+            painter.drawEllipse(sx - sensor_half_size, sy - sensor_half_size, sensor_size, sensor_size)
     
     def draw_scan_lines(self, painter):
         """绘制扫描线效果"""
@@ -3468,9 +3078,10 @@ class SubwayGateAnimation(QWidget):
         else:
             scan_color = QColor(255, 150, 100)
         
-        # 主扫描线 - 水平移动
+        # 主扫描线 - 水平移动（应用缩放）
         scan_alpha = int(120 + 80 * math.sin(self.frame_count * 0.15))
-        painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), scan_alpha), 3))
+        main_line_width = max(1, int(3 * self.display_scale))
+        painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), scan_alpha), main_line_width))
         
         # 主扫描线
         main_scan_y = self.scan_line_pos
@@ -3478,38 +3089,43 @@ class SubwayGateAnimation(QWidget):
         
         # 副扫描线
         secondary_scan_y = (self.scan_line_pos + self.height()//2) % self.height()
-        painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), scan_alpha//2), 2))
+        secondary_line_width = max(1, int(2 * self.display_scale))
+        painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), scan_alpha//2), secondary_line_width))
         painter.drawLine(0, secondary_scan_y, self.width(), secondary_scan_y)
         
         # 垂直扫描线 - 左右移动
         vertical_scan_x = (self.frame_count * 3) % (self.width() + 100) - 50
         if 0 <= vertical_scan_x <= self.width():
-            painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), scan_alpha//3), 2))
+            vertical_line_width = max(1, int(2 * self.display_scale))
+            painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), scan_alpha//3), vertical_line_width))
             painter.drawLine(vertical_scan_x, 0, vertical_scan_x, self.height())
         
-        # 雷达扫描效果（圆形）
+        # 雷达扫描效果（圆形）（应用缩放）
         center_x = self.width() // 2
         center_y = self.height() // 2
-        radar_radius = int(50 + 30 * math.sin(self.frame_count * 0.08))
+        base_radar_radius = int((50 + 30 * math.sin(self.frame_count * 0.08)) * self.display_scale)
         
-        painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), 60), 2))
+        radar_line_width = max(1, int(2 * self.display_scale))
+        painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), 60), radar_line_width))
         painter.setBrush(Qt.BrushStyle.NoBrush)
-        painter.drawEllipse(center_x - radar_radius, center_y - radar_radius, 
-                           radar_radius * 2, radar_radius * 2)
+        painter.drawEllipse(center_x - base_radar_radius, center_y - base_radar_radius, 
+                           base_radar_radius * 2, base_radar_radius * 2)
         
         # 雷达扫描臂
         radar_angle = (self.frame_count * 4) % 360
-        radar_end_x = center_x + radar_radius * math.cos(math.radians(radar_angle))
-        radar_end_y = center_y + radar_radius * math.sin(math.radians(radar_angle))
+        radar_end_x = center_x + base_radar_radius * math.cos(math.radians(radar_angle))
+        radar_end_y = center_y + base_radar_radius * math.sin(math.radians(radar_angle))
         
-        painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), 150), 3))
+        radar_arm_width = max(1, int(3 * self.display_scale))
+        painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), 150), radar_arm_width))
         painter.drawLine(center_x, center_y, int(radar_end_x), int(radar_end_y))
         
-        # 扫描点效果
+        # 扫描点效果（应用缩放）
         for i in range(3):
-            point_radius = 20 + i * 15
+            point_radius = int((20 + i * 15) * self.display_scale)
             point_alpha = int(100 - i * 30)
-            painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), point_alpha), 1))
+            point_line_width = max(1, int(1 * self.display_scale))
+            painter.setPen(QPen(QColor(scan_color.red(), scan_color.green(), scan_color.blue(), point_alpha), point_line_width))
             painter.drawEllipse(int(radar_end_x) - point_radius, int(radar_end_y) - point_radius,
                                point_radius * 2, point_radius * 2)
     
@@ -3517,8 +3133,8 @@ class SubwayGateAnimation(QWidget):
         """绘制发光效果"""
         import math
         
-        # 创建径向渐变发光
-        glow_radius = 100 * self.glow_intensity
+        # 创建径向渐变发光（应用缩放）
+        glow_radius = int(100 * self.glow_intensity * self.display_scale)
         glow_gradient = QLinearGradient(center_x - glow_radius, center_y - glow_radius,
                                        center_x + glow_radius, center_y + glow_radius)
         
@@ -3546,7 +3162,7 @@ class SubwayGateAnimation(QWidget):
                 'vx': random.uniform(-2, 2),
                 'vy': random.uniform(-2, 2),
                 'life': random.uniform(0.5, 1.0),
-                'size': random.uniform(2, 5)
+                'size': random.uniform(2 * self.display_scale, 5 * self.display_scale)  # 应用缩放
             }
             self.particles.append(particle)
     
