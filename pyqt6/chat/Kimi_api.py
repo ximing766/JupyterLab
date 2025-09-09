@@ -72,7 +72,7 @@ class KimiChatAssistant:
                 if self.use_stream:
                     return completion
                 assistant_message = completion.choices[0]   # 第一个候选
-                if assistant_message.finish_reason == "stop":    #XXX tools不能添加
+                if assistant_message.finish_reason == "stop":   
                     self.messages.append(completion.choices[0].message)
                 return assistant_message
             except OpenAIError as e:

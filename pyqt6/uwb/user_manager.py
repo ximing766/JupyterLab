@@ -3,18 +3,9 @@ import time
 
 
 class PositionFilter:
-    """Position filtering utility for smoothing and outlier detection"""
-    
-    def __init__(self, history_max_size: int = 3, max_jump_distance: float = 30.0, 
+    def __init__(self, history_max_size: int = 5, max_jump_distance: float = 50.0, 
                  smoothing_factor: float = 0.5):
-        """
-        Initialize position filter
-        
-        Args:
-            history_max_size: Maximum number of positions to keep in history
-            max_jump_distance: Maximum allowed distance between consecutive positions
-            smoothing_factor: Smoothing factor (0-1), lower values = more smoothing
-        """
+
         self.history_max_size = history_max_size
         self.max_jump_distance = max_jump_distance
         self.smoothing_factor = smoothing_factor
@@ -22,16 +13,6 @@ class PositionFilter:
         self.last_position: Optional[Tuple[float, float]] = None
         
     def filter_position(self, x: float, y: float) -> Tuple[float, float]:
-        """
-        Apply filtering to a new position
-        
-        Args:
-            x: X coordinate
-            y: Y coordinate
-            
-        Returns:
-            Tuple of filtered (x, y) coordinates
-        """
         # If this is the first position, accept it directly
         if self.last_position is None:
             self.last_position = (x, y)
@@ -92,6 +73,17 @@ class UserData:
         self.last_update_time = time.time()
         self.has_new_data = False
         
+        # Card information
+        self.card_no: Optional[str] = None
+        self.balance: Optional[float] = None
+        
+        # Interpolation animation properties
+        self.target_position: Optional[Tuple[float, float, float]] = None
+        self.animation_start_position: Optional[Tuple[float, float, float]] = None
+        self.animation_start_time: float = 0.0
+        self.animation_duration: float = 0.25  # BOOKMARK: 250ms animation duration
+        self.is_animating: bool = False
+        
     def update_position(self, x: float, y: float, z: float = 0.0) -> bool:
         # Apply filtering to 2D coordinates
         filtered_x, filtered_y = self.filter.filter_position(x, y)
@@ -99,18 +91,71 @@ class UserData:
         # Store previous position
         self.last_position = self.current_position
         
-        # Update current position
-        self.current_position = (filtered_x, filtered_y, z)
-        self.last_update_time = time.time()
-        self.has_new_data = True
+        # Set target position for animation
+        new_target = (filtered_x, filtered_y, z)
         
         # Check if position changed significantly (threshold: 1 unit)
+        # Three-level movement detection
         if self.last_position:
             distance = ((filtered_x - self.last_position[0]) ** 2 + 
                        (filtered_y - self.last_position[1]) ** 2) ** 0.5
-            return distance > 3.0  # Return True if significant movement
+            # BOOKMARK: 用户移动3级处理机制
+            if distance < 5.0:  # Small movement - ignore
+                return False
+            elif distance > 5.0:  # Large movement - start animation 
+                # Start interpolation animation
+                self.animation_start_position = self.current_position
+                self.target_position = new_target
+                self.animation_start_time = time.time()
+                self.is_animating = True
+                self.last_update_time = time.time()
+                self.has_new_data = True
+                return True
+            else:  # Medium movement (3.0 - 10.0) - direct update
+                # Medium movement, update directly without animation
+                self.current_position = new_target
+                self.last_update_time = time.time()
+                self.has_new_data = True
+                return True
+        else:
+            # First position, set directly
+            self.current_position = new_target
+            self.last_update_time = time.time()
+            self.has_new_data = True
+            return True
+    
+    def update_animation(self) -> bool:
+        """Update interpolation animation, returns True if animation is still active"""
+        if not self.is_animating or not self.target_position or not self.animation_start_position:
+            return False
+            
+        current_time = time.time()
+        elapsed_time = current_time - self.animation_start_time
         
-        return True  # First position is always significant
+        if elapsed_time >= self.animation_duration:
+            # Animation completed
+            self.current_position = self.target_position
+            self.is_animating = False
+            self.target_position = None
+            self.animation_start_position = None
+            return False
+        
+        # Calculate interpolation progress (0.0 to 1.0)
+        progress = elapsed_time / self.animation_duration
+        
+        # Apply easing function for smoother animation (ease-out)
+        eased_progress = 1 - (1 - progress) ** 3
+        
+        # Interpolate between start and target positions
+        start_x, start_y, start_z = self.animation_start_position
+        target_x, target_y, target_z = self.target_position
+        
+        current_x = start_x + (target_x - start_x) * eased_progress
+        current_y = start_y + (target_y - start_y) * eased_progress
+        current_z = start_z + (target_z - start_z) * eased_progress
+        
+        self.current_position = (current_x, current_y, current_z)
+        return True
     
     def get_screen_position(self, center_x: float, center_y: float, scale: float) -> Tuple[float, float]:
         """Convert world coordinates to screen coordinates"""
@@ -118,6 +163,13 @@ class UserData:
         screen_x = center_x + x * scale
         screen_y = center_y + y * scale
         return (screen_x, screen_y)
+    
+    def update_card_info(self, card_no: Optional[str] = None, balance: Optional[float] = None):
+        """Update card number and balance information"""
+        if card_no is not None:
+            self.card_no = str(card_no)
+        if balance is not None:
+            self.balance = balance
     
     def mark_processed(self):
         """Mark that this user's data has been processed"""
@@ -157,6 +209,11 @@ class MultiUserManager:
         # Update existing user
         return self.users[mac].update_position(x, y, z)
     
+    def update_user_card_info(self, mac: str, card_no: Optional[str] = None, balance: Optional[float] = None):
+        """Update user card information"""
+        if mac in self.users:
+            self.users[mac].update_card_info(card_no, balance)
+    
     def get_users_with_updates(self) -> List[UserData]:
         """Get list of users that have new data to process"""
         return [user for user in self.users.values() if user.has_new_data]
@@ -186,6 +243,15 @@ class MultiUserManager:
         for mac in inactive_users:
             del self.users[mac]
             print(f"Removed inactive user: {mac}")
+    
+    def update_animations(self) -> bool:
+        """Update animations for all users, returns True if any user is still animating"""
+        has_active_animations = False
+        for user in self.users.values():
+            if user.update_animation():
+                has_active_animations = True
+                user.has_new_data = True  # Mark for redraw
+        return has_active_animations
     
     def clear_all_users(self):
         """Clear all users"""

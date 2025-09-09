@@ -152,7 +152,7 @@ class MainWindow(QMainWindow):
             self.background_cache = background.scaled(
                 size, 
                 Qt.AspectRatioMode.KeepAspectRatioByExpanding,
-                Qt.TransformationMode.SmoothTransformation
+                Qt.TransformationMode.FastTransformation
             )
             self.last_window_size = size
             
@@ -308,7 +308,7 @@ class MainWindow(QMainWindow):
         self.nav_list.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.nav_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         
-        nav_items = ["COM 1", "COM 2", "CHART"] 
+        nav_items = ["COM 1", "COM 2", "CHART"]   # BOOKMARK: NAV BAR
         for item in nav_items:
             list_item = QListWidgetItem(item)
             list_item.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
@@ -370,9 +370,9 @@ class MainWindow(QMainWindow):
             return True # 阻止事件进一步传播
         return super().eventFilter(obj, event)
 
-    def create_title_bar(self):
+    def create_title_bar(self):  # BOOKMARK: title bar
         title_bar = QWidget()
-        title_bar.setObjectName("titleBar")
+        title_bar.setObjectName("titleBar")  
         title_bar.setFixedHeight(30)
         title_layout = QHBoxLayout(title_bar)
         title_layout.setContentsMargins(10, 0, 10, 0)
@@ -393,7 +393,7 @@ class MainWindow(QMainWindow):
 
         title_bar.setAttribute(Qt.WidgetAttribute.WA_MouseTracking)
         
-        self.title_label = QLabel("UWBDash")
+        self.title_label = QLabel("UWBDash")  
         self.title_label.setObjectName("titleLabel")
         
         help_btn = QPushButton("Help")
@@ -1400,7 +1400,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(main_splitter)
         return Chart_page
     
-    def toggle_layout_mode(self):
+    def toggle_layout_mode(self):   #BOOKMARK: 扩展模式
         """切换布局模式：正常模式 <-> 扩展模式"""
         if not self.is_expanded_mode:
             # 切换到扩展模式：隐藏图表和表格区域
@@ -1414,7 +1414,7 @@ class MainWindow(QMainWindow):
                     table_widget.hide()
             
             # 调整splitter比例，让动画区域和位置区域按1:2显示
-            self.canvas_splitter.setSizes([50, 100])  # 动画区域:位置区域 = 1:2
+            self.canvas_splitter.setSizes([50, 150])  # 动画区域:位置区域 = 1:2
             self.main_splitter.setSizes([0, 300])     # 隐藏图表区域
             
             # 设置扩展模式下的显示缩放为1.5倍
@@ -2032,6 +2032,9 @@ class MainWindow(QMainWindow):
                 try:
                     # Fix unquoted hex values in JSON (e.g., "mac": F4A6 -> "mac": "F4A6")
                     fixed_text = re.sub(r'"mac":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"mac": "\1"', text)
+                    # Fix empty values in JSON (e.g., "CardNo": , -> "CardNo": null)
+                    fixed_text = re.sub(r'"(CardNo|Balance)":\s*,', r'"\1": null,', fixed_text)
+                    fixed_text = re.sub(r'"(CardNo|Balance)":\s*}', r'"\1": null}', fixed_text)
                     json_data = json.loads(fixed_text)
                 except json.JSONDecodeError as e:
                     print(f"JSON解析错误: {e}")
@@ -2042,6 +2045,17 @@ class MainWindow(QMainWindow):
                 user_y = float(json_data.get('User-Y', 0))
                 user_z = float(json_data.get('User-Z', 0))
                 user_mac = json_data.get('mac', 'default')  # 获取用户MAC地址
+                
+                # 提取卡号和余额信息
+                card_no = json_data.get('CardNo')
+                balance_raw = json_data.get('Balance')
+                balance = None
+                if balance_raw is not None:
+                    try:
+                        # 将余额从分转换为元（除以100）
+                        balance = float(balance_raw) / 100.0
+                    except (ValueError, TypeError):
+                        balance = None
                 
                 new_red_length = int(json_data.get('RedAreaH', 0)) / 2
                 new_blue_length = int(json_data.get('BlueAreaH', 0))
@@ -2104,6 +2118,10 @@ class MainWindow(QMainWindow):
                 if hasattr(self, 'position_view'):
                     # 直接使用单用户更新方法，避免不必要的循环开销
                     self.position_view.update_position(user_x, user_y, user_mac)
+                    
+                    # 更新用户卡号和余额信息
+                    if card_no is not None or balance is not None:
+                        self.position_view.user_manager.update_user_card_info(user_mac, card_no, balance)
                     
                     # 定期清理不活跃的用户（每100次更新检查一次）
                     if not hasattr(self, '_cleanup_counter'):
@@ -2695,7 +2713,7 @@ class SubwayGateAnimation(QWidget):
         self.animation_timer = QTimer()
         self.animation_timer.timeout.connect(self.update_animation)
         
-        self.animation_speed = 2.5  # 帧
+        self.animation_speed = 3.5  # 帧 (increased by 1/3 for faster animation)
         self.open_duration = 2000   # 开门保持时间(ms)
         self.open_timer = QTimer()
         self.open_timer.timeout.connect(self.start_closing)

@@ -112,7 +112,7 @@ class AgentB(Agent):
         possible_positions = []    #可能的位置合集，30度有12个点
         # 在以B为圆心，距离为半径的圆周上生成可能位置
         for angle in range(0, 360, 30):  # 每30度一个点
-            rad = math.radians(angle)    #XXX 弧度
+            rad = math.radians(angle)    
             pos = Point(
                 self.position.x + distance_to_a * math.cos(rad),
                 self.position.y + distance_to_a * math.sin(rad)

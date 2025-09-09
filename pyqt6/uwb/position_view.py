@@ -21,6 +21,11 @@ class PositionView(QWidget):
         # 多用户管理器
         self.user_manager = MultiUserManager(max_users=10)
         
+        # 动画定时器 - 用于平滑移动动画
+        self.animation_timer = QTimer()
+        self.animation_timer.timeout.connect(self.update_animations)
+        self.animation_timer.setInterval(20)  # BOOKMARK: SET FPS
+        
         # 兼容性属性 - 为了保持与现有代码的兼容性
         self.current_position = None
         self.last_position = None
@@ -30,6 +35,17 @@ class PositionView(QWidget):
         self.display_scale = scale
         self.static_content = None  # 清除缓存，强制重绘
         self.update()
+        
+    def update_animations(self):   #XXX 定时器会不断检测是否还需要update重绘
+        """Update user position animations"""
+        has_active_animations = self.user_manager.update_animations()
+        
+        if has_active_animations:
+            # Continue animation
+            self.update()  # Trigger repaint
+        else:
+            # No active animations, stop timer
+            self.animation_timer.stop()
         
     def draw_static_content(self, painter, center_x, center_y):
         # 获取动态长度值并应用显示缩放
@@ -121,8 +137,8 @@ class PositionView(QWidget):
         painter.end()
         
     def update_position(self, x, y, mac="default"):
-        """更新用户位置并触发重绘，支持多用户"""
-        position_changed = self.user_manager.update_user_position(mac, x, y)
+        #XXX 用户大幅度或中幅度移动 position_changed=TRUE
+        position_changed = self.user_manager.update_user_position(mac, x, y)  
         
         # 更新兼容性属性（使用第一个用户或默认用户的位置）
         if mac == "default" or len(self.user_manager.users) == 1:
@@ -131,8 +147,16 @@ class PositionView(QWidget):
                 self.last_position = self.current_position
                 self.current_position = (user.current_position[0], user.current_position[1])
         
-        # 只有当位置发生显著变化时才触发重绘
+        # 根据位置变化类型决定处理方式
         if position_changed:
+            # Check if any user is animating to decide whether to start animation timer
+            has_animations = any(user.is_animating for user in self.user_manager.users.values())
+            
+            if has_animations and not self.animation_timer.isActive():
+                # Start animation timer only if there are animations
+                self.animation_timer.start()
+            
+            # Always trigger redraw for position changes
             self.update()
     
     def update_multi_user_positions(self, user_positions):  # BOOKMARK: 更新用户位置
@@ -156,8 +180,16 @@ class PositionView(QWidget):
             self.last_position = self.current_position
             self.current_position = (first_user.current_position[0], first_user.current_position[1])
         
-        # Only trigger redraw if any position changed significantly
+        # Only trigger redraw and animation if any position changed significantly
         if any_position_changed:
+            # Check if any user is animating to decide whether to start animation timer
+            has_animations = any(user.is_animating for user in self.user_manager.users.values())
+            
+            if has_animations and not self.animation_timer.isActive():
+                # Start animation timer only if there are animations
+                self.animation_timer.start()
+            
+            # Always trigger redraw for position changes
             self.update()
         
     def refresh_areas(self):
@@ -194,8 +226,14 @@ class PositionView(QWidget):
             x, y, z = user.current_position
             user_color = self.user_manager.get_user_color(user.mac)
             
-            # 绘制用户信息文本（无背景）
+            # 构建用户信息文本，包含坐标、卡号和余额
             coord_text = f"{user.mac[-4:]} : ({int(x)}, {int(y)})"
+            
+            # 添加卡号和余额信息
+            if user.card_no is not None:
+                coord_text += f" | {user.card_no[-8:]}"
+            if user.balance is not None:
+                coord_text += f" | ¥{user.balance:.2f}"
             
             # 绘制用户颜色指示器
             painter.setPen(Qt.PenStyle.NoPen)
@@ -204,7 +242,7 @@ class PositionView(QWidget):
             
             # 绘制文本（无背景）
             painter.setPen(QPen(QColor("#ffffff"), 1))
-            painter.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
+            painter.setFont(QFont("Segoe UI", 11, QFont.Weight.Bold))
             painter.drawText(28, info_y + 13, coord_text)
             
             info_y += 25  # 下一行
