@@ -24,7 +24,7 @@ class PositionView(QWidget):
         # 动画定时器 - 用于平滑移动动画
         self.animation_timer = QTimer()
         self.animation_timer.timeout.connect(self.update_animations)
-        self.animation_timer.setInterval(20)  # BOOKMARK: SET FPS
+        self.animation_timer.setInterval(15)  # BOOKMARK: SET FPS
         
         # 兼容性属性 - 为了保持与现有代码的兼容性
         self.current_position = None

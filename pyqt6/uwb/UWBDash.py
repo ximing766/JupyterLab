@@ -164,10 +164,10 @@ class MainWindow(QMainWindow):
     
     def _load_background_config(self):
         default_images = [
-            "pic/person1.jpg", "pic/city1.jpg", "pic/carton1.jpg",
-            "pic/landscape1.jpg", "pic/person2.jpg", "pic/landscape2.jpg"
+            "pic/person1.jpg", "pic/city1.jpg", "pic/carton1.jpg",        
+            "pic/landscape1.jpg", "pic/person2.jpg", "pic/person8.jpg", "pic/landscape2.jpg"
         ]
-        default_current_image = default_images[0] if default_images else None
+        default_current_image = default_images[5] if default_images else None
 
         try:
             if self.config_path.exists():
@@ -970,6 +970,7 @@ class MainWindow(QMainWindow):
                 
                 self.serial_thread2 = SerialReadThread(self.serial2)
                 self.serial_thread2.data_received.connect(self.handle_serial_2_data)
+                self.serial_thread2.connection_lost.connect(self.handle_serial2_connection_lost)
                 self.serial_thread2.start()
                 
                 self.toggle_btn2.setText("关闭串口")
@@ -1028,7 +1029,27 @@ class MainWindow(QMainWindow):
 
         except Exception as e:
             print(f"数据处理错误 (on_data_received): {str(e)}")
-        
+
+    def handle_serial2_connection_lost(self, error_msg):
+        """Handle serial connection lost for COM2"""
+        try:
+            # Update UI status to indicate disconnection
+            self.toggle_btn2.setText("打开串口")
+            self.status_indicator2.setStyleSheet("color: red;background:rgba(36,36,36,0);")
+            
+            # Clean up serial resources
+            if hasattr(self, 'serial_thread2'):
+                self.serial_thread2.stop()
+                self.serial_thread2 = None
+            if hasattr(self, 'serial2'):
+                self.serial2.close()
+                self.serial2 = None
+                
+            # Show warning message
+            # QMessageBox.warning(self, "串口连接丢失", f"COM2串口连接意外断开: {error_msg}")
+        except Exception as e:
+            print(f"处理串口2连接丢失错误: {str(e)}")
+
     def create_COM_page(self):
         COM1_page = QWidget()
         layout = QVBoxLayout(COM1_page)
@@ -1823,6 +1844,7 @@ class MainWindow(QMainWindow):
                 # 创建并启动读取线程
                 self.serial_thread = SerialReadThread(self.serial_port)
                 self.serial_thread.data_received.connect(self.handle_serial_data)
+                self.serial_thread.connection_lost.connect(self.handle_serial_connection_lost)
                 self.serial_thread.start()
                 
                 # 更新UI状态
@@ -2133,6 +2155,26 @@ class MainWindow(QMainWindow):
                         
         except Exception as e:
             print(f"Error processing serial data: {str(e)}")
+
+    def handle_serial_connection_lost(self, error_msg):
+        """Handle serial connection lost for COM1"""
+        try:
+            # Update UI status to indicate disconnection
+            self.toggle_btn.setText("打开串口")
+            self.status_indicator.setStyleSheet("color: red;background:rgba(36,42,56,0);")
+            
+            # Clean up serial resources
+            if hasattr(self, 'serial_thread'):
+                self.serial_thread.stop()
+                self.serial_thread = None
+            if hasattr(self, 'serial_port'):
+                self.serial_port.close()
+                self.serial_port = None
+                
+            # Show warning message
+            # QMessageBox.warning(self, "串口连接丢失", f"COM1串口连接意外断开: {error_msg}")
+        except Exception as e:
+            print(f"处理串口连接丢失错误: {str(e)}")
 
     def update_display(self):
         """更新显示区域"""
@@ -3216,6 +3258,7 @@ class SubwayGateAnimation(QWidget):
 
 class SerialReadThread(QThread):
     data_received = pyqtSignal(bytes)
+    connection_lost = pyqtSignal(str)  # Add signal for connection lost
     
     def __init__(self, serial_port):
         super().__init__()
@@ -3243,6 +3286,7 @@ class SerialReadThread(QThread):
                                 self.data_received.emit(line)
             except Exception as e:
                 print(f"串口读取错误: {str(e)}")
+                self.connection_lost.emit(str(e))  # Emit signal when connection is lost
                 break
             time.sleep(0.01)  # 降低CPU占用
             
