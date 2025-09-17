@@ -81,7 +81,7 @@ class UserData:
         self.target_position: Optional[Tuple[float, float, float]] = None
         self.animation_start_position: Optional[Tuple[float, float, float]] = None
         self.animation_start_time: float = 0.0
-        self.animation_duration: float = 0.25  # BOOKMARK: 250ms animation duration
+        self.animation_duration: float = 0.25  # BM: 250ms animation duration
         self.is_animating: bool = False
         
     def update_position(self, x: float, y: float, z: float = 0.0) -> bool:
@@ -99,7 +99,7 @@ class UserData:
         if self.last_position:
             distance = ((filtered_x - self.last_position[0]) ** 2 + 
                        (filtered_y - self.last_position[1]) ** 2) ** 0.5
-            # BOOKMARK: 用户移动3级处理机制
+            # BM: 用户移动3级处理机制
             if distance < 5.0:  # Small movement - ignore
                 return False
             elif distance > 5.0:  # Large movement - start animation 

@@ -88,6 +88,9 @@ class MainWindow(QMainWindow):
         self.current_ports2              = []
         self.data_buffer                 = []
         self.data_buffer2                = []
+        self.time_log_data = []  # Store time log entries
+        self.last_time_log_count = 0  # Track data changes for refresh optimization
+        self.load_historical_time_logs()  # Load existing time logs from buffer
         
         self.display_timer = QTimer()
         self.display_timer.timeout.connect(self.update_display)
@@ -308,7 +311,7 @@ class MainWindow(QMainWindow):
         self.nav_list.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.nav_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
         
-        nav_items = ["COM 1", "COM 2", "CHART"]   # BOOKMARK: NAV BAR
+        nav_items = ["COM 1", "COM 2", "CHART"]   # BM: NAV BAR
         for item in nav_items:
             list_item = QListWidgetItem(item)
             list_item.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
@@ -370,7 +373,7 @@ class MainWindow(QMainWindow):
             return True # 阻止事件进一步传播
         return super().eventFilter(obj, event)
 
-    def create_title_bar(self):  # BOOKMARK: title bar
+    def create_title_bar(self):  # BM: title bar
         title_bar = QWidget()
         title_bar.setObjectName("titleBar")  
         title_bar.setFixedHeight(30)
@@ -524,7 +527,7 @@ class MainWindow(QMainWindow):
             self.showMaximized()
             self.maximize_btn.setText("❐")
 
-    def create_pages(self): # BOOKMARK: 创建页面
+    def create_pages(self): # BM: 创建页面
         COM1_page  = self.create_COM_page()
         COM2_page  = self.create_COM_page2()
         Chart_page = self.create_Chart_page()
@@ -1007,7 +1010,7 @@ class MainWindow(QMainWindow):
             except Exception as e:
                 QMessageBox.warning(self, "错误", f"关闭串口失败: {str(e)}")
     
-    def handle_serial_2_data(self, data): # BOOKMARK: COM2数据处理
+    def handle_serial_2_data(self, data): # BM: COM2数据处理
         try:
             text = data.decode('utf-8', errors='ignore')
             self.log_worker.add_log_task("UwbLog2", "info", text.strip())
@@ -1107,6 +1110,17 @@ class MainWindow(QMainWindow):
        
         self.Transaction_time_label = QLabel("0000ms")
         self.Transaction_time_label.setStyleSheet("background:rgba(36, 42, 56, 0);")
+        
+        # Add separator line and time log button
+        line_top_3 = QFrame()
+        line_top_3.setFrameShape(QFrame.Shape.VLine)
+        line_top_3.setFrameShadow(QFrame.Shadow.Sunken)
+        line_top_3.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
+        
+        self.time_log_btn = QPushButton("❃")
+        self.time_log_btn.setFixedWidth(35)
+        self.time_log_btn.setToolTip("显示包含时间信息的日志")
+        self.time_log_btn.clicked.connect(self.show_time_log_dialog) # BM: Time Log 
 
         top_layout.addWidget(self.port_combo)
         top_layout.addSpacing(10)
@@ -1127,6 +1141,10 @@ class MainWindow(QMainWindow):
         top_layout.addWidget(self.Address_label)
         top_layout.addSpacing(5)
         top_layout.addWidget(self.Transaction_time_label)
+        top_layout.addSpacing(20)
+        top_layout.addWidget(line_top_3)
+        top_layout.addSpacing(20)
+        top_layout.addWidget(self.time_log_btn)
 
         top_layout.addStretch()
 
@@ -1421,7 +1439,7 @@ class MainWindow(QMainWindow):
         layout.addWidget(main_splitter)
         return Chart_page
     
-    def toggle_layout_mode(self):   #BOOKMARK: 扩展模式
+    def toggle_layout_mode(self):   #BM: 扩展模式
         """切换布局模式：正常模式 <-> 扩展模式"""
         if not self.is_expanded_mode:
             # 切换到扩展模式：隐藏图表和表格区域
@@ -1831,6 +1849,9 @@ class MainWindow(QMainWindow):
         """切换串口开关状态"""
         if self.toggle_btn.text() == "打开串口":
             try:
+                # Clear time log data when opening new serial connection
+                self.time_log_data.clear()
+                
                 # 创建串口对象
                 self.serial_port = serial.Serial(
                     port     = self.port_combo.currentText(),
@@ -2023,7 +2044,129 @@ class MainWindow(QMainWindow):
         except Exception as e:
             print(f"Error updating chart: {str(e)}")
 
-    # @time_decorator
+    
+    def show_time_log_dialog(self):
+        """Show time log dialog with beautiful UI in separate thread"""
+        # Use QTimer.singleShot to run dialog creation in next event loop iteration
+        # This prevents blocking the main UI thread
+        QTimer.singleShot(0, self._create_time_log_dialog)
+    
+    def _create_time_log_dialog(self):
+        """Create and show time log dialog"""
+        self.time_log_dialog = QDialog(self)
+        self.time_log_dialog.setWindowTitle("⏰ Time Log")
+        self.time_log_dialog.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowCloseButtonHint)
+        self.time_log_dialog.resize(700, 450)
+        
+        # Center the dialog
+        parent_geometry = self.geometry()
+        dialog_geometry = self.time_log_dialog.geometry()
+        x = parent_geometry.x() + (parent_geometry.width() - dialog_geometry.width()) // 2
+        y = parent_geometry.y() + (parent_geometry.height() - dialog_geometry.height()) // 2
+        self.time_log_dialog.move(x, y)
+        
+        layout = QVBoxLayout(self.time_log_dialog)
+        layout.setContentsMargins(15, 15, 15, 15)
+        layout.setSpacing(10)
+        
+        # Create text display area
+        self.time_log_text_display = QTextEdit()
+        self.time_log_text_display.setReadOnly(True)
+        self.time_log_text_display.setFont(QFont("Consolas", 11))
+        self.time_log_text_display.setStyleSheet("""
+            QTextEdit {
+                background-color: #3a3f47;
+                color: #e7f8ef;
+                border: 2px solid #5a9fd4;
+                border-radius: 10px;
+                padding: 12px;
+                selection-background-color: #5a9fd4;
+                font-family: 'Consolas', 'Monaco', monospace;
+            }
+        """)
+        
+        # Initialize data change tracking
+        self.last_time_log_count = 0
+        
+        # Initial data load
+        self.refresh_time_log_display()
+        
+        layout.addWidget(self.time_log_text_display)
+        
+        # Apply dialog styling with dark theme and transparency
+        self.time_log_dialog.setStyleSheet("""
+            QDialog {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #4a5568, stop:1 #2d3748);
+                border-radius: 12px;
+            }
+        """)
+        
+        # Set fixed window opacity for transparency
+        self.time_log_dialog.setWindowOpacity(0.99)
+        
+        # Override window flags to customize title bar
+        self.time_log_dialog.setWindowFlags(
+            Qt.WindowType.Dialog | 
+            Qt.WindowType.WindowCloseButtonHint |
+            Qt.WindowType.WindowTitleHint
+        )
+        
+        # Setup auto-refresh timer
+        self.time_log_refresh_timer = QTimer()
+        self.time_log_refresh_timer.timeout.connect(self.refresh_time_log_display)
+        self.time_log_refresh_timer.start(1000)  # Refresh every 1 second
+        
+        # Connect dialog close event to stop timer
+        self.time_log_dialog.finished.connect(self.stop_time_log_refresh)
+        
+        self.time_log_dialog.show()  # Use show() instead of exec() to avoid blocking
+    
+    def load_historical_time_logs(self):
+        """Load historical time logs from existing data buffer"""
+        try:
+            # Check if data_buffer exists and has content
+            if hasattr(self, 'data_buffer') and self.data_buffer:
+                for entry in self.data_buffer:
+                    if "@@@ Time of" in entry:
+                        # Use current timestamp for historical entries since original timestamp is not available
+                        timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                        log_entry = f"[{timestamp}] {entry.strip()}"
+                        self.time_log_data.append(log_entry)
+                
+                # Keep only the latest 1000 entries
+                if len(self.time_log_data) > 1000:
+                    self.time_log_data = self.time_log_data[-1000:]
+                    
+                print(f"Loaded {len(self.time_log_data)} historical time log entries")
+        except Exception as e:
+            print(f"Error loading historical time logs: {e}")
+    
+
+    def refresh_time_log_display(self):
+        """Refresh time log display only when new data is available"""
+        if hasattr(self, 'time_log_text_display') and self.time_log_text_display:
+            current_count = len(self.time_log_data)
+            
+            # Only refresh if there's new data or it's the first time
+            if not hasattr(self, 'last_time_log_count') or current_count != self.last_time_log_count:
+                if self.time_log_data:
+                    content = "\n".join([f"{entry}" for entry in self.time_log_data])
+                    self.time_log_text_display.setPlainText(content)
+                    # Auto scroll to bottom to show latest entries
+                    scrollbar = self.time_log_text_display.verticalScrollBar()
+                    scrollbar.setValue(scrollbar.maximum())
+                else:
+                    self.time_log_text_display.setPlainText("暂无时间日志记录\n\n等待接收包含 '@@@ Time of' 的数据...")
+                
+                # Update the last count
+                self.last_time_log_count = current_count
+    
+    def stop_time_log_refresh(self):
+        """Stop the time log refresh timer"""
+        if hasattr(self, 'time_log_refresh_timer'):
+            self.time_log_refresh_timer.stop()
+
     def handle_serial_data(self, data):
         try:
             text = data.decode('utf-8')
@@ -2031,6 +2174,15 @@ class MainWindow(QMainWindow):
             self.log_worker.add_log_task("UwbLog", "info", text.strip())
             text = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
             self.data_buffer.append(text)
+            
+            # Collect time log data containing '@@@ Time of'
+            if "@@@ Time of" in text:
+                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                log_entry = f"{text.strip()}"
+                self.time_log_data.append(log_entry)
+                # Keep only the latest 1000 entries to prevent memory issues
+                if len(self.time_log_data) > 1000:
+                    self.time_log_data = self.time_log_data[-1000:]
 
             if "Write Card End" in text:
                 #"@@@ Time of Write Card End     = 00:14:520  │ 80D7 │  710 ms"
@@ -2048,7 +2200,7 @@ class MainWindow(QMainWindow):
                     
                     if hasattr(self, 'gate_animation') and self.gate_animation is not None:
                         self.gate_animation.trigger_gate_animation()
-            # BOOKMARK: COM1数据处理
+            # BM: COM1数据处理
             if "@POSITION" in text:
                 # print(f'接收到原始数据：{repr(text)}')
                 try:

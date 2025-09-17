@@ -24,7 +24,7 @@ class PositionView(QWidget):
         # 动画定时器 - 用于平滑移动动画
         self.animation_timer = QTimer()
         self.animation_timer.timeout.connect(self.update_animations)
-        self.animation_timer.setInterval(15)  # BOOKMARK: SET FPS
+        self.animation_timer.setInterval(15)  # BM: SET FPS
         
         # 兼容性属性 - 为了保持与现有代码的兼容性
         self.current_position = None
@@ -159,7 +159,7 @@ class PositionView(QWidget):
             # Always trigger redraw for position changes
             self.update()
     
-    def update_multi_user_positions(self, user_positions):  # BOOKMARK: 更新用户位置
+    def update_multi_user_positions(self, user_positions):  # BM: 更新用户位置
         any_position_changed = False
         
         if isinstance(user_positions, dict):
@@ -197,7 +197,7 @@ class PositionView(QWidget):
         self.static_content = None  # 清除缓存
         self.update()  # 触发重绘
         
-    def paintEvent(self, event):   # BOOKMARK: 绘制用户位置
+    def paintEvent(self, event):   # BM: 绘制用户位置
         painter = QPainter(self)
         painter.setRenderHint(QPainter.RenderHint.Antialiasing)
         

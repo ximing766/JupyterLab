@@ -7,6 +7,7 @@
     "gMrmSessionHandle": "#ffaaff",
     "APP_HIFTask": "#34a7b2",
     "SystemStatus = 1": "#aa9bff",
-    "RED AREA": "#ff5885",
-    "BLUE AREA": "#55aaff"
+    "INTO RED AREA": "#ff5885",
+    "INTO BLUE AREA": "#55aaff",
+    "Crash Log": "#ff0000"
 }
