@@ -1121,6 +1121,11 @@ class MainWindow(QMainWindow):
         self.time_log_btn.setFixedWidth(35)
         self.time_log_btn.setToolTip("显示包含时间信息的日志")
         self.time_log_btn.clicked.connect(self.show_time_log_dialog) # BM: Time Log 
+        
+        self.protocol_parse_btn = QPushButton("⚡")
+        self.protocol_parse_btn.setFixedWidth(35)
+        self.protocol_parse_btn.setToolTip("协议解析工具")
+        self.protocol_parse_btn.clicked.connect(self.show_protocol_parse_dialog) # BM: Protocol Parse
 
         top_layout.addWidget(self.port_combo)
         top_layout.addSpacing(10)
@@ -1145,6 +1150,8 @@ class MainWindow(QMainWindow):
         top_layout.addWidget(line_top_3)
         top_layout.addSpacing(20)
         top_layout.addWidget(self.time_log_btn)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(self.protocol_parse_btn)
 
         top_layout.addStretch()
 
@@ -2675,6 +2682,806 @@ class MainWindow(QMainWindow):
             self.find_dialog.close()
         if index != 1:
             self.find_dialog2.close()
+
+    def show_protocol_parse_dialog(self):
+        """Show TLV protocol parsing dialog - Dark themed input dialog"""
+        QTimer.singleShot(0, self._create_tlv_input_dialog)
+    
+    def _create_tlv_input_dialog(self): # BM: create tlv input dialog
+        """Create and show TLV protocol input dialog with dark theme"""
+        self.input_dialog = QDialog(self)
+        # Remove title bar and window decorations
+        self.input_dialog.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
+        self.input_dialog.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.input_dialog.resize(450, 200)
+        
+        # Center the dialog
+        parent_geometry = self.geometry()
+        dialog_geometry = self.input_dialog.geometry()
+        x = parent_geometry.x() + (parent_geometry.width() - dialog_geometry.width()) // 2
+        y = parent_geometry.y() + (parent_geometry.height() - dialog_geometry.height()) // 2
+        self.input_dialog.move(x, y)
+        
+        # Main container with dark theme
+        main_widget = QWidget()
+        main_widget.setStyleSheet("""
+            QWidget {
+                background-color: rgba(45, 52, 54, 0.95);
+                border-radius: 12px;
+                border: 1px solid rgba(116, 125, 140, 0.3);
+            }
+        """)
+        
+        layout = QVBoxLayout(self.input_dialog)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(main_widget)
+        
+        # Inner layout
+        inner_layout = QVBoxLayout(main_widget)
+        inner_layout.setContentsMargins(15, 15, 15, 15)
+        inner_layout.setSpacing(15)
+        
+        # Input field with dark theme
+        self.protocol_input = QTextEdit()
+        self.protocol_input.setMinimumHeight(100)
+        self.protocol_input.setFont(QFont("Consolas", 11))
+        self.protocol_input.setPlaceholderText("")
+        self.protocol_input.setStyleSheet("""
+            QTextEdit {
+                background-color: #2c3e50;
+                border: 2px solid #34495e;
+                border-radius: 8px;
+                padding: 12px;
+                color: #ecf0f1;
+                font-size: 11px;
+                selection-background-color: #3498db;
+            }
+            QTextEdit:focus {
+                border-color: #3498db;
+                background-color: #34495e;
+            }
+        """)
+        inner_layout.addWidget(self.protocol_input)
+        
+        # Button layout - only confirm and cancel
+        button_layout = QHBoxLayout()
+        button_layout.setSpacing(10)
+        
+        cancel_btn = QPushButton("取消")
+        cancel_btn.setFont(QFont("Microsoft YaHei", 10))
+        cancel_btn.clicked.connect(self.input_dialog.close)
+        cancel_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #7f8c8d;
+                color: white;
+                border: none;
+                padding: 5px 5px;
+                border-radius: 6px;
+                font-weight: bold;
+                min-width: 35px;
+            }
+            QPushButton:hover {
+                background-color: #95a5a6;
+            }
+            QPushButton:pressed {
+                background-color: #6c7b7d;
+            }
+        """)
+        
+        confirm_btn = QPushButton("确认")
+        confirm_btn.setFont(QFont("Microsoft YaHei", 10))
+        confirm_btn.clicked.connect(self._proceed_to_tlv_parse)
+        confirm_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #3498db;
+                color: white;
+                border: none;
+                padding: 5px 5px;
+                border-radius: 6px;
+                font-weight: bold;
+                min-width: 35px;
+            }
+            QPushButton:hover {
+                background-color: #2980b9;
+            }
+            QPushButton:pressed {
+                background-color: #21618c;
+            }
+        """)
+        
+        dcs_btn = QPushButton("DCS")
+        dcs_btn.setFont(QFont("Microsoft YaHei", 10))
+        dcs_btn.clicked.connect(self._calculate_dcs)
+        dcs_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #e74c3c;
+                color: white;
+                border: none;
+                padding: 5px 5px;
+                border-radius: 6px;
+                font-weight: bold;
+                min-width: 35px;
+            }
+            QPushButton:hover {
+                background-color: #c0392b;
+            }
+            QPushButton:pressed {
+                background-color: #a93226;
+            }
+        """)
+        
+        # Add 0x format button
+        format_0x_btn = QPushButton("0x")
+        format_0x_btn.setFont(QFont("Microsoft YaHei", 10))
+        format_0x_btn.clicked.connect(self._format_with_0x)
+        format_0x_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #9b59b6;
+                color: white;
+                border: none;
+                padding: 5px 5px;
+                border-radius: 6px;
+                font-weight: bold;
+                min-width: 35px;
+            }
+            QPushButton:hover {
+                background-color: #8e44ad;
+            }
+            QPushButton:pressed {
+                background-color: #7d3c98;
+            }
+        """)
+        
+        button_layout.addWidget(cancel_btn)
+        button_layout.addStretch()
+        button_layout.addWidget(format_0x_btn)
+        button_layout.addWidget(dcs_btn)
+        button_layout.addWidget(confirm_btn)
+        inner_layout.addLayout(button_layout)
+        
+        # Make dialog draggable
+        self.input_dialog.mousePressEvent = self._dialog_mouse_press
+        self.input_dialog.mouseMoveEvent = self._dialog_mouse_move
+        
+        self.input_dialog.show()
+    
+    def _dialog_mouse_press(self, event):
+        """Handle mouse press for dragging"""
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.drag_position = event.globalPosition().toPoint() - self.input_dialog.frameGeometry().topLeft()
+            event.accept()
+    
+    def _dialog_mouse_move(self, event):
+        """Handle mouse move for dragging"""
+        if event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, 'drag_position'):
+            self.input_dialog.move(event.globalPosition().toPoint() - self.drag_position)
+            event.accept()
+    
+    def _proceed_to_tlv_parse(self):
+        """Proceed to TLV parsing step after input"""
+        input_text = self.protocol_input.toPlainText().strip()
+        if not input_text:
+            # Show error message
+            error_label = QLabel("请输入TLV协议数据")
+            error_label.setStyleSheet("color: #dc3545; font-weight: bold;")
+            return
+        
+        # Store input text and close input dialog
+        self.stored_protocol_input = input_text
+        self.input_dialog.close()
+        
+        # Show TLV parsing result dialog
+        QTimer.singleShot(100, self._create_tlv_result_dialog)
+    
+    def _calculate_dcs(self):
+        """Calculate DCS (Data Check Sum) for hex string input"""
+        input_text = self.protocol_input.toPlainText().strip()
+        if not input_text:
+            # Show error message in a simple dialog
+            msg = QMessageBox(self)
+            msg.setWindowTitle("错误")
+            msg.setText("请输入十六进制数据")
+            msg.setIcon(QMessageBox.Icon.Warning)
+            msg.exec()
+            return
+        
+        try:
+            # Clean and validate hex string
+            clean_str = input_text.replace(" ", "").replace("\n", "").replace("\t", "").replace("\r", "").upper()
+            
+            # Validate hex string
+            if not all(c in "0123456789ABCDEF" for c in clean_str):
+                raise ValueError("输入包含非十六进制字符")
+            
+            if len(clean_str) % 2 != 0:
+                raise ValueError("十六进制字符串长度必须为偶数")
+            
+            # Convert to byte array and calculate checksum
+            bytes_data = [int(clean_str[i:i+2], 16) for i in range(0, len(clean_str), 2)]
+            
+            # Calculate sum (only keep lowest byte)
+            checksum = sum(bytes_data) & 0xFF
+            
+            # Calculate DCS (checksum + dcs = 0x00, so dcs = 0x100 - checksum)
+            dcs = (0x100 - checksum) & 0xFF
+            
+            # Add DCS result to the input field
+            current_text = self.protocol_input.toPlainText()
+            result_text = f"∑: 0x{checksum:02X}   DCS: 0x{dcs:02X}"
+            
+            # Add result on a new line
+            if not current_text.endswith('\n'):
+                current_text += '\n'
+            current_text += result_text
+            
+            self.protocol_input.setPlainText(current_text)
+            
+            # Move cursor to end and show status
+            cursor = self.protocol_input.textCursor()
+            cursor.movePosition(cursor.MoveOperation.End)
+            self.protocol_input.setTextCursor(cursor)
+            
+            # Show brief status message
+            self.statusBar().showMessage(f"DCS计算完成: ∑=0x{checksum:02X}, DCS=0x{dcs:02X}", 3000)
+            
+        except Exception as e:
+            # Show error message
+            msg = QMessageBox(self)
+            msg.setWindowTitle("计算错误")
+            msg.setText(f"DCS计算失败: {str(e)}")
+            msg.setIcon(QMessageBox.Icon.Critical)
+            msg.exec()
+    
+    def _copy_dcs_value(self, dcs_value, button):
+        """Copy DCS value to clipboard"""
+        clipboard = QApplication.clipboard()
+        clipboard.setText(dcs_value)
+        
+        # Show brief confirmation
+        original_text = button.text()
+        button.setText("已复制!")
+        QTimer.singleShot(1000, lambda: button.setText(original_text))
+    
+    def _format_with_0x(self):
+        """Format input data with 0x prefix"""
+        try:
+            # Get current text from input field
+            current_text = self.protocol_input.toPlainText().strip()
+            if not current_text:
+                return
+            
+            # Remove existing spaces and format
+            numbers = current_text.replace(" ", "").replace("0x", "").replace(",", "")
+            
+            # Validate hex characters
+            if not all(c in '0123456789ABCDEFabcdef' for c in numbers):
+                # Show error message
+                msg = QMessageBox(self)
+                msg.setWindowTitle("格式错误")
+                msg.setText("输入包含非十六进制字符，请检查输入数据")
+                msg.setIcon(QMessageBox.Icon.Warning)
+                msg.exec()
+                return
+            
+            # Format numbers in pairs with 0x prefix
+            formatted_numbers = [numbers[i:i+2] for i in range(0, len(numbers), 2)]
+            formatted_numbers = [f"0x{num.upper()}" for num in formatted_numbers]
+            result = ",".join(formatted_numbers)
+            
+            # Update the input field with formatted result
+            self.protocol_input.setPlainText(result)
+            
+            # Show length information in status
+            byte_count = len(numbers) // 2
+            self.statusBar().showMessage(f"已格式化为0x前缀格式，共 {byte_count} 字节", 3000)
+            
+        except Exception as e:
+            # Show error message
+            msg = QMessageBox(self)
+            msg.setWindowTitle("格式化错误")
+            msg.setText(f"数据格式化失败: {str(e)}")
+            msg.setIcon(QMessageBox.Icon.Critical)
+            msg.exec()
+    
+    
+    def _create_tlv_result_dialog(self):
+        """Create and show TLV parsing result dialog (second step) - Dark themed"""
+        self.result_dialog = QDialog(self)
+        # Remove title bar and window decorations
+        self.result_dialog.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
+        self.result_dialog.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground)
+        self.result_dialog.resize(650, 500)
+        
+        # Center the dialog
+        parent_geometry = self.geometry()
+        dialog_geometry = self.result_dialog.geometry()
+        x = parent_geometry.x() + (parent_geometry.width() - dialog_geometry.width()) // 2
+        y = parent_geometry.y() + (parent_geometry.height() - dialog_geometry.height()) // 2
+        self.result_dialog.move(x, y)
+        
+        # Main container with dark theme
+        main_widget = QWidget()
+        main_widget.setStyleSheet("""
+            QWidget {
+                background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                    stop:0 rgba(44, 62, 80, 0.98),
+                    stop:1 rgba(52, 73, 94, 0.98));
+                border-radius: 10px;
+                border: 1px solid rgba(149, 165, 166, 0.3);
+            }
+        """)
+        
+        layout = QVBoxLayout(self.result_dialog)
+        layout.setContentsMargins(0, 0, 0, 0)
+        layout.addWidget(main_widget)
+        
+        # Inner layout
+        inner_layout = QVBoxLayout(main_widget)
+        inner_layout.setContentsMargins(10, 10, 10, 10)
+        inner_layout.setSpacing(10)
+        
+        # Parse and display results
+        try:
+            result_html = self.parse_tlv_protocol(self.stored_protocol_input)
+            
+            # Create dark themed result display
+            result_widget = QTextEdit()
+            result_widget.setReadOnly(True)
+            result_widget.setFont(QFont("Consolas", 11))
+            result_widget.setHtml(result_html)
+            result_widget.setStyleSheet("""
+                QTextEdit {
+                    background-color: rgba(52, 73, 94, 0.9);
+                    border: 1px solid rgba(41, 163, 245, 0.521);
+                    border-radius: 8px;
+                    padding: 5px;
+                    color: #ecf0f1;
+                    line-height: 1.6;
+                }
+                QScrollBar:vertical {
+                    background-color: rgba(44, 62, 80, 0.8);
+                    width: 10px;
+                    border-radius: 4px;
+                }
+                QScrollBar::handle:vertical {
+                    background-color: rgba(52, 152, 219, 0.6);
+                    border-radius: 4px;
+                    min-height: 20px;
+                }
+                QScrollBar::handle:vertical:hover {
+                    background-color: rgba(52, 152, 219, 0.8);
+                }
+                QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                    border: none;
+                    background: none;
+                }
+            """)
+            
+        except Exception as e:
+            result_widget = QLabel(f"TLV解析错误: {str(e)}")
+            result_widget.setStyleSheet("""
+                QLabel {
+                    background-color: rgba(231, 76, 60, 0.2);
+                    color: #e74c3c;
+                    border: 1px solid rgba(231, 76, 60, 0.4);
+                    border-radius: 8px;
+                    padding: 5px;
+                    font-size: 12px;
+                }
+            """)
+        
+        inner_layout.addWidget(result_widget)
+        
+        # Action buttons with dark theme
+        action_layout = QHBoxLayout()
+        action_layout.setSpacing(10)
+        
+        back_btn = QPushButton("重新输入")
+        back_btn.setFont(QFont("Microsoft YaHei", 9))
+        back_btn.clicked.connect(self._back_to_input)
+        back_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #95a5a6;
+                color: #2c3e50;
+                border: none;
+                padding: 8px 8px;
+                border-radius: 8px;
+                font-weight: bold;
+                min-width: 60px;
+            }
+            QPushButton:hover {
+                background-color: #7f8c8d;
+            }
+        """)
+        
+        copy_btn = QPushButton("复制结果")
+        copy_btn.setFont(QFont("Microsoft YaHei", 9))
+        copy_btn.clicked.connect(self._copy_tlv_result)
+        copy_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #27ae60;
+                color: white;
+                border: none;
+                padding: 8px 8px;
+                border-radius: 8px;
+                font-weight: bold;
+                min-width: 60px;
+            }
+            QPushButton:hover {
+                background-color: #229954;
+            }
+        """)
+        
+        cancel_btn = QPushButton("取消")
+        cancel_btn.setFont(QFont("Microsoft YaHei", 9))
+        cancel_btn.clicked.connect(self.result_dialog.close)
+        cancel_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #e74c3c;
+                color: white;
+                border: none;
+                padding: 8px 8px;
+                border-radius: 8px;
+                font-weight: bold;
+                min-width: 60px;
+            }
+            QPushButton:hover {
+                background-color: #c0392b;
+            }
+        """)
+        
+        action_layout.addWidget(back_btn)
+        action_layout.addStretch()
+        action_layout.addWidget(copy_btn)
+        action_layout.addWidget(cancel_btn)
+        inner_layout.addLayout(action_layout)
+        
+        # Make dialog draggable
+        self.result_dialog.mousePressEvent = self._result_dialog_mouse_press
+        self.result_dialog.mouseMoveEvent = self._result_dialog_mouse_move
+        
+        self.result_dialog.show()
+    
+    def _result_dialog_mouse_press(self, event):
+        """Handle mouse press for dragging result dialog"""
+        if event.button() == Qt.MouseButton.LeftButton:
+            self.result_drag_position = event.globalPosition().toPoint() - self.result_dialog.frameGeometry().topLeft()
+            event.accept()
+    
+    def _result_dialog_mouse_move(self, event):
+        """Handle mouse move for dragging result dialog"""
+        if event.buttons() == Qt.MouseButton.LeftButton and hasattr(self, 'result_drag_position'):
+            self.result_dialog.move(event.globalPosition().toPoint() - self.result_drag_position)
+            event.accept()
+    
+    def _back_to_input(self):
+        """Go back to input dialog"""
+        self.result_dialog.close()
+        QTimer.singleShot(100, self._create_tlv_input_dialog)
+    
+    def _copy_tlv_result(self):
+        """Copy TLV parsing result to clipboard - only data (length + data)"""
+        if hasattr(self, 'stored_protocol_input'):
+            try:
+                # Parse the protocol to get structured data
+                clean_str = self.stored_protocol_input.replace(" ", "").replace("\n", "").replace("\t", "").replace("\r", "").upper()
+                
+                # Validate hex string
+                if not all(c in "0123456789ABCDEF" for c in clean_str):
+                    return
+                
+                if len(clean_str) % 2 != 0:
+                    return
+                
+                # Convert to byte array
+                try:
+                    bytes_data = [int(clean_str[i:i+2], 16) for i in range(0, len(clean_str), 2)]
+                except ValueError:
+                    return
+                
+                if len(bytes_data) < 1:
+                    return
+                
+                packet_count = bytes_data[0]
+                current_pos = 1
+                copy_data = []
+                
+                # Extract only length and data for each packet
+                packet_lines = []
+                for i in range(packet_count):
+                    if current_pos >= len(bytes_data):
+                        break
+                    
+                    packet_line = []
+                    
+                    # Check if we have at least 2 bytes for length
+                    if current_pos + 1 >= len(bytes_data):
+                        if current_pos < len(bytes_data):
+                            # Only one byte available for length
+                            packet_line.append(f"{bytes_data[current_pos]:02X}")
+                        if packet_line:
+                            packet_lines.append(' '.join(packet_line))
+                        break
+                    
+                    # Read 2-byte length
+                    length_low = bytes_data[current_pos]
+                    length_high = bytes_data[current_pos + 1]
+                    data_length = (length_high << 8) | length_low
+                    current_pos += 2
+                    
+                    # Add length bytes to packet line
+                    packet_line.append(f"{length_low:02X}{length_high:02X}")
+                    
+                    # Check if we have enough data
+                    if current_pos + data_length > len(bytes_data):
+                        # Not enough data, extract what we have
+                        available_data = bytes_data[current_pos:] if current_pos < len(bytes_data) else []
+                        if available_data:
+                            data_hex = ''.join(f'{b:02X}' for b in available_data)
+                            packet_line.append(data_hex)
+                        packet_lines.append(' '.join(packet_line))
+                        break
+                    
+                    # Extract complete data
+                    packet_data = bytes_data[current_pos:current_pos + data_length]
+                    current_pos += data_length
+                    
+                    if packet_data:
+                        data_hex = ''.join(f'{b:02X}' for b in packet_data)
+                        packet_line.append(data_hex)
+                    
+                    # Add this packet's line to the result
+                    packet_lines.append(' '.join(packet_line))
+                
+                # Join all packet lines with newlines
+                result_text = '\n'.join(packet_lines)
+                
+                clipboard = QApplication.clipboard()
+                clipboard.setText(result_text)
+                
+                # Show brief confirmation
+                sender = self.sender()
+                original_text = sender.text()
+                sender.setText("已复制!")
+                QTimer.singleShot(1000, lambda: sender.setText(original_text))
+            except Exception as e:
+                pass
+    
+    def clear_protocol_input(self):
+        """Clear protocol input field"""
+        if hasattr(self, 'protocol_input'):
+            self.protocol_input.clear()
+    
+    def parse_tlv_protocol(self, protocol_str):
+        """Parse TLV protocol string - Standard TLV format"""
+        # Remove spaces and convert to uppercase
+        clean_str = protocol_str.replace(" ", "").replace("\n", "").replace("\t", "").replace("\r", "").upper()
+        
+        # Validate hex string
+        if not all(c in "0123456789ABCDEF" for c in clean_str):
+            raise ValueError("输入包含非十六进制字符")
+        
+        if len(clean_str) % 2 != 0:
+            raise ValueError("十六进制字符串长度必须为偶数")
+        
+        # Convert to byte array
+        try:
+            bytes_data = [int(clean_str[i:i+2], 16) for i in range(0, len(clean_str), 2)]
+        except ValueError:
+            raise ValueError("十六进制字符串格式错误")
+        
+        if len(bytes_data) < 1:
+            raise ValueError("数据长度不足")
+        
+        result = []
+        # Clean container without background colors
+        result.append("<div style='font-family: Segoe UI, Arial, sans-serif; color: #ffffff; margin: 0; padding: 0;'>")
+        
+        # Original data block - simple and clean
+        original_hex = ''.join(f'{b:02X}' for b in bytes_data)
+        result.append(f"""
+            <div style='
+                padding: 10px;
+                margin-bottom: 10px;
+                border: 2px solid #e9c707;
+            '>
+                <div style='
+                    color: #2dbaf1;
+                    font-weight: 600;
+                    font-size: 15px;
+                    margin-bottom: 3px;
+                '>原始数据</div>
+                <div style='
+                    color: #e9c707;
+                    font-family: Consolas, Monaco, Courier New, monospace;
+                    font-size: 14px;
+                    word-break: break-all;
+                    line-height: 1.0;
+                    padding: 10px;
+                    border: 1px solid #666666;
+                    margin-bottom: 15px;
+                '>{original_hex}</div>
+            </div>
+        """)
+        
+        # Parse TLV format: first byte = number of packets, then each packet = 2 bytes length + data
+        if len(bytes_data) < 1:
+            raise ValueError("数据长度不足，至少需要1个字节表示包数量")
+        
+        packet_count = bytes_data[0]
+        
+        current_pos = 1
+        parsed_packets = []
+        incomplete_data = False  # Flag to track if data is incomplete
+        
+        for i in range(packet_count):
+            if current_pos >= len(bytes_data):
+                # No more data available, but don't raise error
+                incomplete_data = True
+                break
+            
+            # Check if we have at least 2 bytes for length
+            if current_pos + 1 >= len(bytes_data):
+                # Incomplete length field, parse what we have
+                incomplete_data = True
+                if current_pos < len(bytes_data):
+                    # Only one byte available for length
+                    length_low = bytes_data[current_pos]
+                    parsed_packets.append({
+                        'index': i + 1,
+                        'length': None,  # Unknown length
+                        'length_bytes': (length_low, None),
+                        'data': [],
+                        'incomplete': True,
+                        'error': '长度字段不完整'
+                    })
+                break
+            
+            # Read 2-byte length (little-endian: low byte first, then high byte)
+            length_low = bytes_data[current_pos]
+            length_high = bytes_data[current_pos + 1]
+            data_length = (length_high << 8) | length_low
+            current_pos += 2
+            
+            # Check if we have enough data
+            if current_pos + data_length > len(bytes_data):
+                # Not enough data, extract what we have
+                incomplete_data = True
+                available_data = bytes_data[current_pos:] if current_pos < len(bytes_data) else []
+                parsed_packets.append({
+                    'index': i + 1,
+                    'length': data_length,
+                    'length_bytes': (length_low, length_high),
+                    'data': available_data,
+                    'incomplete': True,
+                    'expected_length': data_length,
+                    'actual_length': len(available_data)
+                })
+                break
+            
+            # Extract data
+            packet_data = bytes_data[current_pos:current_pos + data_length]
+            current_pos += data_length
+            
+            parsed_packets.append({
+                'index': i + 1,
+                'length': data_length,
+                'length_bytes': (length_low, length_high),
+                'data': packet_data,
+                'incomplete': False
+            })
+        
+        # Add warning message if data is incomplete
+        if incomplete_data:
+            result.append(f"""
+                <div style='
+                    padding: 10px;
+                    margin-bottom: 10px;
+                    border: 2px solid #ff6b6b;
+                    background-color: rgba(255, 107, 107, 0.1);
+                '>
+                    <div style='
+                        color: #ff6b6b;
+                        font-weight: 600;
+                        font-size: 15px;
+                        margin-bottom: 3px;
+                    '>⚠️ 数据不完整警告</div>
+                    <div style='
+                        color: #ffcc02;
+                        font-size: 14px;
+                    '>协议包数据长度不足，已解析可用部分</div>
+                </div>
+            """)
+        
+        # Display each packet as a simple block
+        for i, packet in enumerate(parsed_packets):
+            # Determine border color based on completeness
+            border_color = "#ff6b6b" if packet.get('incomplete', False) else "#0080ff"
+            
+            result.append(f"""
+                <div style='
+                    margin-bottom: 1px;
+                    border: 2px solid {border_color};
+                '>
+                    <div style='
+                        padding: 16px 5px;
+                        border-bottom: 1px solid #666666;
+                    '>
+                        <div style='
+                            color: #2dbaf1;
+                            font-weight: 600;
+                            font-size: 15px;
+                        '>第{packet['index']}包{' (不完整)' if packet.get('incomplete', False) else ''}</div>
+                    </div>
+                    
+                    <div style='padding: 20px;'>
+                        <div style='margin-bottom: 1px;'>
+            """)
+            
+            # Display length bytes with special handling for incomplete data
+            if packet.get('incomplete', False) and 'error' in packet:
+                # Case: incomplete length field
+                length_byte_1 = packet['length_bytes'][0] if packet['length_bytes'][0] is not None else '??'
+                length_byte_2 = packet['length_bytes'][1] if packet['length_bytes'][1] is not None else '??'
+                result.append(f"""
+                                <span style='color: #ff6b6b; font-family: Consolas, Monaco, Courier New, monospace; font-weight: 600; font-size: 16px;'>{length_byte_1:02X if isinstance(length_byte_1, int) else length_byte_1}{length_byte_2 if length_byte_2 == '??' else f'{length_byte_2:02X}'}</span>
+                                <span style='color: #ff6b6b; font-size: 12px; margin-left: 10px;'>({packet['error']})</span>
+                """)
+            elif packet.get('incomplete', False):
+                # Case: incomplete data
+                result.append(f"""
+                                <span style='color: #ff6b6b; font-family: Consolas, Monaco, Courier New, monospace; font-weight: 600; font-size: 16px;'>{packet['length_bytes'][0]:02X}{packet['length_bytes'][1]:02X}</span>
+                                <span style='color: #ff6b6b; font-size: 12px; margin-left: 10px;'>(期望 {packet['expected_length']} 字节，实际 {packet['actual_length']} 字节)</span>
+                """)
+            else:
+                # Case: complete data
+                result.append(f"""
+                                <span style='color: #0080ff; font-family: Consolas, Monaco, Courier New, monospace; font-weight: 600; font-size: 16px;'>{packet['length_bytes'][0]:02X}{packet['length_bytes'][1]:02X}</span>
+                """)
+            
+            result.append("""
+                            </div>
+                        </div>
+                        <div>
+            """)
+            
+            # Display data content
+            if packet['data']:
+                data_hex = ''.join(f'{b:02X}' for b in packet['data'])
+                data_color = "#ff9999" if packet.get('incomplete', False) else "#e9c707"
+                result.append(f"""
+                                <div style='
+                                    font-family: Consolas, Monaco, Courier New, monospace;
+                                    color: {data_color};
+                                    font-size: 14px;
+                                    word-break: break-all;
+                                    line-height: 1.0;
+                                    margin-bottom: 15px;
+                                '>{data_hex}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                """)
+            else:
+                no_data_text = "数据不完整" if packet.get('incomplete', False) else "暂无数据"
+                result.append(f"""
+                                <div style='
+                                    color: #999999;
+                                    font-style: italic;
+                                    text-align: center;
+                                    font-size: 14px;
+                                    padding: 8px;
+                                '>{no_data_text}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                """)
+        
+        result.append("</div>")
+        
+        return "".join(result)
 
 class ThemeManager:
     # 📌📁❌🔸
