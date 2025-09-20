@@ -37,11 +37,13 @@ from qfluentwidgets import (
     MSFluentWindow, SettingCardGroup, PushSettingCard, HyperlinkCard,
     FluentIcon as FIF, InfoBar, InfoBarPosition, setTheme, Theme, isDarkTheme,
     MessageBox, ScrollArea, SubtitleLabel, setFont, ComboBox, SpinBox, EditableComboBox,
-    setTheme, Theme, qconfig
+    setTheme, Theme, qconfig, PushButton, CheckBox, PrimaryPushButton, BodyLabel, TableWidget,
+    LineEdit, ToolButton, TextEdit, SwitchButton, CaptionLabel
 )
 # 自定义模块
 from log import Logger
 from position_view import PositionView
+from splash_screen import SplashScreen
 
 def time_decorator(func):
     """
@@ -64,6 +66,8 @@ class MainWindow(MSFluentWindow):
         app_path  = Path(os.getcwd())
         print(f"app_path: {app_path}")
         self.setWindowIcon(QIcon(str(icon_path)))
+        self.setWindowTitle("UWB Dashboard")
+
         self.current_theme               = ThemeManager.DARK_THEME
         self.config_path                 = Path(__file__).parent / "config.json"
         self._load_background_config()
@@ -259,7 +263,8 @@ class MainWindow(MSFluentWindow):
 
     def init_ui(self):
         # MSFluentWindow uses addSubInterface instead of setCentralWidget
-        self.setGeometry(100, 100, 800, 700)
+        self.setMinimumSize(1000, 700)
+        self.setGeometry(100, 100, 1000, 700)
         
         # Create pages first
         self.create_pages()
@@ -429,46 +434,41 @@ class MainWindow(MSFluentWindow):
         status_widget = QWidget()
         status_layout = QHBoxLayout(status_widget)
         status_layout.setContentsMargins(10, 0, 10, 0)
-        status_layout.setSpacing(5)
-        self.status_indicator2 = QLabel("●")
-        self.status_indicator2.setStyleSheet("color: red; font-size: 16px;background:rgba(36, 42, 56, 0);")
-        status_layout.addWidget(self.status_indicator2)
+        status_layout.setSpacing(10)
 
-        self.toggle_btn2 = QPushButton("打开串口")
-        self.toggle_btn2.setFixedWidth(90)
-        self.toggle_btn2.clicked.connect(self.toggle_port2)
+        # Modern switch button for serial port control
+        self.toggle_btn2 = SwitchButton()
+        self.toggle_btn2.setOffText("关闭")
+        self.toggle_btn2.setOnText("打开")
+        self.toggle_btn2.checkedChanged.connect(self.toggle_port2)
 
         line_top_1 = QFrame()
         line_top_1.setFrameShape(QFrame.Shape.VLine)
         line_top_1.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
         
-        max_lines_label = QLabel("最大行数")
-        max_lines_label.setStyleSheet("background: rgba(36, 42, 56, 0);")
+        max_lines_label = BodyLabel("最大行数")
+
         self.max_lines_spin2 = SpinBox()
         self.max_lines_spin2.setRange(50000, 300000)
         self.max_lines_spin2.setValue(150000)
         self.max_lines_spin2.setSingleStep(10000)
         self.max_lines_spin2.valueChanged.connect(self.update_max_lines2)
-        self.current_lines_label2 = QLabel("当前行数: 0")
-        self.current_lines_label2.setStyleSheet("background: rgba(36, 42, 56, 0);")
+        self.current_lines_label2 = BodyLabel("当前行数: 0")
+
         
         line_top_2 = QFrame()
         line_top_2.setFrameShape(QFrame.Shape.VLine)
         line_top_2.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
-        self.Address_label_2 = QLabel("0000  -")
-        self.Address_label_2.setStyleSheet("background:rgba(36, 42, 56, 0);")
-       
-        self.Transaction_time_label_2 = QLabel("0000ms")
-        self.Transaction_time_label_2.setStyleSheet("background:rgba(36, 42, 56, 0);")
+        self.Address_label_2 = BodyLabel("0000  -")
+        self.Transaction_time_label_2 = BodyLabel("0000ms")
         
         top_layout.addWidget(self.port_combo2)
         top_layout.addSpacing(10)
         top_layout.addWidget(self.baud_combo2)
         top_layout.addSpacing(10)
-        top_layout.addWidget(status_widget)
         top_layout.addWidget(self.toggle_btn2)
         top_layout.addSpacing(20)
         top_layout.addWidget(line_top_1)
@@ -488,19 +488,6 @@ class MainWindow(MSFluentWindow):
         layout.addWidget(top_widget)
 
         splitter = QSplitter(Qt.Orientation.Vertical)
-        splitter.setStyleSheet("""
-            QSplitter::handle {
-                background: transparent;
-                border    : none;
-                min-height: 5px;
-            }
-            QSplitter::handle:vertical {
-                height: 5px;
-            }
-            QSplitter::handle:horizontal {
-                width: 5px;
-            }
-        """)
         
         self.create_display_area2(splitter)
     
@@ -508,19 +495,19 @@ class MainWindow(MSFluentWindow):
         # bottom_widget.setStyleSheet("background: rgba(36, 42, 56, 0.8);")
         bottom_layout = QHBoxLayout(bottom_widget)
         
-        self.clear_btn2 = QPushButton("清屏")
+        self.clear_btn2 = PushButton("清屏")
         self.clear_btn2.setFixedWidth(80)
         self.clear_btn2.clicked.connect(self.serial_display2.clear)
 
-        self.config_highlight_btn2 = QPushButton("高亮")
+        self.config_highlight_btn2 = PushButton("高亮")
         self.config_highlight_btn2.setFixedWidth(80)
         self.config_highlight_btn2.clicked.connect(self.open_highlight_config_dialog)
 
-        self.timestamp2 = QCheckBox("🕒 时间戳")
+        self.timestamp2 = CheckBox("🕒 时间戳")
         self.timestamp2.setObjectName("timestamp")
         self.timestamp2.setToolTip("每行前添加时间戳")
         self.timestamp2.setChecked(True)
-        self.auto_scroll2 = QCheckBox("📌 自动滚动")
+        self.auto_scroll2 = CheckBox("📌 自动滚动")
         self.auto_scroll2.setObjectName("autoScroll")
         self.auto_scroll2.setChecked(False)
         self.auto_scroll2.setToolTip("锁定滚动条到底部")
@@ -536,13 +523,13 @@ class MainWindow(MSFluentWindow):
         line_bottom_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
         # 日志相关按钮
-        self.open_text_log_file_btn2 = QPushButton("📄TEXT")
+        self.open_text_log_file_btn2 = PushButton("📄TEXT")
         self.open_text_log_file_btn2.setFixedWidth(75)
         self.open_text_log_file_btn2.setToolTip("打开当前Text日志文件")
         self.open_text_log_file_btn2.clicked.connect(self.open_current_text_log_file2)
         self.open_text_log_file_btn2.setEnabled(False)
 
-        self.open_log_folder_btn2 = QPushButton("📁")
+        self.open_log_folder_btn2 = PushButton("📁")
         self.open_log_folder_btn2.setFixedWidth(60)
         self.open_log_folder_btn2.setToolTip("打开日志文件夹")
         self.open_log_folder_btn2.clicked.connect(self.open_log_folder)
@@ -616,31 +603,7 @@ class MainWindow(MSFluentWindow):
                 border          : 1.5px solid #477faa;
                 background-color: rgba(36, 42, 56, 0.5);
             }
-            QScrollBar:vertical {
-                background   : transparent;
-                width        : 10px;
-                margin       : 2px 0 2px 0;
-                border-radius: 5px;
-            }
-            QScrollBar::handle:vertical {
-                background: qlineargradient(
-                    x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #3da9fc, stop:1 #1e293b
-                );
-                min-height   : 24px;
-                border-radius: 5px;
-            }
-            QScrollBar::handle:vertical:hover {
-                background: qlineargradient(
-                    x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #90caf9, stop:1 #3da9fc
-                );
-            }
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                height    : 0;
-                background: none;
-                border    : none;
-            }
+            
         """)
         
         self.serial_display2.document().blockCountChanged.connect(self.update_current_lines2)
@@ -661,21 +624,20 @@ class MainWindow(MSFluentWindow):
         find_layout.setContentsMargins(6, 6, 6, 6)
         find_layout.setSpacing(6)
 
-        self.find_input2 = QLineEdit()
+        self.find_input2 = LineEdit()
         self.find_input2.setPlaceholderText("输入搜索内容")
         self.find_input2.textChanged.connect(self.update_find_count2)
-        self.count_label2 = QLabel("0/0")
+        self.count_label2 = BodyLabel("0/0")
 
-        from PyQt6.QtWidgets import QToolButton
-        self.prev_btn2 = QToolButton()
+        self.prev_btn2 = ToolButton()
         self.prev_btn2.setArrowType(Qt.ArrowType.UpArrow)
         self.prev_btn2.clicked.connect(lambda: self.find_text2(False))
-        self.next_btn2 = QToolButton()
+        self.next_btn2 = ToolButton()
         self.next_btn2.setArrowType(Qt.ArrowType.DownArrow)
         self.next_btn2.clicked.connect(lambda: self.find_text2(True))
 
-        self.close_find_btn2 = QToolButton()
-        self.close_find_btn2.setText("✕")
+        self.close_find_btn2 = ToolButton()
+        self.close_find_btn2.setText("×")
         self.close_find_btn2.clicked.connect(self.find_dialog2.close)
         self.close_find_btn2.setStyleSheet("font-size: 16px; color: #fff; background: transparent; border: none;")
 
@@ -823,7 +785,7 @@ class MainWindow(MSFluentWindow):
             self.current_ports2 = available_ports
     
     def toggle_port2(self):
-        if self.toggle_btn2.text() == "打开串口":
+        if self.toggle_btn2.isChecked():
             try:
                 port = self.port_combo2.currentText()
                 if not port:
@@ -847,8 +809,6 @@ class MainWindow(MSFluentWindow):
                 self.serial_thread2.connection_lost.connect(self.handle_serial2_connection_lost)
                 self.serial_thread2.start()
                 
-                self.toggle_btn2.setText("关闭串口")
-                self.status_indicator2.setStyleSheet("color: green;background:rgba(36,36,36,0);")
                 
                 current_time      = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
                 port_name         = self.port_combo2.currentText().replace(":", "_")
@@ -866,6 +826,7 @@ class MainWindow(MSFluentWindow):
                 
             except Exception as e:
                 QMessageBox.warning(self, "错误", f"打开串口失败: {str(e)}")
+                self.toggle_btn2.setChecked(False)  # Reset switch state on error
         else:
             try:
                 if hasattr(self, 'serial_thread2') and self.serial_thread2:
@@ -876,8 +837,6 @@ class MainWindow(MSFluentWindow):
                     self.serial2.close()
                     self.serial2 = None
                 
-                self.toggle_btn2.setText("打开串口")
-                self.status_indicator2.setStyleSheet("color: red;background:rgba(36,36,36,0);")
             except Exception as e:
                 QMessageBox.warning(self, "错误", f"关闭串口失败: {str(e)}")
     
@@ -909,7 +868,6 @@ class MainWindow(MSFluentWindow):
         try:
             # Update UI status to indicate disconnection
             self.toggle_btn2.setText("打开串口")
-            self.status_indicator2.setStyleSheet("color: red;background:rgba(36,36,36,0);")
             
             # Clean up serial resources
             if hasattr(self, 'serial_thread2'):
@@ -924,7 +882,7 @@ class MainWindow(MSFluentWindow):
         except Exception as e:
             print(f"处理串口2连接丢失错误: {str(e)}")
 
-    def create_COM_page(self):
+    def create_COM_page(self):   # BM : COM1 PAGE
         COM1_page = QWidget()
         layout = QVBoxLayout(COM1_page)
         layout.setContentsMargins(10, 10, 10, 10)
@@ -944,41 +902,35 @@ class MainWindow(MSFluentWindow):
         status_widget = QWidget()
         status_layout = QHBoxLayout(status_widget)
         status_layout.setContentsMargins(10, 0, 10, 0)
-        status_layout.setSpacing(5)
-        self.status_indicator = QLabel("●")
-        self.status_indicator.setStyleSheet("color: red; font-size: 16px;background:rgba(36, 42, 56, 0);")
-        status_layout.addWidget(self.status_indicator)
+        status_layout.setSpacing(10)
 
-        self.toggle_btn = QPushButton("打开串口")
-        self.toggle_btn.setFixedWidth(90)
-        self.toggle_btn.clicked.connect(self.toggle_port)
+        # Modern switch button for serial port control
+        self.toggle_btn = SwitchButton()
+        self.toggle_btn.setOffText("关闭")
+        self.toggle_btn.setOnText("打开")
+        self.toggle_btn.checkedChanged.connect(self.toggle_port)
 
         line_top_1 = QFrame()
         line_top_1.setFrameShape(QFrame.Shape.VLine)
         line_top_1.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
         
-        max_lines_label = QLabel("最大行数") 
-        max_lines_label.setStyleSheet("background:rgba(36, 42, 56, 0);")
+        max_lines_label = BodyLabel("最大行数") 
         
         self.max_lines_spin = SpinBox()
         self.max_lines_spin.setRange(50000, 300000)
         self.max_lines_spin.setValue(150000)
         self.max_lines_spin.setSingleStep(10000)
         self.max_lines_spin.valueChanged.connect(self.update_max_lines)
-        self.current_lines_label = QLabel("当前行数: 0")
-        self.current_lines_label.setStyleSheet("background:rgba(36, 42, 56, 0);")
+        self.current_lines_label = BodyLabel("当前行数: 0")
 
         line_top_2 = QFrame()
         line_top_2.setFrameShape(QFrame.Shape.VLine)
         line_top_2.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
-        self.Address_label = QLabel("0000  -")
-        self.Address_label.setStyleSheet("background:rgba(36, 42, 56, 0);")
-       
-        self.Transaction_time_label = QLabel("0000ms")
-        self.Transaction_time_label.setStyleSheet("background:rgba(36, 42, 56, 0);")
+        self.Address_label = BodyLabel("0000  -")
+        self.Transaction_time_label = BodyLabel("0000ms")
         
         # Add separator line and time log button
         line_top_3 = QFrame()
@@ -986,12 +938,12 @@ class MainWindow(MSFluentWindow):
         line_top_3.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_3.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
         
-        self.time_log_btn = QPushButton("❃")
+        self.time_log_btn = PushButton("❃")
         self.time_log_btn.setFixedWidth(35)
         self.time_log_btn.setToolTip("显示包含时间信息的日志")
         self.time_log_btn.clicked.connect(self.show_time_log_dialog) # BM: Time Log 
         
-        self.protocol_parse_btn = QPushButton("⚡")
+        self.protocol_parse_btn = PushButton("⚡")
         self.protocol_parse_btn.setFixedWidth(35)
         self.protocol_parse_btn.setToolTip("协议解析工具")
         self.protocol_parse_btn.clicked.connect(self.show_protocol_parse_dialog) # BM: Protocol Parse
@@ -1000,7 +952,6 @@ class MainWindow(MSFluentWindow):
         top_layout.addSpacing(10)
         top_layout.addWidget(self.baud_combo)
         top_layout.addSpacing(10)
-        top_layout.addWidget(status_widget)
         top_layout.addWidget(self.toggle_btn)
         top_layout.addSpacing(20)
         top_layout.addWidget(line_top_1)
@@ -1027,19 +978,6 @@ class MainWindow(MSFluentWindow):
         layout.addWidget(top_widget)
 
         splitter = QSplitter(Qt.Orientation.Vertical)
-        splitter.setStyleSheet("""
-            QSplitter::handle {
-                background: transparent;
-                border    : none;
-                min-height: 5px;
-            }
-            QSplitter::handle:vertical {
-                height: 5px;
-            }
-            QSplitter::handle:horizontal {
-                width: 5px;
-            }
-        """)
         
         self.create_display_area(splitter)
         
@@ -1047,19 +985,19 @@ class MainWindow(MSFluentWindow):
         # bottom_widget.setStyleSheet("background: rgba(36, 42, 56, 0.25);")
         bottom_layout = QHBoxLayout(bottom_widget)
         
-        self.clear_btn = QPushButton("清屏")
+        self.clear_btn = PushButton("清屏")
         self.clear_btn.setFixedWidth(80)
         self.clear_btn.clicked.connect(self.serial_display.clear)
 
-        self.config_highlight_btn = QPushButton("高亮")
+        self.config_highlight_btn = PushButton("高亮")
         self.config_highlight_btn.setFixedWidth(80)
         self.config_highlight_btn.clicked.connect(self.open_highlight_config_dialog)
 
-        self.timestamp = QCheckBox("🕒 时间戳")
+        self.timestamp = CheckBox("🕒 时间戳")
         self.timestamp.setObjectName("timestamp")
         self.timestamp.setToolTip("每行前添加时间戳")
         self.timestamp.setChecked(True)
-        self.auto_scroll = QCheckBox("📌 自动滚动")
+        self.auto_scroll = CheckBox("📌 自动滚动")
         self.auto_scroll.setObjectName("autoScroll")
         self.auto_scroll.setChecked(False)
         self.auto_scroll.setToolTip("锁定滚动条到底部")
@@ -1075,19 +1013,19 @@ class MainWindow(MSFluentWindow):
         line_bottom_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
         # 日志相关按钮
-        self.open_csv_log_file_btn = QPushButton("📄CSV")
+        self.open_csv_log_file_btn = PushButton("📄CSV")
         self.open_csv_log_file_btn.setFixedWidth(75)
         self.open_csv_log_file_btn.setToolTip("打开当前CSV日志文件")
         self.open_csv_log_file_btn.clicked.connect(self.open_current_csv_file)
         self.open_csv_log_file_btn.setEnabled(False)
 
-        self.open_text_log_file_btn = QPushButton("📄TEXT")
+        self.open_text_log_file_btn = PushButton("📄TEXT")
         self.open_text_log_file_btn.setFixedWidth(75)
         self.open_text_log_file_btn.setToolTip("打开当前Text日志文件")
         self.open_text_log_file_btn.clicked.connect(self.open_current_text_log_file)
         self.open_text_log_file_btn.setEnabled(False)
 
-        self.open_log_folder_btn = QPushButton("📁")
+        self.open_log_folder_btn = PushButton("📁")
         self.open_log_folder_btn.setFixedWidth(60)
         self.open_log_folder_btn.setToolTip("打开日志文件夹")
         self.open_log_folder_btn.clicked.connect(self.open_log_folder)
@@ -1190,23 +1128,21 @@ class MainWindow(MSFluentWindow):
         find_layout.setContentsMargins(6, 6, 6, 6)
         find_layout.setSpacing(6)
 
-        self.find_input = QLineEdit()
+        self.find_input = LineEdit()
         self.find_input.setPlaceholderText("输入搜索内容")
         self.find_input.textChanged.connect(self.update_find_count)
-        self.count_label = QLabel("0/0")
+        self.count_label = BodyLabel("0/0")
 
-        # 上下箭头按钮
-        from PyQt6.QtWidgets import QToolButton
-        self.prev_btn = QToolButton()
+        self.prev_btn = ToolButton()
         self.prev_btn.setArrowType(Qt.ArrowType.UpArrow)
         self.prev_btn.clicked.connect(lambda: self.find_text(False))
-        self.next_btn = QToolButton()
+        self.next_btn = ToolButton()
         self.next_btn.setArrowType(Qt.ArrowType.DownArrow)
         self.next_btn.clicked.connect(lambda: self.find_text(True))
 
         # 关闭按钮
-        self.close_find_btn = QToolButton()
-        self.close_find_btn.setText("✕")
+        self.close_find_btn = ToolButton()
+        self.close_find_btn.setText("×")
         self.close_find_btn.clicked.connect(self.find_dialog.close)
         self.close_find_btn.setStyleSheet("font-size: 16px; color: #fff; background: transparent; border: none;")
 
@@ -1217,7 +1153,6 @@ class MainWindow(MSFluentWindow):
         find_layout.addWidget(self.close_find_btn)
 
         # 添加鼠标事件处理
-        self.serial_display.wheelEvent = self.on_display_wheel
         self.serial_display.keyPressEvent = self.on_display_key_press
         self.font_size = 12  # 初始字体大小
         
@@ -1230,36 +1165,11 @@ class MainWindow(MSFluentWindow):
         layout.setSpacing(0)
 
         main_splitter = QSplitter(Qt.Orientation.Vertical)
-        main_splitter.setStyleSheet("""
-            QSplitter::handle {
-                background: transparent;
-                border    : none;
-                min-height: 5px;
-            }
-            QSplitter::handle:vertical {
-                height: 5px;
-            }
-            QSplitter::handle:horizontal {
-                width: 5px;
-            }
-        """)
+    
         chart_widget = self.create_chart_area()
         main_splitter.addWidget(chart_widget)
 
         canvas_splitter = QSplitter(Qt.Orientation.Horizontal)
-        canvas_splitter.setStyleSheet("""
-            QSplitter::handle {
-                background: transparent;
-                border    : none;
-                min-height: 5px;
-            }
-            QSplitter::handle:vertical {
-                height: 5px;
-            }
-            QSplitter::handle:horizontal {
-                width: 5px;
-            }
-        """)
 
         table_widget = self.create_test_area()  # 这里包含了表格和预留区域
         canvas_splitter.addWidget(table_widget)
@@ -1272,25 +1182,9 @@ class MainWindow(MSFluentWindow):
         # 添加切换按钮
         button_layout = QHBoxLayout()
         button_layout.addStretch()  # 推到右边
-        self.layout_toggle_btn = QPushButton("⚡")
+        self.layout_toggle_btn = PushButton("⚡")
         self.layout_toggle_btn.setFixedSize(50, 30)
-        self.layout_toggle_btn.setStyleSheet("""
-            QPushButton {
-                background: rgba(45, 52, 54, 0.8);
-                border: 1px solid #2c3e50;
-                border-radius: 15px;
-                color: #ecf0f1;
-                font-size: 14px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background: rgba(52, 73, 94, 0.9);
-                border: 1px solid #34495e;
-            }
-            QPushButton:pressed {
-                background: rgba(44, 62, 80, 1.0);
-            }
-        """)
+
         self.layout_toggle_btn.clicked.connect(self.toggle_layout_mode)
         button_layout.addWidget(self.layout_toggle_btn)
         bottom_right_layout.addLayout(button_layout)
@@ -1496,15 +1390,15 @@ class MainWindow(MSFluentWindow):
         top_table_layout.setContentsMargins(5, 5, 5, 5)
         top_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
-        self.data_table = QTableWidget()
+        self.data_table = TableWidget()
         self.data_table.setColumnCount(10)
-        self.data_table.setHorizontalHeaderLabels([
-            'Master', 'Slave', 'NLOS', 'RSSI', 'Speed',
-            'X', 'Y', 'Z', 'Auth', 'Trans'
-        ])
+        self.data_table.setHorizontalHeaderLabels(['Master', 'Slave', 'NLOS', 'RSSI', 'Speed','X', 'Y', 'Z', 'Auth', 'Trans'])
         
         self.data_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.data_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        self.data_table.setAlternatingRowColors(True)           # 斑马纹
+        self.data_table.setBorderVisible(True)                  # 边框线
+        self.data_table.setBorderRadius(8)                      # 圆角表头
         top_table_layout.addWidget(self.data_table)
 
         # 下部分 - 闸机动画区域
@@ -1525,31 +1419,6 @@ class MainWindow(MSFluentWindow):
 
         bottom_left_layout.addWidget(form_splitter)
         return bottom_left
-    
-    def on_display_wheel(self, event):
-        """处理显示区域的鼠标滚轮事件"""
-        if event.modifiers() == Qt.KeyboardModifier.ControlModifier:
-            delta = event.angleDelta().y()
-            if delta > 0:
-                self.font_size = min(self.font_size + 1, 24)  # 增大字体，最大24
-            else:
-                self.font_size = max(self.font_size - 1, 8)   # 减小字体，最小8
-            
-            # 更新字体大小
-            self.serial_display.setStyleSheet(f"""
-                QTextEdit {{
-                    background-color: rgba(0, 0, 0, 0.2);
-                    border          : 1px solid rgba(255, 255, 255, 0.1);
-                    border-radius   : 10px;
-                    padding         : 10px;
-                    color           : #fafafa;
-                    font-family     : 'Consolas', 'Courier New', monospace;
-                    font-size       : {self.font_size}px;
-                }}
-            """)
-        else:
-            # 调用原始的滚轮事件处理
-            QTextEdit.wheelEvent(self.serial_display, event)
     
     def on_display_key_press(self, event):
         """处理显示区域的键盘事件"""
@@ -1723,7 +1592,7 @@ class MainWindow(MSFluentWindow):
 
     def toggle_port(self):
         """切换串口开关状态"""
-        if self.toggle_btn.text() == "打开串口":
+        if self.toggle_btn.isChecked():
             try:
                 # Clear time log data when opening new serial connection
                 self.time_log_data.clear()
@@ -1744,10 +1613,6 @@ class MainWindow(MSFluentWindow):
                 self.serial_thread.connection_lost.connect(self.handle_serial_connection_lost)
                 self.serial_thread.start()
                 
-                # 更新UI状态
-                self.toggle_btn.setText("关闭串口")
-                self.status_indicator.setStyleSheet("color: green;background:rgba(36,36,36,0);")
-
                 current_time      = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
                 port_name         = self.port_combo.currentText().replace(":", "_")
                 csv_log_filename  = f"[{port_name}] {current_time}.csv"
@@ -1771,9 +1636,7 @@ class MainWindow(MSFluentWindow):
                     self.open_csv_log_file_btn.setEnabled(False)
             except Exception as e:
                 QMessageBox.critical(self, "错误", f"打开串口失败：{str(e)}")
-                self.current_csv_log_file_path  = None 
-                self.current_text_log_file_path = None
-                self.open_csv_log_file_btn.setEnabled(False)
+                self.toggle_btn.setChecked(False)  # Reset switch state on error
                 return
         else:
             # 关闭串口
@@ -1781,10 +1644,6 @@ class MainWindow(MSFluentWindow):
                 self.serial_thread.stop()
             if hasattr(self, 'serial_port'):
                 self.serial_port.close()
-            
-            # 更新UI状态
-            self.toggle_btn.setText("打开串口")
-            self.status_indicator.setStyleSheet("color: red;background:rgba(36,42,56,0);")
     
     def open_current_csv_file(self):
         """使用系统默认应用打开当前的日志文件"""
@@ -1947,22 +1806,10 @@ class MainWindow(MSFluentWindow):
         layout.setSpacing(10)
         
         # Create text display area
-        self.time_log_text_display = QTextEdit()
+        self.time_log_text_display = TextEdit()
         self.time_log_text_display.setReadOnly(True)
         # Increase font size for better readability
         self.time_log_text_display.setFont(QFont("Consolas", 13))
-        self.time_log_text_display.setStyleSheet("""
-            QTextEdit {
-                background-color: #3a3f47;
-                color: #e7f8ef;
-                border: 2px solid #5a9fd4;
-                border-radius: 10px;
-                padding: 12px;
-                selection-background-color: #5a9fd4;
-                font-family: 'Consolas', 'Monaco', monospace;
-                line-height: 1.4;
-            }
-        """)
         
         # Initialize data change tracking
         self.last_time_log_count = 0
@@ -2192,7 +2039,6 @@ class MainWindow(MSFluentWindow):
         try:
             # Update UI status to indicate disconnection
             self.toggle_btn.setText("打开串口")
-            self.status_indicator.setStyleSheet("color: red;background:rgba(36,42,56,0);")
             
             # Clean up serial resources
             if hasattr(self, 'serial_thread'):
@@ -2363,15 +2209,9 @@ class MainWindow(MSFluentWindow):
         self._save_background_config()
         self.update()
     
-    def apply_theme(self):   # BM:THEME
+    def apply_theme(self):   # BM:全局主题 THEME
         theme = self.current_theme
-        
-        # Apply theme to MSFluentWindow using qfluentwidgets theme system
         setTheme(Theme.DARK if theme == ThemeManager.DARK_THEME else Theme.LIGHT)
-        
-        # Apply custom styles to specific widgets that need custom styling
-        # Use findChildren to apply styles to specific widget instances
-        # self._apply_custom_widget_styles(theme)
         
         # Apply global stylesheet for non-fluent widgets
         self.setStyleSheet(f"""
@@ -2385,175 +2225,43 @@ class MainWindow(MSFluentWindow):
                 background-color: rgba(33, 42, 54, 0.397);
                 color           : {theme['text']};
             }}
-            
-            /* Text displays and custom components */
-            QTextEdit, QPlainTextEdit {{
-                background   : rgba(255, 255, 255, 0.1);
-                border       : 1px solid rgba(90, 110, 140, 0.3);
-                border-radius: 8px;
-                color        : {theme['text']};
-                font-family  : 'Consolas', 'Monaco', monospace;
-                selection-background-color: {theme['accent']};
+            QScrollBar:vertical {{
+                background   : transparent;
+                width        : 10px;
+                margin       : 2px 0 2px 0;
+                border-radius: 5px;
             }}
-            
-            /* Custom scroll bars for text widgets */
-            QTextEdit QScrollBar:vertical, QPlainTextEdit QScrollBar:vertical {{
-                background   : rgba(36, 42, 56, 0.08);
-                width        : 12px;
-                margin       : 4px 0 4px 0;
-                border-radius: 6px;
-            }}
-            QTextEdit QScrollBar::handle:vertical, QPlainTextEdit QScrollBar::handle:vertical {{
+            QScrollBar::handle:vertical {{
                 background: qlineargradient(
                     x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #4a90e2, stop:1 #1e293b
+                    stop:0 #3da9fc, stop:1 #1e293b
                 );
-                min-height   : 28px;
-                border-radius: 6px;
-                border       : 1px solid #3da9fc;
+                min-height   : 24px;
+                border-radius: 5px;
             }}
-            QTextEdit QScrollBar::handle:vertical:hover, QPlainTextEdit QScrollBar::handle:vertical:hover {{
+            QScrollBar::handle:vertical:hover {{
                 background: qlineargradient(
                     x1:0, y1:0, x2:1, y2:1,
                     stop:0 #90caf9, stop:1 #3da9fc
                 );
-                border: 1.5px solid #66abf5;
             }}
-            
-            /* Custom line edits */
-            QLineEdit {{
-                background   : rgba(255, 255, 255, 0.1);
-                border       : 1px solid rgba(90, 110, 140, 0.3);
-                border-radius: 8px;
-                font-size    : 14px;
-                padding      : 8px;
-                color        : {theme['text']};
+            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
+                height    : 0;
+                background: none;
+                border    : none;
             }}
-            QLineEdit:focus {{
-                border: 2px solid {theme['accent']};
+            QSplitter::handle {{
+                background: transparent;
+                border    : none;
+                min-height: 5px;
             }}
-            
-            /* Custom checkboxes */
-            QCheckBox {{
-                color    : {theme['text']};
-                spacing  : 5px;
-                padding  : 2px;
-                font-size: 12px;
+            QSplitter::handle:vertical {{
+                height: 5px;
             }}
-            QCheckBox::indicator {{
-                width        : 16px;
-                height       : 16px;
-                border       : 1px solid #a0a4ad;
-                border-radius: 4px;
-                background   : transparent;
-            }}
-            QCheckBox::indicator:hover {{
-                border    : 1px solid {theme['accent']};
-                background: rgba(90, 110, 140, 0.10);
-            }}
-            QCheckBox::indicator:checked {{
-                background-color: {theme['accent']};
-                border          : 1px solid {theme['accent']};
+            QSplitter::handle:horizontal {{
+                width: 5px;
             }}
         """)
-    
-    def _apply_custom_widget_styles(self, theme):
-        """Apply custom styles to specific widget instances"""
-        
-        # Apply styles to QPushButtons that are not qfluentwidgets buttons
-        for button in self.findChildren(QPushButton):
-            if not hasattr(button, '_is_fluent_widget'):
-                button.setStyleSheet(f"""
-                    QPushButton {{
-                        background   : rgba(90, 110, 140, 0.33);
-                        color        : {theme['text']};
-                        border       : 1px solid rgba(90, 110, 140, 0.18);
-                        padding      : 4px 12px;
-                        border-radius: 8px;
-                        font-size    : 13px;
-                        font-weight  : 500;
-                    }}
-                    QPushButton:hover {{
-                        background: rgba(90, 110, 140, 0.55);
-                        border: 1px solid {theme['accent']};
-                    }}
-                    QPushButton:pressed {{
-                        background: rgba(90, 110, 140, 0.75);
-                        border: 1px solid {theme['accent']};
-                    }}
-                """)
-        
-        # Apply styles to QListWidget
-        for listwidget in self.findChildren(QListWidget):
-            listwidget.setStyleSheet(f"""
-                QListWidget {{
-                    background-color: {theme['nav_bg']};
-                    border          : none;
-                    color           : {theme['text']};
-                }}
-                QListWidget::item {{
-                    color      : {theme['nav_item']};
-                    border-left: 4px solid transparent;
-                    padding    : 8px;
-                }}
-                QListWidget::item:selected {{
-                    background-color: {theme['nav_selected']};
-                    border-left     : 4px solid {theme['accent']};
-                }}
-                QListWidget::item:hover {{
-                    background-color: rgba(90, 110, 140, 0.2);
-                }}
-            """)
-        if hasattr(self, "data_table"):
-            self.data_table.setAlternatingRowColors(True)
-            self.data_table.setStyleSheet(f"""
-                QTableWidget {{
-                    background                : transparent;
-                    border                    : 1.5px solid #3a4a5c;
-                    border-radius             : 14px;
-                    selection-background-color: {theme['accent']};
-                    selection-color           : #fff;
-                    alternate-background-color: rgba(255,255,255,0.08);
-                    font-size                 : 13px;
-                    font-family               : 'JetBrains Mono', 'Consolas', 'Microsoft YaHei', monospace;
-                    color                     : {theme['text']};
-                }}
-                QHeaderView::section {{
-                    background             : {theme['nav_bg']};
-                    color                  : {theme['nav_item']};
-                    border                 : none;
-                    padding                : 8px 5px;
-                    font-weight            : bold;
-                    font-size              : 13px;
-                    border-top-left-radius : 10px;
-                    border-top-right-radius: 10px;
-                }}
-                QTableWidget::item {{
-                    color     : {theme['text']};
-                    border    : none;
-                    background: transparent;
-                    font-size : 13px;
-                }}
-                QTableWidget::item:selected {{
-                    background: {theme['accent']};
-                    color     : #fff;
-                }}
-                QTableWidget::item:hover {{
-                    background: rgba(76, 175, 255, 0.18);
-                }}
-                QTableWidget::viewport {{
-                    background: transparent;
-                }}
-                QTableCornerButton::section {{
-                    background            : {theme['nav_bg']};
-                    border                : none;
-                    border-top-left-radius: 10px;
-                }}
-            """)
-            self.data_table.setShowGrid(False)
-        
-    # switch_page method removed - MSFluentWindow handles page switching automatically
-    # The navigation is managed by the built-in navigation interface
 
     def show_protocol_parse_dialog(self):
         """Show TLV protocol parsing dialog - Dark themed input dialog"""
@@ -2594,115 +2302,34 @@ class MainWindow(MSFluentWindow):
         inner_layout.setSpacing(15)
         
         # Input field with dark theme
-        self.protocol_input = QTextEdit()
+        self.protocol_input = TextEdit()
         self.protocol_input.setMinimumHeight(100)
         self.protocol_input.setFont(QFont("Consolas", 11))
         self.protocol_input.setPlaceholderText("")
-        self.protocol_input.setStyleSheet("""
-            QTextEdit {
-                background-color: #2c3e50;
-                border: 2px solid #34495e;
-                border-radius: 8px;
-                padding: 12px;
-                color: #ecf0f1;
-                font-size: 11px;
-                selection-background-color: #3498db;
-            }
-            QTextEdit:focus {
-                border-color: #3498db;
-                background-color: #34495e;
-            }
-        """)
+        
         inner_layout.addWidget(self.protocol_input)
         
         # Button layout - only confirm and cancel
         button_layout = QHBoxLayout()
         button_layout.setSpacing(10)
         
-        cancel_btn = QPushButton("取消")
+        cancel_btn = PushButton("取消")
         cancel_btn.setFont(QFont("Microsoft YaHei", 10))
         cancel_btn.clicked.connect(self.input_dialog.close)
-        cancel_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #7f8c8d;
-                color: white;
-                border: none;
-                padding: 5px 5px;
-                border-radius: 6px;
-                font-weight: bold;
-                min-width: 35px;
-            }
-            QPushButton:hover {
-                background-color: #95a5a6;
-            }
-            QPushButton:pressed {
-                background-color: #6c7b7d;
-            }
-        """)
         
-        confirm_btn = QPushButton("确认")
+        confirm_btn = PrimaryPushButton("确认")
         confirm_btn.setFont(QFont("Microsoft YaHei", 10))
         confirm_btn.clicked.connect(self._proceed_to_tlv_parse)
-        confirm_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #3498db;
-                color: white;
-                border: none;
-                padding: 5px 5px;
-                border-radius: 6px;
-                font-weight: bold;
-                min-width: 35px;
-            }
-            QPushButton:hover {
-                background-color: #2980b9;
-            }
-            QPushButton:pressed {
-                background-color: #21618c;
-            }
-        """)
+
         
-        dcs_btn = QPushButton("DCS")
+        dcs_btn = PushButton("DCS")
         dcs_btn.setFont(QFont("Microsoft YaHei", 10))
         dcs_btn.clicked.connect(self._calculate_dcs)
-        dcs_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #e74c3c;
-                color: white;
-                border: none;
-                padding: 5px 5px;
-                border-radius: 6px;
-                font-weight: bold;
-                min-width: 35px;
-            }
-            QPushButton:hover {
-                background-color: #c0392b;
-            }
-            QPushButton:pressed {
-                background-color: #a93226;
-            }
-        """)
         
         # Add 0x format button
-        format_0x_btn = QPushButton("0x")
+        format_0x_btn = PushButton("0x")
         format_0x_btn.setFont(QFont("Microsoft YaHei", 10))
         format_0x_btn.clicked.connect(self._format_with_0x)
-        format_0x_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #9b59b6;
-                color: white;
-                border: none;
-                padding: 5px 5px;
-                border-radius: 6px;
-                font-weight: bold;
-                min-width: 35px;
-            }
-            QPushButton:hover {
-                background-color: #8e44ad;
-            }
-            QPushButton:pressed {
-                background-color: #7d3c98;
-            }
-        """)
         
         button_layout.addWidget(cancel_btn)
         button_layout.addStretch()
@@ -2734,7 +2361,7 @@ class MainWindow(MSFluentWindow):
         input_text = self.protocol_input.toPlainText().strip()
         if not input_text:
             # Show error message
-            error_label = QLabel("请输入TLV协议数据")
+            error_label = BodyLabel("请输入TLV协议数据")
             error_label.setStyleSheet("color: #dc3545; font-weight: bold;")
             return
         
@@ -2897,50 +2524,13 @@ class MainWindow(MSFluentWindow):
             result_html = self.parse_tlv_protocol(self.stored_protocol_input)
             
             # Create dark themed result display
-            result_widget = QTextEdit()
+            result_widget = TextEdit()
             result_widget.setReadOnly(True)
             result_widget.setFont(QFont("Consolas", 11))
             result_widget.setHtml(result_html)
-            result_widget.setStyleSheet("""
-                QTextEdit {
-                    background-color: rgba(52, 73, 94, 0.9);
-                    border: 1px solid rgba(41, 163, 245, 0.521);
-                    border-radius: 8px;
-                    padding: 5px;
-                    color: #ecf0f1;
-                    line-height: 1.6;
-                }
-                QScrollBar:vertical {
-                    background-color: rgba(44, 62, 80, 0.8);
-                    width: 10px;
-                    border-radius: 4px;
-                }
-                QScrollBar::handle:vertical {
-                    background-color: rgba(52, 152, 219, 0.6);
-                    border-radius: 4px;
-                    min-height: 20px;
-                }
-                QScrollBar::handle:vertical:hover {
-                    background-color: rgba(52, 152, 219, 0.8);
-                }
-                QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
-                    border: none;
-                    background: none;
-                }
-            """)
             
         except Exception as e:
-            result_widget = QLabel(f"TLV解析错误: {str(e)}")
-            result_widget.setStyleSheet("""
-                QLabel {
-                    background-color: rgba(231, 76, 60, 0.2);
-                    color: #e74c3c;
-                    border: 1px solid rgba(231, 76, 60, 0.4);
-                    border-radius: 8px;
-                    padding: 5px;
-                    font-size: 12px;
-                }
-            """)
+            result_widget = BodyLabel(f"TLV解析错误: {str(e)}")
         
         inner_layout.addWidget(result_widget)
         
@@ -2948,59 +2538,18 @@ class MainWindow(MSFluentWindow):
         action_layout = QHBoxLayout()
         action_layout.setSpacing(10)
         
-        back_btn = QPushButton("重新输入")
+        back_btn = PushButton("重新输入")
         back_btn.setFont(QFont("Microsoft YaHei", 9))
         back_btn.clicked.connect(self._back_to_input)
-        back_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #95a5a6;
-                color: #2c3e50;
-                border: none;
-                padding: 8px 8px;
-                border-radius: 8px;
-                font-weight: bold;
-                min-width: 60px;
-            }
-            QPushButton:hover {
-                background-color: #7f8c8d;
-            }
-        """)
         
-        copy_btn = QPushButton("复制结果")
+        copy_btn = PrimaryPushButton("复制结果")
         copy_btn.setFont(QFont("Microsoft YaHei", 9))
         copy_btn.clicked.connect(self._copy_tlv_result)
-        copy_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #27ae60;
-                color: white;
-                border: none;
-                padding: 8px 8px;
-                border-radius: 8px;
-                font-weight: bold;
-                min-width: 60px;
-            }
-            QPushButton:hover {
-                background-color: #229954;
-            }
-        """)
         
-        cancel_btn = QPushButton("取消")
+        cancel_btn = PushButton("取消")
         cancel_btn.setFont(QFont("Microsoft YaHei", 9))
         cancel_btn.clicked.connect(self.result_dialog.close)
-        cancel_btn.setStyleSheet("""
-            QPushButton {
-                background-color: #e74c3c;
-                color: white;
-                border: none;
-                padding: 8px 8px;
-                border-radius: 8px;
-                font-weight: bold;
-                min-width: 60px;
-            }
-            QPushButton:hover {
-                background-color: #c0392b;
-            }
-        """)
+
         
         action_layout.addWidget(back_btn)
         action_layout.addStretch()
@@ -3596,11 +3145,11 @@ class HighlightConfigDialog(QDialog):
 
         # 按钮区域
         button_layout = QHBoxLayout()
-        add_btn       = QPushButton("添加")
+        add_btn = PrimaryPushButton("添加")
         add_btn.clicked.connect(self.add_keyword)
-        edit_btn = QPushButton("编辑")
+        edit_btn = PushButton("编辑")
         edit_btn.clicked.connect(self.edit_keyword)
-        remove_btn = QPushButton("删除")
+        remove_btn = PushButton("删除")
         remove_btn.clicked.connect(self.remove_keyword)
 
         button_layout.addWidget(add_btn)
@@ -3627,7 +3176,7 @@ class HighlightConfigDialog(QDialog):
             # 关键字
             self.table.setItem(row_position, 0, QTableWidgetItem(keyword))
 
-            color_label = QLabel()
+            color_label = BodyLabel()
             color_label.setStyleSheet(f"background-color: {color.name()}; border: 1px solid #555;") # 直接设置背景色和边框
             self.table.setCellWidget(row_position, 1, color_label)
 
@@ -4416,7 +3965,39 @@ class ParticleEffectWidget(QWidget):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyle("Fusion")  # Use Fusion style for better transparency support
+    
+    # Create main window but don't show it yet
     window = MainWindow()
-    window.show()
+    
+    # Show splash screen first
+    splash = SplashScreen()
+    splash.show()
+    
+    # Process events to show splash screen
+    app.processEvents()
+    
+    # Connect splash finished signal to show main window
+    def show_main_window():
+        """Show main window when splash screen is finished"""
+        try:
+            window.show()
+            window.raise_()  # Bring window to front
+            window.activateWindow()  # Activate window
+        except Exception as e:
+            print(f"Error showing main window: {e}")
+    
+    # Connect the finished signal from splash screen
+    splash.finished.connect(show_main_window)
+    
+    # Fallback timer in case signal doesn't work
+    def check_splash_closed():
+        if not splash.isVisible():
+            show_main_window()
+            fallback_timer.stop()
+    
+    fallback_timer = QTimer()
+    fallback_timer.timeout.connect(check_splash_closed)
+    fallback_timer.start(200)  # Check every 200ms as fallback
+    
     # Note: MSFluentWindow handles maximize button internally, no need to set text
     sys.exit(app.exec())
