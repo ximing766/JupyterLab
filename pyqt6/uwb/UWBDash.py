@@ -32,6 +32,13 @@ from PyQt6.QtCharts import (
     QChart, QChartView,
     QLineSeries, QValueAxis
 )
+from qfluentwidgets import FluentIcon as FIF, NavigationItemPosition 
+from qfluentwidgets import (
+    MSFluentWindow, SettingCardGroup, PushSettingCard, HyperlinkCard,
+    FluentIcon as FIF, InfoBar, InfoBarPosition, setTheme, Theme, isDarkTheme,
+    MessageBox, ScrollArea, SubtitleLabel, setFont, ComboBox, SpinBox, EditableComboBox,
+    setTheme, Theme, qconfig
+)
 # 自定义模块
 from log import Logger
 from position_view import PositionView
@@ -48,16 +55,7 @@ def time_decorator(func):
         return result
     return wrapper
 
-class MainWindow(QMainWindow):
-    """
-    UWBDash 主窗口类
-    
-    这是一个基于 PyQt6 的 UWB 数据可视化工具。主要功能包括:
-    - 双串口数据接收和显示
-    - UWB 数据实时图表展示
-    - 自定义主题切换
-    - 日志记录功能
-    """
+class MainWindow(MSFluentWindow):
     theme_changed = pyqtSignal()
 
     def __init__(self):
@@ -126,15 +124,9 @@ class MainWindow(QMainWindow):
             (1, 60), (0, 60), (-1, 60), (1, 110), (0, 110),
             (-1, 110), (1, 160), (0, 160), (-1, 160), (0, 210)
         ]
-
-        self.setWindowFlags(
-            Qt.WindowType.FramelessWindowHint |         # 无边框
-            Qt.WindowType.WindowMinimizeButtonHint |    # 允许最小化
-            Qt.WindowType.WindowMaximizeButtonHint      # 允许最大化
-        )
+        
         self.init_ui()
 
-    
     def paintEvent(self, event):
         if not self.background_cache or self.size() != self.last_window_size:
             size = self.size()
@@ -142,14 +134,22 @@ class MainWindow(QMainWindow):
             if not background_path.exists(): # Fallback if current image is somehow invalid
                 print(f"Warning: Background image {self.background_image} not found. Falling back to default.")
                 if self.background_images:
-                    self.background_image = self.background_images[0]
-                    self._save_background_config() # Save the fallback
-                    background_path = Path(__file__).parent / self.background_image
+                    # Try to find the first available image
+                    for img in self.background_images:
+                        test_path = Path(__file__).parent / img
+                        if test_path.exists():
+                            self.background_image = img
+                            self._save_background_config() # Save the fallback
+                            background_path = test_path
+                            print(f"Using fallback image: {img}")
+                            break
+                    else:
+                        # No images found in the list
+                        print("Error: No background images available.")
+                        return
                 else: # Ultimate fallback if list is also empty (should not happen with proper config loading)
-                    # You might want to handle this case more gracefully, e.g., by not drawing a background
-                    # or using a solid color. For now, let's assume config loading ensures a valid image.
                     print("Error: No background images available.")
-                    return # Or handle error appropriately
+                    return
 
             background = QPixmap(str(background_path))
             self.background_cache = background.scaled(
@@ -167,8 +167,8 @@ class MainWindow(QMainWindow):
     
     def _load_background_config(self):
         default_images = [
-            "pic/person1.jpg", "pic/city1.jpg", "pic/carton1.jpg",        
-            "pic/landscape1.jpg", "pic/person2.jpg", "pic/person8.jpg", "pic/landscape2.jpg"
+            "pic\\person1.jpg", "pic\\city1.jpg", "pic\\carton1.jpg",        
+            "pic\\landscape1.jpg", "pic\\person2.jpg", "pic\\person8.jpg", "pic\\landscape2.jpg"
         ]
         default_current_image = default_images[5] if default_images else None
 
@@ -258,283 +258,155 @@ class MainWindow(QMainWindow):
             print(f"保存高亮配置失败: {e}")
 
     def init_ui(self):
-        title_bar = self.create_title_bar()
+        # MSFluentWindow uses addSubInterface instead of setCentralWidget
         self.setGeometry(100, 100, 800, 700)
-
-        main_widget = QWidget()
-        self.setCentralWidget(main_widget)
-        main_layout = QVBoxLayout(main_widget)
-        main_layout.setContentsMargins(0, 0, 0, 0)
-        main_layout.setSpacing(0)
-
-        nav_container = self.create_nav_bar()
-        self.nav_list.currentRowChanged.connect(self.switch_page)
-
-        self.stacked_widget = QStackedWidget()
+        
+        # Create pages first
         self.create_pages()
-
-        splitter = QSplitter(Qt.Orientation.Horizontal)
-        splitter.setStyleSheet("""
-            QSplitter::handle {
-                background: transparent;
-                border    : none;
-                min-height: 2px;
-            }
-            QSplitter::handle:vertical {
-                height: 2px;
-            }
-            QSplitter::handle:horizontal {
-                width: 2px;
-            }
-        """)
         
-        splitter.addWidget(nav_container)
-        splitter.addWidget(self.stacked_widget)
-        splitter.setStretchFactor(1, 1)  
-        splitter.setSizes([80,500])
-
-        main_layout.addWidget(title_bar)
-        main_layout.addWidget(splitter)  
+        # Set unique object names for routing (required by MSFluentWindow)
+        self.COM1_page.setObjectName("COM1")
+        self.COM2_page.setObjectName("COM2") 
+        self.Chart_page.setObjectName("CHART")
         
+        # Create settings page
+        self.Settings_page = self.create_settings_page()
+        
+        # Add sub-interfaces to MSFluentWindow
+        # BM:NAV bar
+        self.addSubInterface(self.COM1_page, FIF.CONNECT, "COM 1")
+        self.addSubInterface(self.COM2_page, FIF.CONNECT, "COM 2")
+        self.addSubInterface(self.Chart_page, FIF.PIE_SINGLE, "CHART")
+        # Add settings to bottom of navigation
+        self.addSubInterface(self.Settings_page, FIF.SETTING, "设置", position=NavigationItemPosition.BOTTOM)
+
         self.apply_theme()
-        self.nav_list.setCurrentRow(0)
-
-    def create_nav_bar(self):
-        nav_container = QWidget()
-        nav_container.setMinimumWidth(65)  
-        nav_container.setMaximumWidth(300) 
-        nav_layout = QVBoxLayout(nav_container)
-        nav_layout.setContentsMargins(0, 0, 0, 0)
-        nav_layout.setSpacing(0)
-
-        self.nav_list = QListWidget()
-        self.nav_list.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
-        self.nav_list.setFocusPolicy(Qt.FocusPolicy.NoFocus)
-        
-        nav_items = ["COM 1", "COM 2", "CHART"]   # BM: NAV BAR
-        for item in nav_items:
-            list_item = QListWidgetItem(item)
-            list_item.setFont(QFont("Segoe UI", 10, QFont.Weight.Bold))
-            list_item.setSizeHint(QSize(65, 50))
-            list_item.setTextAlignment(Qt.AlignmentFlag.AlignVCenter)
-            self.nav_list.addItem(list_item)
-
-        self.theme_btn = QPushButton(" 🌓 ")
-        # self.theme_btn.setFixedHeight(45)
-        self.theme_btn.setStyleSheet(f"background: {self.current_theme['bg']}; border-radius: 0px;")
-        self.theme_btn.clicked.connect(self.toggle_theme)
-
-        nav_layout.addWidget(self.nav_list)
-        nav_layout.addWidget(self.theme_btn)
-        return nav_container
+        # Set default dark theme
+        setTheme(Theme.DARK)
     
     def mousePressEvent(self, event):
-        idx = self.stacked_widget.currentIndex()
-        count = self.stacked_widget.count()
-        # print(f"count: {count} idx: {idx}")
-        if event.button() == Qt.MouseButton.XButton2:  
-            new_idx = (idx - 1) % count
-            self.stacked_widget.setCurrentIndex(new_idx)
-            self.nav_list.setCurrentRow(new_idx)
-            # print(f"New_idx: {new_idx}")
-        elif event.button() == Qt.MouseButton.XButton1:  
-            new_idx = (idx + 1) % count
-            self.stacked_widget.setCurrentIndex(new_idx)
-            self.nav_list.setCurrentRow(new_idx)
-            # print(f"New_idx: {new_idx}")
-        else:
-            super().mousePressEvent(event)
+        # Handle mouse side buttons for page navigation
+        if hasattr(self, 'stackedWidget') and self.stackedWidget:
+            current_idx = self.stackedWidget.currentIndex()
+            total_pages = self.stackedWidget.count()
+            
+            if event.button() == Qt.MouseButton.XButton1:  # Forward button (side button 1)
+                new_idx = (current_idx + 1) % total_pages
+                self.stackedWidget.setCurrentIndex(new_idx)
+                # Update navigation if available
+                if hasattr(self, 'navigationInterface'):
+                    self.navigationInterface.setCurrentItem(self.stackedWidget.widget(new_idx).objectName())
+                event.accept()
+                return
+            elif event.button() == Qt.MouseButton.XButton2:  # Back button (side button 2)  
+                new_idx = (current_idx - 1 + total_pages) % total_pages
+                self.stackedWidget.setCurrentIndex(new_idx)
+                # Update navigation if available
+                if hasattr(self, 'navigationInterface'):
+                    self.navigationInterface.setCurrentItem(self.stackedWidget.widget(new_idx).objectName())
+                event.accept()
+                return
+        
+        super().mousePressEvent(event)
     
     def wheelEvent(self, event):
-        current_idx = self.stacked_widget.currentIndex()
-        # 检测滚轮方向（正值表示向上滚动）
+        # Get current interface from MSFluentWindow's stackedWidget
+        current_widget = self.stackedWidget.currentWidget()
         delta = event.angleDelta().y()
         
-        if current_idx == 0:  # COM 1 页面
-            if delta > 0:  # 向上滚动
-                self.auto_scroll.setChecked(True)  
-            elif delta < 0 and not self.auto_scroll.isChecked():  # 向下滚动且自动滚动未启用
-                # 可选：在这里添加额外的向下滚动逻辑
+        # Check which page is currently active and handle auto-scroll
+        if current_widget == self.COM1_page:  # COM 1 page
+            if delta > 0:  # Scroll up
+                if hasattr(self, 'auto_scroll'):
+                    self.auto_scroll.setChecked(True)  
+            elif delta < 0 and hasattr(self, 'auto_scroll') and not self.auto_scroll.isChecked():
+                # Optional: add additional scroll down logic
                 pass
-        elif current_idx == 1:  # COM 2 页面
-            if delta > 0:  # 向上滚动
-                self.auto_scroll2.setChecked(True)  
-            elif delta < 0 and not self.auto_scroll2.isChecked():  # 向下滚动且自动滚动未启用
-                # 可选：在这里添加额外的向下滚动逻辑
+        elif current_widget == self.COM2_page:  # COM 2 page
+            if delta > 0:  # Scroll up
+                if hasattr(self, 'auto_scroll2'):
+                    self.auto_scroll2.setChecked(True)  
+            elif delta < 0 and hasattr(self, 'auto_scroll2') and not self.auto_scroll2.isChecked():
+                # Optional: add additional scroll down logic
                 pass
                 
-        # 调用父类方法以保持正常的滚动行为
+        # Call parent method to maintain normal scroll behavior
         super().wheelEvent(event)
 
     def eventFilter(self, obj, event):
-        if (obj == self.serial_display or obj == self.serial_display2) and event.type() == QEvent.Type.Wheel:
+        # 检查属性是否存在，避免在初始化过程中出错
+        if (hasattr(self, 'serial_display') and hasattr(self, 'serial_display2') and 
+            (obj == self.serial_display or obj == self.serial_display2) and 
+            event.type() == QEvent.Type.Wheel):
             # print(f"Event type: {event.type()}")
             self.wheelEvent(event)
             return True # 阻止事件进一步传播
         return super().eventFilter(obj, event)
-
-    def create_title_bar(self):  # BM: title bar
-        title_bar = QWidget()
-        title_bar.setObjectName("titleBar")  
-        title_bar.setFixedHeight(30)
-        title_layout = QHBoxLayout(title_bar)
-        title_layout.setContentsMargins(10, 0, 10, 0)
-        title_layout.setSpacing(5)
-
-        def mousePressEvent(event):
-            if event.button() == Qt.MouseButton.LeftButton:
-                self.drag_pos = event.globalPosition().toPoint()
-        
-        def mouseMoveEvent(event):
-            if event.buttons() & Qt.MouseButton.LeftButton:
-                self.move(self.pos() + event.globalPosition().toPoint() - self.drag_pos)
-                self.drag_pos = event.globalPosition().toPoint()
-        
-        # 将事件处理器绑定到标题栏
-        title_bar.mousePressEvent = mousePressEvent
-        title_bar.mouseMoveEvent  = mouseMoveEvent
-
-        title_bar.setAttribute(Qt.WidgetAttribute.WA_MouseTracking)
-        
-        self.title_label = QLabel("UWBDash")  
-        self.title_label.setObjectName("titleLabel")
-        
-        help_btn = QPushButton("Help")
-        help_btn.setStyleSheet("background: transparent; border: none;color:#c29500;font-weight:bold;")
-        help_btn.clicked.connect(self.show_help_dialog)
-        
-        about_btn = QPushButton("About")
-        about_btn.setStyleSheet("background: transparent; border: none;color:#c29500;font-weight:bold;")
-        about_btn.clicked.connect(self.show_about_dialog)
-
-        btn_size = QSize(20, 20)
-        
-        minimize_btn = QPushButton("─")
-        minimize_btn.setFixedSize(btn_size)
-        minimize_btn.clicked.connect(self.showMinimized)
-        
-        self.maximize_btn = QPushButton("□")
-        self.maximize_btn.setFixedSize(btn_size)
-        self.maximize_btn.clicked.connect(self.toggle_maximize)
-        
-        close_btn = QPushButton("❌")
-        close_btn.setFixedSize(btn_size)
-        close_btn.clicked.connect(self.close)
-
-        control_btns = [minimize_btn, self.maximize_btn, close_btn]
-        for btn in control_btns:
-            btn.setStyleSheet("""
-                QPushButton {
-                    border    : none;
-                    font-size : 10px;
-                    padding   : 5px;
-                    background: transparent;
-                }
-                QPushButton:hover {
-                    background-color: rgba(255, 255, 255, 0.1);
-                }
-            """)
-        close_btn.setStyleSheet(close_btn.styleSheet() + """
-            QPushButton:hover {
-                background-color: #ff4444;
-            }
-        """)
-
-        title_layout.addWidget(self.title_label)
-        title_layout.addWidget(help_btn)
-        title_layout.addWidget(about_btn)
-        title_layout.addStretch()
-        title_layout.addWidget(minimize_btn)
-        title_layout.addWidget(self.maximize_btn)
-        title_layout.addWidget(close_btn)
-        
-        return title_bar
     
     def show_help_dialog(self):
-        help_dialog = QDialog(self)
-        help_dialog.setWindowTitle("UWBDash Help")
-        help_dialog.setFixedSize(500, 400)
-
-        layout = QVBoxLayout(help_dialog)
-
-        title_label = QLabel("UWBDash Help Guide")
-        title_label.setStyleSheet("font-size: 24px; font-weight: bold; color: #c29500;")
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-
-        # Create a scroll area for the content
-        scroll = QScrollArea()
-        scroll.setWidgetResizable(True)
-        scroll_content = QWidget()
-        scroll_layout = QVBoxLayout(scroll_content)
-
-        # Add help sections
-        sections = [
-            ("Basic Controls", [
-                "• Click and drag the title bar to move the window",
-                "• Ctrl + F to open the search box",
-                "• Select the message box and press Space to stop the scrolling"
-            ]),
-            ("Data Visualization", [
-                "• Slave anchor needs to be connected for transmitting json data",
-                "• Real-time UWB positioning data display",
-                "• Interactive charts for key param monitoring",
-            ]),
-            ("Configuration", [
-                "• Set up serial port parameters in the settings panel",
-                "• Customize highlight colors for different message types"
-            ]),
-            ("Logging", [
-                "• A log file will be created automatically in the app directory when the '打开串口' button is clicked every time",
-            ])
-        ]
-
-        for section_title, items in sections:
-            section_label = QLabel(section_title)
-            section_label.setStyleSheet("font-size: 16px; font-weight: bold; color: #666; margin-top: 10px;")
-            scroll_layout.addWidget(section_label)
-
-            for item in items:
-                item_label = QLabel(item)
-                # item_label.setStyleSheet("font-size: 12px; color: #333; margin-left: 20px;")
-                item_label.setWordWrap(True)
-                scroll_layout.addWidget(item_label)
-
-        scroll_layout.addStretch()
-        scroll.setWidget(scroll_content)
-        layout.addWidget(title_label)
-        layout.addWidget(scroll)
-
-        # Add OK button
-        ok_button = QPushButton("OK")
-        ok_button.clicked.connect(help_dialog.accept)
-        layout.addWidget(ok_button)
-        help_dialog.exec()
+        """Show help dialog with modern Fluent Design"""
+        help_content = """
+        <h2>🚀 UWB Dashboard 使用指南</h2>
+        
+        <h3>📊 数据监控</h3>
+        <p>• <b>实时数据</b>：查看当前位置和距离信息</p>
+        <p>• <b>图表显示</b>：观察位置变化趋势</p>
+        <p>• <b>数据记录</b>：保存历史数据用于分析</p>
+        
+        <h3>🎯 定位功能</h3>
+        <p>• 实时位置可视化</p>
+        <p>• 精度优化</p>
+        
+        <h3>⚙️ 设置选项</h3>
+        <p>• 主题切换：浅色/深色模式</p>
+        <p>• 背景自定义：个性化界面</p>
+        
+        """
+        
+        w = MessageBox(
+            title='帮助支持',
+            content=help_content,
+            parent=self
+        )
+        w.yesButton.setText('我知道了')
+        w.cancelButton.hide()
+        w.exec()
 
     def show_about_dialog(self):
-        QMessageBox.about(self, "关于", "UWBDash APP\nCardShare@QLL")
+        """Show about dialog with modern Fluent Design"""
+        about_content = """
+        <div style="text-align: center;">
+            <h1>🎯 UWB Dashboard</h1>
+        </div>
+        
+        <h3>📋 版本信息</h3>
+        <p><b>版本：</b>v1.0.0</p>
+        <p><b>构建日期：</b>2025年1月</p>
+        <p><b>Python版本：</b>3.8+</p>
+        
+        <h3>👨‍💻 作者信息</h3>
+        <p>• <b>开发：</b>CardShare@QLL</p>
+        """
+        
+        w = MessageBox(
+            title='关于 UWB Dashboard',
+            content=about_content,
+            parent=self
+        )
+        w.yesButton.setText('确定')
+        w.cancelButton.hide()
+        w.exec()
     
     def open_highlight_config_dialog(self):
         dialog = HighlightConfigDialog(self.highlight_config, self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             self.highlight_config = dialog.get_config()
 
-
-    def toggle_maximize(self):
-        if self.isMaximized():
-            self.showNormal()
-            self.maximize_btn.setText("□")
-        else:
-            self.showMaximized()
-            self.maximize_btn.setText("❐")
-
     def create_pages(self): # BM: 创建页面
-        COM1_page  = self.create_COM_page()
-        COM2_page  = self.create_COM_page2()
-        Chart_page = self.create_Chart_page()
-
-        self.stacked_widget.addWidget(COM1_page)
-        self.stacked_widget.addWidget(COM2_page)
-        self.stacked_widget.addWidget(Chart_page)
+        # Store pages as instance variables for MSFluentWindow
+        self.COM1_page  = self.create_COM_page()
+        self.COM2_page  = self.create_COM_page2()
+        self.Chart_page = self.create_Chart_page()
     
     def create_COM_page2(self):
         COM2_page = QWidget()
@@ -547,13 +419,12 @@ class MainWindow(QMainWindow):
         top_layout = QHBoxLayout(top_widget)
         top_layout.setContentsMargins(5, 5, 5, 5)
         
-        self.port_combo2 = QComboBox()
-        self.port_combo2.setMinimumWidth(120)
+        self.port_combo2 = ComboBox()
 
-        self.baud_combo2 = QComboBox()
+        self.baud_combo2 = ComboBox()
         self.baud_combo2.addItems(['9600', '115200', '230400', '460800', '3000000'])
         self.baud_combo2.setCurrentText('3000000')
-        self.baud_combo2.setStyleSheet(self.port_combo2.styleSheet())
+
 
         status_widget = QWidget()
         status_layout = QHBoxLayout(status_widget)
@@ -574,7 +445,7 @@ class MainWindow(QMainWindow):
         
         max_lines_label = QLabel("最大行数")
         max_lines_label.setStyleSheet("background: rgba(36, 42, 56, 0);")
-        self.max_lines_spin2 = QSpinBox()
+        self.max_lines_spin2 = SpinBox()
         self.max_lines_spin2.setRange(50000, 300000)
         self.max_lines_spin2.setValue(150000)
         self.max_lines_spin2.setSingleStep(10000)
@@ -1064,13 +935,11 @@ class MainWindow(QMainWindow):
         top_layout = QHBoxLayout(top_widget)
         top_layout.setContentsMargins(5, 5, 5, 5)
         
-        self.port_combo = QComboBox()
-        self.port_combo.setMinimumWidth(120)
+        self.port_combo = ComboBox()
 
-        self.baud_combo = QComboBox()
+        self.baud_combo = ComboBox()
         self.baud_combo.addItems(['9600', '115200', '230400', '460800', '3000000'])
         self.baud_combo.setCurrentText('3000000')
-        self.baud_combo.setStyleSheet(self.port_combo.styleSheet())
 
         status_widget = QWidget()
         status_layout = QHBoxLayout(status_widget)
@@ -1092,7 +961,7 @@ class MainWindow(QMainWindow):
         max_lines_label = QLabel("最大行数") 
         max_lines_label.setStyleSheet("background:rgba(36, 42, 56, 0);")
         
-        self.max_lines_spin = QSpinBox()
+        self.max_lines_spin = SpinBox()
         self.max_lines_spin.setRange(50000, 300000)
         self.max_lines_spin.setValue(150000)
         self.max_lines_spin.setSingleStep(10000)
@@ -1463,11 +1332,11 @@ class MainWindow(QMainWindow):
             self.canvas_splitter.setSizes([50, 150])  # 动画区域:位置区域 = 1:2
             self.main_splitter.setSizes([0, 300])     # 隐藏图表区域
             
-            # 设置扩展模式下的显示缩放为1.5倍
+            # 设置扩展模式下的显示缩放为1.2倍（适中的放大值）
             if hasattr(self, 'gate_animation'):
-                self.gate_animation.set_display_scale(1.5)
+                self.gate_animation.set_display_scale(1.2)
             if hasattr(self, 'position_view'):
-                self.position_view.set_display_scale(1.5)
+                self.position_view.set_display_scale(1.2)
             
             self.layout_toggle_btn.setText("📊")
             self.is_expanded_mode = True
@@ -2063,7 +1932,8 @@ class MainWindow(QMainWindow):
         self.time_log_dialog = QDialog(self)
         self.time_log_dialog.setWindowTitle("⏰ Time Log")
         self.time_log_dialog.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowCloseButtonHint)
-        self.time_log_dialog.resize(700, 450)
+        # Increase dialog size for better visibility
+        self.time_log_dialog.resize(900, 600)
         
         # Center the dialog
         parent_geometry = self.geometry()
@@ -2079,7 +1949,8 @@ class MainWindow(QMainWindow):
         # Create text display area
         self.time_log_text_display = QTextEdit()
         self.time_log_text_display.setReadOnly(True)
-        self.time_log_text_display.setFont(QFont("Consolas", 11))
+        # Increase font size for better readability
+        self.time_log_text_display.setFont(QFont("Consolas", 13))
         self.time_log_text_display.setStyleSheet("""
             QTextEdit {
                 background-color: #3a3f47;
@@ -2089,6 +1960,7 @@ class MainWindow(QMainWindow):
                 padding: 12px;
                 selection-background-color: #5a9fd4;
                 font-family: 'Consolas', 'Monaco', monospace;
+                line-height: 1.4;
             }
         """)
         
@@ -2491,66 +2363,47 @@ class MainWindow(QMainWindow):
         self._save_background_config()
         self.update()
     
-    def apply_theme(self):
+    def apply_theme(self):   # BM:THEME
         theme = self.current_theme
+        
+        # Apply theme to MSFluentWindow using qfluentwidgets theme system
+        setTheme(Theme.DARK if theme == ThemeManager.DARK_THEME else Theme.LIGHT)
+        
+        # Apply custom styles to specific widgets that need custom styling
+        # Use findChildren to apply styles to specific widget instances
+        # self._apply_custom_widget_styles(theme)
+        
+        # Apply global stylesheet for non-fluent widgets
         self.setStyleSheet(f"""
+            MSFluentWindow {{
+                background-color: transparent;
+            }}
             QMainWindow {{
-                background-color: {theme['bg']};
-            }}
-            QWidget#titleBar {{
-                background-color: {theme['title_bg']} !important;
-            }}
-            QLabel#titleLabel {{
-                color           : #C29500;              /* 固定字体颜色 */
-                font-weight     : bold;
-                background-color: {theme['title_bg']};  /* 继承标题栏背景色 */
+                background-color: transparent;
             }}
             QWidget {{
-                background-color: {theme['bg']};
+                background-color: rgba(33, 42, 54, 0.397);
                 color           : {theme['text']};
             }}
-            QListWidget {{
-                background-color: {theme['nav_bg']};
-                border          : none;
-            }}
-            QListWidget::item {{
-                color      : {theme['nav_item']};
-                border-left: 4px solid transparent;
-            }}
-            QListWidget::item:selected {{
-                background-color: {theme['nav_selected']};
-                border-left     : 4px solid {theme['accent']};
-            }}
-            QComboBox:hover {{
-                background: rgba(90, 110, 140, 0.604);
-                border: 1px solid {theme['accent']};
-            }}
-            QPushButton {{
-                background   : rgba(90, 110, 140, 0.33);
-                color        : {theme['text']};
-                border       : 1px solid rgba(90, 110, 140, 0.18);
-                padding      : 4px 12px;
+            
+            /* Text displays and custom components */
+            QTextEdit, QPlainTextEdit {{
+                background   : rgba(255, 255, 255, 0.1);
+                border       : 1px solid rgba(90, 110, 140, 0.3);
                 border-radius: 8px;
-                font-size    : 13px;
+                color        : {theme['text']};
+                font-family  : 'Consolas', 'Monaco', monospace;
+                selection-background-color: {theme['accent']};
             }}
-            QPushButton:hover {{
-
-                border: 1px solid {theme['accent']};
-            }}
-            QLineEdit {{
-                background   : rgba(255, 255, 255, 0.35);
-                border       : 1px solid rgba(0, 0, 0, 0.35);
-                border-radius: 15px;
-                font-size    : 14px;
-                padding      : 8px;
-            }}
-            QScrollBar:vertical {{
+            
+            /* Custom scroll bars for text widgets */
+            QTextEdit QScrollBar:vertical, QPlainTextEdit QScrollBar:vertical {{
                 background   : rgba(36, 42, 56, 0.08);
                 width        : 12px;
                 margin       : 4px 0 4px 0;
                 border-radius: 6px;
             }}
-            QScrollBar::handle:vertical {{
+            QTextEdit QScrollBar::handle:vertical, QPlainTextEdit QScrollBar::handle:vertical {{
                 background: qlineargradient(
                     x1:0, y1:0, x2:1, y2:1,
                     stop:0 #4a90e2, stop:1 #1e293b
@@ -2559,45 +2412,28 @@ class MainWindow(QMainWindow):
                 border-radius: 6px;
                 border       : 1px solid #3da9fc;
             }}
-            QScrollBar::handle:vertical:hover {{
+            QTextEdit QScrollBar::handle:vertical:hover, QPlainTextEdit QScrollBar::handle:vertical:hover {{
                 background: qlineargradient(
                     x1:0, y1:0, x2:1, y2:1,
                     stop:0 #90caf9, stop:1 #3da9fc
                 );
                 border: 1.5px solid #66abf5;
             }}
-            QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
-                height    : 0;
-                background: none;
-                border    : none;
+            
+            /* Custom line edits */
+            QLineEdit {{
+                background   : rgba(255, 255, 255, 0.1);
+                border       : 1px solid rgba(90, 110, 140, 0.3);
+                border-radius: 8px;
+                font-size    : 14px;
+                padding      : 8px;
+                color        : {theme['text']};
             }}
-            QScrollBar:horizontal {{
-                background   : rgba(36, 42, 56, 0.08);
-                height       : 12px;
-                margin       : 0 4px 0 4px;
-                border-radius: 6px;
+            QLineEdit:focus {{
+                border: 2px solid {theme['accent']};
             }}
-            QScrollBar::handle:horizontal {{
-                background: qlineargradient(
-                    x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #4a90e2, stop:1 #1e293b
-                );
-                min-width    : 28px;
-                border-radius: 6px;
-                border       : 1px solid #3da9fc;
-            }}
-            QScrollBar::handle:horizontal:hover {{
-                background: qlineargradient(
-                    x1:0, y1:0, x2:1, y2:1,
-                    stop:0 #90caf9, stop:1 #3da9fc
-                );
-                border: 1.5px solid #66abf5;
-            }}
-            QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {{
-                width     : 0;
-                background: none;
-                border    : none;
-            }}
+            
+            /* Custom checkboxes */
             QCheckBox {{
                 color    : {theme['text']};
                 spacing  : 5px;
@@ -2619,15 +2455,55 @@ class MainWindow(QMainWindow):
                 background-color: {theme['accent']};
                 border          : 1px solid {theme['accent']};
             }}
-            QCheckBox::indicator:checked:hover {{
-                background-color: {theme['accent']};
-                border          : 1px solid {theme['accent']};
-            }}
-            QCheckBox::indicator:checked:disabled {{
-                background-color: #cccccc;
-                border          : 1px solid #cccccc;
-            }}
         """)
+    
+    def _apply_custom_widget_styles(self, theme):
+        """Apply custom styles to specific widget instances"""
+        
+        # Apply styles to QPushButtons that are not qfluentwidgets buttons
+        for button in self.findChildren(QPushButton):
+            if not hasattr(button, '_is_fluent_widget'):
+                button.setStyleSheet(f"""
+                    QPushButton {{
+                        background   : rgba(90, 110, 140, 0.33);
+                        color        : {theme['text']};
+                        border       : 1px solid rgba(90, 110, 140, 0.18);
+                        padding      : 4px 12px;
+                        border-radius: 8px;
+                        font-size    : 13px;
+                        font-weight  : 500;
+                    }}
+                    QPushButton:hover {{
+                        background: rgba(90, 110, 140, 0.55);
+                        border: 1px solid {theme['accent']};
+                    }}
+                    QPushButton:pressed {{
+                        background: rgba(90, 110, 140, 0.75);
+                        border: 1px solid {theme['accent']};
+                    }}
+                """)
+        
+        # Apply styles to QListWidget
+        for listwidget in self.findChildren(QListWidget):
+            listwidget.setStyleSheet(f"""
+                QListWidget {{
+                    background-color: {theme['nav_bg']};
+                    border          : none;
+                    color           : {theme['text']};
+                }}
+                QListWidget::item {{
+                    color      : {theme['nav_item']};
+                    border-left: 4px solid transparent;
+                    padding    : 8px;
+                }}
+                QListWidget::item:selected {{
+                    background-color: {theme['nav_selected']};
+                    border-left     : 4px solid {theme['accent']};
+                }}
+                QListWidget::item:hover {{
+                    background-color: rgba(90, 110, 140, 0.2);
+                }}
+            """)
         if hasattr(self, "data_table"):
             self.data_table.setAlternatingRowColors(True)
             self.data_table.setStyleSheet(f"""
@@ -2676,12 +2552,8 @@ class MainWindow(QMainWindow):
             """)
             self.data_table.setShowGrid(False)
         
-    def switch_page(self, index):
-        self.stacked_widget.setCurrentIndex(index)
-        if index != 0:  
-            self.find_dialog.close()
-        if index != 1:
-            self.find_dialog2.close()
+    # switch_page method removed - MSFluentWindow handles page switching automatically
+    # The navigation is managed by the built-in navigation interface
 
     def show_protocol_parse_dialog(self):
         """Show TLV protocol parsing dialog - Dark themed input dialog"""
@@ -3252,7 +3124,7 @@ class MainWindow(QMainWindow):
         if hasattr(self, 'protocol_input'):
             self.protocol_input.clear()
     
-    def parse_tlv_protocol(self, protocol_str):
+    def parse_tlv_protocol(self, protocol_str):  # BM: 解析数据页面
         """Parse TLV protocol string - Standard TLV format"""
         # Remove spaces and convert to uppercase
         clean_str = protocol_str.replace(" ", "").replace("\n", "").replace("\t", "").replace("\r", "").upper()
@@ -3482,6 +3354,199 @@ class MainWindow(QMainWindow):
         result.append("</div>")
         
         return "".join(result)
+
+    def create_settings_page(self): # BM: Setting Page
+        """Create modern settings page with Fluent Design components"""
+       
+        
+        settings_page = ScrollArea()
+        settings_page.setObjectName("Settings")
+        
+        # Create main widget
+        view = QWidget()
+        vBoxLayout = QVBoxLayout(view)
+        vBoxLayout.setContentsMargins(20, 20, 20, 20)
+        vBoxLayout.setSpacing(20)
+        
+        # Appearance settings group
+        self.appearanceGroup = SettingCardGroup('外观设置', view)
+        
+        # Theme setting card
+        self.themeCard = PushSettingCard(
+            text='深色',
+            icon=FIF.BRUSH,
+            title='应用主题',
+            content='深色主题已启用'
+        )
+        self.themeCard.clicked.connect(self.onThemeCardClicked)
+        
+        # Background image setting card
+        self.backgroundCard = PushSettingCard(
+            text='切换背景',
+            icon=FIF.PHOTO,
+            title='背景图片',
+            content=f'当前背景: {self.background_image}'
+        )
+        self.backgroundCard.clicked.connect(self.on_background_toggle)
+        
+        self.appearanceGroup.addSettingCard(self.themeCard)
+        self.appearanceGroup.addSettingCard(self.backgroundCard)
+        
+        # Application settings group
+        self.applicationGroup = SettingCardGroup('应用设置', view)
+        
+        # Help card
+        self.helpCard = PushSettingCard(
+            text='查看帮助',
+            icon=FIF.HELP,
+            title='帮助支持',
+            content='获取应用使用帮助和支持信息'
+        )
+        self.helpCard.clicked.connect(self.show_help_dialog)
+        
+        # About card
+        self.aboutCard = PushSettingCard(
+            text='关于应用',
+            icon=FIF.INFO,
+            title='关于 UWB Dashboard',
+            content='查看应用版本和开发信息'
+        )
+        self.aboutCard.clicked.connect(self.show_about_dialog)
+        
+        self.applicationGroup.addSettingCard(self.helpCard)
+        self.applicationGroup.addSettingCard(self.aboutCard)
+        
+        # About group
+        self.aboutGroup = SettingCardGroup('关于', view)
+        
+        # Version info card
+        self.versionCard = PushSettingCard(
+            text='检查更新',
+            icon=FIF.UPDATE,
+            title='版本信息',
+            content='UWB Dashboard v1.0.0'
+        )
+        self.versionCard.clicked.connect(self.checkUpdate)
+        
+        # Project homepage card
+        self.homepageCard = HyperlinkCard(
+            url='https://github.com/your-repo/uwb-dashboard',
+            text='访问项目主页',
+            icon=FIF.LINK,
+            title='项目主页',
+            content='访问GitHub项目页面获取更多信息'
+        )
+        
+        self.aboutGroup.addSettingCard(self.versionCard)
+        self.aboutGroup.addSettingCard(self.homepageCard)
+        
+        # Layout setup
+        vBoxLayout.addWidget(self.appearanceGroup)
+        vBoxLayout.addSpacing(10)
+        vBoxLayout.addWidget(self.applicationGroup)
+        vBoxLayout.addSpacing(10)
+        vBoxLayout.addWidget(self.aboutGroup)
+        vBoxLayout.addStretch(1)
+        
+        settings_page.setWidget(view)
+        settings_page.setWidgetResizable(True)
+        settings_page.setStyleSheet('QScrollArea{background: transparent; border: none}')
+        
+        return settings_page
+    
+    def onThemeCardClicked(self):
+        """Theme card clicked slot"""
+        try:
+            # Cycle through themes
+            current_theme = 'dark' if isDarkTheme() else 'light'
+            if current_theme == 'light':
+                setTheme(Theme.DARK)
+                self.themeCard.button.setText('深色')
+                self.themeCard.setContent('深色主题已启用')
+                theme_name = '深色'
+            else:
+                setTheme(Theme.LIGHT)
+                self.themeCard.button.setText('浅色')
+                self.themeCard.setContent('浅色主题已启用')
+                theme_name = '浅色'
+                
+            InfoBar.success(
+                title='主题已切换',
+                content=f'已切换到{theme_name}主题',
+                orient=Qt.Orientation.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP,
+                duration=2000,
+                parent=self
+            )
+        except RuntimeError as e:
+            # Handle the dictionary changed size during iteration error
+            print(f"Theme switching error: {e}")
+            InfoBar.error(
+                title='主题切换失败',
+                content='主题切换时发生错误，请稍后重试',
+                orient=Qt.Orientation.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP,
+                duration=3000,
+                parent=self
+            )
+        
+    def checkUpdate(self):
+        """Check for updates"""
+        InfoBar.info(
+            title='检查更新',
+            content='当前已是最新版本',
+            orient=Qt.Orientation.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.TOP,
+            duration=2000,
+            parent=self
+        )
+    
+    def on_background_toggle(self):
+        """Handle background image toggle from settings page"""
+        try:
+            # Use actual available backgrounds from pic directory
+            backgrounds = ['pic\\carton1.jpg', 'pic\\city1.jpg', 'pic\\landscape1.jpg', 'pic\\landscape2.jpg', 'pic\\person1.jpg', 'pic\\person2.jpg', 'pic\\person8.jpg']
+            current_index = backgrounds.index(self.background_image) if self.background_image in backgrounds else 0
+            next_index = (current_index + 1) % len(backgrounds)
+            self.background_image = backgrounds[next_index]
+            
+            # Update background card content
+            if hasattr(self, 'backgroundCard'):
+                self.backgroundCard.setContent(f'当前背景: {self.background_image}')
+            
+            # Save configuration
+            self._save_background_config()
+            
+            # Clear background cache to force reload
+            self.background_cache = None
+            
+            # Update the display
+            self.update()
+            
+            # Show success message
+            InfoBar.success(
+                title='背景已切换',
+                content=f'已切换到 {self.background_image}',
+                orient=Qt.Orientation.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP,
+                duration=2000,
+                parent=self
+            )
+        except Exception as e:
+            print(f"Background toggle error: {e}")
+            InfoBar.error(
+                title='背景切换失败',
+                content='背景切换时发生错误，请检查图片文件',
+                orient=Qt.Orientation.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP,
+                duration=3000,
+                parent=self
+            )
 
 class ThemeManager:
     # 📌📁❌🔸
@@ -4350,10 +4415,8 @@ class ParticleEffectWidget(QWidget):
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
-    app.setStyle("Fusion")  # 使用Fusion样式更好支持透明效果
+    app.setStyle("Fusion")  # Use Fusion style for better transparency support
     window = MainWindow()
     window.show()
-    # 在显示窗口后设置最大化状态
-    window.setWindowState(Qt.WindowState.WindowMaximized)
-    window.maximize_btn.setText("❐")
+    # Note: MSFluentWindow handles maximize button internally, no need to set text
     sys.exit(app.exec())
