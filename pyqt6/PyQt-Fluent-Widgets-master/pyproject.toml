@@ -1,0 +1,10 @@
+[project]
+name = "pyqt-fluent-widgets-master"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.11"
+dependencies = [
+    "pyqt-fluent-widgets>=1.8.7",
+    "pyqt5-qt5==5.15.2",
+]

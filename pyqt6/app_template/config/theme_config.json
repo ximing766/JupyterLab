@@ -1,0 +1,17 @@
+{
+    "current_theme": "dark",
+    "themes": {
+        "dark": {
+            "name": "Dark Theme",
+            "is_dark": true,
+            "primary_color": "#0078d4",
+            "background_color": "#202020"
+        },
+        "light": {
+            "name": "Light Theme",
+            "is_dark": false,
+            "primary_color": "#0078d4",
+            "background_color": "#ffffff"
+        }
+    }
+}

@@ -1,16 +1,13 @@
 {
   "background_images": [
-    "pic\\person1.jpg",
-    "pic\\city1.jpg",
-    "pic\\carton1.jpg",
-    "pic\\landscape1.jpg",
-    "pic\\person2.jpg",
-    "pic\\landscape2.jpg",
-    "pic\\person8.jpg"
+    "pic\\person4.jpg",
+    "pic\\person5.jpg",
+    "pic\\person6.jpg",
+    "pic\\person7.jpg",
+    "pic\\person8.jpg",
+    "pic\\person11.jpg",
+    "pic\\carton2.jpg",
+    "pic\\hello.jpg"
   ],
-  "current_background_image": "pic\\person8.jpg",
-  "font_settings": {
-    "font_family": "SimHei",
-    "font_size": 20
-  }
+  "current_background_image": "pic\\person7.jpg"
 }

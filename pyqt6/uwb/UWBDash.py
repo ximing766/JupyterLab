@@ -34,11 +34,12 @@ from PyQt6.QtCharts import (
 )
 from qfluentwidgets import FluentIcon as FIF, NavigationItemPosition 
 from qfluentwidgets import (
-    MSFluentWindow, SettingCardGroup, PushSettingCard, HyperlinkCard,
-    FluentIcon as FIF, InfoBar, InfoBarPosition, setTheme, Theme, isDarkTheme,
+    MSFluentWindow, FluentWindow, SettingCardGroup, PushSettingCard, HyperlinkCard,
+    FluentIcon as FIF, InfoBar, InfoBarPosition, setTheme, Theme, isDarkTheme, ComboBoxSettingCard,
     MessageBox, ScrollArea, SubtitleLabel, setFont, ComboBox, SpinBox, EditableComboBox,
     setTheme, Theme, qconfig, PushButton, CheckBox, PrimaryPushButton, BodyLabel, TableWidget,
-    LineEdit, ToolButton, TextEdit, SwitchButton, CaptionLabel
+    LineEdit, ToolButton, TextEdit, SwitchButton, CaptionLabel, DotInfoBadge, SearchLineEdit, ToolButton,
+    PrimaryToolButton, CompactSpinBox, OptionsSettingCard, ConfigItem, OptionsConfigItem, OptionsValidator, QConfig
 )
 # 自定义模块
 from log import Logger
@@ -57,7 +58,7 @@ def time_decorator(func):
         return result
     return wrapper
 
-class MainWindow(MSFluentWindow):
+class MainWindow(FluentWindow): # MSFluentWindow
     theme_changed = pyqtSignal()
 
     def __init__(self):
@@ -66,7 +67,7 @@ class MainWindow(MSFluentWindow):
         app_path  = Path(os.getcwd())
         print(f"app_path: {app_path}")
         self.setWindowIcon(QIcon(str(icon_path)))
-        self.setWindowTitle("UWB Dashboard")
+        self.setWindowTitle("UWB Dash")
 
         self.current_theme               = ThemeManager.DARK_THEME
         self.config_path                 = Path(__file__).parent / "config.json"
@@ -93,6 +94,18 @@ class MainWindow(MSFluentWindow):
         self.time_log_data = []  # Store time log entries
         self.last_time_log_count = 0  # Track data changes for refresh optimization
         self.load_historical_time_logs()  # Load existing time logs from buffer
+        
+        # Create config class and load configuration
+        class AppConfig(QConfig):
+            logLevelItem = OptionsConfigItem(
+                "LogLevel", "level", "ALL",      # group, key, default
+                OptionsValidator(["ALL", "INFO", "DEBUG", "WARN", "ERROR"])
+            )
+        
+        self.config = AppConfig()
+        qconfig.load(str(Path(__file__).parent / "config.json"), self.config)
+        self.current_log_level = self.config.logLevelItem.value  # Get value from config
+        print(f"current_log_level: {self.current_log_level}")
         
         self.display_timer = QTimer()
         self.display_timer.timeout.connect(self.update_display)
@@ -134,6 +147,27 @@ class MainWindow(MSFluentWindow):
     def paintEvent(self, event):
         if not self.background_cache or self.size() != self.last_window_size:
             size = self.size()
+            
+            # Check if background_image is None or empty
+            if not self.background_image:
+                print("Warning: No background image set.")
+                if self.background_images:
+                    # Use the first available image
+                    for img in self.background_images:
+                        test_path = Path(__file__).parent / img
+                        if test_path.exists():
+                            self.background_image = img
+                            self._save_background_config() # Save the fallback
+                            print(f"Using first available image: {img}")
+                            break
+                    else:
+                        # No images found in the list
+                        print("Error: No background images available.")
+                        return
+                else:
+                    print("Error: No background images available.")
+                    return
+            
             background_path = Path(__file__).parent / self.background_image
             if not background_path.exists(): # Fallback if current image is somehow invalid
                 print(f"Warning: Background image {self.background_image} not found. Falling back to default.")
@@ -170,55 +204,44 @@ class MainWindow(MSFluentWindow):
         painter.drawPixmap(x, y, self.background_cache)
     
     def _load_background_config(self):
-        default_images = [
-            "pic\\person1.jpg", "pic\\city1.jpg", "pic\\carton1.jpg",        
-            "pic\\landscape1.jpg", "pic\\person2.jpg", "pic\\person8.jpg", "pic\\landscape2.jpg"
-        ]
-        default_current_image = default_images[5] if default_images else None
-
         try:
             if self.config_path.exists():
                 with open(self.config_path, "r", encoding="utf-8") as f:
                     config_data = json.load(f) 
-                self.background_images = config_data.get("background_images", default_images)
-                self.background_image = config_data.get("current_background_image", default_current_image)
-                if not self.background_images: # Ensure list is not empty
-                    self.background_images = default_images
-                if self.background_image not in self.background_images and self.background_images:
-                    self.background_image = self.background_images[0]
-                elif not self.background_images:
-                     self.background_image = None # No images available
-
+                self.background_images = config_data.get("background_images", [])
+                self.background_image = config_data.get("current_background_image", None)
+                
+                # Ensure we have valid images list
+                if not self.background_images:
+                    print("Warning: No background images found in config file.")
+                    self.background_images = []
+                    self.background_image = None
+                    self.background_image_index = 0
+                    return
+                
                 # Ensure current_background_image is valid and exists in the list
                 if self.background_image not in self.background_images:
-                    self.background_image = self.background_images[0] if self.background_images else default_current_image
+                    print(f"Warning: Current background image '{self.background_image}' not found in images list. Using first image.")
+                    self.background_image = self.background_images[0]
+                    self._save_background_config() # Save the corrected config
                 
                 # Initialize background_image_index based on the loaded current_background_image
                 if self.background_image and self.background_image in self.background_images:
                     self.background_image_index = self.background_images.index(self.background_image)
                 else:
-                    self.background_image_index = 0 # Default to first image if current is invalid or not found
-                    if self.background_images: # If there are images, set current to the first one
-                        self.background_image = self.background_images[0]
-                    else: # If no images at all, set current to None
-                        self.background_image = None
+                    self.background_image_index = 0
+                    self.background_image = self.background_images[0] if self.background_images else None
 
             else:
-                self.background_images = default_images
-                self.background_image = default_current_image
+                print("Warning: Config file not found. Please create a config.json file with background_images.")
+                self.background_images = []
+                self.background_image = None
                 self.background_image_index = 0
-                self._save_background_config() # Create config file with defaults
+                
         except Exception as e:
-            print(f"Error loading background config: {e}. Using defaults.")
-            self.background_images = default_images
-            self.background_image = default_current_image
-            self.background_image_index = 0
-            # Attempt to save defaults if loading failed, to fix a potentially corrupt file
-            self._save_background_config()
-        
-        # Final check to ensure background_image is set if list is not empty
-        if not self.background_image and self.background_images:
-            self.background_image = self.background_images[0]
+            print(f"Error loading background config: {e}")
+            self.background_images = []
+            self.background_image = None
             self.background_image_index = 0
 
     def _save_background_config(self):
@@ -262,31 +285,26 @@ class MainWindow(MSFluentWindow):
             print(f"保存高亮配置失败: {e}")
 
     def init_ui(self):
-        # MSFluentWindow uses addSubInterface instead of setCentralWidget
         self.setMinimumSize(1000, 700)
         self.setGeometry(100, 100, 1000, 700)
-        
-        # Create pages first
+    
         self.create_pages()
         
-        # Set unique object names for routing (required by MSFluentWindow)
         self.COM1_page.setObjectName("COM1")
         self.COM2_page.setObjectName("COM2") 
         self.Chart_page.setObjectName("CHART")
         
-        # Create settings page
         self.Settings_page = self.create_settings_page()
         
-        # Add sub-interfaces to MSFluentWindow
-        # BM:NAV bar
-        self.addSubInterface(self.COM1_page, FIF.CONNECT, "COM 1")
-        self.addSubInterface(self.COM2_page, FIF.CONNECT, "COM 2")
+        # BM:NAV bar - Enhanced navigation with status indicators
+        self.nav_com1 = self.addSubInterface(self.COM1_page, FIF.CONNECT, "COM1") 
+        self.nav_com2 = self.addSubInterface(self.COM2_page, FIF.CONNECT, "COM2")
         self.addSubInterface(self.Chart_page, FIF.PIE_SINGLE, "CHART")
-        # Add settings to bottom of navigation
-        self.addSubInterface(self.Settings_page, FIF.SETTING, "设置", position=NavigationItemPosition.BOTTOM)
+        self.addSubInterface(self.Settings_page, FIF.SETTING, "Setting", position=NavigationItemPosition.BOTTOM)
+
+        self.navigationInterface.setExpandWidth(125)   # 展开时宽度设为 300 px
 
         self.apply_theme()
-        # Set default dark theme
         setTheme(Theme.DARK)
     
     def mousePressEvent(self, event):
@@ -351,7 +369,7 @@ class MainWindow(MSFluentWindow):
     def show_help_dialog(self):
         """Show help dialog with modern Fluent Design"""
         help_content = """
-        <h2>🚀 UWB Dashboard 使用指南</h2>
+        <h2>🚀 UWB Dash 使用指南</h2>
         
         <h3>📊 数据监控</h3>
         <p>• <b>实时数据</b>：查看当前位置和距离信息</p>
@@ -380,21 +398,17 @@ class MainWindow(MSFluentWindow):
     def show_about_dialog(self):
         """Show about dialog with modern Fluent Design"""
         about_content = """
-        <div style="text-align: center;">
-            <h1>🎯 UWB Dashboard</h1>
-        </div>
-        
         <h3>📋 版本信息</h3>
         <p><b>版本：</b>v1.0.0</p>
         <p><b>构建日期：</b>2025年1月</p>
         <p><b>Python版本：</b>3.8+</p>
         
         <h3>👨‍💻 作者信息</h3>
-        <p>• <b>开发：</b>CardShare@QLL</p>
+        <p>• <b>CardShare@Qilang²</b></p>
         """
         
         w = MessageBox(
-            title='关于 UWB Dashboard',
+            title='关于 UWB Dash',
             content=about_content,
             parent=self
         )
@@ -406,6 +420,45 @@ class MainWindow(MSFluentWindow):
         dialog = HighlightConfigDialog(self.highlight_config, self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             self.highlight_config = dialog.get_config()
+    
+    def on_log_level_changed(self, level):
+        """Handle log level change from settings page"""
+        self.current_log_level = level.value
+        InfoBar.info(
+            title='Log等级已更改',
+            content=f'Log等级为: {level.value}',
+            orient=Qt.Orientation.Horizontal,
+            isClosable=True,
+            position=InfoBarPosition.TOP,
+            duration=2000,
+            parent=self
+        )
+    
+    def should_filter_log_message(self, message):
+        if self.current_log_level == 'ALL':
+            return False  # Show all messages
+        
+        message_upper = message.upper()
+        
+        if self.current_log_level == 'INFO':
+            # INFO level: hide messages containing HALUCI
+            return 'HALUCI' in message_upper
+        elif self.current_log_level == 'DEBUG':
+            # DEBUG level: hide messages containing HALUCI or INFO
+            return 'HALUCI' in message_upper or 'INFO' in message_upper
+        elif self.current_log_level == 'WARN':
+            # WARN level: hide messages containing HALUCI, INFO, or DEBUG
+            return ('HALUCI' in message_upper or 
+                    'INFO' in message_upper or 
+                    'DEBUG' in message_upper)
+        elif self.current_log_level == 'ERROR':
+            # ERROR level: hide messages containing HALUCI, INFO, DEBUG, or WARN
+            return ('HALUCI' in message_upper or 
+                    'INFO' in message_upper or 
+                    'DEBUG' in message_upper or 
+                    'WARN' in message_upper)
+        
+        return False  # Default: don't filter
 
     def create_pages(self): # BM: 创建页面
         # Store pages as instance variables for MSFluentWindow
@@ -438,51 +491,66 @@ class MainWindow(MSFluentWindow):
 
         # Modern switch button for serial port control
         self.toggle_btn2 = SwitchButton()
-        self.toggle_btn2.setOffText("关闭")
-        self.toggle_btn2.setOnText("打开")
         self.toggle_btn2.checkedChanged.connect(self.toggle_port2)
 
         line_top_1 = QFrame()
         line_top_1.setFrameShape(QFrame.Shape.VLine)
         line_top_1.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
-        
-        max_lines_label = BodyLabel("最大行数")
 
-        self.max_lines_spin2 = SpinBox()
+        self.max_lines_spin2 = CompactSpinBox()
         self.max_lines_spin2.setRange(50000, 300000)
         self.max_lines_spin2.setValue(150000)
         self.max_lines_spin2.setSingleStep(10000)
         self.max_lines_spin2.valueChanged.connect(self.update_max_lines2)
-        self.current_lines_label2 = BodyLabel("当前行数: 0")
-
+        self.current_lines_label2 = QLabel("Row: 0")
+        self.current_lines_label2.setStyleSheet("background: transparent;")
         
         line_top_2 = QFrame()
         line_top_2.setFrameShape(QFrame.Shape.VLine)
         line_top_2.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
-        self.Address_label_2 = BodyLabel("0000  -")
-        self.Transaction_time_label_2 = BodyLabel("0000ms")
+        self.Address_label_2 = QLabel("0000  -")
+        self.Address_label_2.setStyleSheet("background: transparent;")
+        self.Transaction_time_label_2 = QLabel("0000ms")
+        self.Transaction_time_label_2.setStyleSheet("background: transparent;")
+
+        line_top_3 = QFrame()
+        line_top_3.setFrameShape(QFrame.Shape.VLine)
+        line_top_3.setFrameShadow(QFrame.Shadow.Sunken)
+        line_top_3.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
+        
+        self.search_line2 = SearchLineEdit()
+        self.search_line2.setPlaceholderText("Search")
+        self.search_line2.setFixedWidth(200)
+        self.search_line2.textChanged.connect(self.on_search_text_changed2)
+        self.search_line2.searchSignal.connect(self.on_search_triggered2)
+        self.search_line2.clearSignal.connect(self.on_search_cleared2)
+        
+        # Search result count label for COM2
+        self.search_count_label2 = QLabel("0/0")
+        self.search_count_label2.setStyleSheet("background: transparent;")
+        self.search_count_label2.setMinimumWidth(40)
         
         top_layout.addWidget(self.port_combo2)
-        top_layout.addSpacing(10)
         top_layout.addWidget(self.baud_combo2)
-        top_layout.addSpacing(10)
         top_layout.addWidget(self.toggle_btn2)
-        top_layout.addSpacing(20)
-        top_layout.addWidget(line_top_1)
-        top_layout.addSpacing(20)
-        top_layout.addWidget(max_lines_label)
-        top_layout.addWidget(self.max_lines_spin2)
         top_layout.addSpacing(10)
+        top_layout.addWidget(line_top_1)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(self.max_lines_spin2)
         top_layout.addWidget(self.current_lines_label2)
-        top_layout.addSpacing(20)
+        top_layout.addSpacing(10)
         top_layout.addWidget(line_top_2)
-        top_layout.addSpacing(20)
+        top_layout.addSpacing(10)
         top_layout.addWidget(self.Address_label_2)
-        top_layout.addSpacing(5)
         top_layout.addWidget(self.Transaction_time_label_2)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(line_top_3)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(self.search_line2)
+        top_layout.addWidget(self.search_count_label2)
         top_layout.addStretch()
 
         layout.addWidget(top_widget)
@@ -495,19 +563,19 @@ class MainWindow(MSFluentWindow):
         # bottom_widget.setStyleSheet("background: rgba(36, 42, 56, 0.8);")
         bottom_layout = QHBoxLayout(bottom_widget)
         
-        self.clear_btn2 = PushButton("清屏")
-        self.clear_btn2.setFixedWidth(80)
+        self.clear_btn2 = ToolButton(FIF.DELETE)
+        self.clear_btn2.setFixedWidth(50)
         self.clear_btn2.clicked.connect(self.serial_display2.clear)
 
-        self.config_highlight_btn2 = PushButton("高亮")
-        self.config_highlight_btn2.setFixedWidth(80)
-        self.config_highlight_btn2.clicked.connect(self.open_highlight_config_dialog)
+        # Removed highlight config button - moved to settings page
 
-        self.timestamp2 = CheckBox("🕒 时间戳")
+        self.timestamp2 = CheckBox("🕒")
+        self.timestamp2.setStyleSheet("background: transparent")
         self.timestamp2.setObjectName("timestamp")
         self.timestamp2.setToolTip("每行前添加时间戳")
         self.timestamp2.setChecked(True)
-        self.auto_scroll2 = CheckBox("📌 自动滚动")
+        self.auto_scroll2 = CheckBox("📌")
+        self.auto_scroll2.setStyleSheet("background: transparent")
         self.auto_scroll2.setObjectName("autoScroll")
         self.auto_scroll2.setChecked(False)
         self.auto_scroll2.setToolTip("锁定滚动条到底部")
@@ -517,11 +585,6 @@ class MainWindow(MSFluentWindow):
         line_bottom_1.setFrameShadow(QFrame.Shadow.Sunken)
         line_bottom_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
-        line_bottom_2 = QFrame()
-        line_bottom_2.setFrameShape(QFrame.Shape.VLine)
-        line_bottom_2.setFrameShadow(QFrame.Shadow.Sunken)
-        line_bottom_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
-
         # 日志相关按钮
         self.open_text_log_file_btn2 = PushButton("📄TEXT")
         self.open_text_log_file_btn2.setFixedWidth(75)
@@ -530,22 +593,19 @@ class MainWindow(MSFluentWindow):
         self.open_text_log_file_btn2.setEnabled(False)
 
         self.open_log_folder_btn2 = PushButton("📁")
-        self.open_log_folder_btn2.setFixedWidth(60)
+        self.open_log_folder_btn2.setFixedWidth(50)
         self.open_log_folder_btn2.setToolTip("打开日志文件夹")
         self.open_log_folder_btn2.clicked.connect(self.open_log_folder)
 
         bottom_layout.addWidget(self.clear_btn2)
-        bottom_layout.addWidget(self.config_highlight_btn2)
+        bottom_layout.addWidget(self.open_text_log_file_btn2)
+        bottom_layout.addWidget(self.open_log_folder_btn2)
         bottom_layout.addSpacing(10)
         bottom_layout.addWidget(line_bottom_1)
         bottom_layout.addSpacing(10)
         bottom_layout.addWidget(self.timestamp2)
         bottom_layout.addWidget(self.auto_scroll2)
-        bottom_layout.addSpacing(10)
-        bottom_layout.addWidget(line_bottom_2)
-        bottom_layout.addSpacing(10)
-        bottom_layout.addWidget(self.open_text_log_file_btn2)
-        bottom_layout.addWidget(self.open_log_folder_btn2)
+        
         bottom_layout.addStretch()
         
         splitter.addWidget(bottom_widget)
@@ -565,7 +625,7 @@ class MainWindow(MSFluentWindow):
     
     def update_current_lines2(self):
         current_count = self.serial_display2.document().blockCount()
-        self.current_lines_label2.setText(f"当前行数: {current_count}")
+        self.current_lines_label2.setText(f"Row: {current_count}")
         max_lines = self.serial_display2.document().maximumBlockCount()
         if current_count >= max_lines:
             self.serial_display2.clear()
@@ -590,7 +650,7 @@ class MainWindow(MSFluentWindow):
             QTextEdit {
                 background-color          : rgba(36, 42, 56, 0.177);
                 border                    : 1.5px solid #3a4a5c;
-                border-radius             : 16px;
+                border-radius             : 1px;
                 padding                   : 12px;
                 color                     : {theme['text']};
                 font-size                 : 15px;
@@ -601,7 +661,7 @@ class MainWindow(MSFluentWindow):
             }
             QTextEdit:focus {
                 border          : 1.5px solid #477faa;
-                background-color: rgba(36, 42, 56, 0.5);
+                background-color: rgba(27, 32, 44, 0.795);
             }
             
         """)
@@ -609,46 +669,7 @@ class MainWindow(MSFluentWindow):
         self.serial_display2.document().blockCountChanged.connect(self.update_current_lines2)
         self.update_current_lines2()
 
-        self.find_dialog2 = QDialog(self)
-        self.find_dialog2.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Tool)
-        self.find_dialog2.setFixedSize(300, 48)
-        self.find_dialog2.setStyleSheet("""
-            QDialog {
-                background-color: rgba(45, 52, 54, 0.95);
-                border          : 1px solid rgba(255, 255, 255, 0.1);
-                border-radius   : 10px;
-            }
-        """)
-
-        find_layout = QHBoxLayout(self.find_dialog2)
-        find_layout.setContentsMargins(6, 6, 6, 6)
-        find_layout.setSpacing(6)
-
-        self.find_input2 = LineEdit()
-        self.find_input2.setPlaceholderText("输入搜索内容")
-        self.find_input2.textChanged.connect(self.update_find_count2)
-        self.count_label2 = BodyLabel("0/0")
-
-        self.prev_btn2 = ToolButton()
-        self.prev_btn2.setArrowType(Qt.ArrowType.UpArrow)
-        self.prev_btn2.clicked.connect(lambda: self.find_text2(False))
-        self.next_btn2 = ToolButton()
-        self.next_btn2.setArrowType(Qt.ArrowType.DownArrow)
-        self.next_btn2.clicked.connect(lambda: self.find_text2(True))
-
-        self.close_find_btn2 = ToolButton()
-        self.close_find_btn2.setText("×")
-        self.close_find_btn2.clicked.connect(self.find_dialog2.close)
-        self.close_find_btn2.setStyleSheet("font-size: 16px; color: #fff; background: transparent; border: none;")
-
-        find_layout.addWidget(self.find_input2)
-        find_layout.addWidget(self.count_label2)
-        find_layout.addWidget(self.prev_btn2)
-        find_layout.addWidget(self.next_btn2)
-        find_layout.addWidget(self.close_find_btn2)
-
         self.serial_display2.keyPressEvent = self.on_display_key_press2
-        # self.serial_display2.setTextInteractionFlags(Qt.TextInteractionFlag.NoTextInteraction)
         
         layout.addWidget(self.serial_display2)
     
@@ -656,120 +677,7 @@ class MainWindow(MSFluentWindow):
     def on_display_key_press2(self, event):
         if event.key() == Qt.Key.Key_Space:
             self.auto_scroll2.setChecked(not self.auto_scroll2.isChecked())
-        elif event.modifiers() & Qt.KeyboardModifier.ControlModifier:
-            if event.key() == Qt.Key.Key_F:
-                cursor = self.serial_display2.textCursor()
-                selected_text = cursor.selectedText()
-                self.show_find_dialog2()
-                if selected_text:
-                    self.find_input2.setText(selected_text)
-                    self.find_input2.selectAll()
-                event.accept()
-                return
-        
         QTextEdit.keyPressEvent(self.serial_display2, event)
-    
-    def show_find_dialog2(self):
-        display_rect = self.serial_display2.rect()
-        display_pos = self.serial_display2.mapToGlobal(display_rect.topRight())
-        dialog_x = display_pos.x() - self.find_dialog2.width() - 10  # 距离右边界10像素
-        dialog_y = display_pos.y() + 10  # 距离顶部10像素
-        self.find_dialog2.move(dialog_x, dialog_y)
-        
-        self.find_dialog2.show()
-        self.find_input2.setFocus()
-        self.find_input2.selectAll()
-        
-    
-    def update_find_count2(self):
-        """增量更新查找结果计数"""
-        text    = self.find_input2.text()
-        content = self.serial_display2.toPlainText()
-        
-        # 增量缓存：只对新增内容查找
-        if not hasattr(self, '_find_count_cache2'):
-            self._find_count_cache2 = {'text': '', 'content_len': 0, 'count': 0}
-        cache = self._find_count_cache2
-
-        if not text:
-            self.count_label2.setText("0/0")
-            cache['text']        = ''
-            cache['content_len'] = 0
-            cache['count']       = 0
-            return
-
-        if text != cache['text']:
-            count = content.count(text)
-            cache['text']        = text
-            cache['content_len'] = len(content)
-            cache['count']       = count
-        else:
-            old_len = cache['content_len']
-            if len(content) > old_len:
-                new_part  = content[old_len:]
-                count_new = new_part.count(text)
-                cache['count']       += count_new
-                cache['content_len']  = len(content)
-            elif len(content) < old_len:
-                count                = content.count(text)
-                cache['count']       = count
-                cache['content_len'] = len(content)
-
-        count = cache['count']
-        
-        # 获取当前选中的位置
-        current = 0
-        cursor  = self.serial_display2.textCursor()
-        if cursor.hasSelection():
-            sel_text = cursor.selectedText()
-            if sel_text == text:
-                pos     = cursor.position() - len(text)
-                current = content[:pos].count(text) + 1
-        
-        self.count_label2.setText(f"{current}/{count}")
-
-    def find_text2(self, forward=True):
-        """增量查找文本"""
-        text = self.find_input2.text()
-        if not text:
-            return
-        
-        # 终止上一个查找线程
-        if hasattr(self, 'find_thread2') and self.find_thread2.isRunning():
-            self.find_thread2.terminate()
-            self.find_thread2.wait()
-        
-        doc = self.serial_display2.document()
-        current_format = doc.defaultTextOption()
-
-        self.auto_scroll2.setChecked(True)
-
-        content = self.serial_display2.toPlainText()
-        cursor = self.serial_display2.textCursor()
-        cur_pos = cursor.selectionStart() if cursor.hasSelection() else cursor.position()
-
-        # 启动查找线程
-        self.find_thread2 = FindThread(content, text, cur_pos, forward)
-        self.find_thread2.result_ready.connect(self.on_find_result2)
-        self.find_thread2.start()
-
-    def on_find_result2(self, current, total, positions):
-        # 定位并高亮当前匹配项
-        pos = positions[current]
-        length = len(self.find_input2.text())
-        cursor = self.serial_display2.textCursor()
-        cursor.setPosition(pos)
-        cursor.setPosition(pos + length, QTextCursor.MoveMode.KeepAnchor)
-        self.serial_display2.setTextCursor(cursor)
-
-        fmt = QTextCharFormat()
-        fmt.setBackground(QColor("#ffaaff"))
-        fmt.setForeground(QColor("#000000"))
-        fmt.setFontWeight(QFont.Weight.Bold)
-        cursor.mergeCharFormat(fmt)
-
-        self._last_highlight2 = (pos, length)
-        self.count_label2.setText(f"{current+1}/{total}")
     
     def refresh_ports2(self):
         import serial.tools.list_ports
@@ -809,7 +717,6 @@ class MainWindow(MSFluentWindow):
                 self.serial_thread2.connection_lost.connect(self.handle_serial2_connection_lost)
                 self.serial_thread2.start()
                 
-                
                 current_time      = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
                 port_name         = self.port_combo2.currentText().replace(":", "_")
                 text_log_filename = f"[{port_name}] {current_time}.log"
@@ -829,16 +736,21 @@ class MainWindow(MSFluentWindow):
                 self.toggle_btn2.setChecked(False)  # Reset switch state on error
         else:
             try:
-                if hasattr(self, 'serial_thread2') and self.serial_thread2:
+                if hasattr(self, 'serial_thread2') and self.serial_thread2 is not None:
                     self.serial_thread2.stop()
                     self.serial_thread2 = None
 
-                if hasattr(self, 'serial2') and self.serial2:
+                if hasattr(self, 'serial2') and self.serial2 is not None:
                     self.serial2.close()
                     self.serial2 = None
                 
             except Exception as e:
-                QMessageBox.warning(self, "错误", f"关闭串口失败: {str(e)}")
+                print(f"关闭串口2时发生错误: {str(e)}")
+                # 即使出错也要重置状态
+                if hasattr(self, 'serial_thread2'):
+                    self.serial_thread2 = None
+                if hasattr(self, 'serial2'):
+                    self.serial2 = None
     
     def handle_serial_2_data(self, data): # BM: COM2数据处理
         try:
@@ -906,31 +818,31 @@ class MainWindow(MSFluentWindow):
 
         # Modern switch button for serial port control
         self.toggle_btn = SwitchButton()
-        self.toggle_btn.setOffText("关闭")
-        self.toggle_btn.setOnText("打开")
         self.toggle_btn.checkedChanged.connect(self.toggle_port)
 
         line_top_1 = QFrame()
         line_top_1.setFrameShape(QFrame.Shape.VLine)
         line_top_1.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
+
         
-        max_lines_label = BodyLabel("最大行数") 
-        
-        self.max_lines_spin = SpinBox()
+        self.max_lines_spin = CompactSpinBox()
         self.max_lines_spin.setRange(50000, 300000)
         self.max_lines_spin.setValue(150000)
         self.max_lines_spin.setSingleStep(10000)
         self.max_lines_spin.valueChanged.connect(self.update_max_lines)
-        self.current_lines_label = BodyLabel("当前行数: 0")
+        self.current_lines_label = QLabel("Row: 0")
+        self.current_lines_label.setStyleSheet("background: transparent;")
 
         line_top_2 = QFrame()
         line_top_2.setFrameShape(QFrame.Shape.VLine)
         line_top_2.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
-        self.Address_label = BodyLabel("0000  -")
-        self.Transaction_time_label = BodyLabel("0000ms")
+        self.Address_label = QLabel("0000  -")
+        self.Address_label.setStyleSheet("background: transparent;")
+        self.Transaction_time_label = QLabel("0000ms")
+        self.Transaction_time_label.setStyleSheet("background: transparent;")
         
         # Add separator line and time log button
         line_top_3 = QFrame()
@@ -948,30 +860,47 @@ class MainWindow(MSFluentWindow):
         self.protocol_parse_btn.setToolTip("协议解析工具")
         self.protocol_parse_btn.clicked.connect(self.show_protocol_parse_dialog) # BM: Protocol Parse
 
+        # Add separator line and time log button
+        line_top_4 = QFrame()
+        line_top_4.setFrameShape(QFrame.Shape.VLine)
+        line_top_4.setFrameShadow(QFrame.Shadow.Sunken)
+        line_top_4.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
+
+        self.search_line = SearchLineEdit()
+        self.search_line.setPlaceholderText("Search")
+        self.search_line.setFixedWidth(200)
+        self.search_line.textChanged.connect(self.on_search_text_changed)
+        self.search_line.searchSignal.connect(self.on_search_triggered)
+        self.search_line.clearSignal.connect(self.on_search_cleared)
+        
+        # Search result count label
+        self.search_count_label = QLabel("0/0")
+        self.search_count_label.setStyleSheet("background: transparent;")
+        self.search_count_label.setMinimumWidth(40)
+
         top_layout.addWidget(self.port_combo)
-        top_layout.addSpacing(10)
         top_layout.addWidget(self.baud_combo)
-        top_layout.addSpacing(10)
         top_layout.addWidget(self.toggle_btn)
-        top_layout.addSpacing(20)
+        top_layout.addSpacing(10)
         top_layout.addWidget(line_top_1)
-        top_layout.addSpacing(20)
-        top_layout.addWidget(max_lines_label)
+        top_layout.addSpacing(10)
         top_layout.addWidget(self.max_lines_spin)
-        top_layout.addSpacing(10)
         top_layout.addWidget(self.current_lines_label)
-        top_layout.addSpacing(20)
-        top_layout.addWidget(line_top_2)
-        top_layout.addSpacing(20)
-        top_layout.addWidget(self.Address_label)
-        top_layout.addSpacing(5)
-        top_layout.addWidget(self.Transaction_time_label)
-        top_layout.addSpacing(20)
-        top_layout.addWidget(line_top_3)
-        top_layout.addSpacing(20)
-        top_layout.addWidget(self.time_log_btn)
         top_layout.addSpacing(10)
+        top_layout.addWidget(line_top_2)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(self.Address_label)
+        top_layout.addWidget(self.Transaction_time_label)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(line_top_3)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(self.time_log_btn)
         top_layout.addWidget(self.protocol_parse_btn)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(line_top_4)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(self.search_line)
+        top_layout.addWidget(self.search_count_label)
 
         top_layout.addStretch()
 
@@ -985,19 +914,19 @@ class MainWindow(MSFluentWindow):
         # bottom_widget.setStyleSheet("background: rgba(36, 42, 56, 0.25);")
         bottom_layout = QHBoxLayout(bottom_widget)
         
-        self.clear_btn = PushButton("清屏")
-        self.clear_btn.setFixedWidth(80)
+        self.clear_btn = ToolButton(FIF.DELETE)
+        self.clear_btn.setFixedWidth(50)
         self.clear_btn.clicked.connect(self.serial_display.clear)
 
-        self.config_highlight_btn = PushButton("高亮")
-        self.config_highlight_btn.setFixedWidth(80)
-        self.config_highlight_btn.clicked.connect(self.open_highlight_config_dialog)
+        # Removed highlight config button - moved to settings page
 
-        self.timestamp = CheckBox("🕒 时间戳")
+        self.timestamp = CheckBox("🕒")
+        self.timestamp.setStyleSheet("background: transparent")
         self.timestamp.setObjectName("timestamp")
         self.timestamp.setToolTip("每行前添加时间戳")
         self.timestamp.setChecked(True)
-        self.auto_scroll = CheckBox("📌 自动滚动")
+        self.auto_scroll = CheckBox("📌")
+        self.auto_scroll.setStyleSheet("background: transparent")
         self.auto_scroll.setObjectName("autoScroll")
         self.auto_scroll.setChecked(False)
         self.auto_scroll.setToolTip("锁定滚动条到底部")
@@ -1006,11 +935,6 @@ class MainWindow(MSFluentWindow):
         line_bottom_1.setFrameShape(QFrame.Shape.VLine)
         line_bottom_1.setFrameShadow(QFrame.Shadow.Sunken)
         line_bottom_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
-
-        line_bottom_2 = QFrame()
-        line_bottom_2.setFrameShape(QFrame.Shape.VLine)
-        line_bottom_2.setFrameShadow(QFrame.Shadow.Sunken)
-        line_bottom_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
         # 日志相关按钮
         self.open_csv_log_file_btn = PushButton("📄CSV")
@@ -1026,23 +950,20 @@ class MainWindow(MSFluentWindow):
         self.open_text_log_file_btn.setEnabled(False)
 
         self.open_log_folder_btn = PushButton("📁")
-        self.open_log_folder_btn.setFixedWidth(60)
+        self.open_log_folder_btn.setFixedWidth(50)
         self.open_log_folder_btn.setToolTip("打开日志文件夹")
         self.open_log_folder_btn.clicked.connect(self.open_log_folder)
 
         bottom_layout.addWidget(self.clear_btn)
-        bottom_layout.addWidget(self.config_highlight_btn)
+        bottom_layout.addWidget(self.open_csv_log_file_btn)
+        bottom_layout.addWidget(self.open_text_log_file_btn)
+        bottom_layout.addWidget(self.open_log_folder_btn)
         bottom_layout.addSpacing(10)
         bottom_layout.addWidget(line_bottom_1)
         bottom_layout.addSpacing(10)
         bottom_layout.addWidget(self.timestamp)
         bottom_layout.addWidget(self.auto_scroll)
-        bottom_layout.addSpacing(10)
-        bottom_layout.addWidget(line_bottom_2)
-        bottom_layout.addSpacing(10)
-        bottom_layout.addWidget(self.open_csv_log_file_btn)
-        bottom_layout.addWidget(self.open_text_log_file_btn)
-        bottom_layout.addWidget(self.open_log_folder_btn)
+        
         bottom_layout.addStretch()
         
         splitter.addWidget(bottom_widget)
@@ -1065,7 +986,7 @@ class MainWindow(MSFluentWindow):
     def update_current_lines(self):
         """更新当前行数显示"""
         current_count = self.serial_display.document().blockCount()
-        self.current_lines_label.setText(f"当前行数: {current_count}")
+        self.current_lines_label.setText(f"Row: {current_count}")
         # 如果当前行数等于最大行数，自动清除
         max_lines = self.serial_display.document().maximumBlockCount()
         if current_count >= max_lines:
@@ -1093,64 +1014,23 @@ class MainWindow(MSFluentWindow):
             QTextEdit {
                 background-color          : rgba(36, 42, 56, 0.177);
                 border                    : 1.5px solid #3a4a5c;
-                border-radius             : 16px;
+                border-radius             : 1px;
                 padding                   : 12px;
                 color                     : {theme['text']};
                 font-size                 : 15px;
                 font-family               : 'JetBrains Mono', 'Consolas', 'Microsoft YaHei', monospace;
                 selection-background-color: #088bef;
                 selection-color           : #ffffff;
-
             }
             QTextEdit:focus {
                 border          : 1.5px solid #477faa;
-                background-color: rgba(36, 42, 56, 0.5);
+                background-color: rgba(27, 32, 44, 0.795);
             }
         """)
         
         # 更新初始行数显示
         self.serial_display.document().blockCountChanged.connect(self.update_current_lines)
         self.update_current_lines()
-
-        # 查找框相关
-        self.find_dialog = QDialog(self)
-        self.find_dialog.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Tool)
-        self.find_dialog.setFixedSize(300, 48)
-        self.find_dialog.setStyleSheet("""
-            QDialog {
-                background-color: rgba(45, 52, 54, 0.95);
-                border          : 1px solid rgba(255, 255, 255, 0.1);
-                border-radius   : 10px;
-            }
-        """)
-
-        find_layout = QHBoxLayout(self.find_dialog)
-        find_layout.setContentsMargins(6, 6, 6, 6)
-        find_layout.setSpacing(6)
-
-        self.find_input = LineEdit()
-        self.find_input.setPlaceholderText("输入搜索内容")
-        self.find_input.textChanged.connect(self.update_find_count)
-        self.count_label = BodyLabel("0/0")
-
-        self.prev_btn = ToolButton()
-        self.prev_btn.setArrowType(Qt.ArrowType.UpArrow)
-        self.prev_btn.clicked.connect(lambda: self.find_text(False))
-        self.next_btn = ToolButton()
-        self.next_btn.setArrowType(Qt.ArrowType.DownArrow)
-        self.next_btn.clicked.connect(lambda: self.find_text(True))
-
-        # 关闭按钮
-        self.close_find_btn = ToolButton()
-        self.close_find_btn.setText("×")
-        self.close_find_btn.clicked.connect(self.find_dialog.close)
-        self.close_find_btn.setStyleSheet("font-size: 16px; color: #fff; background: transparent; border: none;")
-
-        find_layout.addWidget(self.find_input)
-        find_layout.addWidget(self.count_label)
-        find_layout.addWidget(self.prev_btn)
-        find_layout.addWidget(self.next_btn)
-        find_layout.addWidget(self.close_find_btn)
 
         # 添加鼠标事件处理
         self.serial_display.keyPressEvent = self.on_display_key_press
@@ -1424,109 +1304,218 @@ class MainWindow(MSFluentWindow):
         """处理显示区域的键盘事件"""
         if event.key() == Qt.Key.Key_Space:
             self.auto_scroll.setChecked(not self.auto_scroll.isChecked())
-        elif event.modifiers() == Qt.KeyboardModifier.ControlModifier and event.key() == Qt.Key.Key_F:
-            # 计算查找框显示在serial_display右上角
-            parent_pos = self.serial_display.mapToGlobal(self.serial_display.rect().topRight())
-            dlg_geom = self.find_dialog.geometry()
-
-            cursor = self.serial_display.textCursor()
-            selected_text = cursor.selectedText()
-            # 让查找框右上角与显示区右上角对齐
-            self.find_dialog.move(parent_pos.x() - dlg_geom.width(), parent_pos.y())
-            self.find_dialog.show()
-            self.find_input.setFocus()
-            self.find_input.selectAll()
-            self.auto_scroll.setChecked(True)
-            if selected_text:
-                self.find_input.setText(selected_text)
-        # 调用原始的键盘事件处理
         QTextEdit.keyPressEvent(self.serial_display, event)
     
-    def update_find_count(self):
-        """增量更新查找结果计数"""
-        text = self.find_input.text()
-        content = self.serial_display.toPlainText()
-        # 增量缓存：只对新增内容查找
-        if not hasattr(self, '_find_count_cache'):
-            self._find_count_cache = {'text': '', 'content_len': 0, 'count': 0}
-        cache = self._find_count_cache
-
+    def on_search_text_changed(self, text):
+        """Handle SearchLineEdit text changes"""
         if not text:
-            self.count_label.setText("0/0")
-            cache['text']        = ''
-            cache['content_len'] = 0
-            cache['count']       = 0
-            return
-
-        if text != cache['text']:
-            # 关键字变了，重新全量查找
-            count = content.count(text)
-            cache['text']        = text
-            cache['content_len'] = len(content)
-            cache['count']       = count
-        else:
-            # 关键字没变，只查找新增部分
-            old_len = cache['content_len']
-            if len(content) > old_len:
-                new_part              = content[old_len:]
-                count_new             = new_part.count(text)
-                cache['count']       += count_new
-                cache['content_len']  = len(content)
-            # 如果内容被清空或减少，重新全量查找
-            elif len(content) < old_len:
-                count                = content.count(text)
-                cache['count']       = count
-                cache['content_len'] = len(content)
-
-        count   = cache['count']
-        current = 0
-        # 获取当前选中的位置
-        cursor = self.serial_display.textCursor()
-        if cursor.hasSelection():
-            sel_text = cursor.selectedText()
-            if sel_text == text:
-                pos     = cursor.position() - len(text)
-                current = content[:pos].count(text) + 1
-        self.count_label.setText(f"{current}/{count}")
-    
-    def find_text(self, forward=True):
-        text = self.find_input.text()
-        if not text:
+            self.clear_search_highlights()
             return
         
-        # 终止上一个查找线程
-        if hasattr(self, 'find_thread') and self.find_thread.isRunning():
-            self.find_thread.terminate()
-            self.find_thread.wait()
-        
-        self.auto_scroll.setChecked(True)
-
-        content = self.serial_display.toPlainText()
-        cursor  = self.serial_display.textCursor()
-        cur_pos = cursor.selectionStart() if cursor.hasSelection() else cursor.position()
-
-        # 启动查找线程
-        self.find_thread = FindThread(content, text, cur_pos, forward)
-        self.find_thread.result_ready.connect(self.on_find_result)
-        self.find_thread.start()
+        # Auto search as user types
+        self.perform_search(text)
     
-    def on_find_result(self, current, total, positions):
-        # 定位并高亮当前匹配项
-        pos    = positions[current]
-        length = len(self.find_input.text())
+    def on_search_triggered(self, text):
+        """Handle SearchLineEdit search signal (Enter key)"""
+        if text:
+            self.perform_search(text, move_to_next=True)
+    
+    def on_search_cleared(self):
+        """Handle SearchLineEdit clear signal"""
+        self.clear_search_highlights()
+        self.search_count_label.setText("0/0")
+    
+    def perform_search(self, text, move_to_next=False):
+        """Perform search in serial display"""
+        if not text:
+            self.search_count_label.setText("0/0")
+            return
+            
+        content = self.serial_display.toPlainText()
+        if not content:
+            self.search_count_label.setText("0/0")
+            return
+            
+        # Find all occurrences
+        positions = []
+        start = 0
+        while True:
+            pos = content.find(text, start)
+            if pos == -1:
+                break
+            positions.append(pos)
+            start = pos + 1
+        
+        total_matches = len(positions)
+        if not positions:
+            self.search_count_label.setText("0/0")
+            return
+            
+        # Highlight all matches
+        self.highlight_search_matches(positions, len(text))
+        
+        # Move to next match if requested
+        current_match = 1  # Default to first match
+        if move_to_next:
+            cursor = self.serial_display.textCursor()
+            current_pos = cursor.position()
+            
+            # Find next position after current cursor
+            next_pos = None
+            for i, pos in enumerate(positions):
+                if pos > current_pos:
+                    next_pos = pos
+                    current_match = i + 1
+                    break
+            
+            # If no next position, wrap to first
+            if next_pos is None and positions:
+                next_pos = positions[0]
+                current_match = 1
+                
+            if next_pos is not None:
+                cursor.setPosition(next_pos)
+                cursor.setPosition(next_pos + len(text), QTextCursor.MoveMode.KeepAnchor)
+                self.serial_display.setTextCursor(cursor)
+                self.serial_display.ensureCursorVisible()
+        
+        # Update count label
+        self.search_count_label.setText(f"{current_match}/{total_matches}")
+    
+    def highlight_search_matches(self, positions, length):
+        """Highlight search matches in the text"""
         cursor = self.serial_display.textCursor()
-        cursor.setPosition(pos)
-        cursor.setPosition(pos + length, QTextCursor.MoveMode.KeepAnchor)
-        self.serial_display.setTextCursor(cursor)
-
+        
+        # Clear previous highlights
+        cursor.select(QTextCursor.SelectionType.Document)
         fmt = QTextCharFormat()
-        fmt.setBackground(QColor("#c3dd8c"))
-        fmt.setForeground(QColor("#000000"))
-        fmt.setFontWeight(QFont.Weight.Bold)
         cursor.mergeCharFormat(fmt)
-
-        self._last_highlight = (pos, length)
-        self.count_label.setText(f"{current+1}/{total}")
+        
+        # Highlight matches
+        for pos in positions:
+            cursor.setPosition(pos)
+            cursor.setPosition(pos + length, QTextCursor.MoveMode.KeepAnchor)
+            
+            fmt = QTextCharFormat()
+            fmt.setBackground(QColor("#c3dd8c"))
+            fmt.setForeground(QColor("#000000"))
+            cursor.mergeCharFormat(fmt)
+    
+    def clear_search_highlights(self):
+        """Clear all search highlights"""
+        cursor = self.serial_display.textCursor()
+        cursor.select(QTextCursor.SelectionType.Document)
+        fmt = QTextCharFormat()
+        cursor.mergeCharFormat(fmt)
+        cursor.clearSelection()
+        self.serial_display.setTextCursor(cursor)
+    
+    def on_search_text_changed2(self, text):
+        """Handle SearchLineEdit text changes for COM2"""
+        if not text:
+            self.clear_search_highlights2()
+            return
+        
+        # Auto search as user types
+        self.perform_search2(text)
+    
+    def on_search_triggered2(self, text):
+        """Handle SearchLineEdit search signal (Enter key) for COM2"""
+        if text:
+            self.perform_search2(text, move_to_next=True)
+    
+    def on_search_cleared2(self):
+        """Handle SearchLineEdit clear signal for COM2"""
+        self.clear_search_highlights2()
+        self.search_count_label2.setText("0/0")
+    
+    def perform_search2(self, text, move_to_next=False):
+        """Perform search in serial display for COM2"""
+        if not text:
+            self.search_count_label2.setText("0/0")
+            return
+            
+        content = self.serial_display2.toPlainText()
+        if not content:
+            self.search_count_label2.setText("0/0")
+            return
+            
+        # Find all occurrences
+        positions = []
+        start = 0
+        while True:
+            pos = content.find(text, start)
+            if pos == -1:
+                break
+            positions.append(pos)
+            start = pos + 1
+        
+        total_matches = len(positions)
+        if not positions:
+            self.search_count_label2.setText("0/0")
+            return
+            
+        # Highlight all matches
+        self.highlight_search_matches2(positions, len(text))
+        
+        # Move to next match if requested
+        current_match = 1  # Default to first match
+        if move_to_next:
+            cursor = self.serial_display2.textCursor()
+            current_pos = cursor.position()
+            
+            # Find next position after current cursor
+            next_pos = None
+            for i, pos in enumerate(positions):
+                if pos > current_pos:
+                    next_pos = pos
+                    current_match = i + 1
+                    break
+                    break
+            
+            # If no next position, wrap to first
+            if next_pos is None and positions:
+                next_pos = positions[0]
+                current_match = 1
+                
+            if next_pos is not None:
+                cursor.setPosition(next_pos)
+                cursor.setPosition(next_pos + len(text), QTextCursor.MoveMode.KeepAnchor)
+                self.serial_display2.setTextCursor(cursor)
+                self.serial_display2.ensureCursorVisible()
+        
+        # Update count label
+        self.search_count_label2.setText(f"{current_match}/{total_matches}")
+    
+    def highlight_search_matches2(self, positions, length):
+        """Highlight search matches in the text for COM2"""
+        cursor = self.serial_display2.textCursor()
+        
+        # Clear previous highlights
+        cursor.select(QTextCursor.SelectionType.Document)
+        fmt = QTextCharFormat()
+        cursor.mergeCharFormat(fmt)
+        
+        # Highlight matches
+        for pos in positions:
+            cursor.setPosition(pos)
+            cursor.setPosition(pos + length, QTextCursor.MoveMode.KeepAnchor)
+            
+            fmt = QTextCharFormat()
+            fmt.setBackground(QColor("#c3dd8c"))
+            fmt.setForeground(QColor("#000000"))
+            cursor.mergeCharFormat(fmt)
+    
+    def clear_search_highlights2(self):
+        """Clear all search highlights for COM2"""
+        cursor = self.serial_display2.textCursor()
+        cursor.select(QTextCursor.SelectionType.Document)
+        fmt = QTextCharFormat()
+        cursor.mergeCharFormat(fmt)
+        cursor.clearSelection()
+        self.serial_display2.setTextCursor(cursor)
+    
+    # Removed on_find_result method - using SearchLineEdit instead
 
     def refresh_ports(self):
         """刷新可用串口列表，使用注册表方式获取所有串口，包括虚拟串口"""
@@ -1640,10 +1629,20 @@ class MainWindow(MSFluentWindow):
                 return
         else:
             # 关闭串口
-            if hasattr(self, 'serial_thread'):
-                self.serial_thread.stop()
-            if hasattr(self, 'serial_port'):
-                self.serial_port.close()
+            try:
+                if hasattr(self, 'serial_thread') and self.serial_thread is not None:
+                    self.serial_thread.stop()
+                    self.serial_thread = None
+                if hasattr(self, 'serial_port') and self.serial_port is not None:
+                    self.serial_port.close()
+                    self.serial_port = None
+            except Exception as e:
+                print(f"关闭串口时发生错误: {str(e)}")
+                # 即使出错也要重置状态
+                if hasattr(self, 'serial_thread'):
+                    self.serial_thread = None
+                if hasattr(self, 'serial_port'):
+                    self.serial_port = None
     
     def open_current_csv_file(self):
         """使用系统默认应用打开当前的日志文件"""
@@ -2060,7 +2059,17 @@ class MainWindow(MSFluentWindow):
             scrollbar      = self.serial_display.verticalScrollBar()
             current_scroll = scrollbar.value()
             
-            text = ''.join(self.data_buffer)
+            # Apply log level filtering
+            filtered_buffer = []
+            for message in self.data_buffer:
+                if not self.should_filter_log_message(message):
+                    filtered_buffer.append(message)
+            
+            if not filtered_buffer:
+                self.data_buffer.clear()
+                return
+            
+            text = ''.join(filtered_buffer)
             
             # 如果选中了时间戳选项，为每行添加时间戳
             if self.timestamp.isChecked():
@@ -2108,10 +2117,6 @@ class MainWindow(MSFluentWindow):
                                 highlight_cursor.mergeCharFormat(highlight_fmt)
                             idx = block_text.find(keyword, idx + len(keyword))
                     block = block.next()
-
-            # 更新查找计数
-            if self.find_dialog.isVisible():
-                self.update_find_count()
             
             if self.auto_scroll.isChecked():
                 scrollbar.setValue(current_scroll)
@@ -2135,7 +2140,18 @@ class MainWindow(MSFluentWindow):
             cursor         = self.serial_display2.textCursor()
             scrollbar      = self.serial_display2.verticalScrollBar()
             current_scroll = scrollbar.value()
-            text           = ''.join(self.data_buffer2)
+            
+            # Apply log level filtering
+            filtered_buffer = []
+            for message in self.data_buffer2:
+                if not self.should_filter_log_message(message):
+                    filtered_buffer.append(message)
+            
+            if not filtered_buffer:
+                self.data_buffer2.clear()
+                return
+            
+            text = ''.join(filtered_buffer)
             
             # 如果选中了时间戳选项，为每行添加时间戳
             if self.timestamp2.isChecked():
@@ -2183,10 +2199,6 @@ class MainWindow(MSFluentWindow):
                                 highlight_cursor.setCharFormat(highlight_fmt)
                             idx = block_text.find(keyword, idx + len(keyword))
                     block = block.next()
-
-            # 更新查找计数
-            if self.find_dialog2.isVisible():
-                self.update_find_count2()
             
             if self.auto_scroll2.isChecked():
                 scrollbar.setValue(current_scroll)
@@ -2361,7 +2373,7 @@ class MainWindow(MSFluentWindow):
         input_text = self.protocol_input.toPlainText().strip()
         if not input_text:
             # Show error message
-            error_label = BodyLabel("请输入TLV协议数据")
+            error_label = QLabel("请输入TLV协议数据")
             error_label.setStyleSheet("color: #dc3545; font-weight: bold;")
             return
         
@@ -2530,7 +2542,7 @@ class MainWindow(MSFluentWindow):
             result_widget.setHtml(result_html)
             
         except Exception as e:
-            result_widget = BodyLabel(f"TLV解析错误: {str(e)}")
+            result_widget = QLabel(f"TLV解析错误: {str(e)}")
         
         inner_layout.addWidget(result_widget)
         
@@ -2905,22 +2917,16 @@ class MainWindow(MSFluentWindow):
         return "".join(result)
 
     def create_settings_page(self): # BM: Setting Page
-        """Create modern settings page with Fluent Design components"""
-       
-        
         settings_page = ScrollArea()
         settings_page.setObjectName("Settings")
         
-        # Create main widget
         view = QWidget()
         vBoxLayout = QVBoxLayout(view)
         vBoxLayout.setContentsMargins(20, 20, 20, 20)
         vBoxLayout.setSpacing(20)
         
-        # Appearance settings group
         self.appearanceGroup = SettingCardGroup('外观设置', view)
         
-        # Theme setting card
         self.themeCard = PushSettingCard(
             text='深色',
             icon=FIF.BRUSH,
@@ -2929,20 +2935,34 @@ class MainWindow(MSFluentWindow):
         )
         self.themeCard.clicked.connect(self.onThemeCardClicked)
         
-        # Background image setting card
         self.backgroundCard = PushSettingCard(
             text='切换背景',
             icon=FIF.PHOTO,
             title='背景图片',
-            content=f'当前背景: {self.background_image}'
+
         )
         self.backgroundCard.clicked.connect(self.on_background_toggle)
-        
         self.appearanceGroup.addSettingCard(self.themeCard)
         self.appearanceGroup.addSettingCard(self.backgroundCard)
         
-        # Application settings group
         self.applicationGroup = SettingCardGroup('应用设置', view)
+        
+        self.logLevelCard = OptionsSettingCard(
+            configItem=self.config.logLevelItem,
+            icon=FIF.FILTER,
+            title='LOG LEVEL',
+            content='设置显示的Log级别',
+            texts=['ALL', 'INFO', 'DEBUG', 'WARN', 'ERROR']
+        )
+        self.logLevelCard.optionChanged.connect(self.on_log_level_changed)
+        
+        self.highlightCard = PushSettingCard(
+            text='配置高亮',
+            icon=FIF.PALETTE,
+            title='高亮配置',
+            content='配置关键字高亮显示的颜色和样式'
+        )
+        self.highlightCard.clicked.connect(self.open_highlight_config_dialog)
         
         # Help card
         self.helpCard = PushSettingCard(
@@ -2957,11 +2977,13 @@ class MainWindow(MSFluentWindow):
         self.aboutCard = PushSettingCard(
             text='关于应用',
             icon=FIF.INFO,
-            title='关于 UWB Dashboard',
+            title='关于UWBDash',
             content='查看应用版本和开发信息'
         )
         self.aboutCard.clicked.connect(self.show_about_dialog)
         
+        self.applicationGroup.addSettingCard(self.logLevelCard)
+        self.applicationGroup.addSettingCard(self.highlightCard)
         self.applicationGroup.addSettingCard(self.helpCard)
         self.applicationGroup.addSettingCard(self.aboutCard)
         
@@ -2973,13 +2995,13 @@ class MainWindow(MSFluentWindow):
             text='检查更新',
             icon=FIF.UPDATE,
             title='版本信息',
-            content='UWB Dashboard v1.0.0'
+            content='UWB Dash v1.0.0'
         )
         self.versionCard.clicked.connect(self.checkUpdate)
         
         # Project homepage card
         self.homepageCard = HyperlinkCard(
-            url='https://github.com/your-repo/uwb-dashboard',
+            url='https://github.com/your-repo/uwb-Dash',
             text='访问项目主页',
             icon=FIF.LINK,
             title='项目主页',
@@ -3056,15 +3078,22 @@ class MainWindow(MSFluentWindow):
     def on_background_toggle(self):
         """Handle background image toggle from settings page"""
         try:
-            # Use actual available backgrounds from pic directory
-            backgrounds = ['pic\\carton1.jpg', 'pic\\city1.jpg', 'pic\\landscape1.jpg', 'pic\\landscape2.jpg', 'pic\\person1.jpg', 'pic\\person2.jpg', 'pic\\person8.jpg']
-            current_index = backgrounds.index(self.background_image) if self.background_image in backgrounds else 0
-            next_index = (current_index + 1) % len(backgrounds)
-            self.background_image = backgrounds[next_index]
+            # Use backgrounds from config.json instead of hardcoded list
+            if not self.background_images:
+                # Fallback to default if no backgrounds configured
+                self.background_images = [
+                    "pic\\carton2.jpg",
+                    "pic\\person4.jpg",
+                    "pic\\person5.jpg",
+                    "pic\\person6.jpg",
+                    "pic\\person7.jpg",
+                    "pic\\person8.jpg",
+                    "pic\\person11.jpg"
+                ]
             
-            # Update background card content
-            if hasattr(self, 'backgroundCard'):
-                self.backgroundCard.setContent(f'当前背景: {self.background_image}')
+            current_index = self.background_images.index(self.background_image) if self.background_image in self.background_images else 0
+            next_index = (current_index + 1) % len(self.background_images)
+            self.background_image = self.background_images[next_index]
             
             # Save configuration
             self._save_background_config()
@@ -3078,7 +3107,7 @@ class MainWindow(MSFluentWindow):
             # Show success message
             InfoBar.success(
                 title='背景已切换',
-                content=f'已切换到 {self.background_image}',
+                content=f'٩(•̤̀ᵕ•̤́๑)ᵒᵏᵎᵎᵎᵎ',
                 orient=Qt.Orientation.Horizontal,
                 isClosable=True,
                 position=InfoBarPosition.TOP,
@@ -3176,7 +3205,7 @@ class HighlightConfigDialog(QDialog):
             # 关键字
             self.table.setItem(row_position, 0, QTableWidgetItem(keyword))
 
-            color_label = BodyLabel()
+            color_label = QLabel()
             color_label.setStyleSheet(f"background-color: {color.name()}; border: 1px solid #555;") # 直接设置背景色和边框
             self.table.setCellWidget(row_position, 1, color_label)
 
@@ -3966,30 +3995,21 @@ if __name__ == "__main__":
     app = QApplication(sys.argv)
     app.setStyle("Fusion")  # Use Fusion style for better transparency support
     
-    # Create main window but don't show it yet
     window = MainWindow()
-    
-    # Show splash screen first
     splash = SplashScreen()
     splash.show()
-    
-    # Process events to show splash screen
     app.processEvents()
     
-    # Connect splash finished signal to show main window
     def show_main_window():
-        """Show main window when splash screen is finished"""
         try:
             window.show()
-            window.raise_()  # Bring window to front
+            window.raise_()          # Bring window to front
             window.activateWindow()  # Activate window
         except Exception as e:
             print(f"Error showing main window: {e}")
-    
-    # Connect the finished signal from splash screen
+
     splash.finished.connect(show_main_window)
     
-    # Fallback timer in case signal doesn't work
     def check_splash_closed():
         if not splash.isVisible():
             show_main_window()
@@ -3997,7 +4017,6 @@ if __name__ == "__main__":
     
     fallback_timer = QTimer()
     fallback_timer.timeout.connect(check_splash_closed)
-    fallback_timer.start(200)  # Check every 200ms as fallback
+    fallback_timer.start(200)  
     
-    # Note: MSFluentWindow handles maximize button internally, no need to set text
     sys.exit(app.exec())

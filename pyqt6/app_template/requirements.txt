@@ -1,0 +1,12 @@
+# PyQt6 Application Template Requirements
+
+# Core GUI framework
+PyQt6>=6.4.0
+
+# Modern UI components
+PyQtFluentWidgets>=1.4.0
+
+# Optional: For enhanced functionality
+# Pillow>=9.0.0          # Image processing
+# requests>=2.28.0       # HTTP requests
+# sqlite3                # Database (built-in with Python)
