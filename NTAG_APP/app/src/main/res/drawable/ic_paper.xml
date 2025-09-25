@@ -1,0 +1,33 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Paper as a rounded card -->
+    <path
+        android:fillColor="#42A5F5"
+        android:pathData="M6,5 C5.4477,5 5,5.4477 5,6 L5,18 C5,18.5523 5.4477,19 6,19 L18,19 C18.5523,19 19,18.5523 19,18 L19,6 C19,5.4477 18.5523,5 18,5 Z" />
+
+    <!-- Page fold corner -->
+    <path
+        android:fillColor="#90CAF9"
+        android:pathData="M16,6 L18,6 C18.5523,6 19,6.4477 19,7 L19,9 Z" />
+
+    <!-- Text lines -->
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:pathData="M8,9 L16,9" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:pathData="M8,12 L16,12" />
+    <path
+        android:strokeColor="#FFFFFF"
+        android:strokeWidth="1.2"
+        android:strokeLineCap="round"
+        android:pathData="M8,15 L13,15" />
+</vector>

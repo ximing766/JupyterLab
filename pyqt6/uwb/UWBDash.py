@@ -1,4 +1,3 @@
-# 标准库导入
 import sys
 import os
 import json
@@ -8,18 +7,14 @@ import time
 import queue
 import random
 from pathlib import Path
-# 串口通信
 import serial
-# Qt核心模块
 from PyQt6.QtCore import (
     Qt, QSize, QPoint, QUrl, QTimer,
     QDateTime, QThread, QMargins, QPointF,
     pyqtSignal, QObject, QPointF, QRectF,
     QEvent, QRect
 )
-# Qt界面模块
 from PyQt6.QtWidgets import *
-# Qt图形和绘制
 from PyQt6.QtGui import (
     QFont, QColor, QPalette, QTextCursor,
     QPixmap, QPainter, QIcon, QCursor,
@@ -27,24 +22,27 @@ from PyQt6.QtGui import (
     QLinearGradient, QTextCharFormat,
     QTextOption, QTextDocument
 )
-# Qt图表模块
 from PyQt6.QtCharts import (
     QChart, QChartView,
     QLineSeries, QValueAxis
 )
-from qfluentwidgets import FluentIcon as FIF, NavigationItemPosition 
 from qfluentwidgets import (
     MSFluentWindow, FluentWindow, SettingCardGroup, PushSettingCard, HyperlinkCard,
     FluentIcon as FIF, InfoBar, InfoBarPosition, setTheme, Theme, isDarkTheme, ComboBoxSettingCard,
     MessageBox, ScrollArea, SubtitleLabel, setFont, ComboBox, SpinBox, EditableComboBox,
     setTheme, Theme, qconfig, PushButton, CheckBox, PrimaryPushButton, BodyLabel, TableWidget,
     LineEdit, ToolButton, TextEdit, SwitchButton, CaptionLabel, DotInfoBadge, SearchLineEdit, ToolButton,
-    PrimaryToolButton, CompactSpinBox, OptionsSettingCard, ConfigItem, OptionsConfigItem, OptionsValidator, QConfig
+    PrimaryToolButton, CompactSpinBox, OptionsSettingCard, ConfigItem, OptionsConfigItem, OptionsValidator, QConfig,
+    NavigationItemPosition
 )
-# 自定义模块
 from log import Logger
 from position_view import PositionView
 from splash_screen import SplashScreen
+
+APP_VERSION = "v2.0.2"
+APP_NAME = "UWBDash"
+BUILD_DATE = "2025年9月"
+AUTHOR = "@Qilang²"
 
 def time_decorator(func):
     """
@@ -60,7 +58,6 @@ def time_decorator(func):
 
 class MainWindow(FluentWindow): # MSFluentWindow
     theme_changed = pyqtSignal()
-
     def __init__(self):
         super().__init__()
         icon_path = Path(__file__).parent / "logo.ico"
@@ -71,11 +68,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
         self.current_theme               = ThemeManager.DARK_THEME
         self.config_path                 = Path(__file__).parent / "config.json"
-        self._load_background_config()
+        self._load_unified_config()
         self.logger                      = Logger(app_path=str(app_path))
         self.csv_title                   = ['Master', 'Slave', 'NLOS', 'RSSI', 'Speed','X', 'Y', 'Z', 'Auth', 'Trans']
-        self.highlight_config_path       = str(Path(__file__).parent / "highlight_config.json")
-        self.highlight_config            = self.load_highlight_config()
         self.background_cache            = None         # 添加背景缓存
         self.last_window_size            = QSize()      # 添加窗口尺寸记录
         self.drag_pos                    = QPoint()
@@ -103,13 +98,17 @@ class MainWindow(FluentWindow): # MSFluentWindow
             )
         
         self.config = AppConfig()
-        qconfig.load(str(Path(__file__).parent / "config.json"), self.config)
-        self.current_log_level = self.config.logLevelItem.value  # Get value from config
+        # Use unified config for app settings
+        self.current_log_level = self.app_config.get("LogLevel", {}).get("level", "INFO")
         print(f"current_log_level: {self.current_log_level}")
+        
+        # Sync QConfig with unified config file
+        if self.current_log_level in ["ALL", "INFO", "DEBUG", "WARN", "ERROR"]:
+            self.config.logLevelItem.value = self.current_log_level
+            self.config.save()
         
         self.display_timer = QTimer()
         self.display_timer.timeout.connect(self.update_display)
-    
         self.display_timer.start(250)
 
         self.display_timer2 = QTimer()
@@ -123,11 +122,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.chart_thread.update_chart.connect(self.update_chart)
         self.chart_thread.start()
 
-        self.highlight_config_timer = QTimer()
-        self.highlight_config_timer.timeout.connect(self.reload_highlight_config)
-        self.highlight_config_timer.start(10000)
+        # MYTODO 
+        # self.highlight_config_timer = QTimer()
+        # self.highlight_config_timer.timeout.connect(self.reload_highlight_config)
+        # self.highlight_config_timer.start(10000)
 
-        
         self.uwb_data = {
             'master'   : [],
             'slave'    : [],
@@ -135,20 +134,17 @@ class MainWindow(FluentWindow): # MSFluentWindow
             'lift_deep': [],
             'speed'    : [],
         }
-
         self.base_points = [
             (0, -40), (0, 0), (1, 10), (0, 10), (-1, 10),
             (1, 60), (0, 60), (-1, 60), (1, 110), (0, 110),
             (-1, 110), (1, 160), (0, 160), (-1, 160), (0, 210)
         ]
-        
+
         self.init_ui()
 
     def paintEvent(self, event):
         if not self.background_cache or self.size() != self.last_window_size:
             size = self.size()
-            
-            # Check if background_image is None or empty
             if not self.background_image:
                 print("Warning: No background image set.")
                 if self.background_images:
@@ -157,7 +153,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                         test_path = Path(__file__).parent / img
                         if test_path.exists():
                             self.background_image = img
-                            self._save_background_config() # Save the fallback
+                            self._save_unified_config() # Save the fallback
                             print(f"Using first available image: {img}")
                             break
                     else:
@@ -172,17 +168,15 @@ class MainWindow(FluentWindow): # MSFluentWindow
             if not background_path.exists(): # Fallback if current image is somehow invalid
                 print(f"Warning: Background image {self.background_image} not found. Falling back to default.")
                 if self.background_images:
-                    # Try to find the first available image
                     for img in self.background_images:
                         test_path = Path(__file__).parent / img
                         if test_path.exists():
                             self.background_image = img
-                            self._save_background_config() # Save the fallback
+                            self._save_unified_config() # Save the fallback
                             background_path = test_path
                             print(f"Using fallback image: {img}")
                             break
                     else:
-                        # No images found in the list
                         print("Error: No background images available.")
                         return
                 else: # Ultimate fallback if list is also empty (should not happen with proper config loading)
@@ -203,15 +197,25 @@ class MainWindow(FluentWindow): # MSFluentWindow
         y = (self.height() - self.background_cache.height()) // 2
         painter.drawPixmap(x, y, self.background_cache)
     
-    def _load_background_config(self):
+    def _load_unified_config(self):
+        """Load all configuration from unified config.json file"""
         try:
             if self.config_path.exists():
                 with open(self.config_path, "r", encoding="utf-8") as f:
-                    config_data = json.load(f) 
-                self.background_images = config_data.get("background_images", [])
-                self.background_image = config_data.get("current_background_image", None)
+                    config_data = json.load(f)
                 
-                # Ensure we have valid images list
+                background_config = config_data.get("background", {})
+                self.background_images = background_config.get("background_images", [])
+                self.background_image = background_config.get("current_background_image", None)
+                
+                self.app_config = config_data.get("app", {})
+                
+                highlight_config = config_data.get("highlight", {})
+                self.highlight_config = {k: QColor(v) for k, v in highlight_config.items()}
+                
+                self.quick_send_data = config_data.get("quick_send", {})
+                
+                # Validate background configuration
                 if not self.background_images:
                     print("Warning: No background images found in config file.")
                     self.background_images = []
@@ -219,11 +223,10 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     self.background_image_index = 0
                     return
                 
-                # Ensure current_background_image is valid and exists in the list
                 if self.background_image not in self.background_images:
                     print(f"Warning: Current background image '{self.background_image}' not found in images list. Using first image.")
                     self.background_image = self.background_images[0]
-                    self._save_background_config() # Save the corrected config
+                    self._save_unified_config() # Save the corrected config
                 
                 # Initialize background_image_index based on the loaded current_background_image
                 if self.background_image and self.background_image in self.background_images:
@@ -233,62 +236,50 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     self.background_image = self.background_images[0] if self.background_images else None
 
             else:
-                print("Warning: Config file not found. Please create a config.json file with background_images.")
+                print("Warning: Config file not found. Please create a config.json file with all configurations.")
                 self.background_images = []
                 self.background_image = None
                 self.background_image_index = 0
+                self.app_config = {}
+                self.highlight_config = {}
+                self.quick_send_data = {}
                 
         except Exception as e:
-            print(f"Error loading background config: {e}")
+            print(f"Error loading unified config: {e}")
             self.background_images = []
             self.background_image = None
             self.background_image_index = 0
+            self.app_config = {}
+            self.highlight_config = {}
+            self.quick_send_data = {}
 
-    def _save_background_config(self):
+    def _save_unified_config(self):
+        print("保存配置函数被调用")
         config_data = {
-            "background_images": self.background_images,
-            "current_background_image": self.background_image
+            "background": {
+                "background_images": self.background_images,
+                "current_background_image": self.background_image
+            },
+            "app": self.app_config,
+            "highlight": {k: v.name() for k, v in self.highlight_config.items()},
+            "quick_send": self.quick_send_data
         }
         try:
             with open(self.config_path, "w", encoding="utf-8") as f:
-                json.dump(config_data, f, indent=2)
+                json.dump(config_data, f, indent=2, ensure_ascii=False)
         except Exception as e:
-            print(f"Error saving background config: {e}")
-    
-    def load_highlight_config(self):
-        try:
-            with open(self.highlight_config_path, "r", encoding="utf-8") as f:
-                data = json.load(f)
-            # 将颜色字符串转为 QColor
-            return {k: QColor(v) for k, v in data.items()}
-        except Exception as e:
-            print(f"加载高亮配置失败: {e}")
-            # 默认配置
-            return {
-                "APP     :ERROR"     : QColor("#ff7f7f"),
-                "APP     :INFO"      : QColor("#8ccfff"),
-                "APP     :WARN"      : QColor("#ffd280"),
-                "gCapSessionHandle"  : QColor("#00ff7f"),
-                "gDtxSessionHandle"  : QColor("#b9f309"),
-                "gMrmSessionHandle"  : QColor("#ffaaff"),
-                "AuthenticationState": QColor("#3daaea"),
-                "APP_HIFTask"        : QColor("#34a7b2"),
-            }
+            print(f"Error saving unified config: {e}")
 
     def reload_highlight_config(self):
-        # 将当前的 self.highlight_config 写回到 JSON 文件
-        try:
-            data = {k: v.name() for k, v in self.highlight_config.items()}
-            with open(self.highlight_config_path, "w", encoding="utf-8") as f:
-                json.dump(data, f, ensure_ascii=False, indent=4)
-        except Exception as e:
-            print(f"保存高亮配置失败: {e}")
+        self._save_unified_config()
 
     def init_ui(self):
         self.setMinimumSize(1000, 700)
         self.setGeometry(100, 100, 1000, 700)
     
         self.create_pages()
+        
+        self.load_quick_send_config()
         
         self.COM1_page.setObjectName("COM1")
         self.COM2_page.setObjectName("COM2") 
@@ -308,7 +299,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         setTheme(Theme.DARK)
     
     def mousePressEvent(self, event):
-        # Handle mouse side buttons for page navigation
         if hasattr(self, 'stackedWidget') and self.stackedWidget:
             current_idx = self.stackedWidget.currentIndex()
             total_pages = self.stackedWidget.count()
@@ -337,7 +327,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         current_widget = self.stackedWidget.currentWidget()
         delta = event.angleDelta().y()
         
-        # Check which page is currently active and handle auto-scroll
         if current_widget == self.COM1_page:  # COM 1 page
             if delta > 0:  # Scroll up
                 if hasattr(self, 'auto_scroll'):
@@ -353,15 +342,12 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 # Optional: add additional scroll down logic
                 pass
                 
-        # Call parent method to maintain normal scroll behavior
         super().wheelEvent(event)
 
     def eventFilter(self, obj, event):
-        # 检查属性是否存在，避免在初始化过程中出错
         if (hasattr(self, 'serial_display') and hasattr(self, 'serial_display2') and 
             (obj == self.serial_display or obj == self.serial_display2) and 
             event.type() == QEvent.Type.Wheel):
-            # print(f"Event type: {event.type()}")
             self.wheelEvent(event)
             return True # 阻止事件进一步传播
         return super().eventFilter(obj, event)
@@ -370,45 +356,52 @@ class MainWindow(FluentWindow): # MSFluentWindow
         """Show help dialog with modern Fluent Design"""
         help_content = """
         <h2>🚀 UWB Dash 使用指南</h2>
-        
         <h3>📊 数据监控</h3>
         <p>• <b>实时数据</b>：查看当前位置和距离信息</p>
         <p>• <b>图表显示</b>：观察位置变化趋势</p>
         <p>• <b>数据记录</b>：保存历史数据用于分析</p>
-        
         <h3>🎯 定位功能</h3>
         <p>• 实时位置可视化</p>
-        <p>• 精度优化</p>
-        
+        <p>• 支持多个用户同时在线监控</p>
         <h3>⚙️ 设置选项</h3>
         <p>• 主题切换：浅色/深色模式</p>
         <p>• 背景自定义：个性化界面</p>
+        <h3>⌨️ 一些功能 </h3>
+        <p>• <b>鼠标侧键</b>：快速切换页面（前进/后退）</p>
+        <p>• <b>空格键</b>：暂停/恢复日志滚动</p>
+        <p>• <b>Log Level过滤</b>：按日志级别筛选显示内容</p>
+        <p>• <b>快捷发送</b>：预设常用指令，一键发送</p>
         
         """
-        
         w = MessageBox(
             title='帮助支持',
             content=help_content,
             parent=self
         )
-        w.yesButton.setText('我知道了')
+        w.yesButton.setText('🤣我知道了🤣')
         w.cancelButton.hide()
         w.exec()
 
     def show_about_dialog(self):
         """Show about dialog with modern Fluent Design"""
-        about_content = """
-        <h3>📋 版本信息</h3>
-        <p><b>版本：</b>v1.0.0</p>
-        <p><b>构建日期：</b>2025年1月</p>
-        <p><b>Python版本：</b>3.8+</p>
-        
-        <h3>👨‍💻 作者信息</h3>
-        <p>• <b>CardShare@Qilang²</b></p>
+        about_content = f"""
+        <div style="text-align: center; padding: 10px;">
+            <div style=" border-radius: 8px; padding: 15px; margin: 10px 0;">
+                <h3 style="color: #666; margin-bottom: 10px;">📋 版本信息</h3>
+                <p style="margin: 5px 0;"><b>版本：</b>{APP_VERSION}</p>
+                <p style="margin: 5px 0;"><b>构建日期：</b>{BUILD_DATE}</p>
+                <p style="margin: 5px 0;"><b>Python版本：</b>3.8+</p>
+            </div>
+            
+            <div style=" border-radius: 8px; padding: 15px; margin: 10px 0;">
+                <h3 style="color: #666; margin-bottom: 10px;">👨‍💻 作者信息</h3>
+                <p style="margin: 5px 0;"><b>CardShare@Qilang²</b></p>
+            </div>
+        </div>
         """
         
         w = MessageBox(
-            title='关于 UWB Dash',
+            title='UWBDASH',
             content=about_content,
             parent=self
         )
@@ -420,10 +413,24 @@ class MainWindow(FluentWindow): # MSFluentWindow
         dialog = HighlightConfigDialog(self.highlight_config, self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             self.highlight_config = dialog.get_config()
+            # Save the updated highlight configuration to unified config file
+            self._save_unified_config()
     
     def on_log_level_changed(self, level):
         """Handle log level change from settings page"""
         self.current_log_level = level.value
+        # Update app config and save to file
+        if not hasattr(self, 'app_config'):
+            self.app_config = {}
+        if "LogLevel" not in self.app_config:
+            self.app_config["LogLevel"] = {}
+        self.app_config["LogLevel"]["level"] = level.value
+        self._save_unified_config()
+        
+        # Also update QConfig system
+        self.config.logLevelItem.value = level.value
+        self.config.save()
+        
         InfoBar.info(
             title='Log等级已更改',
             content=f'Log等级为: {level.value}',
@@ -555,19 +562,19 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
         layout.addWidget(top_widget)
 
-        splitter = QSplitter(Qt.Orientation.Vertical)
-        
-        self.create_display_area2(splitter)
+        self.splitter2 = QSplitter(Qt.Orientation.Vertical)
+        self.create_display_area2(self.splitter2)
     
         bottom_widget = QWidget()
         # bottom_widget.setStyleSheet("background: rgba(36, 42, 56, 0.8);")
-        bottom_layout = QHBoxLayout(bottom_widget)
+        bottom_layout = QVBoxLayout(bottom_widget)
+        
+        # Create horizontal layout for the main controls
+        controls_layout = QHBoxLayout()
         
         self.clear_btn2 = ToolButton(FIF.DELETE)
         self.clear_btn2.setFixedWidth(50)
         self.clear_btn2.clicked.connect(self.serial_display2.clear)
-
-        # Removed highlight config button - moved to settings page
 
         self.timestamp2 = CheckBox("🕒")
         self.timestamp2.setStyleSheet("background: transparent")
@@ -580,12 +587,53 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.auto_scroll2.setChecked(False)
         self.auto_scroll2.setToolTip("锁定滚动条到底部")
 
+        # COM2 sending controls
+        self.send_judge2 = CheckBox("HEX")
+        self.send_judge2.setStyleSheet("background: transparent")
+        self.send_judge2.setChecked(True)
+        self.send_judge2.clicked.connect(self.toggle_send_mode2)
+
+        self.send_line_edit2 = LineEdit()
+        self.send_line_edit2.setPlaceholderText("e.g., AA BB or 0xAA 0xBB or String")
+        self.send_line_edit2.setClearButtonEnabled(True)
+
+        # Large input box for expanded mode (initially hidden)
+        self.large_send_edit2 = TextEdit()
+        self.large_send_edit2.setPlaceholderText("e.g., AA BB or 0xAA 0xBB or String")
+        self.large_send_edit2.setMaximumHeight(300)
+        self.large_send_edit2.hide()
+
+        self.send_btn2 = ToolButton(FIF.SEND)
+        self.send_btn2.setFixedWidth(60)
+        self.send_btn2.clicked.connect(self.com2_send_data)
+
+        # Quick send components for COM2
+        self.quick_send_combo2 = ComboBox()
+        self.quick_send_combo2.setFixedWidth(120)
+        self.quick_send_combo2.setPlaceholderText("Quick Send")
+        self.quick_send_combo2.currentTextChanged.connect(self.on_quick_send_selected2)
+        
+        self.quick_config_btn2 = ToolButton(FIF.SETTING)
+        self.quick_config_btn2.setFixedSize(30, 30)
+        self.quick_config_btn2.setToolTip("Configure Quick Send")
+        self.quick_config_btn2.clicked.connect(self.show_quick_send_config)
+
+        # Expand/collapse button for COM2
+        self.expand_btn2 = ToolButton(FIF.UP)
+        self.expand_btn2.setFixedSize(30, 30)
+        self.expand_btn2.clicked.connect(self.toggle_input_size2)
+        self.is_expanded2 = False
+
         line_bottom_1 = QFrame()
         line_bottom_1.setFrameShape(QFrame.Shape.VLine)
         line_bottom_1.setFrameShadow(QFrame.Shadow.Sunken)
         line_bottom_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
-        # 日志相关按钮
+        line_bottom_2 = QFrame()
+        line_bottom_2.setFrameShape(QFrame.Shape.VLine)
+        line_bottom_2.setFrameShadow(QFrame.Shadow.Sunken)
+        line_bottom_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
+
         self.open_text_log_file_btn2 = PushButton("📄TEXT")
         self.open_text_log_file_btn2.setFixedWidth(75)
         self.open_text_log_file_btn2.setToolTip("打开当前Text日志文件")
@@ -597,21 +645,32 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.open_log_folder_btn2.setToolTip("打开日志文件夹")
         self.open_log_folder_btn2.clicked.connect(self.open_log_folder)
 
-        bottom_layout.addWidget(self.clear_btn2)
-        bottom_layout.addWidget(self.open_text_log_file_btn2)
-        bottom_layout.addWidget(self.open_log_folder_btn2)
-        bottom_layout.addSpacing(10)
-        bottom_layout.addWidget(line_bottom_1)
-        bottom_layout.addSpacing(10)
-        bottom_layout.addWidget(self.timestamp2)
-        bottom_layout.addWidget(self.auto_scroll2)
+        controls_layout.addWidget(self.clear_btn2)
+        controls_layout.addWidget(self.open_text_log_file_btn2)
+        controls_layout.addWidget(self.open_log_folder_btn2)
+        controls_layout.addSpacing(10)
+        controls_layout.addWidget(line_bottom_1)
+        controls_layout.addSpacing(10)
+        controls_layout.addWidget(self.timestamp2)
+        controls_layout.addWidget(self.auto_scroll2)
+        controls_layout.addWidget(self.send_judge2)
+        controls_layout.addSpacing(10)
+        controls_layout.addWidget(line_bottom_2)
+        controls_layout.addSpacing(10)
+        controls_layout.addWidget(self.send_line_edit2)
+        controls_layout.addWidget(self.send_btn2)
+        controls_layout.addWidget(self.quick_send_combo2)
+        controls_layout.addWidget(self.quick_config_btn2)
+        controls_layout.addStretch()
+        controls_layout.addWidget(self.expand_btn2)
         
-        bottom_layout.addStretch()
+        bottom_layout.addWidget(self.large_send_edit2)
+        bottom_layout.addLayout(controls_layout)
         
-        splitter.addWidget(bottom_widget)
-        splitter.setSizes([2000, 100])  
+        self.splitter2.addWidget(bottom_widget)
+        self.splitter2.setSizes([2000, 100])  
         
-        layout.addWidget(splitter)
+        layout.addWidget(self.splitter2)
         
         self.port_scan_timer2 = QTimer()
         self.port_scan_timer2.timeout.connect(self.refresh_ports2)
@@ -788,9 +847,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
             if hasattr(self, 'serial2'):
                 self.serial2.close()
                 self.serial2 = None
-                
-            # Show warning message
-            # QMessageBox.warning(self, "串口连接丢失", f"COM2串口连接意外断开: {error_msg}")
         except Exception as e:
             print(f"处理串口2连接丢失错误: {str(e)}")
 
@@ -844,7 +900,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.Transaction_time_label = QLabel("0000ms")
         self.Transaction_time_label.setStyleSheet("background: transparent;")
         
-        # Add separator line and time log button
         line_top_3 = QFrame()
         line_top_3.setFrameShape(QFrame.Shape.VLine)
         line_top_3.setFrameShadow(QFrame.Shadow.Sunken)
@@ -860,7 +915,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.protocol_parse_btn.setToolTip("协议解析工具")
         self.protocol_parse_btn.clicked.connect(self.show_protocol_parse_dialog) # BM: Protocol Parse
 
-        # Add separator line and time log button
         line_top_4 = QFrame()
         line_top_4.setFrameShape(QFrame.Shape.VLine)
         line_top_4.setFrameShadow(QFrame.Shadow.Sunken)
@@ -873,7 +927,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.search_line.searchSignal.connect(self.on_search_triggered)
         self.search_line.clearSignal.connect(self.on_search_cleared)
         
-        # Search result count label
         self.search_count_label = QLabel("0/0")
         self.search_count_label.setStyleSheet("background: transparent;")
         self.search_count_label.setMinimumWidth(40)
@@ -906,37 +959,27 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
         layout.addWidget(top_widget)
 
-        splitter = QSplitter(Qt.Orientation.Vertical)
+        self.splitter = QSplitter(Qt.Orientation.Vertical)
         
-        self.create_display_area(splitter)
+        self.create_display_area(self.splitter)
         
         bottom_widget = QWidget()
         # bottom_widget.setStyleSheet("background: rgba(36, 42, 56, 0.25);")
-        bottom_layout = QHBoxLayout(bottom_widget)
+        bottom_layout = QVBoxLayout(bottom_widget)
         
-        self.clear_btn = ToolButton(FIF.DELETE)
-        self.clear_btn.setFixedWidth(50)
-        self.clear_btn.clicked.connect(self.serial_display.clear)
-
-        # Removed highlight config button - moved to settings page
-
-        self.timestamp = CheckBox("🕒")
-        self.timestamp.setStyleSheet("background: transparent")
-        self.timestamp.setObjectName("timestamp")
-        self.timestamp.setToolTip("每行前添加时间戳")
-        self.timestamp.setChecked(True)
-        self.auto_scroll = CheckBox("📌")
-        self.auto_scroll.setStyleSheet("background: transparent")
-        self.auto_scroll.setObjectName("autoScroll")
-        self.auto_scroll.setChecked(False)
-        self.auto_scroll.setToolTip("锁定滚动条到底部")
+        # Create horizontal layout for the main controls
+        controls_layout = QHBoxLayout()
 
         line_bottom_1 = QFrame()
         line_bottom_1.setFrameShape(QFrame.Shape.VLine)
         line_bottom_1.setFrameShadow(QFrame.Shadow.Sunken)
         line_bottom_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
-        # 日志相关按钮
+        line_bottom_2 = QFrame()
+        line_bottom_2.setFrameShape(QFrame.Shape.VLine)
+        line_bottom_2.setFrameShadow(QFrame.Shadow.Sunken)
+        line_bottom_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
+
         self.open_csv_log_file_btn = PushButton("📄CSV")
         self.open_csv_log_file_btn.setFixedWidth(75)
         self.open_csv_log_file_btn.setToolTip("打开当前CSV日志文件")
@@ -954,24 +997,84 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.open_log_folder_btn.setToolTip("打开日志文件夹")
         self.open_log_folder_btn.clicked.connect(self.open_log_folder)
 
-        bottom_layout.addWidget(self.clear_btn)
-        bottom_layout.addWidget(self.open_csv_log_file_btn)
-        bottom_layout.addWidget(self.open_text_log_file_btn)
-        bottom_layout.addWidget(self.open_log_folder_btn)
-        bottom_layout.addSpacing(10)
-        bottom_layout.addWidget(line_bottom_1)
-        bottom_layout.addSpacing(10)
-        bottom_layout.addWidget(self.timestamp)
-        bottom_layout.addWidget(self.auto_scroll)
+        self.clear_btn = ToolButton(FIF.DELETE)
+        self.clear_btn.setFixedWidth(50)
+        self.clear_btn.clicked.connect(self.serial_display.clear)
+
+        self.timestamp = CheckBox("🕒")
+        self.timestamp.setStyleSheet("background: transparent")
+        self.timestamp.setObjectName("timestamp")
+        self.timestamp.setChecked(True)
+
+        self.auto_scroll = CheckBox("📌")
+        self.auto_scroll.setStyleSheet("background: transparent")
+        self.auto_scroll.setObjectName("autoScroll")
+        self.auto_scroll.setChecked(False)
+
+        self.send_judge = CheckBox("HEX")
+        self.send_judge.setStyleSheet("background: transparent")
+        self.send_judge.setChecked(True)
+        self.send_judge.clicked.connect(self.toggle_send_mode)
+
+        self.send_line_edit = LineEdit()
+        self.send_line_edit.setPlaceholderText("e.g., AA BB or 0xAA 0xBB or String")
+        self.send_line_edit.setClearButtonEnabled(True)
+
+        # Large input box for expanded mode (initially hidden)
+        self.large_send_edit = TextEdit()
+        self.large_send_edit.setPlaceholderText("e.g., AA BB or 0xAA 0xBB or String")
+        self.large_send_edit.setMaximumHeight(300)
+        self.large_send_edit.hide()
+
+        self.send_btn = ToolButton(FIF.SEND)
+        self.send_btn.setFixedWidth(60)
+        self.send_btn.clicked.connect(self.com1_send_data)
+
+        # Quick send components
+        self.quick_send_combo = ComboBox()
+        self.quick_send_combo.setFixedWidth(120)
+        self.quick_send_combo.setPlaceholderText("Quick Send")
+        self.quick_send_combo.currentTextChanged.connect(self.on_quick_send_selected)
         
-        bottom_layout.addStretch()
+        self.quick_config_btn = ToolButton(FIF.DEVELOPER_TOOLS)
+        self.quick_config_btn.setFixedSize(30, 30)
+        self.quick_config_btn.setToolTip("Configure Quick Send")
+        self.quick_config_btn.clicked.connect(self.show_quick_send_config)
+
+        # Expand/collapse button
+        self.expand_btn = ToolButton(FIF.UP)
+        self.expand_btn.setFixedSize(30, 30)
+        self.expand_btn.clicked.connect(self.toggle_input_size)
+        self.is_expanded = False
+
+        controls_layout.addWidget(self.clear_btn)
+        controls_layout.addWidget(self.open_csv_log_file_btn)
+        controls_layout.addWidget(self.open_text_log_file_btn)
+        controls_layout.addWidget(self.open_log_folder_btn)
+        controls_layout.addSpacing(10)
+        controls_layout.addWidget(line_bottom_1)
+        controls_layout.addSpacing(10)
+        controls_layout.addWidget(self.timestamp)
+        controls_layout.addWidget(self.auto_scroll)
+        controls_layout.addWidget(self.send_judge)
+        controls_layout.addSpacing(10)
+        controls_layout.addWidget(line_bottom_2)
+        controls_layout.addSpacing(10)
+        controls_layout.addWidget(self.send_line_edit)
+        controls_layout.addWidget(self.send_btn)
+        controls_layout.addWidget(self.quick_send_combo)
+        controls_layout.addWidget(self.quick_config_btn)
+        controls_layout.addStretch()
+        controls_layout.addWidget(self.expand_btn)
         
-        splitter.addWidget(bottom_widget)
-        splitter.setSizes([2000, 100])  # 设置初始大小比例
+        bottom_layout.addWidget(self.large_send_edit)
+        bottom_layout.addLayout(controls_layout)
         
-        layout.addWidget(splitter)
+        self.splitter.addWidget(bottom_widget)
+        self.splitter.setSizes([2000, 100])  # 设置初始大小比例
         
-        # 设置自动扫描定时器
+        layout.addWidget(self.splitter)
+        
         self.port_scan_timer = QTimer()
         self.port_scan_timer.timeout.connect(self.refresh_ports)
         self.port_scan_timer.start(1000)
@@ -1006,10 +1109,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.serial_display.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)
         
-        # 设置字体和样式
         font = QFont("Microsoft YaHei", 12)
         self.serial_display.setFont(font)
-        
         self.serial_display.setStyleSheet("""
             QTextEdit {
                 background-color          : rgba(36, 42, 56, 0.177);
@@ -1028,7 +1129,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
             }
         """)
         
-        # 更新初始行数显示
         self.serial_display.document().blockCountChanged.connect(self.update_current_lines)
         self.update_current_lines()
 
@@ -1054,12 +1154,10 @@ class MainWindow(FluentWindow): # MSFluentWindow
         table_widget = self.create_test_area()  # 这里包含了表格和预留区域
         canvas_splitter.addWidget(table_widget)
         
-        # 创建位置区域
         bottom_right = QWidget()
         bottom_right_layout = QVBoxLayout(bottom_right)
         bottom_right_layout.setContentsMargins(5, 5, 5, 5)
         
-        # 添加切换按钮
         button_layout = QHBoxLayout()
         button_layout.addStretch()  # 推到右边
         self.layout_toggle_btn = PushButton("⚡")
@@ -1351,7 +1449,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
             self.search_count_label.setText("0/0")
             return
             
-        # Highlight all matches
         self.highlight_search_matches(positions, len(text))
         
         # Move to next match if requested
@@ -1391,7 +1488,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         fmt = QTextCharFormat()
         cursor.mergeCharFormat(fmt)
         
-        # Highlight matches
         for pos in positions:
             cursor.setPosition(pos)
             cursor.setPosition(pos + length, QTextCursor.MoveMode.KeepAnchor)
@@ -1455,7 +1551,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
             self.search_count_label2.setText("0/0")
             return
             
-        # Highlight all matches
         self.highlight_search_matches2(positions, len(text))
         
         # Move to next match if requested
@@ -1496,7 +1591,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         fmt = QTextCharFormat()
         cursor.mergeCharFormat(fmt)
         
-        # Highlight matches
         for pos in positions:
             cursor.setPosition(pos)
             cursor.setPosition(pos + length, QTextCursor.MoveMode.KeepAnchor)
@@ -1807,18 +1901,14 @@ class MainWindow(FluentWindow): # MSFluentWindow
         # Create text display area
         self.time_log_text_display = TextEdit()
         self.time_log_text_display.setReadOnly(True)
-        # Increase font size for better readability
         self.time_log_text_display.setFont(QFont("Consolas", 13))
         
-        # Initialize data change tracking
         self.last_time_log_count = 0
         
-        # Initial data load
         self.refresh_time_log_display()
         
         layout.addWidget(self.time_log_text_display)
         
-        # Apply dialog styling with dark theme and transparency
         self.time_log_dialog.setStyleSheet("""
             QDialog {
                 background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
@@ -1891,6 +1981,201 @@ class MainWindow(FluentWindow): # MSFluentWindow
         """Stop the time log refresh timer"""
         if hasattr(self, 'time_log_refresh_timer'):
             self.time_log_refresh_timer.stop()
+    
+    def toggle_input_size2(self):
+        """Toggle between small and large input boxes for COM2"""
+        if self.is_expanded2:
+            # Collapse: hide large input, show small input
+            self.large_send_edit2.hide()
+            self.send_line_edit2.show()
+            self.expand_btn2.setIcon(FIF.UP)
+            # Reset splitter sizes to original
+            if hasattr(self.splitter2, 'setSizes'):
+                self.splitter2.setSizes([2000, 100])
+            self.is_expanded2 = False
+        else:
+            # Expand: hide small input, show large input
+            self.send_line_edit2.hide()
+            self.large_send_edit2.show()
+            self.expand_btn2.setIcon(FIF.DOWN )
+            # Increase bottom area size
+            if hasattr(self.splitter2, 'setSizes'):
+                self.splitter2.setSizes([1500, 500])
+            self.is_expanded2 = True
+
+    def toggle_send_mode2(self):
+        """Toggle between HEX and STR sending modes for COM2"""
+        if self.send_judge2.isChecked():
+            self.send_judge2.setText("HEX")
+            placeholder = "Enter hex data."
+        else:
+            self.send_judge2.setText("STR")
+            placeholder = "Enter string data."
+        
+        self.send_line_edit2.setPlaceholderText(placeholder)
+        self.large_send_edit2.setPlaceholderText(placeholder)
+
+    def com2_send_data(self):
+        """Send data through COM2 port based on selected mode"""
+        try:
+            # Check if serial port is available and open
+            if not hasattr(self, 'serial2') or not self.serial2.is_open:
+                InfoBar.error(
+                    title='发送失败',
+                    content='COM2串口未打开！',
+                    position=InfoBarPosition.TOP,
+                    duration=2000,
+                    parent=self
+                )
+                return
+            
+            # Get text from active input box
+            if self.is_expanded2:
+                text = self.large_send_edit2.toPlainText().strip()
+            else:
+                text = self.send_line_edit2.text().strip()
+                
+            if not text:
+                InfoBar.warning(
+                    title='输入警告',
+                    content='请输入要发送的数据！',
+                    position=InfoBarPosition.TOP,
+                    duration=2000,
+                    parent=self
+                )
+                return
+                
+            if self.send_judge2.isChecked():  # HEX mode
+                # Remove spaces and convert hex string to bytes
+                hex_string = text.replace(' ', '').replace('0x', '')
+                if len(hex_string) % 2 != 0:
+                    InfoBar.error(
+                        title='格式错误',
+                        content='无效的十六进制格式！长度必须为偶数。',
+                        position=InfoBarPosition.TOP,
+                        duration=2000,
+                        parent=self
+                    )
+                    return
+                data = bytes.fromhex(hex_string)
+            else:  # STR mode
+                data = text.encode('utf-8')
+            
+            self.serial2.write(data)
+            InfoBar.success(
+                    title='发送成功',
+                    content='数据已成功发送！',
+                    position=InfoBarPosition.TOP,
+                    duration=2000,
+                    parent=self
+            )
+            
+        except Exception as e:
+            InfoBar.error(
+                title='发送失败',
+                content=f'发送数据失败: {str(e)}',
+                position=InfoBarPosition.TOP,
+                duration=2000,
+                parent=self
+            )
+
+    def toggle_input_size(self):
+        """Toggle between small and large input boxes"""
+        if self.is_expanded:
+            # Collapse: hide large input, show small input
+            self.large_send_edit.hide()
+            self.send_line_edit.show()
+            self.expand_btn.setIcon(FIF.UP)
+            # Reset splitter sizes to original
+            if hasattr(self.splitter, 'setSizes'):
+                self.splitter.setSizes([2000, 100])
+            self.is_expanded = False
+        else:
+            # Expand: hide small input, show large input
+            self.send_line_edit.hide()
+            self.large_send_edit.show()
+            self.expand_btn.setIcon(FIF.DOWN )
+            # Increase bottom area size
+            if hasattr(self.splitter, 'setSizes'):
+                self.splitter.setSizes([1500, 500])
+            self.is_expanded = True
+
+    def toggle_send_mode(self):
+        """Toggle between HEX and STR sending modes"""
+        if self.send_judge.isChecked():
+            self.send_judge.setText("HEX")
+            placeholder = "Enter hex data (e.g., FF AA BB CC)"
+        else:
+            self.send_judge.setText("STR")
+            placeholder = "Enter string data"
+        
+        # Update placeholder for both input boxes
+        self.send_line_edit.setPlaceholderText(placeholder)
+        self.large_send_edit.setPlaceholderText(placeholder)
+
+    def com1_send_data(self):
+        """Send data through COM1 port based on selected mode"""
+        try:
+            # Check if serial port is available and open
+            if not hasattr(self, 'serial_port') or not self.serial_port.is_open:
+                InfoBar.error(
+                    title='发送失败',
+                    content='COM1串口未打开！',
+                    position=InfoBarPosition.TOP,
+                    duration=2000,
+                    parent=self
+                )
+                return
+            
+            # Get text from active input box
+            if self.is_expanded:
+                text = self.large_send_edit.toPlainText().strip()
+            else:
+                text = self.send_line_edit.text().strip()
+                
+            if not text:
+                InfoBar.warning(
+                    title='输入警告',
+                    content='请输入要发送的数据！',
+                    position=InfoBarPosition.TOP,
+                    duration=2000,
+                    parent=self
+                )
+                return
+                
+            if self.send_judge.isChecked():  # HEX mode
+                # Remove spaces and convert hex string to bytes
+                hex_string = text.replace(' ', '').replace('0x', '')
+                if len(hex_string) % 2 != 0:
+                    InfoBar.error(
+                        title='格式错误',
+                        content='无效的十六进制格式！长度必须为偶数。',
+                        position=InfoBarPosition.TOP,
+                        duration=2000,
+                        parent=self
+                    )
+                    return
+                data = bytes.fromhex(hex_string)
+            else:  # STR mode
+                data = text.encode('utf-8')
+            
+            self.serial_port.write(data)
+            InfoBar.success(
+                    title='发送成功',
+                    content='数据已成功发送！',
+                    position=InfoBarPosition.TOP,
+                    duration=2000,
+                    parent=self
+            )
+            
+        except Exception as e:
+            InfoBar.error(
+                title='发送失败',
+                content=f'发送数据失败: {str(e)}',
+                position=InfoBarPosition.TOP,
+                duration=2000,
+                parent=self
+            )
 
     def handle_serial_data(self, data):
         try:
@@ -2218,14 +2503,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 Qt.TransformationMode.SmoothTransformation
             )
             self.last_window_size = self.size()
-        self._save_background_config()
+        self._save_unified_config()
         self.update()
     
     def apply_theme(self):   # BM:全局主题 THEME
         theme = self.current_theme
-        setTheme(Theme.DARK if theme == ThemeManager.DARK_THEME else Theme.LIGHT)
-        
-        # Apply global stylesheet for non-fluent widgets
         self.setStyleSheet(f"""
             MSFluentWindow {{
                 background-color: transparent;
@@ -2280,7 +2562,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         QTimer.singleShot(0, self._create_tlv_input_dialog)
     
     def _create_tlv_input_dialog(self): # BM: create tlv input dialog
-        """Create and show TLV protocol input dialog with dark theme"""
         self.input_dialog = QDialog(self)
         # Remove title bar and window decorations
         self.input_dialog.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.Dialog)
@@ -2294,7 +2575,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         y = parent_geometry.y() + (parent_geometry.height() - dialog_geometry.height()) // 2
         self.input_dialog.move(x, y)
         
-        # Main container with dark theme
         main_widget = QWidget()
         main_widget.setStyleSheet("""
             QWidget {
@@ -2313,7 +2593,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         inner_layout.setContentsMargins(15, 15, 15, 15)
         inner_layout.setSpacing(15)
         
-        # Input field with dark theme
         self.protocol_input = TextEdit()
         self.protocol_input.setMinimumHeight(100)
         self.protocol_input.setFont(QFont("Consolas", 11))
@@ -2510,7 +2789,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         y = parent_geometry.y() + (parent_geometry.height() - dialog_geometry.height()) // 2
         self.result_dialog.move(x, y)
         
-        # Main container with dark theme
         main_widget = QWidget()
         main_widget.setStyleSheet("""
             QWidget {
@@ -2546,7 +2824,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
         inner_layout.addWidget(result_widget)
         
-        # Action buttons with dark theme
         action_layout = QHBoxLayout()
         action_layout.setSpacing(10)
         
@@ -2939,7 +3216,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
             text='切换背景',
             icon=FIF.PHOTO,
             title='背景图片',
-
         )
         self.backgroundCard.clicked.connect(self.on_background_toggle)
         self.appearanceGroup.addSettingCard(self.themeCard)
@@ -2964,7 +3240,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         )
         self.highlightCard.clicked.connect(self.open_highlight_config_dialog)
         
-        # Help card
         self.helpCard = PushSettingCard(
             text='查看帮助',
             icon=FIF.HELP,
@@ -2995,13 +3270,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
             text='检查更新',
             icon=FIF.UPDATE,
             title='版本信息',
-            content='UWB Dash v1.0.0'
+            content=f'{APP_NAME}_{APP_VERSION}'
         )
         self.versionCard.clicked.connect(self.checkUpdate)
         
         # Project homepage card
         self.homepageCard = HyperlinkCard(
-            url='https://github.com/your-repo/uwb-Dash',
+            url='https://ximing766.github.io/my-project-doc/',
             text='访问项目主页',
             icon=FIF.LINK,
             title='项目主页',
@@ -3059,7 +3334,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 orient=Qt.Orientation.Horizontal,
                 isClosable=True,
                 position=InfoBarPosition.TOP,
-                duration=3000,
+                duration=2000,
                 parent=self
             )
         
@@ -3096,7 +3371,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
             self.background_image = self.background_images[next_index]
             
             # Save configuration
-            self._save_background_config()
+            self._save_unified_config()
             
             # Clear background cache to force reload
             self.background_cache = None
@@ -3122,9 +3397,56 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 orient=Qt.Orientation.Horizontal,
                 isClosable=True,
                 position=InfoBarPosition.TOP,
-                duration=3000,
+                duration=2000,
                 parent=self
             )
+
+    def on_quick_send_selected(self, text):
+        """Handle quick send selection for COM1"""
+        if text and text in self.quick_send_data:
+            # Always add to LineEdit first, then check if expanded for TextEdit
+            self.send_line_edit.setText(self.quick_send_data[text])
+            # If expanded, also add to large text edit
+            if self.is_expanded:
+                self.large_send_edit.setPlainText(self.quick_send_data[text])
+
+    def on_quick_send_selected2(self, text):
+        """Handle quick send selection for COM2"""
+        if text and text in self.quick_send_data:
+            self.send_line_edit2.setText(self.quick_send_data[text])
+            if self.is_expanded2:
+                self.large_send_edit2.setPlainText(self.quick_send_data[text])
+
+    def show_quick_send_config(self):
+        """Show quick send configuration dialog"""
+        dialog = QuickSendConfigDialog(self.quick_send_data, self)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            self.quick_send_data = dialog.get_config()
+            self.update_quick_send_combo()
+            self.save_quick_send_config()
+
+    def update_quick_send_combo(self):
+        if hasattr(self, 'quick_send_combo'):
+            self.quick_send_combo.clear()
+            for key in self.quick_send_data.keys():
+                self.quick_send_combo.addItem(key)
+        if hasattr(self, 'quick_send_combo2'):
+            self.quick_send_combo2.clear()
+            for key in self.quick_send_data.keys():
+                self.quick_send_combo2.addItem(key)
+    
+    def load_quick_send_config(self):
+        if hasattr(self, 'quick_send_data'):
+            self.update_quick_send_combo()
+        else:
+            self.quick_send_data = {}
+
+    def save_quick_send_config(self):
+        """Save quick send configuration to unified config file"""
+        try:
+            self._save_unified_config()
+        except Exception as e:
+            print(f"Failed to save quick send config: {e}")
 
 class ThemeManager:
     # 📌📁❌🔸
@@ -3263,6 +3585,145 @@ class HighlightConfigDialog(QDialog):
 
     def get_config(self):
         return self.config
+
+class QuickSendConfigDialog(QDialog):
+    """Quick send configuration dialog"""
+    def __init__(self, current_config, parent=None):
+        super().__init__(parent)
+        self.setWindowTitle("配置快捷发送")
+        self.setMinimumWidth(500)
+        self.setMinimumHeight(400)
+        self.config = current_config.copy()
+
+        layout = QVBoxLayout(self)
+
+        self.table = QTableWidget()
+        self.table.setColumnCount(2)
+        self.table.setHorizontalHeaderLabels(["名称", "数据"])
+        self.table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)
+        self.table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
+        self.table.setColumnWidth(0, 150)
+        self.table.setSelectionBehavior(QAbstractItemView.SelectionBehavior.SelectRows)
+        self.table.verticalHeader().setVisible(False)
+        layout.addWidget(self.table)
+
+        # Buttons
+        button_layout = QHBoxLayout()
+        add_btn = PrimaryPushButton("添加")
+        add_btn.clicked.connect(self.add_item)
+        edit_btn = PushButton("编辑")
+        edit_btn.clicked.connect(self.edit_item)
+        remove_btn = PushButton("删除")
+        remove_btn.clicked.connect(self.remove_item)
+
+        button_layout.addWidget(add_btn)
+        button_layout.addWidget(edit_btn)
+        button_layout.addWidget(remove_btn)
+        button_layout.addStretch()
+        layout.addLayout(button_layout)
+
+        # Dialog buttons
+        dialog_buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        dialog_buttons.accepted.connect(self.accept)
+        dialog_buttons.rejected.connect(self.reject)
+        layout.addWidget(dialog_buttons)
+
+        self.populate_table()
+
+    def populate_table(self):
+        """Populate table with current config"""
+        self.table.setRowCount(len(self.config))
+        for row, (key, value) in enumerate(self.config.items()):
+            self.table.setItem(row, 0, QTableWidgetItem(key))
+            self.table.setItem(row, 1, QTableWidgetItem(value))
+
+    def add_item(self):
+        """Add new key-value pair"""
+        dialog = QuickSendItemDialog(self)
+        if dialog.exec() == QDialog.DialogCode.Accepted:
+            key, value = dialog.get_data()
+            if key and key not in self.config:
+                self.config[key] = value
+                self.populate_table()
+            elif key in self.config:
+                InfoBar.warning(
+                    title='重复的名称',
+                    content='该名称已存在，请使用其他名称',
+                    orient=Qt.Orientation.Horizontal,
+                    isClosable=True,
+                    position=InfoBarPosition.TOP,
+                    duration=2000,
+                    parent=self
+                )
+
+    def edit_item(self):
+        """Edit selected item"""
+        current_row = self.table.currentRow()
+        if current_row >= 0:
+            key_item = self.table.item(current_row, 0)
+            value_item = self.table.item(current_row, 1)
+            if key_item and value_item:
+                old_key = key_item.text()
+                dialog = QuickSendItemDialog(self, old_key, value_item.text())
+                if dialog.exec() == QDialog.DialogCode.Accepted:
+                    new_key, new_value = dialog.get_data()
+                    if new_key:
+                        # Remove old key if changed
+                        if old_key != new_key and old_key in self.config:
+                            del self.config[old_key]
+                        self.config[new_key] = new_value
+                        self.populate_table()
+
+    def remove_item(self):
+        """Remove selected item"""
+        current_row = self.table.currentRow()
+        if current_row >= 0:
+            key_item = self.table.item(current_row, 0)
+            if key_item:
+                key = key_item.text()
+                if key in self.config:
+                    del self.config[key]
+                    self.populate_table()
+
+    def get_config(self):
+        """Get current configuration"""
+        return self.config
+
+class QuickSendItemDialog(QDialog):
+    """Dialog for adding/editing quick send items"""
+    def __init__(self, parent=None, key="", value=""):
+        super().__init__(parent)
+        self.setWindowTitle("快捷发送项")
+        self.setMinimumWidth(400)
+
+        layout = QVBoxLayout(self)
+
+        # Key input
+        key_layout = QHBoxLayout()
+        key_layout.addWidget(BodyLabel("名称:"))
+        self.key_edit = LineEdit()
+        self.key_edit.setText(key)
+        self.key_edit.setPlaceholderText("输入显示名称")
+        key_layout.addWidget(self.key_edit)
+        layout.addLayout(key_layout)
+
+        # Value input
+        value_layout = QHBoxLayout()
+        value_layout.addWidget(BodyLabel("数据:"))
+        self.value_edit = LineEdit()
+        self.value_edit.setText(value)
+        value_layout.addWidget(self.value_edit)
+        layout.addLayout(value_layout)
+
+        # Dialog buttons
+        dialog_buttons = QDialogButtonBox(QDialogButtonBox.StandardButton.Ok | QDialogButtonBox.StandardButton.Cancel)
+        dialog_buttons.accepted.connect(self.accept)
+        dialog_buttons.rejected.connect(self.reject)
+        layout.addWidget(dialog_buttons)
+
+    def get_data(self):
+        """Get key and value"""
+        return self.key_edit.text().strip(), self.value_edit.text().strip()
 
 class LogWorker(QThread):
     def __init__(self, logger):

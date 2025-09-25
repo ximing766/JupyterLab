@@ -1,0 +1,181 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="80"
+    android:viewportHeight="80">
+    
+    <!-- Robot shadow -->
+    <ellipse
+        android:fillColor="#E0E0E0"
+        android:fillAlpha="0.3"
+        cx="40"
+        cy="72"
+        rx="22"
+        ry="6" />
+    
+    <!-- Main body -->
+    <path
+        android:fillColor="#607D8B"
+        android:pathData="M25,35 L55,35 Q60,35 60,40 L60,65 Q60,70 55,70 L25,70 Q20,70 20,65 L20,40 Q20,35 25,35 Z" />
+    
+    <!-- Body panel -->
+    <path
+        android:fillColor="#78909C"
+        android:pathData="M28,38 L52,38 Q55,38 55,41 L55,64 Q55,67 52,67 L28,67 Q25,67 25,64 L25,41 Q25,38 28,38 Z" />
+    
+    <!-- Head -->
+    <path
+        android:fillColor="#607D8B"
+        android:pathData="M30,15 L50,15 Q53,15 53,18 L53,32 Q53,35 50,35 L30,35 Q27,35 27,32 L27,18 Q27,15 30,15 Z" />
+    
+    <!-- Head screen -->
+    <path
+        android:fillColor="#263238"
+        android:pathData="M32,17 L48,17 Q50,17 50,19 L50,31 Q50,33 48,33 L32,33 Q30,33 30,31 L30,19 Q30,17 32,17 Z" />
+    
+    <!-- Eyes (LED) -->
+    <circle
+        android:fillColor="#00E676"
+        cx="36"
+        cy="23"
+        r="2" />
+    <circle
+        android:fillColor="#00E676"
+        cx="44"
+        cy="23"
+        r="2" />
+    
+    <!-- Eye glow -->
+    <circle
+        android:fillColor="#69F0AE"
+        android:fillAlpha="0.6"
+        cx="36"
+        cy="23"
+        r="3" />
+    <circle
+        android:fillColor="#69F0AE"
+        android:fillAlpha="0.6"
+        cx="44"
+        cy="23"
+        r="3" />
+    
+    <!-- Mouth (LED strip) -->
+    <path
+        android:fillColor="#FF5722"
+        android:pathData="M35,28 L45,28 Q46,28 46,29 L46,29 Q46,30 45,30 L35,30 Q34,30 34,29 L34,29 Q34,28 35,28 Z" />
+    
+    <!-- Antenna -->
+    <path
+        android:fillColor="#455A64"
+        android:pathData="M39,8 L41,8 L41,15 L39,15 Z" />
+    
+    <!-- Antenna tip -->
+    <circle
+        android:fillColor="#FF5722"
+        cx="40"
+        cy="8"
+        r="2" />
+    
+    <!-- Antenna light -->
+    <circle
+        android:fillColor="#FF8A65"
+        android:fillAlpha="0.8"
+        cx="40"
+        cy="8"
+        r="3" />
+    
+    <!-- Arms -->
+    <path
+        android:fillColor="#546E7A"
+        android:pathData="M15,40 L25,40 Q27,40 27,42 L27,42 Q27,44 25,44 L15,44 Q13,44 13,42 L13,42 Q13,40 15,40 Z" />
+    <path
+        android:fillColor="#546E7A"
+        android:pathData="M55,40 L65,40 Q67,40 67,42 L67,42 Q67,44 65,44 L55,44 Q53,44 53,42 L53,42 Q53,40 55,40 Z" />
+    
+    <!-- Hands -->
+    <circle
+        android:fillColor="#455A64"
+        cx="20"
+        cy="42"
+        r="3" />
+    <circle
+        android:fillColor="#455A64"
+        cx="60"
+        cy="42"
+        r="3" />
+    
+    <!-- Legs -->
+    <path
+        android:fillColor="#546E7A"
+        android:pathData="M30,70 L36,70 Q39,70 39,73 L39,75 Q39,78 36,78 L30,78 Q27,78 27,75 L27,73 Q27,70 30,70 Z" />
+    <path
+        android:fillColor="#546E7A"
+        android:pathData="M44,70 L50,70 Q53,70 53,73 L53,75 Q53,78 50,78 L44,78 Q41,78 41,75 L41,73 Q41,70 44,70 Z" />
+    
+    <!-- Feet -->
+    <path
+        android:fillColor="#455A64"
+        android:pathData="M27,76 L39,76 Q41,76 41,78 L41,78 Q41,80 39,80 L27,80 Q25,80 25,78 L25,78 Q25,76 27,76 Z" />
+    <path
+        android:fillColor="#455A64"
+        android:pathData="M41,76 L53,76 Q55,76 55,78 L55,78 Q55,80 53,80 L41,80 Q39,80 39,78 L39,78 Q39,76 41,76 Z" />
+    
+    <!-- Body buttons -->
+    <circle
+        android:fillColor="#FF5722"
+        cx="35"
+        cy="45"
+        r="1.5" />
+    <circle
+        android:fillColor="#4CAF50"
+        cx="40"
+        cy="45"
+        r="1.5" />
+    <circle
+        android:fillColor="#2196F3"
+        cx="45"
+        cy="45"
+        r="1.5" />
+    
+    <!-- Chest panel lines -->
+    <rect
+        android:fillColor="#90A4AE"
+        android:x="30dp"
+        android:y="50dp"
+        android:width="20dp"
+        android:height="1dp" />
+    <rect
+        android:fillColor="#90A4AE"
+        android:x="30dp"
+        android:y="55dp"
+        android:width="20dp"
+        android:height="1dp" />
+    <rect
+        android:fillColor="#90A4AE"
+        android:x="30dp"
+        android:y="60dp"
+        android:width="20dp"
+        android:height="1dp" />
+    
+    <!-- Screws -->
+    <circle
+        android:fillColor="#37474F"
+        cx="32"
+        cy="20"
+        r="1" />
+    <circle
+        android:fillColor="#37474F"
+        cx="48"
+        cy="20"
+        r="1" />
+    <circle
+        android:fillColor="#37474F"
+        cx="27"
+        cy="40"
+        r="1" />
+    <circle
+        android:fillColor="#37474F"
+        cx="53"
+        cy="40"
+        r="1" />
+</vector>

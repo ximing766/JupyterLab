@@ -1,0 +1,189 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="80"
+    android:viewportHeight="80">
+    
+    <!-- Dog shadow -->
+    <ellipse
+        android:fillColor="#E0E0E0"
+        android:fillAlpha="0.3"
+        cx="40"
+        cy="70"
+        rx="20"
+        ry="6" />
+    
+    <!-- Main body -->
+    <ellipse
+        android:fillColor="#8D6E63"
+        cx="40"
+        cy="50"
+        rx="18"
+        ry="20" />
+    
+    <!-- Body spots -->
+    <circle
+        android:fillColor="#5D4037"
+        cx="32"
+        cy="45"
+        r="4" />
+    <circle
+        android:fillColor="#5D4037"
+        cx="48"
+        cy="55"
+        r="3" />
+    
+    <!-- Head -->
+    <ellipse
+        android:fillColor="#8D6E63"
+        cx="40"
+        cy="28"
+        rx="15"
+        ry="12" />
+    
+    <!-- Snout -->
+    <ellipse
+        android:fillColor="#A1887F"
+        cx="40"
+        cy="35"
+        rx="8"
+        ry="6" />
+    
+    <!-- Ears (floppy) -->
+    <ellipse
+        android:fillColor="#6D4C41"
+        cx="28"
+        cy="22"
+        rx="6"
+        ry="10"
+        android:rotation="-20" />
+    <ellipse
+        android:fillColor="#6D4C41"
+        cx="52"
+        cy="22"
+        rx="6"
+        ry="10"
+        android:rotation="20" />
+    
+    <!-- Inner ears -->
+    <ellipse
+        android:fillColor="#FFCDD2"
+        cx="28"
+        cy="22"
+        rx="3"
+        ry="6"
+        android:rotation="-20" />
+    <ellipse
+        android:fillColor="#FFCDD2"
+        cx="52"
+        cy="22"
+        rx="3"
+        ry="6"
+        android:rotation="20" />
+    
+    <!-- Eyes -->
+    <circle
+        android:fillColor="#424242"
+        cx="35"
+        cy="25"
+        r="3" />
+    <circle
+        android:fillColor="#424242"
+        cx="45"
+        cy="25"
+        r="3" />
+    
+    <!-- Eye highlights -->
+    <circle
+        android:fillColor="#FFFFFF"
+        cx="36"
+        cy="24"
+        r="1.2" />
+    <circle
+        android:fillColor="#FFFFFF"
+        cx="46"
+        cy="24"
+        r="1.2" />
+    
+    <!-- Nose -->
+    <ellipse
+        android:fillColor="#424242"
+        cx="40"
+        cy="33"
+        rx="2"
+        ry="1.5" />
+    
+    <!-- Mouth -->
+    <path
+        android:strokeColor="#424242"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M40,35 Q37,38 34,36 M40,35 Q43,38 46,36" />
+    
+    <!-- Tongue -->
+    <ellipse
+        android:fillColor="#FFCDD2"
+        cx="40"
+        cy="39"
+        rx="3"
+        ry="2" />
+    
+    <!-- Legs -->
+    <ellipse
+        android:fillColor="#8D6E63"
+        cx="28"
+        cy="65"
+        rx="4"
+        ry="8" />
+    <ellipse
+        android:fillColor="#8D6E63"
+        cx="52"
+        cy="65"
+        rx="4"
+        ry="8" />
+    
+    <!-- Paws -->
+    <ellipse
+        android:fillColor="#5D4037"
+        cx="28"
+        cy="70"
+        rx="5"
+        ry="3" />
+    <ellipse
+        android:fillColor="#5D4037"
+        cx="52"
+        cy="70"
+        rx="5"
+        ry="3" />
+    
+    <!-- Tail -->
+    <path
+        android:fillColor="#8D6E63"
+        android:pathData="M58,45 Q68,40 72,30 Q75,20 70,15 Q65,12 62,20 Q58,30 56,40 Z" />
+    
+    <!-- Tail tip -->
+    <circle
+        android:fillColor="#FFFFFF"
+        cx="70"
+        cy="18"
+        r="3" />
+    
+    <!-- Collar -->
+    <path
+        android:fillColor="#F44336"
+        android:pathData="M25,40 L55,40 Q57,40 57,42 L57,42 Q57,44 55,44 L25,44 Q23,44 23,42 L23,42 Q23,40 25,40 Z" />
+    
+    <!-- Collar buckle -->
+    <path
+        android:fillColor="#FFD700"
+        android:strokeColor="#FFA000"
+        android:strokeWidth="1"
+        android:pathData="M38,41 L42,41 Q43,41 43,42 L43,42 Q43,43 42,43 L38,43 Q37,43 37,42 L37,42 Q37,41 38,41 Z" />
+    
+    <!-- Head spot -->
+    <circle
+        android:fillColor="#5D4037"
+        cx="45"
+        cy="20"
+        r="3" />
+</vector>

@@ -1,13 +1,42 @@
 {
-  "background_images": [
-    "pic\\person4.jpg",
-    "pic\\person5.jpg",
-    "pic\\person6.jpg",
-    "pic\\person7.jpg",
-    "pic\\person8.jpg",
-    "pic\\person11.jpg",
-    "pic\\carton2.jpg",
-    "pic\\hello.jpg"
-  ],
-  "current_background_image": "pic\\person7.jpg"
+  "background": {
+    "background_images": [
+      "pic\\person4.jpg",
+      "pic\\person5.jpg",
+      "pic\\person6.jpg",
+      "pic\\person7.jpg",
+      "pic\\person8.jpg",
+      "pic\\person11.jpg",
+      "pic\\person12.jpg",
+      "pic\\carton2.jpg"
+    ],
+    "current_background_image": "pic\\person6.jpg"
+  },
+  "app": {
+    "LogLevel": {
+      "level": "ALL"
+    },
+    "QFluentWidgets": {
+      "ThemeColor": "#ff009faa",
+      "ThemeMode": "Dark"
+    }
+  },
+  "highlight": {
+    "APP     :ERROR": "#ff7f7f",
+    "APP     :INFO": "#8ccfff",
+    "APP     :WARN": "#ffd280",
+    "gCapSessionHandle": "#00ff7f",
+    "gDtxSessionHandle": "#b9f309",
+    "gMrmSessionHandle": "#ffaaff",
+    "APP_HIFTask": "#34a7b2",
+    "SystemStatus = 1": "#aa9bff",
+    "INTO RED AREA": "#ff5885",
+    "INTO BLUE AREA": "#55aaff",
+    "Crash Log": "#ff0000",
+    "Detection Area": "#6a6a6a"
+  },
+  "quick_send": {
+    "test": "hello world",
+    "123": "123"
+  }
 }

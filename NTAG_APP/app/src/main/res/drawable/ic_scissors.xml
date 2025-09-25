@@ -1,0 +1,35 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="64dp"
+    android:height="64dp"
+    android:viewportWidth="24"
+    android:viewportHeight="24">
+
+    <!-- Scissors handles (two circles) -->
+    <path
+        android:fillColor="#FF7043"
+        android:pathData="M10,9 C10,10.6569 8.6569,12 7,12 C5.3431,12 4,10.6569 4,9 C4,7.3431 5.3431,6 7,6 C8.6569,6 10,7.3431 10,9 Z" />
+    <path
+        android:fillColor="#FF7043"
+        android:pathData="M10,15 C10,16.6569 8.6569,18 7,18 C5.3431,18 4,16.6569 4,15 C4,13.3431 5.3431,12 7,12 C8.6569,12 10,13.3431 10,15 Z" />
+
+    <!-- Pivot -->
+    <path
+        android:fillColor="#CFD8DC"
+        android:pathData="M12,12 C12,12.5523 11.5523,13 11,13 C10.4477,13 10,12.5523 10,12 C10,11.4477 10.4477,11 11,11 C11.5523,11 12,11.4477 12,12 Z" />
+
+    <!-- Scissor blades -->
+    <path
+        android:strokeColor="#455A64"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000"
+        android:pathData="M11,12 L20,5" />
+    <path
+        android:strokeColor="#455A64"
+        android:strokeWidth="1.8"
+        android:strokeLineCap="round"
+        android:strokeLineJoin="round"
+        android:fillColor="#00000000"
+        android:pathData="M11,12 L20,19" />
+</vector>

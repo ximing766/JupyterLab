@@ -1,0 +1,165 @@
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="80dp"
+    android:height="80dp"
+    android:viewportWidth="80"
+    android:viewportHeight="80">
+    
+    <!-- Pet shadow -->
+    <ellipse
+        android:fillColor="#E0E0E0"
+        android:fillAlpha="0.3"
+        cx="40"
+        cy="70"
+        rx="20"
+        ry="6" />
+    
+    <!-- Main body -->
+    <circle
+        android:fillColor="#4FC3F7"
+        cx="40"
+        cy="45"
+        r="20" />
+    
+    <!-- Body highlight -->
+    <circle
+        android:fillColor="#81D4FA"
+        cx="40"
+        cy="40"
+        r="15" />
+    
+    <!-- Head -->
+    <circle
+        android:fillColor="#4FC3F7"
+        cx="40"
+        cy="25"
+        r="15" />
+    
+    <!-- Head highlight -->
+    <circle
+        android:fillColor="#81D4FA"
+        cx="40"
+        cy="22"
+        r="10" />
+    
+    <!-- Ears -->
+    <circle
+        android:fillColor="#29B6F6"
+        cx="32"
+        cy="15"
+        r="4" />
+    <circle
+        android:fillColor="#29B6F6"
+        cx="48"
+        cy="15"
+        r="4" />
+    
+    <!-- Inner ears -->
+    <circle
+        android:fillColor="#FFCDD2"
+        cx="32"
+        cy="15"
+        r="2" />
+    <circle
+        android:fillColor="#FFCDD2"
+        cx="48"
+        cy="15"
+        r="2" />
+    
+    <!-- Eyes -->
+    <circle
+        android:fillColor="#424242"
+        cx="35"
+        cy="22"
+        r="3" />
+    <circle
+        android:fillColor="#424242"
+        cx="45"
+        cy="22"
+        r="3" />
+    
+    <!-- Eye highlights -->
+    <circle
+        android:fillColor="#FFFFFF"
+        cx="36"
+        cy="21"
+        r="1.5" />
+    <circle
+        android:fillColor="#FFFFFF"
+        cx="46"
+        cy="21"
+        r="1.5" />
+    
+    <!-- Nose -->
+    <circle
+        android:fillColor="#424242"
+        cx="40"
+        cy="27"
+        r="1.5" />
+    
+    <!-- Mouth -->
+    <path
+        android:strokeColor="#424242"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M37,30 Q40,33 43,30" />
+    
+    <!-- Arms -->
+    <circle
+        android:fillColor="#4FC3F7"
+        cx="25"
+        cy="40"
+        r="6" />
+    <circle
+        android:fillColor="#4FC3F7"
+        cx="55"
+        cy="40"
+        r="6" />
+    
+    <!-- Legs -->
+    <circle
+        android:fillColor="#4FC3F7"
+        cx="32"
+        cy="60"
+        r="6" />
+    <circle
+        android:fillColor="#4FC3F7"
+        cx="48"
+        cy="60"
+        r="6" />
+    
+    <!-- Belly pattern -->
+    <circle
+        android:fillColor="#FFFFFF"
+        android:fillAlpha="0.3"
+        cx="40"
+        cy="45"
+        r="8" />
+    
+    <!-- Cheek blush -->
+    <circle
+        android:fillColor="#FFCDD2"
+        android:fillAlpha="0.6"
+        cx="28"
+        cy="25"
+        r="3" />
+    <circle
+        android:fillColor="#FFCDD2"
+        android:fillAlpha="0.6"
+        cx="52"
+        cy="25"
+        r="3" />
+    
+    <!-- Antenna -->
+    <path
+        android:strokeColor="#29B6F6"
+        android:strokeWidth="2"
+        android:strokeLineCap="round"
+        android:pathData="M40,10 L40,5" />
+    
+    <!-- Antenna tip -->
+    <circle
+        android:fillColor="#FF5722"
+        cx="40"
+        cy="5"
+        r="2" />
+</vector>
