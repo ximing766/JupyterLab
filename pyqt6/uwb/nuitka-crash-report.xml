@@ -1,0 +1,93 @@
+<?xml version='1.0' encoding='utf8'?>
+<nuitka-compilation-report nuitka_version="2.7.13" nuitka_commercial_version="not installed" mode="standalone" completion="exception">
+  <exception exception_type="PermissionError" exception_value="[WinError 32] 另一个程序正在使用此文件，进程无法访问。: '..\\..\\output\\UWBDash.build\\ccache-3256.txt'">
+Traceback (most recent call last):
+  File "D:\ISoftware\miniconda\router\envs\myenv\Lib\site-packages\nuitka\MainControl.py", line 1168, in main
+    _main()
+  File "D:\ISoftware\miniconda\router\envs\myenv\Lib\site-packages\nuitka\MainControl.py", line 996, in _main
+    main_module = _createMainModule()
+                  ^^^^^^^^^^^^^^^^^^^
+  File "D:\ISoftware\miniconda\router\envs\myenv\Lib\site-packages\nuitka\MainControl.py", line 186, in _createMainModule
+    cleanSconsDirectory(source_dir)
+  File "D:\ISoftware\miniconda\router\envs\myenv\Lib\site-packages\nuitka\build\SconsInterface.py", line 467, in cleanSconsDirectory
+    check(path)
+  File "D:\ISoftware\miniconda\router\envs\myenv\Lib\site-packages\nuitka\build\SconsInterface.py", line 463, in check
+    deleteFile(path, must_exist=True)
+  File "D:\ISoftware\miniconda\router\envs\myenv\Lib\site-packages\nuitka\utils\FileOperations.py", line 653, in deleteFile
+    os.unlink(path)
+PermissionError: [WinError 32] 另一个程序正在使用此文件，进程无法访问。: '..\\..\\output\\UWBDash.build\\ccache-3256.txt'
+</exception>
+  <performance>
+    <memory_usage name="after_launch" value="47669248" />
+  </performance>
+  <data_file name="config.json" source="${cwd}\config.json" size="995" reason="specified data file './config.json=./config.json' on command line" tags="user,copy" />
+  <data_file name="UWBDash.json" source="${cwd}\UWBDash.json" size="1554" reason="specified data file './UWBDash.json=./UWBDash.json' on command line" tags="user,copy" />
+  <data_file name="logo.ico" source="${cwd}\logo.ico" size="70303" reason="specified data file './logo.ico=./logo.ico' on command line" tags="user,copy" />
+  <data_file name="pic\carton2.jpg" source="${cwd}\pic\carton2.jpg" size="397734" reason="specified data dir './pic' on command line" tags="user,copy,data-dir-contents" />
+  <data_file name="pic\person11.jpg" source="${cwd}\pic\person11.jpg" size="595258" reason="specified data dir './pic' on command line" tags="user,copy,data-dir-contents" />
+  <data_file name="pic\person12.jpg" source="${cwd}\pic\person12.jpg" size="1599939" reason="specified data dir './pic' on command line" tags="user,copy,data-dir-contents" />
+  <data_file name="pic\person4.jpg" source="${cwd}\pic\person4.jpg" size="1074817" reason="specified data dir './pic' on command line" tags="user,copy,data-dir-contents" />
+  <data_file name="pic\person5.jpg" source="${cwd}\pic\person5.jpg" size="7794368" reason="specified data dir './pic' on command line" tags="user,copy,data-dir-contents" />
+  <data_file name="pic\person6.jpg" source="${cwd}\pic\person6.jpg" size="906739" reason="specified data dir './pic' on command line" tags="user,copy,data-dir-contents" />
+  <data_file name="pic\person7.jpg" source="${cwd}\pic\person7.jpg" size="7910581" reason="specified data dir './pic' on command line" tags="user,copy,data-dir-contents" />
+  <data_file name="pic\person8.jpg" source="${cwd}\pic\person8.jpg" size="7789880" reason="specified data dir './pic' on command line" tags="user,copy,data-dir-contents" />
+  <data_composer blob_size="None" />
+  <command_line>
+    <option value="--standalone" />
+    <option value="--windows-console-mode=disable" />
+    <option value="--enable-plugin=pyqt6" />
+    <option value="--windows-icon-from-ico=./logo.ico" />
+    <option value="--include-data-dir=./pic=./pic" />
+    <option value="--include-data-file=./config.json=./config.json" />
+    <option value="--include-data-file=./UWBDash.json=./UWBDash.json" />
+    <option value="--include-data-file=./logo.ico=./logo.ico" />
+    <option value="--include-module=log" />
+    <option value="--include-module=position_view" />
+    <option value="--include-module=splash_screen" />
+    <option value="--include-module=user_manager" />
+    <option value="--output-dir=../../output" />
+    <option value="--product-name=UWBDash" />
+    <option value="--product-version=2.0.2" />
+    <option value="--file-version=1.0.0.0" />
+    <option value="--copyright=CardShare@Qilang² © 2025" />
+    <option value="--trademarks=UWBDash" />
+    <option value="UWBDash.py" />
+  </command_line>
+  <plugins>
+    <plugin name="anti-bloat" user_enabled="no" />
+    <plugin name="data-files" user_enabled="no" />
+    <plugin name="delvewheel" user_enabled="no" />
+    <plugin name="dll-files" user_enabled="no" />
+    <plugin name="eventlet" user_enabled="no" />
+    <plugin name="gevent" user_enabled="no" />
+    <plugin name="gi" user_enabled="no" />
+    <plugin name="glfw" user_enabled="no" />
+    <plugin name="implicit-imports" user_enabled="no" />
+    <plugin name="kivy" user_enabled="no" />
+    <plugin name="matplotlib" user_enabled="no" />
+    <plugin name="multiprocessing" user_enabled="no" />
+    <plugin name="options-nanny" user_enabled="no" />
+    <plugin name="pbr-compat" user_enabled="no" />
+    <plugin name="pkg-resources" user_enabled="no" />
+    <plugin name="playwright" user_enabled="no" />
+    <plugin name="pyqt6" user_enabled="yes" />
+    <plugin name="pywebview" user_enabled="no" />
+    <plugin name="spacy" user_enabled="no" />
+    <plugin name="transformers" user_enabled="no" />
+  </plugins>
+  <distributions />
+  <python python_exe="${sys.prefix}\python.exe" python_flavor="Anaconda Python" python_version="3.11.13" os_name="Windows" os_release="11" arch_name="x86_64" filesystem_encoding="utf-8">
+    <search_path>
+      <path value="${cwd}" />
+      <path value="${sys.prefix}\DLLs" />
+      <path value="${sys.prefix}\Lib" />
+      <path value="${sys.prefix}" />
+      <path value="${sys.prefix}\Lib\site-packages" />
+      <path value="${sys.prefix}\Lib\site-packages\win32" />
+      <path value="${sys.prefix}\Lib\site-packages\win32\lib" />
+      <path value="${sys.prefix}\Lib\site-packages\Pythonwin" />
+      <path value="${sys.prefix}\Lib\site-packages\setuptools\_vendor" />
+    </search_path>
+  </python>
+  <output run_filename="E:\Work\Python\JupyterLab\output\UWBDash.dist\UWBDash.exe" />
+</nuitka-compilation-report>

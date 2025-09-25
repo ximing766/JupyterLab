@@ -78,6 +78,12 @@ class SplashScreen(QWidget):
                 scaled_pixmap = pixmap.scaled(80, 80, Qt.AspectRatioMode.KeepAspectRatio, 
                                             Qt.TransformationMode.SmoothTransformation)
                 self.logo_label.setPixmap(scaled_pixmap)
+            else:
+                # Default logo placeholder
+                self.logo_label.setText("📱")
+                font = QFont()
+                font.setPointSize(48)
+                self.logo_label.setFont(font)
         else:
             # Default logo placeholder
             self.logo_label.setText("📱")

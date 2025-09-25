@@ -7,8 +7,8 @@ Manages page registration, navigation, and lifecycle
 from typing import Dict, List, Optional, Type, Any
 from PyQt6.QtCore import QObject, pyqtSignal
 from PyQt6.QtWidgets import QStackedWidget
+from qfluentwidgets import FluentIcon as FIF
 from .base_page import BasePage
-from .placeholder_page import PlaceholderPage, COM1PlaceholderPage, COM2PlaceholderPage, ChartPlaceholderPage
 from .settings_page import SettingsPage
 
 
@@ -61,26 +61,10 @@ class PageManager(QObject):
     
     def _register_default_pages(self):
         """Register default application pages"""
-        # Register placeholder pages
-        self.register_page(
-            "com1", "COM1", COM1PlaceholderPage,
-            tooltip="COM1 Serial Interface", order=1
-        )
-        
-        self.register_page(
-            "com2", "COM2", COM2PlaceholderPage,
-            tooltip="COM2 Serial Interface", order=2
-        )
-        
-        self.register_page(
-            "chart", "Chart", ChartPlaceholderPage,
-            tooltip="Data Visualization", order=3
-        )
-        
-        # Register settings page
+        # Register settings page only
         self.register_page(
             "settings", "Settings", SettingsPage,
-            tooltip="Application Settings", order=99
+            icon=FIF.SETTING, tooltip="Application Settings", order=99
         )
     
     def register_page(self, page_id: str, title: str, page_class: Type[BasePage],

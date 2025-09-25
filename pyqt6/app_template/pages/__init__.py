@@ -5,22 +5,14 @@ Contains all page classes and page management functionality
 """
 
 from .base_page import BasePage
-from .placeholder_page import (
-    PlaceholderPage,
-    COM1PlaceholderPage,
-    COM2PlaceholderPage,
-    ChartPlaceholderPage
-)
 from .settings_page import SettingsPage
+from .example_page import ExamplePage
 from .page_manager import PageManager, PageInfo
 
 __all__ = [
     'BasePage',
-    'PlaceholderPage',
-    'COM1PlaceholderPage',
-    'COM2PlaceholderPage',
-    'ChartPlaceholderPage',
     'SettingsPage',
+    'ExamplePage',
     'PageManager',
     'PageInfo'
 ]

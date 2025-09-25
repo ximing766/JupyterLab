@@ -6,11 +6,11 @@ Contains theme management, background switching, and other general settings
 
 import os
 from PyQt6.QtCore import Qt, pyqtSignal, QUrl
-from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QFileDialog
+from PyQt6.QtWidgets import QVBoxLayout, QHBoxLayout, QFileDialog, QWidget
 from PyQt6.QtGui import QDesktopServices
 from qfluentwidgets import (
-    SettingCardGroup, SwitchSettingCard, ComboBoxSettingCard, 
-    PushSettingCard, HyperlinkCard, PrimaryPushSettingCard,
+    SettingCardGroup, SwitchSettingCard, PushSettingCard,
+    HyperlinkCard, PrimaryPushSettingCard,
     FluentIcon as FIF, InfoBar, InfoBarPosition, MessageBox,
     ExpandLayout, ScrollArea, qconfig, Theme, setTheme
 )
@@ -27,152 +27,191 @@ class SettingsPage(BasePage):
     
     def __init__(self, config_manager=None, parent=None):
         self.config_manager = config_manager
-        super().__init__("settings", "Settings", parent)
+        super().__init__("settings", parent)
+    
+    def apply_theme(self):
+        """Apply current theme to the page"""
+        if self.config_manager:
+            current_theme = self.config_manager.get_theme()
+            
+            # Update theme card text based on current theme
+            if hasattr(self, 'theme_card'):
+                theme_display = "Dark" if current_theme.lower() == "dark" else "Light"
+                self.theme_card.setContent(theme_display)
+                
+            # Apply theme-specific styling to the page
+            if current_theme.lower() == "dark":
+                # Dark theme styling
+                self.setStyleSheet("""
+                    QWidget {
+                        background-color: transparent;
+                        color: white;
+                    }
+                """)
+            else:
+                # Light theme styling
+                self.setStyleSheet("""
+                    QWidget {
+                        background-color: transparent;
+                        color: black;
+                    }
+                """)
     
     def init_content(self):
-        """Initialize settings content"""
-        # Create scroll area for settings
-        self.scroll_widget = ScrollArea()
-        self.scroll_widget.setWidgetResizable(True)
+        """Initialize page content"""
+        scroll_widget = ScrollArea(self)
+        scroll_widget.setWidgetResizable(True)
+        scroll_widget.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        scroll_widget.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         
-        # Create expand layout for setting cards
-        self.expand_layout = ExpandLayout()
+        # Create container widget for scroll content
+        scroll_content = QWidget()
         
-        # Create setting groups
-        self.create_appearance_group()
-        self.create_application_group()
-        self.create_about_group()
+        # Create vertical layout for settings groups (use QVBoxLayout instead of ExpandLayout)
+        content_layout = QVBoxLayout(scroll_content)
+        content_layout.setSpacing(20)  # Add spacing between groups
+        content_layout.setContentsMargins(20, 20, 20, 20)  # Add margins
         
-        # Set layout
-        self.scroll_widget.setLayout(self.expand_layout)
-        self.add_content_widget(self.scroll_widget)
+        # Create settings groups
+        appearance_group = self.create_appearance_group()
+        application_group = self.create_application_group()
+        about_group = self.create_about_group()
+        
+        # Add groups to layout
+        content_layout.addWidget(appearance_group)
+        content_layout.addWidget(application_group)
+        content_layout.addWidget(about_group)
+        
+        # Add stretch to push content to top
+        content_layout.addStretch()
+        
+        # Set the container as scroll widget content
+        scroll_content.setLayout(content_layout)
+        scroll_widget.setWidget(scroll_content)
+        
+        # Add scroll widget to main layout
+        self.layout.addWidget(scroll_widget)
+        
+        # Apply initial theme
+        self.apply_theme()
     
     def create_appearance_group(self):
         """Create appearance settings group"""
-        self.appearance_group = SettingCardGroup("Appearance", self)
+        group = SettingCardGroup("外观", self)
+        
+        # Get current theme from config
+        current_theme = "Light"
+        if self.config_manager:
+            theme_config = self.config_manager.get_theme_config()
+            current_theme = "Dark" if theme_config.get('is_dark', False) else "Light"
         
         # Theme setting card - use PushSettingCard instead of ComboBoxSettingCard
         self.theme_card = PushSettingCard(
-            "Light",
+            current_theme,
             FIF.BRUSH,
-            "Application theme",
-            "Change the appearance of your application"
+            "主题",
+            "选择应用程序主题",
+            parent=group
         )
         self.theme_card.clicked.connect(self.on_theme_clicked)
         
-        # Background setting card
-        self.background_card = SwitchSettingCard(
+        # Background image card - directly cycle through background images
+        self.background_card = PushSettingCard(
+            "切换背景",
             FIF.PHOTO,
-            "Background image",
-            "Enable custom background image",
-            parent=self.appearance_group
+            "背景图片",
+            "点击切换背景图片",
+            parent=group
         )
-        self.background_card.switchButton.checkedChanged.connect(self.on_background_toggle)
+        self.background_card.clicked.connect(self.cycle_background_image)
         
-        # Background selection card
-        self.background_select_card = PushSettingCard(
-            "Select background",
-            FIF.FOLDER,
-            "Background image",
-            "Choose a custom background image",
-            parent=self.appearance_group
-        )
-        self.background_select_card.clicked.connect(self.select_background_image)
+        group.addSettingCard(self.theme_card)
+        group.addSettingCard(self.background_card)
         
-        # Add cards to group
-        self.appearance_group.addSettingCard(self.theme_card)
-        self.appearance_group.addSettingCard(self.background_card)
-        self.appearance_group.addSettingCard(self.background_select_card)
-        
-        # Add group to layout
-        self.expand_layout.addWidget(self.appearance_group)
+        return group
     
     def create_application_group(self):
-        """Create application settings group"""
-        self.application_group = SettingCardGroup("Application", self)
+        group = SettingCardGroup("应用程序", self)
         
-        # Auto-save setting card
-        self.autosave_card = SwitchSettingCard(
-            FIF.SAVE,
-            "Auto-save settings",
-            "Automatically save settings when changed",
-            parent=self.application_group
-        )
-        self.autosave_card.switchButton.checkedChanged.connect(self.on_autosave_changed)
-        
-        # Language setting card - use PushSettingCard instead of ComboBoxSettingCard
+        # Language setting card
         self.language_card = PushSettingCard(
-            "English",
+            "中文",
             FIF.LANGUAGE,
-            "Language",
-            "Choose your preferred language"
+            "语言",
+            "更改应用程序语言",
+            parent=group
         )
         self.language_card.clicked.connect(self.on_language_clicked)
         
         # Reset settings card
-        self.reset_card = PushSettingCard(
-            "Reset",
-            FIF.DELETE,
-            "Reset settings",
-            "Reset all settings to default values",
-            parent=self.application_group
+        self.reset_card = PrimaryPushSettingCard(
+            "重置",
+            FIF.UPDATE,
+            "重置设置",
+            "将所有设置恢复为默认值",
+            parent=group
         )
         self.reset_card.clicked.connect(self.reset_settings)
         
-        # Add cards to group
-        self.application_group.addSettingCard(self.autosave_card)
-        self.application_group.addSettingCard(self.language_card)
-        self.application_group.addSettingCard(self.reset_card)
+        group.addSettingCard(self.language_card)
+        group.addSettingCard(self.reset_card)
         
-        # Add group to layout
-        self.expand_layout.addWidget(self.application_group)
+        return group
     
     def create_about_group(self):
-        """Create about and help group"""
-        self.about_group = SettingCardGroup("About", self)
+        """Create about settings group"""
+        group = SettingCardGroup("关于", self)
         
-        # Help card
+        # Help card - fix HyperlinkCard parameter order
         self.help_card = HyperlinkCard(
-            "https://github.com/your-repo/app-template",
-            "Open help page",
+            "https://github.com/zhiyiYo/PyQt-Fluent-Widgets",
+            "打开帮助页面",
             FIF.HELP,
-            "Help",
-            "Get help and documentation",
-            parent=self.about_group
+            "帮助",
+            "发现新功能并学习有用的技巧",
+            parent=group
         )
         
         # Feedback card
-        self.feedback_card = PrimaryPushSettingCard(
-            "Provide feedback",
+        self.feedback_card = PushSettingCard(
+            "提供反馈",
             FIF.FEEDBACK,
-            "Feedback",
-            "Help us improve the application",
-            parent=self.about_group
+            "反馈",
+            "提供反馈以帮助我们改进应用程序",
+            parent=group
         )
         self.feedback_card.clicked.connect(self.show_feedback_dialog)
         
+        # Check update card
+        self.update_card = PushSettingCard(
+            "检查更新",
+            FIF.UPDATE,
+            "软件更新",
+            "检查并安装应用程序更新",
+            parent=group
+        )
+        self.update_card.clicked.connect(self.check_update)
+        
         # About card
         self.about_card = PushSettingCard(
-            "Check update",
+            "查看许可证",
             FIF.INFO,
-            "About",
-            "Generic PyQt6 Application Template v1.0.0",
-            parent=self.about_group
+            "关于",
+            "版权所有 © 2024. 保留所有权利。",
+            parent=group
         )
-        self.about_card.clicked.connect(self.check_update)
         
-        # Add cards to group
-        self.about_group.addSettingCard(self.help_card)
-        self.about_group.addSettingCard(self.feedback_card)
-        self.about_group.addSettingCard(self.about_card)
-        
-        # Add group to layout
-        self.expand_layout.addWidget(self.about_group)
+        group.addSettingCard(self.help_card)
+        group.addSettingCard(self.feedback_card)
+        group.addSettingCard(self.update_card)
+        group.addSettingCard(self.about_card)
+
+        return group
     
     def on_theme_clicked(self):
         """Handle theme button click - cycle through themes"""
         current_text = self.theme_card.button.text()
-        themes = ["Light", "Dark", "Auto"]
+        themes = ["Light", "Dark"]
         
         try:
             current_index = themes.index(current_text)
@@ -184,60 +223,58 @@ class SettingsPage(BasePage):
         # Update button text
         self.theme_card.button.setText(next_theme)
         
-        # Apply theme
-        theme_map = {
-            "Light": Theme.LIGHT,
-            "Dark": Theme.DARK,
-            "Auto": Theme.AUTO
-        }
-        
-        if next_theme in theme_map:
-            theme = theme_map[next_theme]
-            setTheme(theme)
-            
-            # Save to config
-            if self.config_manager:
-                self.config_manager.set_theme(next_theme.lower())
-            
-            # Emit signal
-            self.theme_changed.emit(next_theme.lower())
-            self.setting_changed.emit("theme", next_theme.lower())
-            
-            # Show info
-            InfoBar.success(
-                title="Theme Changed",
-                content=f"Theme changed to {next_theme}",
-                orient=Qt.Orientation.Horizontal,
-                isClosable=True,
-                position=InfoBarPosition.TOP,
-                duration=2000,
-                parent=self
-            )
-    
-    def on_theme_changed(self, theme_text: str):
-        """Handle theme change (legacy method for compatibility)"""
-        self.on_theme_clicked()
-    
-    def on_background_toggle(self, enabled: bool):
-        """Handle background toggle"""
+        # Save to config first
         if self.config_manager:
-            self.config_manager.set_background_enabled(enabled)
+            self.config_manager.set_theme(next_theme.lower())
         
-        # Emit signal
-        self.background_changed.emit("enabled" if enabled else "disabled")
-        self.setting_changed.emit("background_enabled", enabled)
+        # Emit signal to main window to handle theme application
+        self.theme_changed.emit(next_theme.lower())
+        self.setting_changed.emit("theme", next_theme.lower())
         
         # Show info
-        status = "enabled" if enabled else "disabled"
-        InfoBar.info(
-            title="Background Setting",
-            content=f"Background image {status}",
-            orient=Qt.Orientation.Horizontal,
-            isClosable=True,
-            position=InfoBarPosition.TOP,
-            duration=2000,
-            parent=self
-        )
+        self.show_success("Theme Changed", f"Theme changed to {next_theme}", 2000)
+    
+    def on_theme_changed(self, theme):
+        """Handle theme change"""
+        print(f"Theme changed to: {theme}")
+        if self.config_manager:
+            self.config_manager.set_theme(theme)
+    
+    def cycle_background_image(self):
+        """Cycle through background images in assets/PIC folder"""
+        if not self.config_manager:
+            self.show_warning("配置错误", "配置管理器未初始化")
+            return
+        
+        # Get available images from config manager (which reads from assets/PIC)
+        available_images = self.config_manager.get_available_backgrounds()
+        
+        if not available_images:
+            self.show_warning("无背景图片", "assets/PIC 文件夹中没有找到图片文件")
+            return
+        
+        # Get current background configuration
+        current_image = self.config_manager.get_current_background()
+        current_index = self.config_manager.get_background_config().get("current_index", 0)
+        
+        # Calculate next index
+        next_index = (current_index + 1) % len(available_images)
+        next_image = available_images[next_index]
+        
+        # Update button text to show current image name
+        image_name = os.path.basename(next_image)
+        self.background_card.setContent(f"当前: {image_name}")
+        
+        # Save to config
+        self.config_manager.set_current_background(next_image)
+        self.config_manager.set_background_enabled(True)
+        
+        # Emit signal
+        self.background_changed.emit(next_image)
+        self.setting_changed.emit("background_image", next_image)
+        
+        # Show info
+        self.show_success("背景已切换", f"背景图片已切换到 {image_name}", 2000)
     
     def select_background_image(self):
         """Select background image"""
@@ -261,15 +298,7 @@ class SettingsPage(BasePage):
                 self.setting_changed.emit("background_image", image_path)
                 
                 # Show success message
-                InfoBar.success(
-                    title="Background Updated",
-                    content=f"Background image set to {os.path.basename(image_path)}",
-                    orient=Qt.Orientation.Horizontal,
-                    isClosable=True,
-                    position=InfoBarPosition.TOP,
-                    duration=3000,
-                    parent=self
-                )
+                self.show_success("Background Updated", f"Background image set to {os.path.basename(image_path)}", 3000)
     
     def on_autosave_changed(self, enabled: bool):
         """Handle auto-save setting change"""
@@ -279,15 +308,7 @@ class SettingsPage(BasePage):
         self.setting_changed.emit("autosave", enabled)
         
         status = "enabled" if enabled else "disabled"
-        InfoBar.info(
-            title="Auto-save Setting",
-            content=f"Auto-save {status}",
-            orient=Qt.Orientation.Horizontal,
-            isClosable=True,
-            position=InfoBarPosition.TOP,
-            duration=2000,
-            parent=self
-        )
+        self.show_info("Auto-save Setting", f"Auto-save {status}", 2000)
     
     def on_language_clicked(self):
         """Handle language button click - cycle through languages"""
@@ -310,15 +331,7 @@ class SettingsPage(BasePage):
         
         self.setting_changed.emit("language", next_language.lower())
         
-        InfoBar.info(
-            title="Language Setting",
-            content=f"Language set to {next_language}. Restart required for full effect.",
-            orient=Qt.Orientation.Horizontal,
-            isClosable=True,
-            position=InfoBarPosition.TOP,
-            duration=3000,
-            parent=self
-        )
+        self.show_info("Language Setting", f"Language set to {next_language}. Restart required for full effect.", 3000)
     
     def on_language_changed(self, language: str):
         """Handle language change (legacy method for compatibility)"""
@@ -344,39 +357,15 @@ class SettingsPage(BasePage):
             # Emit signal
             self.setting_changed.emit("reset", True)
             
-            InfoBar.success(
-                title="Settings Reset",
-                content="All settings have been reset to default values",
-                orient=Qt.Orientation.Horizontal,
-                isClosable=True,
-                position=InfoBarPosition.TOP,
-                duration=3000,
-                parent=self
-            )
+            self.show_success("Settings Reset", "All settings have been reset to default values", 3000)
     
     def show_feedback_dialog(self):
         """Show feedback dialog"""
-        InfoBar.info(
-            title="Feedback",
-            content="Thank you for your interest in providing feedback!\n\nPlease visit our GitHub repository or contact us directly.",
-            orient=Qt.Orientation.Vertical,
-            isClosable=True,
-            position=InfoBarPosition.TOP,
-            duration=4000,
-            parent=self
-        )
+        self.show_info("Feedback", "Thank you for your interest in providing feedback!\n\nPlease visit our GitHub repository or contact us directly.", 4000)
     
     def check_update(self):
         """Check for updates"""
-        InfoBar.info(
-            title="Update Check",
-            content="You are using the latest version of the application template.\n\nVersion: 1.0.0",
-            orient=Qt.Orientation.Vertical,
-            isClosable=True,
-            position=InfoBarPosition.TOP,
-            duration=3000,
-            parent=self
-        )
+        self.show_info("Update Check", "You are using the latest version of the application template.\n\nVersion: 1.0.0", 3000)
     
     def load_settings(self):
         """Load settings from config"""
@@ -392,14 +381,6 @@ class SettingsPage(BasePage):
         }
         if theme in theme_map:
             self.theme_card.button.setText(theme_map[theme])
-        
-        # Load background settings
-        bg_enabled = self.config_manager.get_background_enabled()
-        self.background_card.switchButton.setChecked(bg_enabled)
-        
-        # Load other settings
-        autosave = self.config_manager.get_autosave()
-        self.autosave_card.switchButton.setChecked(autosave)
         
         # Load language - update button text based on current language
         language = self.config_manager.get_language()
@@ -424,5 +405,7 @@ class SettingsPage(BasePage):
     def on_deactivate(self):
         """Called when settings page is deactivated"""
         super().on_deactivate()
-        if self.config_manager and self.config_manager.get_autosave():
-            self.save_settings()
+        # Auto-save removed as per requirements
+    
+    def __str__(self):
+        return f"SettingsPage(id='{self.page_id}')"

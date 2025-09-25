@@ -12,7 +12,7 @@ from PyQt6.QtCore import Qt, QSize, QPoint, QTimer, pyqtSignal, QEvent
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QHBoxLayout, QFrame
 from PyQt6.QtGui import QFont, QColor, QPalette, QPixmap, QPainter, QIcon
 from qfluentwidgets import (
-    MSFluentWindow, FluentIcon as FIF, NavigationItemPosition,
+    FluentWindow, FluentIcon as FIF, NavigationItemPosition,
     setTheme, Theme, MessageBox
 )
 
@@ -20,16 +20,15 @@ from config.config_manager import ConfigManager
 from config.theme_manager import ThemeManager
 from pages.settings_page import SettingsPage
 from pages.base_page import BasePage
-from pages.placeholder_page import PlaceholderPage
+from pages.page_manager import PageManager
 from .splash_screen import SplashScreen
 
 
-class MainWindow(MSFluentWindow):
+class MainWindow(FluentWindow):
     """Generic main window template with navigation and theme support"""
-    
     theme_changed = pyqtSignal()
     
-    def __init__(self, app_name="Generic App", app_icon=None, logo_path=None):
+    def __init__(self, app_name="Generic App", logo_path=None):
         super().__init__()
         
         # Basic window setup
@@ -37,13 +36,14 @@ class MainWindow(MSFluentWindow):
         self.logo_path = logo_path
         self.setWindowTitle(self.app_name)
         
-        # Set window icon if provided
-        if app_icon and Path(app_icon).exists():
-            self.setWindowIcon(QIcon(str(app_icon)))
+        # Set window icon if logo provided
+        if logo_path and Path(logo_path).exists():
+            self.setWindowIcon(QIcon(str(logo_path)))
         
         # Initialize managers
         self.config_manager = ConfigManager()
         self.theme_manager = ThemeManager()
+        self.page_manager = PageManager(parent=self)
         
         # Window properties
         self.drag_pos = QPoint()
@@ -55,13 +55,10 @@ class MainWindow(MSFluentWindow):
         self.pages = {}
         self.nav_items = {}
         
-        # Show splash screen first
         self.show_splash_screen()
         
-        # Initialize UI after splash
         QTimer.singleShot(100, self.init_ui)
         
-        # Apply initial theme
         self.apply_theme()
     
     def show_splash_screen(self):
@@ -83,49 +80,49 @@ class MainWindow(MSFluentWindow):
         self.setMinimumSize(1000, 700)
         self.setGeometry(100, 100, 1200, 800)
         
-        # Create default pages
-        self.create_default_pages()
-        
-        # Setup navigation
         self.setup_navigation()
         
-        # Apply theme
-        setTheme(Theme.DARK)
-    
-    def create_default_pages(self):
-        """Create default placeholder pages"""
-        # Create placeholder pages to replace COM1/COM2/CHART
-        self.page1 = PlaceholderPage("Page 1", "This is a placeholder for your first page")
-        self.page2 = PlaceholderPage("Page 2", "This is a placeholder for your second page")
-        self.page3 = PlaceholderPage("Page 3", "This is a placeholder for your third page")
-        
-        # Create settings page
-        self.settings_page = SettingsPage(self.config_manager, self)
-        
-        # Register pages
-        self.register_page("page1", self.page1)
-        self.register_page("page2", self.page2)
-        self.register_page("page3", self.page3)
-        self.register_page("settings", self.settings_page)
+        self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)
+        self.setWindowOpacity(1.0)
     
     def setup_navigation(self):
         """Setup navigation bar with registered pages"""
-        # Add main pages to navigation
-        self.nav_items["page1"] = self.addSubInterface(
-            self.page1, FIF.HOME, "Page 1"
-        )
-        self.nav_items["page2"] = self.addSubInterface(
-            self.page2, FIF.DOCUMENT, "Page 2"
-        )
-        self.nav_items["page3"] = self.addSubInterface(
-            self.page3, FIF.CHAT, "Page 3"
-        )
+        # Get all visible pages from page manager
+        visible_pages = self.page_manager.get_visible_pages()
         
-        # Add settings page at bottom
-        self.nav_items["settings"] = self.addSubInterface(
-            self.settings_page, FIF.SETTING, "Settings", 
-            position=NavigationItemPosition.BOTTOM
-        )
+        # Sort pages by order
+        sorted_pages = sorted(visible_pages.items(), key=lambda x: x[1].order)
+        
+        # Add pages to navigation
+        for page_id, page_info in sorted_pages:
+            if page_info.enabled and page_info.visible:
+                if page_id == "settings":
+                    # Settings page needs special parameters
+                    page_instance = page_info.create_instance(self.config_manager, self)
+                    
+                    # Connect settings page signals
+                    page_instance.background_changed.connect(self.on_background_changed)
+                    page_instance.theme_changed.connect(self.on_theme_changed)
+                else:
+                    # Other pages use default parameters
+                    page_instance = page_info.create_instance(self)
+                
+                # Determine navigation position
+                if page_info.order >= 90:  # Settings and other bottom items
+                    position = NavigationItemPosition.BOTTOM
+                else:
+                    position = NavigationItemPosition.TOP
+                
+                # Add to navigation
+                nav_item = self.addSubInterface(
+                    page_instance, 
+                    page_info.icon or FIF.DOCUMENT, 
+                    page_info.title, 
+                    position=position
+                )
+                
+                self.pages[page_id] = page_instance
+                self.nav_items[page_id] = nav_item
     
     def register_page(self, page_id, page_widget):
         """Register a new page for dynamic management"""
@@ -218,10 +215,8 @@ class MainWindow(MSFluentWindow):
             painter = QPainter(self)
             painter.setOpacity(background_config.get('opacity', 1.0))
             
-            # Center the background
-            x = (self.width() - self.background_cache.width()) // 2
-            y = (self.height() - self.background_cache.height()) // 2
-            painter.drawPixmap(x, y, self.background_cache)
+            # Fill the entire window with the background
+            painter.drawPixmap(0, 0, self.width(), self.height(), self.background_cache)
         else:
             super().paintEvent(event)
     
@@ -234,49 +229,63 @@ class MainWindow(MSFluentWindow):
         background_path = Path(current_image)
         if not background_path.is_absolute():
             # Assume relative to application directory
-            app_dir = Path(__file__).parent.parent.parent
+            app_dir = Path(__file__).parent.parent
             background_path = app_dir / current_image
         
         if background_path.exists():
             size = self.size()
             background = QPixmap(str(background_path))
-            self.background_cache = background.scaled(
-                size,
-                Qt.AspectRatioMode.KeepAspectRatioByExpanding,
-                Qt.TransformationMode.SmoothTransformation
-            )
-            self.last_window_size = size
+            if not background.isNull():
+                self.background_cache = background.scaled(
+                    size,
+                    Qt.AspectRatioMode.KeepAspectRatioByExpanding,
+                    Qt.TransformationMode.SmoothTransformation
+                )
+                self.last_window_size = size
+            else:
+                print(f"Failed to load image: {background_path}")
+        else:
+            print(f"Background image not found: {background_path}")
+    
+    def on_background_changed(self, background_path):
+        """Handle background change from settings page"""
+        self.background_cache = None
+        self.update()
+    
+    def on_theme_changed(self, theme):
+        """Handle theme change from settings page"""
+        self.apply_theme()
     
     def apply_theme(self):
-        """Apply the current theme"""
-        theme_config = self.theme_manager.get_current_theme()
-        
-        if theme_config.get('is_dark', True):
-            setTheme(Theme.DARK)
-        else:
-            setTheme(Theme.LIGHT)
-        
-        # Emit theme changed signal
-        self.theme_changed.emit()
+        """Apply theme to the application"""
+        try:
+            # Get current theme name
+            current_theme = self.config_manager.get_theme()
+            
+            # Get current theme configuration
+            current_theme_config = self.config_manager.get_current_theme()
+
+            # Apply theme to qfluentwidgets based on theme name
+            if current_theme.lower() == "dark":
+                setTheme(Theme.DARK)
+            else:
+                setTheme(Theme.LIGHT)
+            
+            # Apply theme to all pages that support it
+            for page_id, page_info in self.page_manager._pages.items():
+                if page_info.instance and hasattr(page_info.instance, 'apply_theme'):
+                    page_info.instance.apply_theme()
+            
+        except Exception as e:
+            print(f"Error applying theme: {e}")
+            import traceback
+            traceback.print_exc()
     
     def show_help_dialog(self):
         """Show help dialog"""
         help_content = f"""
         <h2>🚀 {self.app_name} 使用指南</h2>
-        
         <h3>📊 功能特性</h3>
-        <p>• <b>模块化设计</b>：易于扩展和维护</p>
-        <p>• <b>主题切换</b>：支持深色/浅色模式</p>
-        <p>• <b>背景自定义</b>：个性化界面体验</p>
-        
-        <h3>🎯 页面管理</h3>
-        <p>• 动态页面添加和移除</p>
-        <p>• 灵活的导航系统</p>
-        
-        <h3>⚙️ 设置选项</h3>
-        <p>• 主题管理</p>
-        <p>• 背景配置</p>
-        <p>• 应用设置</p>
         """
         
         w = MessageBox(
@@ -295,11 +304,6 @@ class MainWindow(MSFluentWindow):
         <p><b>应用名称：</b>{self.app_name}</p>
         <p><b>版本：</b>v1.0.0</p>
         <p><b>构建日期：</b>2025年1月</p>
-        <p><b>Python版本：</b>3.8+</p>
-        
-        <h3>🛠️ 技术栈</h3>
-        <p>• <b>PyQt6</b>：现代化GUI框架</p>
-        <p>• <b>QFluentWidgets</b>：Fluent Design组件</p>
         """
         
         w = MessageBox(
@@ -313,6 +317,5 @@ class MainWindow(MSFluentWindow):
     
     def closeEvent(self, event):
         """Handle application close event"""
-        # Save current configuration
         self.config_manager.save_config()
         super().closeEvent(event)
