@@ -21,7 +21,7 @@ from config.theme_manager import ThemeManager
 from pages.settings_page import SettingsPage
 from pages.base_page import BasePage
 from pages.page_manager import PageManager
-from .splash_screen import SplashScreen
+from .splash_screen import show_splash_screen
 
 
 class MainWindow(FluentWindow):
@@ -76,10 +76,8 @@ class MainWindow(FluentWindow):
     
     def show_splash_screen(self):
         """Show splash screen during initialization"""
-        self.splash_screen = SplashScreen(self.app_name, self.logo_path)
+        self.splash_screen = show_splash_screen(self.app_name, self.logo_path, duration=2000)
         self.splash_screen.finished.connect(self.on_splash_finished)
-        self.splash_screen.show_splash()
-        self.splash_screen.start_loading(duration=2000)
     
     def on_splash_finished(self):
         """Called when splash screen finishes"""

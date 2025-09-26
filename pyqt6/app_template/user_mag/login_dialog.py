@@ -4,14 +4,16 @@ Login Dialog for User Authentication
 Provides a clean and modern login interface using QFluentWidgets
 """
 
-from PyQt6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QWidget, QLabel
+from PyQt6.QtWidgets import QDialog, QVBoxLayout, QHBoxLayout, QWidget, QLabel, QCheckBox
 from PyQt6.QtCore import Qt, pyqtSignal, QTimer
-from PyQt6.QtGui import QFont, QPalette, QColor
+from PyQt6.QtGui import QFont, QPalette, QColor, QIcon
 from qfluentwidgets import (
     LineEdit, PushButton, CheckBox, InfoBar, InfoBarPosition,
-    FluentIcon as FIF, setTheme, Theme, isDarkTheme
+    FluentIcon as FIF, setTheme, Theme, isDarkTheme,
+    BodyLabel 
 )
 from typing import Optional
+import os
 
 
 class LoginDialog(QDialog):
@@ -23,13 +25,27 @@ class LoginDialog(QDialog):
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.setWindowTitle("用户登录")
+        self.setWindowTitle("Login")
         self.setFixedSize(400, 300)
         self.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowCloseButtonHint)
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         
-        # Set fluent theme
-        setTheme(Theme.DARK)
+        # Set window icon
+        icon_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "logo.ico")
+        if os.path.exists(icon_path):
+            self.setWindowIcon(QIcon(icon_path))
+        
+        background_path = os.path.join(
+        os.path.dirname(os.path.dirname(__file__)),
+            "assets", "PIC", "nature3.jpg"
+        ).replace(os.sep, '/')
+
+        self.setStyleSheet(f"""
+            QDialog {{
+                border-image: url({background_path}) 0 0 0 0 stretch stretch;
+                color: white;
+            }}
+        """)
         
         # Initialize UI
         self.setup_ui()
@@ -51,13 +67,11 @@ class LoginDialog(QDialog):
         main_layout.setContentsMargins(30, 30, 30, 30)
         
         # Title
-        title_label = QLabel("系统登录")
-        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        title_font = QFont()
-        title_font.setPointSize(18)
-        title_font.setBold(True)
+        title_label = BodyLabel("🌟 欢迎回来")
+        title_font = QFont("Segoe UI", 20, QFont.Weight.DemiBold)
         title_label.setFont(title_font)
-        title_label.setStyleSheet("color: white; margin-bottom: 10px;")
+        title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        title_label.setStyleSheet("color: #ffffff; margin-bottom: 10px;")
         main_layout.addWidget(title_label)
         
         # Input container
@@ -68,21 +82,21 @@ class LoginDialog(QDialog):
         
         # Username field
         self.username_edit = LineEdit()
-        self.username_edit.setPlaceholderText("用户名")
+        self.username_edit.setPlaceholderText("Username:")
         self.username_edit.setClearButtonEnabled(True)
         self.username_edit.setFixedHeight(40)
         input_layout.addWidget(self.username_edit)
         
         # Password field
         self.password_edit = LineEdit()
-        self.password_edit.setPlaceholderText("密码")
+        self.password_edit.setPlaceholderText("Password:")
         self.password_edit.setEchoMode(LineEdit.EchoMode.Password)
         self.password_edit.setClearButtonEnabled(True)
         self.password_edit.setFixedHeight(40)
         input_layout.addWidget(self.password_edit)
         
         # Remember me checkbox
-        self.remember_checkbox = CheckBox("记住用户名")
+        self.remember_checkbox = QCheckBox("Remember me")
         input_layout.addWidget(self.remember_checkbox)
         
         main_layout.addWidget(input_container)
@@ -92,13 +106,13 @@ class LoginDialog(QDialog):
         button_layout.setSpacing(10)
         
         # Cancel button
-        self.cancel_button = PushButton("取消")
+        self.cancel_button = PushButton("Cancel")
         self.cancel_button.setIcon(FIF.CANCEL)
         self.cancel_button.setFixedHeight(35)
         self.cancel_button.setFixedWidth(100)
         
         # Login button
-        self.login_button = PushButton("登录")
+        self.login_button = PushButton("Login")
         self.login_button.setIcon(FIF.ACCEPT)
         self.login_button.setFixedHeight(35)
         self.login_button.setFixedWidth(100)
