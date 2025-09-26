@@ -13,11 +13,12 @@ from typing import Dict, Any, List, Optional
 class ConfigManager:
     """Manages application configuration settings"""
     
-    def __init__(self, config_dir: Optional[str] = None):
+    def __init__(self, config_dir: Optional[str] = None, user_manager=None):
         """Initialize configuration manager
         
         Args:
             config_dir: Custom configuration directory path
+            user_manager: User manager instance for user-specific configs
         """
         if config_dir:
             self.config_dir = Path(config_dir)
@@ -26,11 +27,17 @@ class ConfigManager:
             app_dir = Path(__file__).parent.parent
             self.config_dir = app_dir / "config"
         
+        # Store user manager reference
+        self.user_manager = user_manager
+        
         # Ensure config directory exists
         self.config_dir.mkdir(exist_ok=True)
         
-        # Single configuration file path
+        # Single configuration file path (default)
         self.config_path = self.config_dir / "config.json"
+        
+        # Current user for user-specific configurations
+        self.current_user = None
         
         # Load configuration
         self._config = self._load_config()
@@ -342,12 +349,55 @@ class ConfigManager:
 
     # General methods
     def save_config(self):
-        """Save all configurations"""
+        """Save all configurations to appropriate file (user-specific or default)"""
+        # If user is logged in, save to user-specific config
+        if self.user_manager and self.user_manager.is_logged_in():
+            current_user = self.user_manager.get_current_user()
+            if current_user:
+                username = current_user['username']
+                user_config_path = self.config_dir / "users" / f"{username}.json"
+                # Ensure users directory exists
+                user_config_path.parent.mkdir(exist_ok=True)
+                self._save_json_config(user_config_path, self._config)
+                return
+        
+        # Default: save to main config file
         self._save_json_config(self.config_path, self._config)
 
     def reload_config(self):
         """Reload all configurations from files"""
         self._config = self._load_config()
+    
+    def load_config_from_dict(self, config_dict: Dict[str, Any]):
+        """Load configuration from dictionary (for user-specific configs)"""
+        if config_dict:
+            self._config = config_dict
+    
+    def set_current_user(self, username: str):
+        """Set current user for user-specific configurations
+        
+        Args:
+            username: Username to set as current user
+        """
+        self.current_user = username
+        # Update config path to user-specific file if user is set
+        if username:
+            # Ensure users directory exists
+            users_dir = self.config_dir / "users"
+            users_dir.mkdir(exist_ok=True)
+            self.config_path = users_dir / f"{username}.json"
+        else:
+            self.config_path = self.config_dir / "config.json"
+        # Reload configuration for the new user
+        self.reload_config()
+    
+    def get_current_user(self) -> Optional[str]:
+        """Get current user
+        
+        Returns:
+            Current username or None if no user is set
+        """
+        return self.current_user
     
     def reset_to_defaults(self):
         """Reset all configurations to defaults"""

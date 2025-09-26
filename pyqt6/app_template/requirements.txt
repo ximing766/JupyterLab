@@ -6,6 +6,10 @@ PyQt6>=6.4.0
 # Modern UI components
 PyQtFluentWidgets>=1.4.0
 
+# Database and User Management
+SQLAlchemy>=2.0.0       # ORM for database operations
+bcrypt>=4.0.0           # Password hashing
+
 # Optional: For enhanced functionality
 # Pillow>=9.0.0          # Image processing
 # requests>=2.28.0       # HTTP requests

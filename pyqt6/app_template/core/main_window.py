@@ -28,22 +28,35 @@ class MainWindow(FluentWindow):
     """Generic main window template with navigation and theme support"""
     theme_changed = pyqtSignal()
     
-    def __init__(self, app_name="Generic App", logo_path=None):
+    def __init__(self, app_name="Generic App", logo_path=None, user_manager=None):
         super().__init__()
         
         # Basic window setup
         self.app_name = app_name
         self.logo_path = logo_path
         self.setWindowTitle(self.app_name)
-        
-        # Set window icon if logo provided
+
         if logo_path and Path(logo_path).exists():
             self.setWindowIcon(QIcon(str(logo_path)))
         
         # Initialize managers
+        self.user_manager = user_manager
         self.config_manager = ConfigManager()
         self.theme_manager = ThemeManager()
         self.page_manager = PageManager(parent=self)
+        
+        # Set user manager for page manager if available
+        if hasattr(self, 'user_manager') and self.user_manager:
+            self.page_manager.set_user_manager(self.user_manager)
+        
+        # Load user-specific config if user management is enabled
+        if self.user_manager and self.user_manager.is_authenticated():
+            current_user = self.user_manager.get_current_user()
+            if current_user:
+                self.config_manager.set_current_user(current_user['username'])
+                user_config = self.user_manager.load_user_config(current_user['username'])
+                if user_config:
+                    self.config_manager.load_config_from_dict(user_config)
         
         # Window properties
         self.drag_pos = QPoint()
@@ -57,7 +70,7 @@ class MainWindow(FluentWindow):
         
         self.show_splash_screen()
         
-        QTimer.singleShot(100, self.init_ui)
+        QTimer.singleShot(100, self.init_ui)   # XXX: 待定main中Page注册完毕
         
         self.apply_theme()
     
@@ -80,15 +93,25 @@ class MainWindow(FluentWindow):
         self.setMinimumSize(1000, 700)
         self.setGeometry(100, 100, 1200, 800)
         
-        self.setup_navigation()
+        self.setup_navigation() # 获取可见页面
+        
+        # Pass user_manager to settings page if available
+        if hasattr(self, 'user_manager') and self.user_manager:
+            settings_page = self.page_manager.get_page_instance('settings')
+            if settings_page:
+                settings_page.user_manager = self.user_manager
+            
+            # Connect user manager signals to refresh page permissions
+            self.user_manager.user_logged_in.connect(self.on_user_login_changed)
+            self.user_manager.user_logged_out.connect(self.on_user_login_changed)
         
         self.setAttribute(Qt.WidgetAttribute.WA_TranslucentBackground, False)
         self.setWindowOpacity(1.0)
     
-    def setup_navigation(self):
+    def setup_navigation(self):  # BM: 添加所有注册页面到nav bar
         """Setup navigation bar with registered pages"""
-        # Get all visible pages from page manager
-        visible_pages = self.page_manager.get_visible_pages()
+        visible_pages = self.page_manager.get_visible_pages()  # XXX:页面级权限管理
+        print(f"setup_navigation, visible pages: {visible_pages.keys()}")
         
         # Sort pages by order
         sorted_pages = sorted(visible_pages.items(), key=lambda x: x[1].order)
@@ -246,6 +269,36 @@ class MainWindow(FluentWindow):
                 print(f"Failed to load image: {background_path}")
         else:
             print(f"Background image not found: {background_path}")
+
+    # BUG: 登陆完成时mainwindow还没有创建,这里不会收到, 预留给未来切换用户
+    def on_user_login_changed(self): 
+        print("receive login change signal")
+        """Handle user login/logout to refresh page permissions"""
+        # Switch to user-specific configuration if logged in
+        if self.user_manager and self.user_manager.is_logged_in():
+            current_user = self.user_manager.get_current_user()
+            if current_user:
+                # Set current user in config manager
+                self.config_manager.set_current_user(current_user['username'])
+                # Load user-specific configuration
+                user_config = self.user_manager.load_user_config(current_user['username'])
+                if user_config:
+                    self.config_manager.load_config_from_dict(user_config)
+        else:
+            # Clear current user and reload default configuration when logged out
+            self.config_manager.set_current_user(None)
+            self.config_manager.reload_config()
+        
+        if hasattr(self, 'page_manager'):
+            # Refresh page permissions
+            self.page_manager.refresh_page_permissions()
+            
+            # Rebuild navigation to show/hide pages based on new permissions
+            self.setup_navigation()
+            
+        # Apply theme and background from the loaded configuration
+        self.apply_theme()
+        self.update()  # Refresh background
     
     def on_background_changed(self, background_path):
         """Handle background change from settings page"""

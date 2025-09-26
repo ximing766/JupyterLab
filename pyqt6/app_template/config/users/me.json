@@ -1,0 +1,19 @@
+{
+    "user": {
+        "username": "me",
+        "preferences": {
+            "theme": "light",
+            "language": "en"
+        }
+    },
+    "app": {
+        "window": {
+            "width": 1200,
+            "height": 800,
+            "maximized": false
+        },
+        "features": {
+            "user_management": true
+        }
+    }
+}

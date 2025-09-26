@@ -103,7 +103,9 @@ class ExamplePage(BasePage):
         self.show_success("已清空", "文本内容已清空")
     
     def on_activate(self):
-        print(f"Example page activated")
+        # print(f"Example page activated")
+        pass
     
     def on_deactivate(self):
-        print(f"Example page deactivated")
+        # print(f"Example page deactivated")
+        pass

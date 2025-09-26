@@ -1,0 +1,59 @@
+{
+    "app": {
+        "name": "Generic App",
+        "version": "1.0.0",
+        "window": {
+            "width": 1200,
+            "height": 800,
+            "min_width": 1000,
+            "min_height": 700
+        },
+        "features": {
+            "mouse_navigation": true,
+            "background_enabled": true,
+            "theme_switching": true,
+            "user_management": true
+        },
+        "settings": {
+            "language": "english",
+            "autosave": true
+        }
+    },
+    "background": {
+        "enabled": true,
+        "opacity": 1.0,
+        "current_image": "assets/PIC/color1.jpg",
+        "available_images": [
+            "assets/PIC/color1.jpg",
+            "assets/PIC/nature1.jpg",
+            "assets/PIC/nature2.jpg",
+            "assets/PIC/nature3.jpg",
+            "assets/PIC/other1.png",
+            "assets/PIC/other2.png",
+            "assets/PIC/person11.jpg",
+            "assets/PIC/person4.jpg",
+            "assets/PIC/person5.jpg",
+            "assets/PIC/person6.jpg",
+            "assets/PIC/person7.jpg",
+            "assets/PIC/person8.jpg"
+        ],
+        "current_index": 0
+    },
+    "theme": {
+        "current_theme": "light",
+        "themes": {
+            "light": {
+                "name": "Light Theme",
+                "is_dark": false,
+                "primary_color": "#0078d4",
+                "background_color": "#ffffff"
+            },
+            "dark": {
+                "name": "Dark Theme",
+                "is_dark": true,
+                "primary_color": "#0078d4",
+                "background_color": "#202020"
+            }
+        }
+    }
+}

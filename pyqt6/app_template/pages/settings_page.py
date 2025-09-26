@@ -27,6 +27,7 @@ class SettingsPage(BasePage):
     
     def __init__(self, config_manager=None, parent=None):
         self.config_manager = config_manager
+        self.user_manager = None
         super().__init__("settings", parent)
     
     def apply_theme(self):
@@ -396,6 +397,12 @@ class SettingsPage(BasePage):
         """Save current settings"""
         if self.config_manager:
             self.config_manager.save_config()
+            
+            # If user management is enabled, also save to user-specific config
+            if hasattr(self, 'user_manager') and self.user_manager and self.user_manager.is_user_management_enabled():
+                current_user = self.user_manager.get_current_user()
+                if current_user:
+                    self.user_manager.save_user_config(current_user.username, self.config_manager.config)
     
     def on_activate(self):
         """Called when settings page is activated"""

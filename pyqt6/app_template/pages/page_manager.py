@@ -17,7 +17,7 @@ class PageInfo:
     
     def __init__(self, page_id: str, title: str, page_class: Type[BasePage], 
                  icon=None, tooltip: str = "", enabled: bool = True, 
-                 visible: bool = True, order: int = 0):
+                 visible: bool = True, order: int = 0, required_role: str = None):
         self.page_id = page_id
         self.title = title
         self.page_class = page_class
@@ -26,6 +26,7 @@ class PageInfo:
         self.enabled = enabled
         self.visible = visible
         self.order = order
+        self.required_role = required_role  # Required user role to access this page
         self.instance = None  # Page instance (created when needed)
     
     def create_instance(self, *args, **kwargs) -> BasePage:
@@ -55,6 +56,7 @@ class PageManager(QObject):
         self._pages: Dict[str, PageInfo] = {}
         self._current_page_id: Optional[str] = None
         self._page_order: List[str] = []
+        self.user_manager = None  # Will be set by main window
         
         # Register default pages
         self._register_default_pages()
@@ -69,7 +71,7 @@ class PageManager(QObject):
     
     def register_page(self, page_id: str, title: str, page_class: Type[BasePage],
                      icon=None, tooltip: str = "", enabled: bool = True,
-                     visible: bool = True, order: int = 0) -> bool:
+                     visible: bool = True, order: int = 0, required_role: str = None) -> bool:
         """Register a new page"""
         if page_id in self._pages:
             print(f"Warning: Page '{page_id}' is already registered")
@@ -88,7 +90,8 @@ class PageManager(QObject):
             tooltip=tooltip,
             enabled=enabled,
             visible=visible,
-            order=order
+            order=order,
+            required_role=required_role
         )
         
         # Add to registry
@@ -100,7 +103,7 @@ class PageManager(QObject):
         # Emit signal
         self.page_registered.emit(page_id, title)
         
-        print(f"Page '{page_id}' registered successfully")
+        # print(f"Page '{page_id}' registered successfully")
         return True
     
     def unregister_page(self, page_id: str) -> bool:
@@ -150,6 +153,9 @@ class PageManager(QObject):
         
         # Create instance if not exists
         if page_info.instance is None:
+            # Pass parent as the first argument if not provided
+            if 'parent' not in kwargs and self.parent:
+                kwargs['parent'] = self.parent
             page_info.instance = page_info.create_instance(*args, **kwargs)
             
             # Add to stacked widget if available
@@ -163,8 +169,12 @@ class PageManager(QObject):
         return self._pages.copy()
     
     def get_visible_pages(self) -> Dict[str, PageInfo]:
-        """Get all visible pages"""
-        return {pid: info for pid, info in self._pages.items() if info.visible}
+        """Get all visible pages (with permission check)"""
+        visible_pages = {}
+        for pid, info in self._pages.items():
+            if info.visible and self._check_page_permission(info):
+                visible_pages[pid] = info
+        return visible_pages
     
     def get_enabled_pages(self) -> Dict[str, PageInfo]:
         """Get all enabled pages"""
@@ -208,6 +218,11 @@ class PageManager(QObject):
         page_info = self.get_page_info(page_id)
         if not page_info or not page_info.enabled:
             print(f"Cannot navigate to page '{page_id}': not found or disabled")
+            return False
+        
+        # Check page permission
+        if not self._check_page_permission(page_info):
+            print(f"Cannot navigate to page '{page_id}': insufficient permissions")
             return False
         
         # Get or create page instance
@@ -294,6 +309,43 @@ class PageManager(QObject):
     def page_exists(self, page_id: str) -> bool:
         """Check if page exists"""
         return page_id in self._pages
+    
+    def set_user_manager(self, user_manager):
+        """Set user manager for permission checking"""
+        self.user_manager = user_manager
+    
+    def _check_page_permission(self, page_info: PageInfo) -> bool:
+        """Check if current user has permission to access the page"""
+        # 1:没有指定访问权限，默认允许访问
+        if not page_info.required_role:
+            return True
+        
+        # 2:用户管理未启用，拒绝访问
+        if not self.user_manager or not self.user_manager.is_user_management_enabled():
+            return False
+        
+        # If user is not authenticated, deny access to role-restricted pages
+        if not self.user_manager.is_authenticated():
+            return False
+        
+        # Check user role
+        current_user = self.user_manager.get_current_user()
+        if not current_user:
+            return False
+        
+        user_role = current_user.get('role', 'user')
+        
+        # Admin can access all pages
+        if user_role == 'admin':
+            return True
+        
+        # Check if user role matches required role
+        return user_role == page_info.required_role
+    
+    def refresh_page_permissions(self):
+        """Refresh page visibility based on current user permissions"""
+        # This will trigger navigation update in the main window
+        self.page_changed.emit("", self._current_page_id or "")
     
     def __str__(self):
         return f"PageManager(pages={len(self._pages)}, current='{self._current_page_id}')"
