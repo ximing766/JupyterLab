@@ -154,37 +154,16 @@ class ConfigManager:
             self._config["app"] = {}
         self._config["app"] = self._merge_configs(self._config["app"], updates)
         self._save_json_config(self.config_path, self._config)
-    
-    # Theme configuration methods
-    def get_theme_config(self) -> Dict[str, Any]:
-        """Get theme configuration"""
-        return self._config.get("theme", {}).copy()
 
     def get_theme(self) -> str:
         """Get current theme name"""
         return self._config.get("theme", {}).get("current_theme", "dark")
-    
-    def get_current_theme(self) -> Dict[str, Any]:
-        """Get current theme settings"""
-        current_theme_name = self._config.get("theme", {}).get("current_theme", "dark")
-        themes = self._config.get("theme", {}).get("themes", {})
-        return themes.get(current_theme_name, themes.get("dark", {}))
 
     def set_theme(self, theme_name: str):
         """Set current theme"""
         if "theme" not in self._config:
             self._config["theme"] = {}
         self._config["theme"]["current_theme"] = theme_name
-        self._save_json_config(self.config_path, self._config)
-
-    def add_theme(self, theme_name: str, theme_config: Dict[str, Any]):
-        """Add a new theme"""
-        if "theme" not in self._config:
-            self._config["theme"] = {}
-        if "themes" not in self._config["theme"]:
-            self._config["theme"]["themes"] = {}
-        
-        self._config["theme"]["themes"][theme_name] = theme_config
         self._save_json_config(self.config_path, self._config)
 
     # Background configuration methods
@@ -261,35 +240,6 @@ class ConfigManager:
         
         return available_images
     
-    def add_background_image(self, image_path: str):
-        """Add a new background image"""
-        if "background" not in self._config:
-            self._config["background"] = {}
-        available_images = self._config["background"].get("available_images", [])
-        if image_path not in available_images:
-            available_images.append(image_path)
-            self._config["background"]["available_images"] = available_images
-            self._save_json_config(self.config_path, self._config)
-    
-    def remove_background_image(self, image_path: str):
-        """Remove a background image"""
-        if "background" not in self._config:
-            return
-        available_images = self._config["background"].get("available_images", [])
-        if image_path in available_images:
-            available_images.remove(image_path)
-            self._config["background"]["available_images"] = available_images
-            
-            # If current image was removed, switch to first available
-            if self._config["background"].get("current_image") == image_path:
-                if available_images:
-                    self.set_current_background(available_images[0])
-                else:
-                    self._config["background"]["current_image"] = None
-                    self._config["background"]["current_index"] = 0
-            
-            self._save_json_config(self.config_path, self._config)
-    
     def set_current_background(self, image_path: str):
         """Set current background image"""
         if "background" not in self._config:
@@ -310,42 +260,6 @@ class ConfigManager:
         
         self._save_json_config(self.config_path, self._config)
         return True
-    
-    def next_background(self) -> Optional[str]:
-        """Switch to next background image"""
-        if "background" not in self._config:
-            return None
-        available_images = self._config["background"].get("available_images", [])
-        if not available_images:
-            return None
-        
-        current_index = self._config["background"].get("current_index", 0)
-        next_index = (current_index + 1) % len(available_images)
-        
-        next_image = available_images[next_index]
-        self._config["background"]["current_image"] = next_image
-        self._config["background"]["current_index"] = next_index
-        self._save_json_config(self.config_path, self._config)
-        
-        return next_image
-    
-    def previous_background(self) -> Optional[str]:
-        """Switch to previous background image"""
-        if "background" not in self._config:
-            return None
-        available_images = self._config["background"].get("available_images", [])
-        if not available_images:
-            return None
-        
-        current_index = self._config["background"].get("current_index", 0)
-        prev_index = (current_index - 1) % len(available_images)
-        
-        prev_image = available_images[prev_index]
-        self._config["background"]["current_image"] = prev_image
-        self._config["background"]["current_index"] = prev_index
-        self._save_json_config(self.config_path, self._config)
-        
-        return prev_image
 
     # General methods
     def save_config(self):
@@ -392,16 +306,10 @@ class ConfigManager:
         self.reload_config()
     
     def get_current_user(self) -> Optional[str]:
-        """Get current user
-        
-        Returns:
-            Current username or None if no user is set
-        """
         return self.current_user
     
     def reset_to_defaults(self):
         """Reset all configurations to defaults"""
-        # Remove existing config file
         if self.config_path.exists():
             self.config_path.unlink()
         

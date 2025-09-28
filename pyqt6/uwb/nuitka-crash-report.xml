@@ -18,7 +18,7 @@ Traceback (most recent call last):
 PermissionError: [WinError 32] 另一个程序正在使用此文件，进程无法访问。: '..\\..\\output\\UWBDash.build\\ccache-3256.txt'
 </exception>
   <performance>
-    <memory_usage name="after_launch" value="47689728" />
+    <memory_usage name="after_launch" value="47312896" />
   </performance>
   <data_file name="config.json" source="${cwd}\config.json" size="995" reason="specified data file './config.json=./config.json' on command line" tags="user,copy" />
   <data_file name="UWBDash.json" source="${cwd}\UWBDash.json" size="1554" reason="specified data file './UWBDash.json=./UWBDash.json' on command line" tags="user,copy" />

@@ -17,17 +17,11 @@ from qfluentwidgets import (
 )
 
 from config.config_manager import ConfigManager
-from config.theme_manager import ThemeManager
-from pages.settings_page import SettingsPage
-from pages.base_page import BasePage
-from pages.page_manager import PageManager
+from pages import SettingsPage, BasePage, PageManager
 from .splash_screen import show_splash_screen
 
 
 class MainWindow(FluentWindow):
-    """Generic main window template with navigation and theme support"""
-    theme_changed = pyqtSignal()
-    
     def __init__(self, app_name="Generic App", logo_path=None, user_manager=None):
         super().__init__()
         
@@ -42,7 +36,6 @@ class MainWindow(FluentWindow):
         # Initialize managers
         self.user_manager = user_manager
         self.config_manager = ConfigManager()
-        self.theme_manager = ThemeManager()
         self.page_manager = PageManager(parent=self)
         
         # Set user manager for page manager if available
@@ -109,7 +102,7 @@ class MainWindow(FluentWindow):
     def setup_navigation(self):  # BM: 添加所有注册页面到nav bar
         """Setup navigation bar with registered pages"""
         visible_pages = self.page_manager.get_visible_pages()  # XXX:页面级权限管理
-        print(f"setup_navigation, visible pages: {visible_pages.keys()}")
+        # print(f"setup_navigation, visible pages: {visible_pages.keys()}")
         
         # Sort pages by order
         sorted_pages = sorted(visible_pages.items(), key=lambda x: x[1].order)
@@ -123,7 +116,6 @@ class MainWindow(FluentWindow):
                     
                     # Connect settings page signals
                     page_instance.background_changed.connect(self.on_background_changed)
-                    page_instance.theme_changed.connect(self.on_theme_changed)
                 else:
                     # Other pages use default parameters
                     page_instance = page_info.create_instance(self)
@@ -144,52 +136,6 @@ class MainWindow(FluentWindow):
                 
                 self.pages[page_id] = page_instance
                 self.nav_items[page_id] = nav_item
-    
-    def register_page(self, page_id, page_widget):
-        """Register a new page for dynamic management"""
-        if not isinstance(page_widget, QWidget):
-            raise ValueError("Page widget must be a QWidget instance")
-        
-        self.pages[page_id] = page_widget
-        page_widget.setObjectName(page_id)
-    
-    def add_page(self, page_id, page_widget, icon, title, position=None):
-        """Add a new page to the application"""
-        # Register the page
-        self.register_page(page_id, page_widget)
-        
-        # Add to navigation
-        nav_position = position or NavigationItemPosition.TOP
-        nav_item = self.addSubInterface(page_widget, icon, title, position=nav_position)
-        self.nav_items[page_id] = nav_item
-        
-        return nav_item
-    
-    def remove_page(self, page_id):
-        """Remove a page from the application"""
-        if page_id in self.pages:
-            # Remove from navigation if exists
-            if page_id in self.nav_items:
-                # Note: MSFluentWindow doesn't have a direct remove method
-                # This would need to be implemented based on specific requirements
-                del self.nav_items[page_id]
-            
-            # Remove from pages registry
-            del self.pages[page_id]
-    
-    def get_page(self, page_id):
-        """Get a registered page by ID"""
-        return self.pages.get(page_id)
-    
-    def switch_to_page(self, page_id):
-        """Switch to a specific page"""
-        if page_id in self.pages:
-            page = self.pages[page_id]
-            self.stackedWidget.setCurrentWidget(page)
-            
-            # Update navigation selection
-            if hasattr(self, 'navigationInterface'):
-                self.navigationInterface.setCurrentItem(page_id)
     
     def mousePressEvent(self, event):
         """Handle mouse events for navigation"""
@@ -268,7 +214,7 @@ class MainWindow(FluentWindow):
         else:
             print(f"Background image not found: {background_path}")
 
-    # BUG: 登陆完成时mainwindow还没有创建,这里不会收到, 预留给未来切换用户
+    # BUG: 登陆完成时mainwindow还没有创建,这里不会收到信号, 预留给未来切换用户
     def on_user_login_changed(self): 
         print("receive login change signal")
         """Handle user login/logout to refresh page permissions"""
@@ -303,34 +249,18 @@ class MainWindow(FluentWindow):
         self.background_cache = None
         self.update()
     
-    def on_theme_changed(self, theme):
-        """Handle theme change from settings page"""
-        self.apply_theme()
-    
     def apply_theme(self):
         """Apply theme to the application"""
         try:
-            # Get current theme name
             current_theme = self.config_manager.get_theme()
-            
-            # Get current theme configuration
-            current_theme_config = self.config_manager.get_current_theme()
 
-            # Apply theme to qfluentwidgets based on theme name
             if current_theme.lower() == "dark":
                 setTheme(Theme.DARK)
             else:
                 setTheme(Theme.LIGHT)
             
-            # Apply theme to all pages that support it
-            for page_id, page_info in self.page_manager._pages.items():
-                if page_info.instance and hasattr(page_info.instance, 'apply_theme'):
-                    page_info.instance.apply_theme()
-            
         except Exception as e:
             print(f"Error applying theme: {e}")
-            import traceback
-            traceback.print_exc()
     
     def show_help_dialog(self):
         """Show help dialog"""

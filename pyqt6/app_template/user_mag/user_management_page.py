@@ -12,10 +12,12 @@ from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
 from PyQt6.QtCore import Qt, pyqtSignal, QTimer
 from PyQt6.QtGui import QFont, QIcon, QColor
 from qfluentwidgets import (PushButton, LineEdit, ComboBox, TableWidget,
-                           BodyLabel, setFont, FluentIcon as FIF)
+                           ToolButton,
+                           BodyLabel, setFont, FluentIcon as FIF, 
+                           setCustomStyleSheet, isDarkTheme, themeColor)
 from typing import Dict, Any, List, Optional
 
-from pages.base_page import BasePage
+from pages import BasePage
 
 
 class UserDialog(QDialog):
@@ -259,16 +261,8 @@ class UserManagementPage(BasePage):
             if child.widget():
                 child.widget().deleteLater()
         
-        self.layout.setSpacing(20)
-        self.layout.setContentsMargins(20, 20, 20, 20)
-        
-        # Title
-        title_label = BodyLabel("用户管理")
-        title_font = QFont()
-        title_font.setPointSize(18)
-        title_font.setBold(True)
-        title_label.setFont(title_font)
-        self.layout.addWidget(title_label)
+        self.layout.setSpacing(10)
+        self.layout.setContentsMargins(10, 10, 10, 10)
         
         # Toolbar
         toolbar_layout = QHBoxLayout()
@@ -279,7 +273,7 @@ class UserManagementPage(BasePage):
         self.add_user_btn.clicked.connect(self.add_user)
         
         # Refresh button
-        self.refresh_btn = PushButton("刷新")
+        self.refresh_btn = ToolButton(FIF.SYNC)
         self.refresh_btn.setIcon(FIF.SYNC)
         self.refresh_btn.clicked.connect(self.load_users)
         
@@ -295,18 +289,22 @@ class UserManagementPage(BasePage):
             ["ID", "Name", "Full Name", "Email", "Role", "Status", "Actions"]
         )
 
-        self.users_table.verticalHeader().hide()                    # 隐藏行号
-        self.users_table.setAlternatingRowColors(True)              # 斑马线
-        self.users_table.setBorderVisible(True)                     # 边框圆角
-        self.users_table.setBorderRadius(8)                         # 圆角 8 px
-        self.users_table.resizeColumnsToContents()                  # 列宽自适应
+        # Enhanced table styling with theme support
+        self.users_table.verticalHeader().hide()                    # Hide row numbers
+        self.users_table.setAlternatingRowColors(True)              # Zebra stripes
+        self.users_table.setBorderVisible(True)                     # Border visible
+        self.users_table.setBorderRadius(8)                         # 8px border radius
+        self.users_table.resizeColumnsToContents()                  # Auto-resize columns
 
-        setFont(self.users_table, 13, QFont.Weight.Medium)          # 全局 13 号中等字
+        # Apply enhanced styling with light/dark theme support
+        self.apply_table_styling(self.users_table)
 
-        # 表头美化
+        setFont(self.users_table, 13, QFont.Weight.Medium)          # Global 13pt medium font
+
+        # Header styling improvements
         header = self.users_table.horizontalHeader()
         header.setHighlightSections(False)
-        header.setFont(QFont('Segoe UI', 13, QFont.Weight.DemiBold))
+        header.setFont(QFont('Consolas', 13, QFont.Weight.DemiBold))
         
         # Set column widths
         header = self.users_table.horizontalHeader()
@@ -376,14 +374,14 @@ class UserManagementPage(BasePage):
         actions_layout.setSpacing(5)
         
         # Edit button
-        edit_btn = PushButton("编辑")
-        edit_btn.setMaximumSize(60, 25)
+        edit_btn = ToolButton(FIF.EDIT)
+        edit_btn.setFixedSize(60, 25)
         edit_btn.clicked.connect(lambda: self.edit_user(user))
         
         # Delete button (disabled for admin user)
-        delete_btn = PushButton("删除")
-        delete_btn.setMaximumSize(60, 25)
-        delete_btn.setStyleSheet("QPushButton { background-color: #ec8585;}")
+        delete_btn = ToolButton(FIF.DELETE)
+        delete_btn.setFixedSize(60, 25)
+        delete_btn.setStyleSheet("QToolButton { background-color: #f34f4f;}")
         delete_btn.clicked.connect(lambda: self.delete_user(user))
         
         if user['username'] == 'admin':

@@ -12,7 +12,6 @@ from pathlib import Path
 from typing import Optional, Dict, Any, List
 from PyQt6.QtCore import QObject, pyqtSignal
 
-# Simplified import - main.py already adds project root to sys.path
 from database import DatabaseManager, UserDatabase, User
 
 
@@ -130,14 +129,20 @@ class UserManager(QObject):
     def update_user(self, user_id: int, **kwargs) -> bool:
         """Update user information"""
         # Get username before update for signal
-        user = self.user_db.get_user_by_id(user_id)
-        if not user:
+        username = None
+        try:
+            with self.user_db.db_manager.session_scope() as session:
+                user = session.query(User).filter_by(id=user_id).first()
+                if not user:
+                    return False
+                username = user.username
+        except Exception as e:
+            print(f"Error getting user for update: {e}")
             return False
         
-        username = user.username
         success = self.user_db.update_user(user_id, **kwargs)
         
-        if success:
+        if success and username:
             # Emit signal
             self.user_updated.emit(username)
         

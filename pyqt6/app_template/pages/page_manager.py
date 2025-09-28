@@ -1,9 +1,4 @@
 # -*- coding: utf-8 -*-
-"""
-Page Manager for Generic PyQt6 Application Template
-Manages page registration, navigation, and lifecycle
-"""
-
 from typing import Dict, List, Optional, Type, Any
 from PyQt6.QtCore import QObject, pyqtSignal
 from PyQt6.QtWidgets import QStackedWidget
@@ -11,10 +6,8 @@ from qfluentwidgets import FluentIcon as FIF
 from .base_page import BasePage
 from .settings_page import SettingsPage
 
-
 class PageInfo:
     """Information about a registered page"""
-    
     def __init__(self, page_id: str, title: str, page_class: Type[BasePage], 
                  icon=None, tooltip: str = "", enabled: bool = True, 
                  visible: bool = True, order: int = 0, required_role: str = None):
@@ -38,11 +31,8 @@ class PageInfo:
     def __str__(self):
         return f"PageInfo(id='{self.page_id}', title='{self.title}', enabled={self.enabled})"
 
-
 class PageManager(QObject):
     """Manages application pages and navigation"""
-    
-    # Signals
     page_registered = pyqtSignal(str, str)  # page_id, title
     page_unregistered = pyqtSignal(str)  # page_id
     page_changed = pyqtSignal(str, str)  # old_page_id, new_page_id
@@ -58,12 +48,9 @@ class PageManager(QObject):
         self._page_order: List[str] = []
         self.user_manager = None  # Will be set by main window
         
-        # Register default pages
         self._register_default_pages()
     
     def _register_default_pages(self):
-        """Register default application pages"""
-        # Register settings page only
         self.register_page(
             "settings", "Settings", SettingsPage,
             icon=FIF.SETTING, tooltip="Application Settings", order=99
@@ -72,7 +59,6 @@ class PageManager(QObject):
     def register_page(self, page_id: str, title: str, page_class: Type[BasePage],
                      icon=None, tooltip: str = "", enabled: bool = True,
                      visible: bool = True, order: int = 0, required_role: str = None) -> bool:
-        """Register a new page"""
         if page_id in self._pages:
             print(f"Warning: Page '{page_id}' is already registered")
             return False
@@ -81,7 +67,6 @@ class PageManager(QObject):
             print(f"Error: Page class must inherit from BasePage")
             return False
         
-        # Create page info
         page_info = PageInfo(
             page_id=page_id,
             title=title,
@@ -94,16 +79,10 @@ class PageManager(QObject):
             required_role=required_role
         )
         
-        # Add to registry
         self._pages[page_id] = page_info
-        
-        # Update page order
         self._update_page_order()
-        
-        # Emit signal
         self.page_registered.emit(page_id, title)
         
-        # print(f"Page '{page_id}' registered successfully")
         return True
     
     def unregister_page(self, page_id: str) -> bool:

@@ -2,7 +2,7 @@
 
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
-from qfluentwidgets import InfoBar, InfoBarPosition
+from qfluentwidgets import InfoBar, InfoBarPosition, qconfig, Theme, setCustomStyleSheet, themeColor, TableWidget
 
 class BasePage(QWidget):
     page_activated = pyqtSignal(str)  # Emitted when page becomes active
@@ -19,8 +19,11 @@ class BasePage(QWidget):
         # Set object name for identification
         self.setObjectName(page_id)
         
-        # Initialize UI
         self.init_ui()
+        
+        # Register for theme changes and apply initial theme
+        qconfig.themeChanged.connect(self._on_theme_changed)
+        self._apply_unified_theme()
     
     def init_ui(self):
         """Initialize the user interface - minimal layout"""
@@ -35,8 +38,116 @@ class BasePage(QWidget):
     
     def apply_theme(self):
         """Apply current theme to the page - can be overridden in subclasses"""
-        # Default implementation - subclasses can override this
+        # This method can be overridden by subclasses for custom theme handling
         pass
+    
+    def _apply_unified_theme(self):
+        """Apply unified theme management for QWidget-based pages"""
+        # Define light theme styles
+        light_qss = """
+        QWidget {
+            background-color: transparent;
+            color: rgb(32, 32, 32);
+        }
+        """
+        
+        # Define dark theme styles  
+        dark_qss = """
+        QWidget {
+            background-color: transparent;
+            color: rgb(255, 255, 255);
+        }
+        """
+        self.setStyleSheet(light_qss if qconfig.theme == Theme.LIGHT else dark_qss)
+
+    def _on_theme_changed(self, theme: Theme):
+        self._apply_unified_theme()
+    
+    def apply_table_styling(self, table_widget):
+        """Apply enhanced table styling with rich color scheme and borders"""
+        
+        light_qss = f"""
+        QTableWidget {{
+            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                stop:0 rgba(248, 250, 252, 0.85),
+                stop:1 rgba(241, 245, 249, 0.75));
+            gridline-color: rgba(148, 163, 184, 0.4);
+            selection-background-color: rgba(59, 130, 246, 0.1);
+        }}
+        
+        QTableWidget::item {{
+            padding: 10px 14px;
+            background-color: transparent;
+            color: rgb(51, 65, 85);
+        }}
+        
+        QTableWidget::item:selected {{
+            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                stop:0 rgba(59, 130, 246, 0.2),
+                stop:1 rgba(37, 99, 235, 0.15));
+            color: rgb(30, 58, 138);
+        }}
+        
+        QTableWidget::item:focus {{
+            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                stop:0 rgba(16, 185, 129, 0.15),
+                stop:1 rgba(5, 150, 105, 0.1));
+        }}
+        
+        QHeaderView::section {{
+            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                stop:0 rgba(162, 225, 233, 0.95),
+                stop:1 rgba(162, 225, 233, 0.75));
+            color: rgb(35, 140, 189);
+            padding: 10px 8px;
+            font-weight: 700;
+            font-size: 13px;
+        }}
+        
+        """
+        
+        # Define enhanced styling for dark theme with rich colors
+        dark_qss = f"""
+        QTableWidget {{
+            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                stop:0 rgba(30, 41, 59, 0.85),
+                stop:1 rgba(15, 23, 42, 0.75));
+            gridline-color: rgba(71, 85, 105, 0.5);
+            selection-background-color: rgba(59, 130, 246, 0.15);
+        }}
+        
+        QTableWidget::item {{
+            padding: 10px 14px;
+            background-color: transparent;
+            color: rgb(226, 232, 240);
+        }}
+        
+        QTableWidget::item:selected {{
+            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                stop:0 rgba(170, 100, 236, 0.3),
+                stop:1 rgba(170, 100, 236, 0.2));
+            color: rgb(233, 213, 255);
+        }}
+        
+        QTableWidget::item:focus {{
+            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                stop:0 rgba(173, 88, 159, 0.5),
+                stop:1 rgba(173, 88, 159, 0.4));
+        }}
+        
+        QHeaderView::section {{
+            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                stop:0 rgba(71, 85, 105, 0.9),
+                stop:1 rgba(51, 65, 85, 0.95));
+            color: rgb(203, 213, 225);
+            padding: 10px 8px;
+            font-weight: 700;
+            font-size: 13px;
+        }}
+        """
+        
+        # Apply the custom styling to the specific table widget
+        setCustomStyleSheet(table_widget, light_qss, dark_qss)
     
     def init_content(self):
         """Initialize page content - override in subclasses"""

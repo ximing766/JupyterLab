@@ -15,32 +15,23 @@
             "user_management": true
         },
         "settings": {
-            "language": "english",
+            "language": "中文",
             "autosave": true
         }
     },
     "background": {
         "enabled": true,
         "opacity": 1.0,
-        "current_image": "assets/PIC/nature3.jpg",
+        "current_image": "assets/PIC/person11.jpg",
         "available_images": [
-            "assets/PIC/color1.jpg",
             "assets/PIC/nature1.jpg",
-            "assets/PIC/nature2.jpg",
             "assets/PIC/nature3.jpg",
-            "assets/PIC/other1.png",
-            "assets/PIC/other2.png",
-            "assets/PIC/person11.jpg",
-            "assets/PIC/person4.jpg",
-            "assets/PIC/person5.jpg",
-            "assets/PIC/person6.jpg",
-            "assets/PIC/person7.jpg",
-            "assets/PIC/person8.jpg"
+            "assets/PIC/person11.jpg"
         ],
-        "current_index": 3
+        "current_index": 2
     },
     "theme": {
-        "current_theme": "dark",
+        "current_theme": "Light",
         "themes": {
             "light": {
                 "name": "Light Theme",

@@ -26,14 +26,11 @@ def main():
     
     # Check if user management is enabled
     if user_manager.is_user_management_enabled():
-        # Show login dialog
         login_controller = LoginController(user_manager)
         if not login_controller.show_login_dialog():
-            # User cancelled login or closed dialog
             sys.exit(0)
         
         if not login_controller.is_authenticated():
-            # Authentication failed
             QMessageBox.critical(None, "登录失败", "用户认证失败，应用程序将退出。")
             sys.exit(1)
 
@@ -41,7 +38,6 @@ def main():
     if not os.path.exists(logo_path):
         logo_path = None
     
-    # Create main window with user manager
     window = MainWindow(
         app_name="Generic App Template",
         logo_path=logo_path,
@@ -52,7 +48,6 @@ def main():
     from user_mag import UserManagementPage
     from qfluentwidgets import FluentIcon as FIF
     
-    # Add example page to application
     window.page_manager.register_page(
         page_id="example",
         title="示例页面",
@@ -62,7 +57,6 @@ def main():
         order=1
     )
     
-    # Add user management page (only visible to admins)
     window.page_manager.register_page(
         page_id="user_management",
         title="用户管理",

@@ -20,43 +20,12 @@ from .base_page import BasePage
 class SettingsPage(BasePage):
     """Settings page with theme management and other general settings"""
     
-    # Signals
-    theme_changed = pyqtSignal(str)  # Emitted when theme changes
     background_changed = pyqtSignal(str)  # Emitted when background changes
-    setting_changed = pyqtSignal(str, object)  # Emitted when any setting changes
     
     def __init__(self, config_manager=None, parent=None):
         self.config_manager = config_manager
         self.user_manager = None
         super().__init__("settings", parent)
-    
-    def apply_theme(self):
-        """Apply current theme to the page"""
-        if self.config_manager:
-            current_theme = self.config_manager.get_theme()
-            
-            # Update theme card text based on current theme
-            if hasattr(self, 'theme_card'):
-                theme_display = "Dark" if current_theme.lower() == "dark" else "Light"
-                self.theme_card.setContent(theme_display)
-                
-            # Apply theme-specific styling to the page
-            if current_theme.lower() == "dark":
-                # Dark theme styling
-                self.setStyleSheet("""
-                    QWidget {
-                        background-color: transparent;
-                        color: white;
-                    }
-                """)
-            else:
-                # Light theme styling
-                self.setStyleSheet("""
-                    QWidget {
-                        background-color: transparent;
-                        color: black;
-                    }
-                """)
     
     def init_content(self):
         """Initialize page content"""
@@ -92,9 +61,6 @@ class SettingsPage(BasePage):
         
         # Add scroll widget to main layout
         self.layout.addWidget(scroll_widget)
-        
-        # Apply initial theme
-        self.apply_theme()
     
     def create_appearance_group(self):
         """Create appearance settings group"""
@@ -103,8 +69,7 @@ class SettingsPage(BasePage):
         # Get current theme from config
         current_theme = "Light"
         if self.config_manager:
-            theme_config = self.config_manager.get_theme_config()
-            current_theme = "Dark" if theme_config.get('is_dark', False) else "Light"
+            current_theme = self.config_manager.get_theme()
         
         # Theme setting card - use PushSettingCard instead of ComboBoxSettingCard
         self.theme_card = PushSettingCard(
@@ -165,11 +130,11 @@ class SettingsPage(BasePage):
         
         # Help card - fix HyperlinkCard parameter order
         self.help_card = HyperlinkCard(
-            "https://github.com/zhiyiYo/PyQt-Fluent-Widgets",
+            "https://ximing766.github.io/my-project-doc/",
             "打开帮助页面",
             FIF.HELP,
             "帮助",
-            "发现新功能并学习有用的技巧",
+            "发现新功能",
             parent=group
         )
         
@@ -195,12 +160,13 @@ class SettingsPage(BasePage):
         
         # About card
         self.about_card = PushSettingCard(
-            "查看许可证",
+            "关于应用",
             FIF.INFO,
             "关于",
             "版权所有 © 2024. 保留所有权利。",
             parent=group
         )
+        self.about_card.clicked.connect(self.show_about_dialog)
         
         group.addSettingCard(self.help_card)
         group.addSettingCard(self.feedback_card)
@@ -226,20 +192,14 @@ class SettingsPage(BasePage):
         
         # Save to config first
         if self.config_manager:
-            self.config_manager.set_theme(next_theme.lower())
+            self.config_manager.set_theme(next_theme)
+
+        if next_theme.lower() == "dark":
+            setTheme(Theme.DARK)
+        else:
+            setTheme(Theme.LIGHT)
         
-        # Emit signal to main window to handle theme application
-        self.theme_changed.emit(next_theme.lower())
-        self.setting_changed.emit("theme", next_theme.lower())
-        
-        # Show info
         self.show_success("Theme Changed", f"Theme changed to {next_theme}", 2000)
-    
-    def on_theme_changed(self, theme):
-        """Handle theme change"""
-        print(f"Theme changed to: {theme}")
-        if self.config_manager:
-            self.config_manager.set_theme(theme)
     
     def cycle_background_image(self):
         """Cycle through background images in assets/PIC folder"""
@@ -251,7 +211,7 @@ class SettingsPage(BasePage):
         available_images = self.config_manager.get_available_backgrounds()
         
         if not available_images:
-            self.show_warning("无背景图片", "assets/PIC 文件夹中没有找到图片文件")
+            self.show_warning("无背景图片", "PIC 文件夹中没有找到图片文件")
             return
         
         # Get current background configuration
@@ -272,41 +232,14 @@ class SettingsPage(BasePage):
         
         # Emit signal
         self.background_changed.emit(next_image)
-        self.setting_changed.emit("background_image", next_image)
         
         # Show info
         self.show_success("背景已切换", f"背景图片已切换到 {image_name}", 2000)
-    
-    def select_background_image(self):
-        """Select background image"""
-        file_dialog = QFileDialog(self)
-        file_dialog.setFileMode(QFileDialog.FileMode.ExistingFile)
-        file_dialog.setNameFilter("Image files (*.png *.jpg *.jpeg *.bmp *.gif)")
-        file_dialog.setViewMode(QFileDialog.ViewMode.Detail)
-        
-        if file_dialog.exec():
-            file_paths = file_dialog.selectedFiles()
-            if file_paths:
-                image_path = file_paths[0]
-                
-                # Save to config
-                if self.config_manager:
-                    self.config_manager.add_background_image(image_path)
-                    self.config_manager.set_current_background(image_path)
-                
-                # Emit signal
-                self.background_changed.emit(image_path)
-                self.setting_changed.emit("background_image", image_path)
-                
-                # Show success message
-                self.show_success("Background Updated", f"Background image set to {os.path.basename(image_path)}", 3000)
     
     def on_autosave_changed(self, enabled: bool):
         """Handle auto-save setting change"""
         if self.config_manager:
             self.config_manager.set_autosave(enabled)
-        
-        self.setting_changed.emit("autosave", enabled)
         
         status = "enabled" if enabled else "disabled"
         self.show_info("Auto-save Setting", f"Auto-save {status}", 2000)
@@ -330,8 +263,6 @@ class SettingsPage(BasePage):
         if self.config_manager:
             self.config_manager.set_language(next_language.lower())
         
-        self.setting_changed.emit("language", next_language.lower())
-        
         self.show_info("Language Setting", f"Language set to {next_language}. Restart required for full effect.", 3000)
     
     def on_language_changed(self, language: str):
@@ -340,58 +271,46 @@ class SettingsPage(BasePage):
     
     def reset_settings(self):
         """Reset all settings to default"""
-        # Show confirmation dialog
         msg_box = MessageBox(
             "Reset Settings",
             "Are you sure you want to reset all settings to default values?\n\nThis action cannot be undone.",
             self
         )
-        
         if msg_box.exec():
-            # Reset config
-            if self.config_manager:
-                self.config_manager.reset_to_defaults()
-            
-            # Reset UI
-            self.load_settings()
-            
-            # Emit signal
-            self.setting_changed.emit("reset", True)
-            
-            self.show_success("Settings Reset", "All settings have been reset to default values", 3000)
-    
+            pass
+
     def show_feedback_dialog(self):
         """Show feedback dialog"""
         self.show_info("Feedback", "Thank you for your interest in providing feedback!\n\nPlease visit our GitHub repository or contact us directly.", 4000)
     
     def check_update(self):
         """Check for updates"""
-        self.show_info("Update Check", "You are using the latest version of the application template.\n\nVersion: 1.0.0", 3000)
+        self.show_info("Update Check", "You are using the latest version.\n\nVersion: 1.0.0", 3000)
     
-    def load_settings(self):
-        """Load settings from config"""
-        if not self.config_manager:
-            return
+    def show_about_dialog(self):
+        """Show about dialog with application information"""
+        about_text = """
+        <h2 style="color:#08f">🚀 应用模板</h2>
+        <p><b>版本</b> <span style="color:#666">1.0.0</span></p>
+        <p><b>作者</b> <span style="color:#666">开发团队</span></p>
+        <p><b>✨ 功能特性</b></p>
+        <ul style="padding-left:1.2em;line-height:1.8">
+        <li>现代化界面</li>
+        <li>明亮 / 暗黑双主题</li>
+        <li>用户管理系统</li>
+        <li>配置管理</li>
+        <li>响应式布局</li>
+        </ul>
+        <p><b>© 版权信息</b></p>
+        <p style="font-size:13px;color:#999">
+        版权所有 © 2024 | MIT 开源协议
+        </p>
+        """
         
-        # Load theme - update button text based on current theme
-        theme = self.config_manager.get_theme()
-        theme_map = {
-            "light": "Light",
-            "dark": "Dark", 
-            "auto": "Auto"
-        }
-        if theme in theme_map:
-            self.theme_card.button.setText(theme_map[theme])
-        
-        # Load language - update button text based on current language
-        language = self.config_manager.get_language()
-        lang_map = {
-            "english": "English",
-            "中文": "中文",
-            "auto": "Auto"
-        }
-        if language in lang_map:
-            self.language_card.button.setText(lang_map[language])
+        msg_box = MessageBox("关于应用", about_text, self)
+        msg_box.yesButton.setText("确定")
+        msg_box.cancelButton.hide()  # Hide cancel button for about dialog
+        msg_box.exec()
     
     def save_settings(self):
         """Save current settings"""
@@ -407,7 +326,6 @@ class SettingsPage(BasePage):
     def on_activate(self):
         """Called when settings page is activated"""
         super().on_activate()
-        self.load_settings()
     
     def on_deactivate(self):
         """Called when settings page is deactivated"""

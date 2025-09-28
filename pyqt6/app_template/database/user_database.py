@@ -101,9 +101,7 @@ class UserDatabase:
                 if 'password' in kwargs:
                     password_hash = bcrypt.hashpw(kwargs['password'].encode('utf-8'), bcrypt.gensalt())
                     user.password_hash = password_hash.decode('utf-8')
-                
                 return True
-                
         except Exception as e:
             print(f"Error updating user: {e}")
             return False
@@ -121,7 +119,6 @@ class UserDatabase:
                     session.delete(user)
                 
                 return True
-                
         except Exception as e:
             print(f"Error deleting user: {e}")
             return False
