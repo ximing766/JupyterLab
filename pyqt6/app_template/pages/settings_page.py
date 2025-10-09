@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-"""
-Settings Page for Generic PyQt6 Application Template
-Contains theme management, background switching, and other general settings
-"""
+
+# Copyright (C) 2025  Qilang² <ximing766@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
 import os
 from PyQt6.QtCore import Qt, pyqtSignal, QUrl
@@ -16,12 +19,10 @@ from qfluentwidgets import (
 )
 from .base_page import BasePage
 
-
 class SettingsPage(BasePage):
     """Settings page with theme management and other general settings"""
-    
     background_changed = pyqtSignal(str)  # Emitted when background changes
-    
+
     def __init__(self, config_manager=None, parent=None):
         self.config_manager = config_manager
         self.user_manager = None
@@ -236,18 +237,10 @@ class SettingsPage(BasePage):
         # Show info
         self.show_success("背景已切换", f"背景图片已切换到 {image_name}", 2000)
     
-    def on_autosave_changed(self, enabled: bool):
-        """Handle auto-save setting change"""
-        if self.config_manager:
-            self.config_manager.set_autosave(enabled)
-        
-        status = "enabled" if enabled else "disabled"
-        self.show_info("Auto-save Setting", f"Auto-save {status}", 2000)
-    
     def on_language_clicked(self):
         """Handle language button click - cycle through languages"""
         current_text = self.language_card.button.text()
-        languages = ["English", "中文", "Auto"]
+        languages = ["English", "中文"]
         
         try:
             current_index = languages.index(current_text)
@@ -263,11 +256,7 @@ class SettingsPage(BasePage):
         if self.config_manager:
             self.config_manager.set_language(next_language.lower())
         
-        self.show_info("Language Setting", f"Language set to {next_language}. Restart required for full effect.", 3000)
-    
-    def on_language_changed(self, language: str):
-        """Handle language change (legacy method for compatibility)"""
-        self.on_language_clicked()
+        self.show_info("Language Setting", f"待定...", 3000)
     
     def reset_settings(self):
         """Reset all settings to default"""
@@ -297,8 +286,8 @@ class SettingsPage(BasePage):
         <ul style="padding-left:1.2em;line-height:1.8">
         <li>现代化界面</li>
         <li>明亮 / 暗黑双主题</li>
-        <li>用户管理系统</li>
-        <li>配置管理</li>
+        <li>支持鼠标侧键</li>
+        <li>SQLite + 配置文件管理</li>
         <li>响应式布局</li>
         </ul>
         <p><b>© 版权信息</b></p>
@@ -311,17 +300,6 @@ class SettingsPage(BasePage):
         msg_box.yesButton.setText("确定")
         msg_box.cancelButton.hide()  # Hide cancel button for about dialog
         msg_box.exec()
-    
-    def save_settings(self):
-        """Save current settings"""
-        if self.config_manager:
-            self.config_manager.save_config()
-            
-            # If user management is enabled, also save to user-specific config
-            if hasattr(self, 'user_manager') and self.user_manager and self.user_manager.is_user_management_enabled():
-                current_user = self.user_manager.get_current_user()
-                if current_user:
-                    self.user_manager.save_user_config(current_user.username, self.config_manager.config)
     
     def on_activate(self):
         """Called when settings page is activated"""

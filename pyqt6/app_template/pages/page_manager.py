@@ -1,4 +1,12 @@
 # -*- coding: utf-8 -*-
+
+# Copyright (C) 2025  Qilang² <ximing766@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
 from typing import Dict, List, Optional, Type, Any
 from PyQt6.QtCore import QObject, pyqtSignal
 from PyQt6.QtWidgets import QStackedWidget

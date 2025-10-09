@@ -1,12 +1,5 @@
 
 ## 在项目根目录下运行打包命令
 
-python -m nuitka --standalone --onefile --windows-console-mode=disable 
---windows-icon-from-ico=assets/logo.ico --include-data-dir=assets=assets 
---include-data-dir=config=config --include-data-dir=database=database 
---enable-plugin=pyqt6 --enable-plugin=numpy --follow-imports --prefer-source-code 
---output-filename=AppTemplate.exe --output-dir=output --remove-output --assume-yes-for-downloads 
---windows-uac-admin --company-name="Your Company" --product-name="App Template" 
---file-version=1.0.0.0 --product-version=1.0.0 
---file-description="PyQt6 Application Template" main.py
+python -m nuitka --standalone --onefile --windows-console-mode=disable --windows-icon-from-ico=assets/logo.ico --include-data-dir=assets=assets --include-data-dir=config=config --include-data-dir=database=database --enable-plugin=pyqt6 --follow-imports --prefer-source-code --output-filename=PowerMeterBluetoothTest.exe --output-dir=output --remove-output --assume-yes-for-downloads --windows-uac-admin --company-name="XX科技" --product-name="电表蓝牙功能检测系统" --file-version=1.0.0.0 --product-version=1.0.0 --file-description="Power Meter Bluetooth Function Test System" main.py
 

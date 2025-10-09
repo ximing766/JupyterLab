@@ -1,0 +1,46 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Modern UWB OTA theme without ActionBar -->
+    <style name="Theme.UWBOTA" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color - Modern blue -->
+        <item name="colorPrimary">#2196F3</item>
+        <item name="colorOnPrimary">#FFFFFF</item>
+        <item name="colorPrimaryContainer">#E3F2FD</item>
+        <item name="colorOnPrimaryContainer">#0D47A1</item>
+        
+        <!-- Secondary brand color - Complementary teal -->
+        <item name="colorSecondary">#00BCD4</item>
+        <item name="colorOnSecondary">#FFFFFF</item>
+        <item name="colorSecondaryContainer">#E0F7FA</item>
+        <item name="colorOnSecondaryContainer">#006064</item>
+        
+        <!-- Surface colors for cards and backgrounds -->
+        <item name="colorSurface">#FAFAFA</item>
+        <item name="colorOnSurface">#212121</item>
+        <item name="colorSurfaceVariant">#F5F5F5</item>
+        <item name="colorOnSurfaceVariant">#424242</item>
+        
+        <!-- Background -->
+        <item name="android:colorBackground">#FFFFFF</item>
+        <item name="colorOnBackground">#1C1B1F</item>
+        
+        <!-- Status bar - transparent for modern look -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        
+        <!-- Navigation bar -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        
+        <!-- Modern window flags -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:fitsSystemWindows">false</item>
+        
+        <!-- Error colors -->
+        <item name="colorError">#F44336</item>
+        <item name="colorOnError">#FFFFFF</item>
+        
+        <!-- Outline colors -->
+        <item name="colorOutline">#E0E0E0</item>
+        <item name="colorOutlineVariant">#EEEEEE</item>
+    </style>
+</resources>

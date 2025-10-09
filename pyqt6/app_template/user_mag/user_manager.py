@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-"""
-User Management Module for Generic PyQt6 Application Template
-Handles user authentication, session management, and user data operations
-"""
+
+# Copyright (C) 2025  Qilang² <ximing766@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
 import os
 import json

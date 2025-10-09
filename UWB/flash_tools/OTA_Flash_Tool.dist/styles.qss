@@ -1,0 +1,369 @@
+/* OTA Flash Tool 样式定义 */
+
+/* 主窗口样式 */
+QMainWindow {
+    background-color: #1e1e1e;
+    color: #ffffff;
+}
+
+/* 标签样式 */
+QLabel {
+    font-size: 12px;
+    color: #e0e0e0;
+    margin: 2px 0;
+    font-weight: 500;
+}
+
+/* 通用按钮样式 */
+QPushButton {
+    background-color: #4a90e2;
+    color: white;
+    border: none;
+    padding: 12px 12px;
+    border-radius: 4px;
+    font-size: 11px;
+    font-weight: 600;
+    min-height: 16px;
+}
+
+QPushButton:hover {
+    background-color: #357abd;
+}
+
+QPushButton:pressed {
+    background-color: #2968a3;
+}
+
+/* Flash按钮样式 - 绿色 */
+QPushButton#flash_btn {
+    background-color: #4CAF50;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+QPushButton#flash_btn:hover {
+    background-color: #45a049;
+}
+
+QPushButton#flash_btn:pressed {
+    background-color: #3d8b40;
+}
+
+/* OTA Flash按钮样式 - 蓝色 */
+QPushButton#ota_flash_btn {
+    background-color: #2196F3;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+QPushButton#ota_flash_btn:hover {
+    background-color: #1976D2;
+}
+
+QPushButton#ota_flash_btn:pressed {
+    background-color: #1565C0;
+}
+
+/* Reset按钮样式 - 红色 */
+QPushButton#reset_btn {
+    background-color: #e74c3c;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+QPushButton#reset_btn:hover {
+    background-color: #c0392b;
+}
+
+QPushButton#reset_btn:pressed {
+    background-color: #a93226;
+}
+
+/* App Flash按钮样式 - 紫色 */
+QPushButton#app_flash_btn {
+    background-color: #9C27B0;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+QPushButton#app_flash_btn:hover {
+    background-color: #7B1FA2;
+}
+
+QPushButton#app_flash_btn:pressed {
+    background-color: #6A1B9A;
+}
+
+/* Placeholder按钮样式 - 灰色 */
+QPushButton#placeholder_btn {
+    background-color: #607D8B;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+QPushButton#placeholder_btn:hover {
+    background-color: #546E7A;
+}
+
+QPushButton#placeholder_btn:pressed {
+    background-color: #455A64;
+}
+
+QPushButton#placeholder_btn:disabled {
+    background-color: #37474F;
+    color: #78909C;
+}
+
+/* UUID按钮样式 - 青色 */
+QPushButton#uuid_btn {
+    background-color: #00BCD4;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+QPushButton#uuid_btn:hover {
+    background-color: #00ACC1;
+}
+
+QPushButton#uuid_btn:pressed {
+    background-color: #0097A7;
+}
+
+/* SR150按钮样式 - 橙色（第二排统一颜色） */
+QPushButton#sr150_btn {
+    background-color: #ff9500;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+QPushButton#sr150_btn:hover {
+    background-color: #e6850e;
+}
+
+QPushButton#sr150_btn:pressed {
+    background-color: #cc7700;
+}
+
+/* 占位按钮1样式 - 橙色（第二排统一颜色） */
+QPushButton#placeholder1_btn {
+    background-color: #ff9500;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+QPushButton#placeholder1_btn:hover {
+    background-color: #e6850e;
+}
+
+QPushButton#placeholder1_btn:pressed {
+    background-color: #cc7700;
+}
+
+QPushButton#placeholder1_btn:disabled {
+    background-color: #666666;
+    color: #999999;
+}
+
+/* 占位按钮2样式 - 橙色（第二排统一颜色） */
+QPushButton#placeholder2_btn {
+    background-color: #ff9500;
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 5px;
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+QPushButton#placeholder2_btn:hover {
+    background-color: #e6850e;
+}
+
+QPushButton#placeholder2_btn:pressed {
+    background-color: #cc7700;
+}
+
+QPushButton#placeholder2_btn:disabled {
+    background-color: #666666;
+    color: #999999;
+}
+
+/* Browse按钮样式 */
+QPushButton#browse_btn {
+    background-color: #5a6268;
+    padding: 6px 12px;
+    font-size: 11px;
+}
+
+QPushButton#browse_btn:hover {
+    background-color: #7a8288;
+}
+
+/* 下拉框样式 */
+QComboBox {
+    padding: 6px 10px;
+    border: 1px solid #5a6268;
+    border-radius: 3px;
+    background-color: #2d2d2d;
+    color: #ffffff;
+    font-size: 12px;
+    min-height: 18px;
+}
+
+QComboBox:hover {
+    border-color: #2d7d87;
+    background-color: #404040;
+}
+
+QComboBox:focus {
+    border-color: #3a9ca8;
+}
+
+QComboBox::drop-down {
+    width: 25px;
+    border-left-width: 1px;
+    border-left-color: #5a6268;
+    border-left-style: solid;
+    border-top-right-radius: 3px;
+    border-bottom-right-radius: 3px;
+    background-color: #5a6268;
+}
+
+QComboBox::down-arrow {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 6px solid #e0e0e0;
+    width: 0px;
+    height: 0px;
+    margin: 0;
+}
+
+QComboBox::down-arrow:hover {
+    border-top-color: #2d7d87;
+}
+
+QComboBox QAbstractItemView {
+    background-color: #2d2d2d;
+    color: #ffffff;
+    border: 1px solid #5a6268;
+    font-size: 12px;
+}
+
+/* 进度条样式 */
+QProgressBar {
+    border: none;
+    border-radius: 6px;
+    text-align: center;
+    background: #404040;
+    color: white;
+    font-weight: bold;
+    font-size: 13px;
+    padding: 0px;
+    min-height: 20px;
+}
+
+QProgressBar::chunk {
+    background: qlineargradient(x1:0, y1:0, x2:1, y2:0, stop:0 #00bfff, stop:1 #0080ff);
+    border-radius: 6px;
+    margin: 0px;
+}
+
+/* 对话框样式 */
+QDialog {
+    background-color: #2d2d2d;
+    border: 1px solid #555555;
+    border-radius: 10px;
+    font-family: 'Microsoft YaHei UI', sans-serif;
+}
+
+QFrame#InfoFrame {
+    background-color: #3d3d3d;
+    border: 1px solid #555555;
+    border-radius: 8px;
+}
+
+QLabel#LabelField {
+    font-size: 13px;
+    color: #ffffff;
+    padding: 4px 0;
+}
+
+QLabel#ValueField {
+    font-size: 13px;
+    font-weight: 600;
+    color: #87ceeb;
+    font-family: 'Consolas', 'Courier New', monospace;
+    background-color: #4a4a4a;
+    padding: 4px 8px;
+    border-radius: 5px;
+}
+
+QLabel#TotalSizeValue {
+    font-size: 14px;
+    font-weight: 700;
+    color: #ff6b6b;
+    font-family: 'Consolas', 'Courier New', monospace;
+    background-color: #4a4a4a;
+    padding: 4px 8px;
+    border-radius: 5px;
+}
+
+/* 对话框按钮样式 */
+QDialog QPushButton {
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 6px;
+    padding: 8px 20px;
+    margin: 5px;
+    border: none;
+}
+
+QPushButton#ConfirmButton {
+    background-color: #38a169;
+    color: white;
+}
+
+QPushButton#ConfirmButton:hover {
+    background-color: #2f855a;
+}
+
+QPushButton#CancelButton {
+    background-color: #a0aec0;
+    color: white;
+}
+
+QPushButton#CancelButton:hover {
+    background-color: #718096;
+}

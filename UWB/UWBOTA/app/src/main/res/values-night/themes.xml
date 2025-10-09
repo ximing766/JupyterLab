@@ -1,0 +1,46 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Modern UWB OTA dark theme without ActionBar -->
+    <style name="Theme.UWBOTA" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Primary brand color - Modern blue for dark theme -->
+        <item name="colorPrimary">#64B5F6</item>
+        <item name="colorOnPrimary">#0D47A1</item>
+        <item name="colorPrimaryContainer">#1565C0</item>
+        <item name="colorOnPrimaryContainer">#E3F2FD</item>
+        
+        <!-- Secondary brand color - Complementary teal for dark theme -->
+        <item name="colorSecondary">#4DD0E1</item>
+        <item name="colorOnSecondary">#006064</item>
+        <item name="colorSecondaryContainer">#00838F</item>
+        <item name="colorOnSecondaryContainer">#E0F7FA</item>
+        
+        <!-- Surface colors for cards and backgrounds -->
+        <item name="colorSurface">#1E1E1E</item>
+        <item name="colorOnSurface">#E0E0E0</item>
+        <item name="colorSurfaceVariant">#2C2C2C</item>
+        <item name="colorOnSurfaceVariant">#BDBDBD</item>
+        
+        <!-- Background -->
+        <item name="android:colorBackground">#121212</item>
+        <item name="colorOnBackground">#E0E0E0</item>
+        
+        <!-- Status bar - transparent for modern look -->
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">false</item>
+        
+        <!-- Navigation bar -->
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightNavigationBar">false</item>
+        
+        <!-- Modern window flags -->
+        <item name="android:windowDrawsSystemBarBackgrounds">true</item>
+        <item name="android:fitsSystemWindows">false</item>
+        
+        <!-- Error colors -->
+        <item name="colorError">#EF5350</item>
+        <item name="colorOnError">#FFFFFF</item>
+        
+        <!-- Outline colors -->
+        <item name="colorOutline">#424242</item>
+        <item name="colorOutlineVariant">#616161</item>
+    </style>
+</resources>

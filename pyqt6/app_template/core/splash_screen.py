@@ -1,16 +1,28 @@
+# Copyright (C) 2025  Qilang² <ximing766@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QProgressBar, QApplication
 from PyQt6.QtCore import Qt, QTimer, pyqtSignal
 from PyQt6.QtGui import QPixmap, QFont
-from qfluentwidgets import isDarkTheme
+from qfluentwidgets import (Theme, setTheme, PushButton, LineEdit, ComboBox, TableWidget,ToolButton,
+                           BodyLabel, ProgressBar)
 import os
 import sys
 
+def isWin11():
+    return sys.platform == 'win32' and sys.getwindowsversion().build >= 22000
 
-class SplashScreen(QWidget):
-    """Simple splash screen for PyQt6 applications"""
-    
+if isWin11():
+    from qframelesswindow import AcrylicWindow as Window
+else:
+    from qframelesswindow import FramelessWindow as Window
+
+class SplashScreen(Window):
     finished = pyqtSignal()
-    
     def __init__(self, app_name="Application", logo_path=None, parent=None):
         super().__init__(parent)
         self.app_name = app_name
@@ -24,21 +36,22 @@ class SplashScreen(QWidget):
         self.setWindowFlags(Qt.WindowType.FramelessWindowHint | Qt.WindowType.WindowStaysOnTopHint)
         self.setFixedSize(400, 300)
         
-        # Center the window
-        self.center_window()
+        # Create a central widget with background
+        self.central_widget = QWidget()
+        self.central_widget.setObjectName("centralWidget")
         
-        # Create layout
-        layout = QVBoxLayout()
+        # Create layout for central widget
+        layout = QVBoxLayout(self.central_widget)
         layout.setContentsMargins(40, 40, 40, 40)
         layout.setSpacing(20)
         
         # Logo label
-        self.logo_label = QLabel()
+        self.logo_label = BodyLabel()
         self.logo_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.load_logo()
         
         # App name label
-        self.name_label = QLabel(self.app_name)
+        self.name_label = BodyLabel(self.app_name)
         self.name_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         font = QFont()
         font.setPointSize(18)
@@ -46,11 +59,11 @@ class SplashScreen(QWidget):
         self.name_label.setFont(font)
         
         # Status label
-        self.status_label = QLabel("Starting...")
+        self.status_label = BodyLabel("Starting...")
         self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
         # Progress bar
-        self.progress_bar = QProgressBar()
+        self.progress_bar = ProgressBar()
         self.progress_bar.setRange(0, 100)
         self.progress_bar.setValue(0)
         self.progress_bar.setTextVisible(False)
@@ -62,7 +75,20 @@ class SplashScreen(QWidget):
         layout.addWidget(self.status_label)
         layout.addWidget(self.progress_bar)
         
-        self.setLayout(layout)
+        # Set central widget as main layout
+        main_layout = QVBoxLayout(self)
+        main_layout.setContentsMargins(0, 0, 0, 0)
+        main_layout.addWidget(self.central_widget)
+        
+        # Set background color and styling for the central widget
+        self.central_widget.setStyleSheet("""
+            QWidget#centralWidget {
+                background: qlineargradient(x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #a7dbdf, stop:1 #a075ca);
+            }
+        """)
+
+        self.center_window()
         
     def load_logo(self):
         """Load and set the logo image"""

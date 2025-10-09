@@ -1,8 +1,11 @@
 # -*- coding: utf-8 -*-
-"""
-User Management Page - Admin Only
-Provides interface for managing users and permissions
-"""
+
+# Copyright (C) 2025  Qilang² <ximing766@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
 
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
                             QTableWidget, QTableWidgetItem, QPushButton,

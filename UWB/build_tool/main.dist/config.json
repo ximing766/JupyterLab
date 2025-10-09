@@ -1,0 +1,68 @@
+{
+  "project_history": [
+    "E:/Work/UWB/Code/UTN3.2/project/RhodesV4_32",
+    "E:/Work/UWB/Code/git/project/RhodesV4_GIT",
+    "E:/Work/UWB/Code/UwbApplication/project/RhodesV4_UwbApplication"
+  ],
+  "last_project": "E:/Work/UWB/Code/UTN3.2/project/RhodesV4_32",
+  "last_config_mode": "Debug",
+  "mcuxpresso_ide_path": "D:/mcux_ide/mcuxpressoidec.exe",
+  "mcuxpresso_workspace_path": "D:/Software/MCUXPRESSO/workspace",
+  "window_geometry": "01d9d0cb000300000000107d0000020500001306000003b30000107d0000022400001306000003b3000000010000000007800000107d0000022400001306000003b3",
+  "window_state": "000000ff00000000fd000000000000028a0000019000000004000000040000000800000008fc00000000",
+  "selected_mode": "A0",
+  "build_modes": {
+    "INGATE_MASTER_TRANSIT": {
+      "display_name": "IN_M",
+      "macros": {
+        "UWBIOT_APP_BUILD__DEMO_TRANSIT": 1,
+        "MASTER_ANCHOR": 1,
+        "INGATE": 1,
+        "TEST": 1
+      }
+    },
+    "INGATE_SLAVE_TRANSIT": {
+      "display_name": "IN_S",
+      "macros": {
+        "UWBIOT_APP_BUILD__DEMO_TRANSIT": 1,
+        "SLAVE_ANCHOR": 1,
+        "INGATE": 1
+      }
+    },
+    "OUTGATE_MASTER_TRANSIT": {
+      "display_name": "OUT_M",
+      "macros": {
+        "UWBIOT_APP_BUILD__DEMO_TRANSIT": 1,
+        "MASTER_ANCHOR": 1,
+        "OUTGATE": 1
+      }
+    },
+    "OUTGATE_SLAVE_TRANSIT": {
+      "display_name": "OUT_S",
+      "macros": {
+        "UWBIOT_APP_BUILD__DEMO_TRANSIT": 1,
+        "SLAVE_ANCHOR": 1,
+        "OUTGATE": 1
+      }
+    },
+    "A0": {
+      "display_name": "A0",
+      "macros": {
+        "UWBIOT_APP_BUILD__DEMO_TRANSIT": 1,
+        "DEMO_TRANSIT_ENABLE_BLE_SENDING": 1,
+        "CURRENT_ANCHOR": "NB_ANCHOR_0",
+        "UWB_GLOBAL_LOG_LEVEL": "UWB_LOG_INFO_LEVEL"
+      }
+    },
+    "A1": {
+      "display_name": "A1",
+      "macros": {
+        "UWBIOT_APP_BUILD__DEMO_TRANSIT": 1,
+        "DEMO_TRANSIT_ENABLE_DATA_SENDING": 1,
+        "CURRENT_ANCHOR": "NB_ANCHOR_1",
+        "UWB_GLOBAL_LOG_LEVEL": "UWB_LOG_INFO_LEVEL"
+      }
+    }
+  },
+  "display_mode": "extended"
+}

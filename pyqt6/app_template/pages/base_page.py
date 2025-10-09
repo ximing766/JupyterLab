@@ -1,5 +1,12 @@
 # -*- coding: utf-8 -*-
 
+# Copyright (C) 2025  Qilang² <ximing766@gmail.com>
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
 from PyQt6.QtCore import Qt, pyqtSignal
 from PyQt6.QtWidgets import QWidget, QVBoxLayout
 from qfluentwidgets import InfoBar, InfoBarPosition, qconfig, Theme, setCustomStyleSheet, themeColor, TableWidget
@@ -21,37 +28,25 @@ class BasePage(QWidget):
         
         self.init_ui()
         
-        # Register for theme changes and apply initial theme
         qconfig.themeChanged.connect(self._on_theme_changed)
         self._apply_unified_theme()
     
     def init_ui(self):
-        """Initialize the user interface - minimal layout"""
         self.layout = QVBoxLayout(self)
         self.layout.setContentsMargins(0, 0, 0, 0)
         self.layout.setSpacing(0)
         
-        # Initialize content
         self.init_content()
-        
+
         self._is_initialized = True
     
-    def apply_theme(self):
-        """Apply current theme to the page - can be overridden in subclasses"""
-        # This method can be overridden by subclasses for custom theme handling
-        pass
-    
     def _apply_unified_theme(self):
-        """Apply unified theme management for QWidget-based pages"""
-        # Define light theme styles
         light_qss = """
         QWidget {
             background-color: transparent;
             color: rgb(32, 32, 32);
         }
         """
-        
-        # Define dark theme styles  
         dark_qss = """
         QWidget {
             background-color: transparent;
@@ -64,20 +59,18 @@ class BasePage(QWidget):
         self._apply_unified_theme()
     
     def apply_table_styling(self, table_widget):
-        """Apply enhanced table styling with rich color scheme and borders"""
-        
         light_qss = f"""
         QTableWidget {{
-            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                stop:0 rgba(248, 250, 252, 0.85),
-                stop:1 rgba(241, 245, 249, 0.75));
+            background: transparent;
             gridline-color: rgba(148, 163, 184, 0.4);
             selection-background-color: rgba(59, 130, 246, 0.1);
         }}
         
         QTableWidget::item {{
             padding: 10px 14px;
-            background-color: transparent;
+            background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                stop:0 rgba(248, 250, 252, 0.85),
+                stop:1 rgba(241, 245, 249, 0.75));
             color: rgb(51, 65, 85);
         }}
         
@@ -106,19 +99,18 @@ class BasePage(QWidget):
         
         """
         
-        # Define enhanced styling for dark theme with rich colors
         dark_qss = f"""
         QTableWidget {{
-            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                stop:0 rgba(30, 41, 59, 0.85),
-                stop:1 rgba(15, 23, 42, 0.75));
+            background: transparent;
             gridline-color: rgba(71, 85, 105, 0.5);
             selection-background-color: rgba(59, 130, 246, 0.15);
         }}
         
         QTableWidget::item {{
             padding: 10px 14px;
-            background-color: transparent;
+            background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
+                stop:0 rgba(30, 41, 59, 0.85),
+                stop:1 rgba(15, 23, 42, 0.75));
             color: rgb(226, 232, 240);
         }}
         
