@@ -22,7 +22,6 @@ from typing import Dict, Any, List, Optional
 
 from pages import BasePage
 
-
 class UserDialog(QDialog):
     """Dialog for creating/editing users"""
     
@@ -35,7 +34,6 @@ class UserDialog(QDialog):
         
         self.setWindowTitle("编辑用户" if is_edit else "创建用户")
         self.setFixedSize(400, 300)
-        self.setModal(True)
         
         self.setup_ui()
         
@@ -110,7 +108,6 @@ class UserDialog(QDialog):
     
     def save_user(self):
         """Save user data"""
-        # Validate data first
         is_valid, error_msg = self.validate_data()
         if not is_valid:
             if self.parent_page:
@@ -299,7 +296,6 @@ class UserManagementPage(BasePage):
         self.users_table.setBorderRadius(8)                         # 8px border radius
         self.users_table.resizeColumnsToContents()                  # Auto-resize columns
 
-        # Apply enhanced styling with light/dark theme support
         self.apply_table_styling(self.users_table)
 
         setFont(self.users_table, 13, QFont.Weight.Medium)          # Global 13pt medium font

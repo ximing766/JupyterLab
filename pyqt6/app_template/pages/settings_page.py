@@ -158,21 +158,31 @@ class SettingsPage(BasePage):
             parent=group
         )
         self.update_card.clicked.connect(self.check_update)
-        
+
+        self.license_card = PushSettingCard(
+            "查看许可证",
+            FIF.INFO,
+            "许可证",
+            "GNU GPLv3",
+            parent=group
+        )
+        self.license_card.clicked.connect(self.open_license)
+
         # About card
         self.about_card = PushSettingCard(
             "关于应用",
             FIF.INFO,
             "关于",
-            "版权所有 © 2024. 保留所有权利。",
+            "版权所有 © 2024. GNU GPLv3 开源许可证。",
             parent=group
         )
         self.about_card.clicked.connect(self.show_about_dialog)
-        
+
         group.addSettingCard(self.help_card)
         group.addSettingCard(self.feedback_card)
         group.addSettingCard(self.update_card)
         group.addSettingCard(self.about_card)
+        group.addSettingCard(self.license_card)
 
         return group
     
@@ -292,7 +302,7 @@ class SettingsPage(BasePage):
         </ul>
         <p><b>© 版权信息</b></p>
         <p style="font-size:13px;color:#999">
-        版权所有 © 2024 | MIT 开源协议
+        版权所有 © 2024 | GNU GPLv3 开源许可证
         </p>
         """
         
@@ -300,6 +310,18 @@ class SettingsPage(BasePage):
         msg_box.yesButton.setText("确定")
         msg_box.cancelButton.hide()  # Hide cancel button for about dialog
         msg_box.exec()
+
+    def open_license(self):
+        """Open the GPLv3 LICENSE file with the system default program"""
+        try:
+            license_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '..', 'LICENSE'))
+            if os.path.exists(license_path):
+                QDesktopServices.openUrl(QUrl.fromLocalFile(license_path))
+                self.show_info("许可证", "已在系统默认程序中打开 LICENSE。", 3000)
+            else:
+                self.show_warning("未找到许可证", f"未找到 LICENSE 文件:\n{license_path}")
+        except Exception as e:
+            self.show_warning("打开失败", f"无法打开 LICENSE 文件:\n{e}")
     
     def on_activate(self):
         """Called when settings page is activated"""

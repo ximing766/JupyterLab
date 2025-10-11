@@ -379,8 +379,8 @@ class OTAWorker(QThread):
     
     def _execute_sr150_flash(self):
         """Execute SR150 flash operation in thread"""
-        # Use relative firmware path
-        firmware_path = os.path.join(os.path.dirname(__file__), 'H1_IOT.SR150_MAINLINE_PROD_FW_EE.40.A0_a8b28afc11bdaf6c.bin')
+        # Use selected firmware path passed from UI
+        firmware_path = self.firmware_path
         
         # Check if firmware file exists
         if not os.path.exists(firmware_path):
@@ -1239,14 +1239,17 @@ class FlashTool(QMainWindow):
 
 
     def sr150_flash_firmware(self):
-        """SR150 fixed firmware OTA flash function"""
+        """SR150从选中文件进行OTA烧录"""
         # Check if OTA worker is already running
         if self.ota_worker and self.ota_worker.isRunning():
             QMessageBox.warning(self, '操作进行中', 'OTA操作正在进行中，请等待完成')
             return
-            
-        # 使用相对于应用路径的固件文件
-        firmware_path = os.path.join(os.path.dirname(__file__), 'H1_IOT.SR150_MAINLINE_PROD_FW_EE.40.A0_a8b28afc11bdaf6c.bin')
+        
+        # 使用用户选中的固件文件
+        firmware_path = self.selected_file
+        if not firmware_path:
+            QMessageBox.warning(self, '文件错误', '请选择固件文件')
+            return
         
         # Check if firmware file exists
         if not os.path.exists(firmware_path):
@@ -1263,6 +1266,7 @@ class FlashTool(QMainWindow):
         firmware_size = os.path.getsize(firmware_path)
         reply = QMessageBox.question(self, 'SR150固件烧录确认', 
                                    f'确定要烧录SR150固件吗？\n\n'
+                                   f'文件: {os.path.basename(firmware_path)}\n'
                                    f'固件大小: {firmware_size} 字节\n'
                                    f'目标地址: 0x{SR150_FLASH_START_ADDR:08X}\n\n',
                                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
@@ -1281,7 +1285,7 @@ class FlashTool(QMainWindow):
             operation_type='sr150_flash',
             com_data=com_data,
             baud_rate=int(self.baud_combo.currentText()),
-            firmware_path=None,  # SR150 uses fixed firmware path
+            firmware_path=firmware_path,  # 使用选中的固件文件
             parent_tool=self
         )
         

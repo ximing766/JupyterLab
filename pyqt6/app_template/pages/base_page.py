@@ -46,11 +46,23 @@ class BasePage(QWidget):
             background-color: transparent;
             color: rgb(32, 32, 32);
         }
+        QDialog {
+            background-color: rgb(255, 255, 255);
+            color: rgb(32, 32, 32);
+            border: 1px solid rgb(229, 231, 235);
+            border-radius: 8px;
+        }
         """
         dark_qss = """
         QWidget {
             background-color: transparent;
             color: rgb(255, 255, 255);
+        }
+        QDialog {
+            background-color: rgb(45, 45, 45);
+            color: rgb(255, 255, 255);
+            border: 1px solid rgb(75, 85, 99);
+            border-radius: 8px;
         }
         """
         self.setStyleSheet(light_qss if qconfig.theme == Theme.LIGHT else dark_qss)
@@ -63,14 +75,10 @@ class BasePage(QWidget):
         QTableWidget {{
             background: transparent;
             gridline-color: rgba(148, 163, 184, 0.4);
-            selection-background-color: rgba(59, 130, 246, 0.1);
         }}
         
         QTableWidget::item {{
-            padding: 10px 14px;
-            background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                stop:0 rgba(248, 250, 252, 0.85),
-                stop:1 rgba(241, 245, 249, 0.75));
+            background-color: rgba(218, 237, 243, 0.5);
             color: rgb(51, 65, 85);
         }}
         
@@ -78,7 +86,7 @@ class BasePage(QWidget):
             background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
                 stop:0 rgba(59, 130, 246, 0.2),
                 stop:1 rgba(37, 99, 235, 0.15));
-            color: rgb(30, 58, 138);
+            color: rgb(204, 87, 240);
         }}
         
         QTableWidget::item:focus {{
@@ -88,53 +96,38 @@ class BasePage(QWidget):
         }}
         
         QHeaderView::section {{
-            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                stop:0 rgba(162, 225, 233, 0.95),
-                stop:1 rgba(162, 225, 233, 0.75));
-            color: rgb(35, 140, 189);
-            padding: 10px 8px;
-            font-weight: 700;
-            font-size: 13px;
+            background: rgba(162, 225, 233, 0.95);
+            color: rgb(28, 108, 145);
+            font-size: 14px;
+            font-weight: bold;
         }}
-        
         """
         
         dark_qss = f"""
         QTableWidget {{
             background: transparent;
             gridline-color: rgba(71, 85, 105, 0.5);
-            selection-background-color: rgba(59, 130, 246, 0.15);
         }}
         
         QTableWidget::item {{
-            padding: 10px 14px;
-            background-color: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                stop:0 rgba(30, 41, 59, 0.85),
-                stop:1 rgba(15, 23, 42, 0.75));
+            background-color: rgba(30, 41, 59, 0.55);
             color: rgb(226, 232, 240);
         }}
         
         QTableWidget::item:selected {{
-            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                stop:0 rgba(170, 100, 236, 0.3),
-                stop:1 rgba(170, 100, 236, 0.2));
-            color: rgb(233, 213, 255);
+            background: rgba(170, 100, 236, 0.3);
+            color: rgb(12, 183, 226);
         }}
         
         QTableWidget::item:focus {{
-            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                stop:0 rgba(173, 88, 159, 0.5),
-                stop:1 rgba(173, 88, 159, 0.4));
+            background: rgba(173, 88, 159, 0.5);
         }}
         
         QHeaderView::section {{
-            background: qlineargradient(x1:0, y1:0, x2:0, y2:1,
-                stop:0 rgba(71, 85, 105, 0.9),
-                stop:1 rgba(51, 65, 85, 0.95));
-            color: rgb(203, 213, 225);
-            padding: 10px 8px;
-            font-weight: 700;
-            font-size: 13px;
+            background: rgba(35, 44, 71, 0.9);
+            color: rgb(221, 230, 241);
+            font-weight: bold;
+            font-size: 14px;
         }}
         """
         
@@ -196,7 +189,7 @@ class BasePage(QWidget):
         return self.__str__()
     
     # Information display methods
-    def show_info(self, title: str = "信息", content: str = "", duration: int = 3000):
+    def show_info(self, title: str = "信息", content: str = "", duration: int = 1000):
         """Show info message"""
         InfoBar.info(
             title=title,
@@ -208,7 +201,7 @@ class BasePage(QWidget):
             parent=self
         )
     
-    def show_success(self, title: str = "成功", content: str = "", duration: int = 3000):
+    def show_success(self, title: str = "成功", content: str = "", duration: int = 1000):
         """Show success message"""
         InfoBar.success(
             title=title,
@@ -220,7 +213,7 @@ class BasePage(QWidget):
             parent=self
         )
     
-    def show_warning(self, title: str = "警告", content: str = "", duration: int = 3000):
+    def show_warning(self, title: str = "警告", content: str = "", duration: int = 2000):
         """Show warning message"""
         InfoBar.warning(
             title=title,
@@ -232,7 +225,7 @@ class BasePage(QWidget):
             parent=self
         )
     
-    def show_error(self, title: str = "错误", content: str = "", duration: int = 5000):
+    def show_error(self, title: str = "错误", content: str = "", duration: int = 2000):
         """Show error message"""
         InfoBar.error(
             title=title,

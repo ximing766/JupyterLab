@@ -130,9 +130,6 @@ class SplashScreen(Window):
         self.progress_timer = QTimer()
         self.progress_timer.timeout.connect(self.update_progress)
         self.progress_timer.start(duration // 100)  # 100 steps
-        
-        # Auto close after duration
-        QTimer.singleShot(duration, self.close_splash)
     
     def update_progress(self):
         """Update progress bar"""
@@ -141,6 +138,8 @@ class SplashScreen(Window):
             self.progress = 100
             self.progress_timer.stop()
             self.status_label.setText("Ready!")
+            # Close splash screen after progress is complete with a small delay
+            QTimer.singleShot(500, self.close_splash)
         
         self.progress_bar.setValue(self.progress)
         

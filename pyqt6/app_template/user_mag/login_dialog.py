@@ -36,7 +36,6 @@ class LoginDialog(Window):
         self._dialog_result = None
         self.setupUI()
         self.setupWindow()
-        # setTheme(Theme.LIGHT)
         
     def setupUI(self):
         """Create UI elements programmatically"""
@@ -45,20 +44,14 @@ class LoginDialog(Window):
         self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout.setSpacing(0)
         
-        # Background image label (left side) - using nature1.jpg
         self.label = QLabel()
         self.label.setText("")
-        # Set background image to nature3.jpg
-        background_path = os.path.join(
-            os.path.dirname(os.path.dirname(__file__)),
-            "assets", "PIC", "nature3.jpg"
-        ).replace(os.sep, '/')
+        background_path = os.path.join(os.path.dirname(os.path.dirname(__file__)),
+            "assets", "PIC", "nature3.jpg").replace(os.sep, '/')
         
-        # 创建背景图片标签并设置初始尺寸
         self.label.setMinimumSize(QSize(650, 500))
         self.label.setMaximumSize(QSize(650, 500))
         
-        # 使用QPixmap直接设置图片，这样可以更好地控制显示
         if os.path.exists(background_path):
             background_pixmap = QPixmap(background_path)
             # 缩放图片以适应标签尺寸，保持宽高比
@@ -89,7 +82,7 @@ class LoginDialog(Window):
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
         self.widget.setSizePolicy(sizePolicy)
-        self.widget.setStyleSheet("background-color: rgba(87, 123, 129, 0.38);")
+        self.widget.setStyleSheet("background-color: rgba(95, 140, 170, 0.527);")
         
         # Right panel layout
         self.verticalLayout_2 = QVBoxLayout(self.widget)
@@ -160,6 +153,7 @@ class LoginDialog(Window):
         self.username_edit = LineEdit(self.widget)
         self.username_edit.setClearButtonEnabled(True)
         self.username_edit.setFixedHeight(40)
+        self.username_edit.setText("admin")  # 设置默认值为 admin
         self.verticalLayout_2.addWidget(self.username_edit)
         
         # Password input - renamed to match login_dialog.py
@@ -184,7 +178,6 @@ class LoginDialog(Window):
         
         # Login button - renamed to match login_dialog.py
         self.login_button = PrimaryPushButton(self.widget)
-        self.login_button.setIcon(FIF.ACCEPT)
         self.login_button.clicked.connect(self.handle_login)  # Connect login function
         self.login_button.setFixedHeight(35)
         self.verticalLayout_2.addWidget(self.login_button)
@@ -205,14 +198,14 @@ class LoginDialog(Window):
         
         self.retranslateUi()
         self.connect_signals()
-        self.username_edit.setFocus()
+        self.password_edit.setFocus()  # 设置密码输入框为默认选中
         
     def retranslateUi(self):
         self.username_edit.setPlaceholderText("Username:")
         self.password_edit.setPlaceholderText("Password:")
-        self.remember_checkbox.setText("记住密码")
-        self.login_button.setText("登录")
-        self.pushButton_2.setText("找回密码")
+        self.remember_checkbox.setText("Remember me")
+        self.login_button.setText("Login")
+        self.pushButton_2.setText("Forgot password?")   
         
     def setupWindow(self):
         self.setTitleBar(SplitTitleBar(self))
@@ -220,16 +213,12 @@ class LoginDialog(Window):
         
         self.label.setScaledContents(False)
         # self.setWindowTitle('Login')
-        self.setWindowOpacity(0.97)
+        self.setWindowOpacity(1)
         
-        # Set window icon
-        icon_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "logo.ico")
-        if os.path.exists(icon_path):
-            self.setWindowIcon(QIcon(icon_path))
         
         # 设置初始大小，但允许调整大小
         self.resize(800, 500)
-        self.setMinimumSize(800, 500)  # 设置最小尺寸
+        self.setMinimumSize(800, 500)
         
         self.setWindowModality(Qt.WindowModality.ApplicationModal)
         

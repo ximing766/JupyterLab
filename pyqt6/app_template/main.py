@@ -13,6 +13,7 @@ import os
 from PyQt6.QtWidgets import QApplication, QMessageBox
 from PyQt6.QtCore import Qt
 from qfluentwidgets import setTheme, Theme
+from qfluentwidgets import FluentIcon as FIF
 
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 from core.main_window import MainWindow
@@ -28,10 +29,7 @@ def main():
     app.setApplicationVersion("1.0.0")
     app.setOrganizationName("Your Organization")
     
-    # Initialize user manager
     user_manager = UserManager()
-    
-    # Check if user management is enabled
     if user_manager.is_user_management_enabled():
         login_controller = LoginController(user_manager)
         if not login_controller.show_login_dialog():

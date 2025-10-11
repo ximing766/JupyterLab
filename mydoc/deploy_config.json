@@ -14,13 +14,7 @@
       "build_command": "mkdocs build",
       "deploy_to_pages": true
     },
-    "UWB_Application_Plan": {
-      "path": "UWB_Application_Plan",
-      "branch": "master",
-      "description": "UWB-Reader应用方案",
-      "build_command": "mkdocs build",
-      "deploy_to_pages": true
-    },
+
     "my-project-doc": {
       "path": "my-project-doc",
       "branch": "main",

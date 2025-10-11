@@ -15,6 +15,7 @@ from pathlib import Path
 from typing import Optional, Dict, Any, List
 from PyQt6.QtCore import QObject, pyqtSignal
 
+# Simplified import - main.py already adds project root to sys.path
 from database import DatabaseManager, UserDatabase, User
 
 
