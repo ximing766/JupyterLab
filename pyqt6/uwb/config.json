@@ -10,11 +10,11 @@
       "pic\\person12.jpg",
       "pic\\carton2.jpg"
     ],
-    "current_background_image": "pic\\person6.jpg"
+    "current_background_image": "pic\\person7.jpg"
   },
   "app": {
     "LogLevel": {
-      "level": "ALL"
+      "level": "INFO"
     },
     "QFluentWidgets": {
       "ThemeColor": "#ff009faa",

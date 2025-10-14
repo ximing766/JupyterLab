@@ -40,7 +40,7 @@ from position_view import PositionView
 from splash_screen import SplashScreen
 
 APP_VERSION = "v2.0.2"
-APP_NAME = "UWBDash"
+APP_NAME = "UWBDash-Lite"
 BUILD_DATE = "2025年9月"
 AUTHOR = "@Qilang²"
 
@@ -64,7 +64,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         app_path  = Path(os.getcwd())
         print(f"app_path: {app_path}")
         self.setWindowIcon(QIcon(str(icon_path)))
-        self.setWindowTitle("UWB Dash")
+        self.setWindowTitle(APP_NAME)
 
         self.current_theme               = ThemeManager.DARK_THEME
         self.config_path                 = Path(__file__).parent / "config.json"
@@ -448,22 +448,23 @@ class MainWindow(FluentWindow): # MSFluentWindow
         message_upper = message.upper()
         
         if self.current_log_level == 'INFO':
-            # INFO level: hide messages containing HALUCI
-            return 'HALUCI' in message_upper
+            # INFO level: show messages containing INFO/DEBUG/WARN/ERROR
+            return not ('APP     :INFO' in message_upper or 
+                       'DEBUG' in message_upper or 
+                       'WARN' in message_upper or 
+                       'ERROR' in message_upper)
         elif self.current_log_level == 'DEBUG':
-            # DEBUG level: hide messages containing HALUCI or INFO
-            return 'HALUCI' in message_upper or 'INFO' in message_upper
+            # DEBUG level: show messages containing DEBUG/WARN/ERROR
+            return not ('DEBUG' in message_upper or 
+                       'WARN' in message_upper or 
+                       'ERROR' in message_upper)
         elif self.current_log_level == 'WARN':
-            # WARN level: hide messages containing HALUCI, INFO, or DEBUG
-            return ('HALUCI' in message_upper or 
-                    'INFO' in message_upper or 
-                    'DEBUG' in message_upper)
+            # WARN level: show messages containing WARN/ERROR
+            return not ('WARN' in message_upper or 
+                       'ERROR' in message_upper)
         elif self.current_log_level == 'ERROR':
-            # ERROR level: hide messages containing HALUCI, INFO, DEBUG, or WARN
-            return ('HALUCI' in message_upper or 
-                    'INFO' in message_upper or 
-                    'DEBUG' in message_upper or 
-                    'WARN' in message_upper)
+            # ERROR level: show only messages containing ERROR
+            return not ('ERROR' in message_upper)
         
         return False  # Default: don't filter
 
@@ -486,7 +487,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
         self.port_combo2 = ComboBox()
 
-        self.baud_combo2 = ComboBox()
+        self.baud_combo2 = EditableComboBox()
+        self.baud_combo2.setFixedWidth(110)
         self.baud_combo2.addItems(['9600', '115200', '230400', '460800', '3000000'])
         self.baud_combo2.setCurrentText('3000000')
 
@@ -531,9 +533,19 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.search_line2 = SearchLineEdit()
         self.search_line2.setPlaceholderText("Search")
         self.search_line2.setFixedWidth(200)
-        self.search_line2.textChanged.connect(self.on_search_text_changed2)
         self.search_line2.searchSignal.connect(self.on_search_triggered2)
         self.search_line2.clearSignal.connect(self.on_search_cleared2)
+        
+        # Add previous and next search buttons for COM2
+        self.search_prev_btn2 = ToolButton(FIF.UP)
+        self.search_prev_btn2.setFixedSize(30, 30)
+        self.search_prev_btn2.clicked.connect(self.search_previous2)
+        self.search_prev_btn2.setToolTip("Previous match")
+        
+        self.search_next_btn2 = ToolButton(FIF.DOWN)
+        self.search_next_btn2.setFixedSize(30, 30)
+        self.search_next_btn2.clicked.connect(self.search_next2)
+        self.search_next_btn2.setToolTip("Next match")
         
         # Search result count label for COM2
         self.search_count_label2 = QLabel("0/0")
@@ -557,6 +569,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
         top_layout.addWidget(line_top_3)
         top_layout.addSpacing(10)
         top_layout.addWidget(self.search_line2)
+        top_layout.addWidget(self.search_prev_btn2)
+        top_layout.addWidget(self.search_next_btn2)
         top_layout.addWidget(self.search_count_label2)
         top_layout.addStretch()
 
@@ -695,19 +709,19 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.serial_display2.setFocusPolicy(Qt.FocusPolicy.StrongFocus) # 确保能接收键盘事件
         self.serial_display2.installEventFilter(self) # 安装事件过滤器
         self.serial_display2.document().setMaximumBlockCount(150000)  # 限制最大行数
-        self.serial_display2.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # 自动换行
-        self.serial_display2.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)  # 允许在任何位置换行
+        # self.serial_display2.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # 自动换行
+        # self.serial_display2.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)  # 允许在任何位置换行
+        self.serial_display2.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)  # 不自动换行
         
         self.serial_display2.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.serial_display2.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-        self.serial_display2.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)
         
         font = QFont("Microsoft YaHei", 12)
         self.serial_display2.setFont(font)
         
         self.serial_display2.setStyleSheet("""
             QTextEdit {
-                background-color          : rgba(36, 42, 56, 0.177);
+                background-color          : rgba(36, 42, 56, 0.2);
                 border                    : 1.5px solid #3a4a5c;
                 border-radius             : 1px;
                 padding                   : 12px;
@@ -720,7 +734,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
             }
             QTextEdit:focus {
                 border          : 1.5px solid #477faa;
-                background-color: rgba(27, 32, 44, 0.795);
+                background-color: rgba(27, 32, 44, 0.99);
             }
             
         """)
@@ -863,7 +877,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
         self.port_combo = ComboBox()
 
-        self.baud_combo = ComboBox()
+        self.baud_combo = EditableComboBox()
+        self.baud_combo.setFixedWidth(110)
         self.baud_combo.addItems(['9600', '115200', '230400', '460800', '3000000'])
         self.baud_combo.setCurrentText('3000000')
 
@@ -923,9 +938,19 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.search_line = SearchLineEdit()
         self.search_line.setPlaceholderText("Search")
         self.search_line.setFixedWidth(200)
-        self.search_line.textChanged.connect(self.on_search_text_changed)
         self.search_line.searchSignal.connect(self.on_search_triggered)
         self.search_line.clearSignal.connect(self.on_search_cleared)
+        
+        # Add previous and next search buttons
+        self.search_prev_btn = ToolButton(FIF.UP)
+        self.search_prev_btn.setFixedSize(30, 30)
+        self.search_prev_btn.clicked.connect(self.search_previous)
+        self.search_prev_btn.setToolTip("Previous match")
+        
+        self.search_next_btn = ToolButton(FIF.DOWN)
+        self.search_next_btn.setFixedSize(30, 30)
+        self.search_next_btn.clicked.connect(self.search_next)
+        self.search_next_btn.setToolTip("Next match")
         
         self.search_count_label = QLabel("0/0")
         self.search_count_label.setStyleSheet("background: transparent;")
@@ -953,10 +978,10 @@ class MainWindow(FluentWindow): # MSFluentWindow
         top_layout.addWidget(line_top_4)
         top_layout.addSpacing(10)
         top_layout.addWidget(self.search_line)
+        top_layout.addWidget(self.search_prev_btn)
+        top_layout.addWidget(self.search_next_btn)
         top_layout.addWidget(self.search_count_label)
-
         top_layout.addStretch()
-
         layout.addWidget(top_widget)
 
         self.splitter = QSplitter(Qt.Orientation.Vertical)
@@ -1100,20 +1125,20 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.serial_display = QTextEdit()
         self.serial_display.setReadOnly(True)
         self.serial_display.document().setMaximumBlockCount(150000)  # 限制最大行数
-        self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # 自动换行
-        self.serial_display.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)  # 允许在任何位置换行
+        # self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # 自动换行
+        # self.serial_display.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)  # 任意位置换行
+        self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)  # 不自动换行
         self.serial_display.installEventFilter(self) # 安装事件过滤器
         
         # 优化显示性能
         self.serial_display.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.serial_display.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-        self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)
         
         font = QFont("Microsoft YaHei", 12)
         self.serial_display.setFont(font)
         self.serial_display.setStyleSheet("""
             QTextEdit {
-                background-color          : rgba(36, 42, 56, 0.177);
+                background-color          : rgba(36, 42, 56, 0.2);
                 border                    : 1.5px solid #3a4a5c;
                 border-radius             : 1px;
                 padding                   : 12px;
@@ -1125,7 +1150,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
             }
             QTextEdit:focus {
                 border          : 1.5px solid #477faa;
-                background-color: rgba(27, 32, 44, 0.795);
+                background-color: rgba(27, 32, 44, 0.99);
             }
         """)
         
@@ -1393,7 +1418,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
         form_splitter.addWidget(top_table)
         form_splitter.addWidget(bottom_space)
-        form_splitter.setSizes([100, 300])
+        form_splitter.setSizes([120, 300])
 
         bottom_left_layout.addWidget(form_splitter)
         return bottom_left
@@ -1416,24 +1441,32 @@ class MainWindow(FluentWindow): # MSFluentWindow
     def on_search_triggered(self, text):
         """Handle SearchLineEdit search signal (Enter key)"""
         if text:
-            self.perform_search(text, move_to_next=True)
+            self.perform_search(text)
     
     def on_search_cleared(self):
         """Handle SearchLineEdit clear signal"""
-        self.clear_search_highlights()
+        self.clear_current_line_highlight()
         self.search_count_label.setText("0/0")
+        self.current_search_text = ""
     
-    def perform_search(self, text, move_to_next=False):
+    def perform_search(self, text):
         """Perform search in serial display"""
         if not text:
             self.search_count_label.setText("0/0")
+            self.clear_current_line_highlight()
+            self.current_search_text = ""
             return
             
         content = self.serial_display.toPlainText()
         if not content:
             self.search_count_label.setText("0/0")
+            self.clear_current_line_highlight()
+            self.current_search_text = ""
             return
             
+        # Store current search text for dynamic updates
+        self.current_search_text = text
+        
         # Find all occurrences
         positions = []
         start = 0
@@ -1447,37 +1480,94 @@ class MainWindow(FluentWindow): # MSFluentWindow
         total_matches = len(positions)
         if not positions:
             self.search_count_label.setText("0/0")
+            self.clear_current_line_highlight()
             return
             
-        self.highlight_search_matches(positions, len(text))
+        # Store search results for navigation
+        self.search_positions = positions
+        self.search_text_length = len(text)
+        self.current_search_index = 0
         
-        # Move to next match if requested
-        current_match = 1  # Default to first match
-        if move_to_next:
-            cursor = self.serial_display.textCursor()
-            current_pos = cursor.position()
-            
-            # Find next position after current cursor
-            next_pos = None
-            for i, pos in enumerate(positions):
-                if pos > current_pos:
-                    next_pos = pos
-                    current_match = i + 1
-                    break
-            
-            # If no next position, wrap to first
-            if next_pos is None and positions:
-                next_pos = positions[0]
-                current_match = 1
-                
-            if next_pos is not None:
-                cursor.setPosition(next_pos)
-                cursor.setPosition(next_pos + len(text), QTextCursor.MoveMode.KeepAnchor)
-                self.serial_display.setTextCursor(cursor)
-                self.serial_display.ensureCursorVisible()
+        # Move to first match and highlight current line
+        self.move_to_search_match(0)
         
         # Update count label
-        self.search_count_label.setText(f"{current_match}/{total_matches}")
+        self.search_count_label.setText(f"1/{total_matches}")
+    
+    def move_to_search_match(self, index):
+        """Move to specific search match and highlight the line"""
+        if not hasattr(self, 'search_positions') or not self.search_positions:
+            return
+            
+        if index < 0 or index >= len(self.search_positions):
+            return
+            
+        pos = self.search_positions[index]
+        cursor = self.serial_display.textCursor()
+        cursor.setPosition(pos)
+        
+        # Move to beginning of line
+        cursor.movePosition(QTextCursor.MoveOperation.StartOfLine)
+        line_start = cursor.position()
+        
+        # Move to end of line
+        cursor.movePosition(QTextCursor.MoveOperation.EndOfLine)
+        line_end = cursor.position()
+        
+        # Clear previous line highlight
+        self.clear_current_line_highlight()
+        
+        # Highlight entire line with background color
+        cursor.setPosition(line_start)
+        cursor.setPosition(line_end, QTextCursor.MoveMode.KeepAnchor)
+        
+        fmt = QTextCharFormat()
+        fmt.setBackground(QColor("#cf91cf"))  # Light purple background for current line
+        cursor.mergeCharFormat(fmt)
+        
+        # Position cursor at the search match
+        cursor.setPosition(pos)
+        cursor.setPosition(pos + self.search_text_length, QTextCursor.MoveMode.KeepAnchor)
+        self.serial_display.setTextCursor(cursor)
+        self.serial_display.ensureCursorVisible()
+        
+        # Store current highlight for clearing later
+        self.current_line_start = line_start
+        self.current_line_end = line_end
+        
+    def clear_current_line_highlight(self):
+        """Clear current line highlight"""
+        if hasattr(self, 'current_line_start') and hasattr(self, 'current_line_end'):
+            cursor = self.serial_display.textCursor()
+            cursor.setPosition(self.current_line_start)
+            cursor.setPosition(self.current_line_end, QTextCursor.MoveMode.KeepAnchor)
+            
+            # Clear formatting by setting default format
+            fmt = QTextCharFormat()
+            fmt.setBackground(QColor())  # Clear background color
+            cursor.mergeCharFormat(fmt)
+            
+            # Reset stored positions
+            self.current_line_start = None
+            self.current_line_end = None
+    
+    def search_previous(self):
+        """Move to previous search match"""
+        if not hasattr(self, 'search_positions') or not self.search_positions:
+            return
+            
+        self.current_search_index = (self.current_search_index - 1) % len(self.search_positions)
+        self.move_to_search_match(self.current_search_index)
+        self.search_count_label.setText(f"{self.current_search_index + 1}/{len(self.search_positions)}")
+    
+    def search_next(self):
+        """Move to next search match"""
+        if not hasattr(self, 'search_positions') or not self.search_positions:
+            return
+            
+        self.current_search_index = (self.current_search_index + 1) % len(self.search_positions)
+        self.move_to_search_match(self.current_search_index)
+        self.search_count_label.setText(f"{self.current_search_index + 1}/{len(self.search_positions)}")
     
     def highlight_search_matches(self, positions, length):
         """Highlight search matches in the text"""
@@ -1518,24 +1608,32 @@ class MainWindow(FluentWindow): # MSFluentWindow
     def on_search_triggered2(self, text):
         """Handle SearchLineEdit search signal (Enter key) for COM2"""
         if text:
-            self.perform_search2(text, move_to_next=True)
+            self.perform_search2(text)
     
     def on_search_cleared2(self):
         """Handle SearchLineEdit clear signal for COM2"""
-        self.clear_search_highlights2()
+        self.clear_current_line_highlight2()
         self.search_count_label2.setText("0/0")
+        self.current_search_text2 = ""
     
-    def perform_search2(self, text, move_to_next=False):
+    def perform_search2(self, text):
         """Perform search in serial display for COM2"""
         if not text:
             self.search_count_label2.setText("0/0")
+            self.clear_current_line_highlight2()
+            self.current_search_text2 = ""
             return
             
         content = self.serial_display2.toPlainText()
         if not content:
             self.search_count_label2.setText("0/0")
+            self.clear_current_line_highlight2()
+            self.current_search_text2 = ""
             return
             
+        # Store current search text for dynamic updates
+        self.current_search_text2 = text
+        
         # Find all occurrences
         positions = []
         start = 0
@@ -1549,39 +1647,193 @@ class MainWindow(FluentWindow): # MSFluentWindow
         total_matches = len(positions)
         if not positions:
             self.search_count_label2.setText("0/0")
+            self.clear_current_line_highlight2()
             return
             
-        self.highlight_search_matches2(positions, len(text))
+        # Store search results for navigation
+        self.search_positions2 = positions
+        self.search_text_length2 = len(text)
+        self.current_search_index2 = 0
         
-        # Move to next match if requested
-        current_match = 1  # Default to first match
-        if move_to_next:
-            cursor = self.serial_display2.textCursor()
-            current_pos = cursor.position()
-            
-            # Find next position after current cursor
-            next_pos = None
-            for i, pos in enumerate(positions):
-                if pos > current_pos:
-                    next_pos = pos
-                    current_match = i + 1
-                    break
-                    break
-            
-            # If no next position, wrap to first
-            if next_pos is None and positions:
-                next_pos = positions[0]
-                current_match = 1
-                
-            if next_pos is not None:
-                cursor.setPosition(next_pos)
-                cursor.setPosition(next_pos + len(text), QTextCursor.MoveMode.KeepAnchor)
-                self.serial_display2.setTextCursor(cursor)
-                self.serial_display2.ensureCursorVisible()
+        # Move to first match and highlight current line
+        self.move_to_search_match2(0)
         
         # Update count label
-        self.search_count_label2.setText(f"{current_match}/{total_matches}")
+        self.search_count_label2.setText(f"1/{total_matches}")
     
+    def move_to_search_match2(self, index):
+        """Move to specific search match and highlight the line for COM2"""
+        if not hasattr(self, 'search_positions2') or not self.search_positions2:
+            return
+            
+        if index < 0 or index >= len(self.search_positions2):
+            return
+            
+        pos = self.search_positions2[index]
+        cursor = self.serial_display2.textCursor()
+        cursor.setPosition(pos)
+        
+        # Move to beginning of line
+        cursor.movePosition(QTextCursor.MoveOperation.StartOfLine)
+        line_start = cursor.position()
+        
+        # Move to end of line
+        cursor.movePosition(QTextCursor.MoveOperation.EndOfLine)
+        line_end = cursor.position()
+        
+        # Clear previous line highlight
+        self.clear_current_line_highlight2()
+        
+        # Highlight entire line with background color
+        cursor.setPosition(line_start)
+        cursor.setPosition(line_end, QTextCursor.MoveMode.KeepAnchor)
+        
+        fmt = QTextCharFormat()
+        fmt.setBackground(QColor("#d8bfd8"))  # Light purple background for current line
+        cursor.mergeCharFormat(fmt)
+        
+        # Position cursor at the search match
+        cursor.setPosition(pos)
+        cursor.setPosition(pos + self.search_text_length2, QTextCursor.MoveMode.KeepAnchor)
+        self.serial_display2.setTextCursor(cursor)
+        self.serial_display2.ensureCursorVisible()
+        
+        # Store current highlight for clearing later
+        self.current_line_start2 = line_start
+        self.current_line_end2 = line_end
+        
+    def clear_current_line_highlight2(self):
+        """Clear current line highlight for COM2"""
+        if hasattr(self, 'current_line_start2') and hasattr(self, 'current_line_end2'):
+            cursor = self.serial_display2.textCursor()
+            cursor.setPosition(self.current_line_start2)
+            cursor.setPosition(self.current_line_end2, QTextCursor.MoveMode.KeepAnchor)
+            
+            # Clear formatting by setting default format
+            fmt = QTextCharFormat()
+            fmt.setBackground(QColor())  # Clear background color
+            cursor.mergeCharFormat(fmt)
+            
+            # Reset stored positions
+            self.current_line_start2 = None
+            self.current_line_end2 = None
+    
+    def search_previous2(self):
+        """Move to previous search match for COM2"""
+        if not hasattr(self, 'search_positions2') or not self.search_positions2:
+            return
+            
+        self.current_search_index2 = (self.current_search_index2 - 1) % len(self.search_positions2)
+        self.move_to_search_match2(self.current_search_index2)
+        self.search_count_label2.setText(f"{self.current_search_index2 + 1}/{len(self.search_positions2)}")
+    
+    def search_next2(self):
+        """Move to next search match for COM2"""
+        if not hasattr(self, 'search_positions2') or not self.search_positions2:
+            return
+            
+        self.current_search_index2 = (self.current_search_index2 + 1) % len(self.search_positions2)
+        self.move_to_search_match2(self.current_search_index2)
+        self.search_count_label2.setText(f"{self.current_search_index2 + 1}/{len(self.search_positions2)}")
+    
+    def update_search_results(self):
+        """Update search results when new data is added"""
+        if hasattr(self, 'current_search_text') and self.current_search_text:
+            # Store current position before updating
+            current_index = getattr(self, 'current_search_index', 0)
+            current_position = None
+            
+            # If we have a current match, store its position for reference
+            if hasattr(self, 'search_positions') and self.search_positions and current_index < len(self.search_positions):
+                current_position = self.search_positions[current_index]
+            
+            # Re-perform search to get updated positions
+            content = self.serial_display.toPlainText()
+            positions = []
+            start = 0
+            while True:
+                pos = content.find(self.current_search_text, start)
+                if pos == -1:
+                    break
+                positions.append(pos)
+                start = pos + 1
+            
+            self.search_positions = positions
+            total_matches = len(positions)
+            
+            if total_matches > 0:
+                # Try to maintain current position relative to content
+                if current_position is not None:
+                    # Find the closest match to the previous position
+                    best_index = 0
+                    min_distance = abs(positions[0] - current_position)
+                    for i, pos in enumerate(positions):
+                        distance = abs(pos - current_position)
+                        if distance < min_distance:
+                            min_distance = distance
+                            best_index = i
+                    self.current_search_index = best_index
+                else:
+                    # Maintain current index if possible
+                    if current_index < total_matches:
+                        self.current_search_index = current_index
+                    else:
+                        self.current_search_index = total_matches - 1
+                
+                self.search_count_label.setText(f"{self.current_search_index + 1}/{total_matches}")
+            else:
+                self.search_count_label.setText("0/0")
+                self.current_search_index = 0
+    
+    def update_search_results2(self):
+        """Update search results when new data is added for COM2"""
+        if hasattr(self, 'current_search_text2') and self.current_search_text2:
+            # Store current position before updating
+            current_index = getattr(self, 'current_search_index2', 0)
+            current_position = None
+            
+            # If we have a current match, store its position for reference
+            if hasattr(self, 'search_positions2') and self.search_positions2 and current_index < len(self.search_positions2):
+                current_position = self.search_positions2[current_index]
+            
+            # Re-perform search to get updated positions
+            content = self.serial_display2.toPlainText()
+            positions = []
+            start = 0
+            while True:
+                pos = content.find(self.current_search_text2, start)
+                if pos == -1:
+                    break
+                positions.append(pos)
+                start = pos + 1
+            
+            self.search_positions2 = positions
+            total_matches = len(positions)
+            
+            if total_matches > 0:
+                # Try to maintain current position relative to content
+                if current_position is not None:
+                    # Find the closest match to the previous position
+                    best_index = 0
+                    min_distance = abs(positions[0] - current_position)
+                    for i, pos in enumerate(positions):
+                        distance = abs(pos - current_position)
+                        if distance < min_distance:
+                            min_distance = distance
+                            best_index = i
+                    self.current_search_index2 = best_index
+                else:
+                    # Maintain current index if possible
+                    if current_index < total_matches:
+                        self.current_search_index2 = current_index
+                    else:
+                        self.current_search_index2 = total_matches - 1
+                
+                self.search_count_label2.setText(f"{self.current_search_index2 + 1}/{total_matches}")
+            else:
+                self.search_count_label2.setText("0/0")
+                self.current_search_index2 = 0
+
     def highlight_search_matches2(self, positions, length):
         """Highlight search matches in the text for COM2"""
         cursor = self.serial_display2.textCursor()
@@ -2407,6 +2659,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 scrollbar.setValue(current_scroll)
             else:
                 scrollbar.setValue(scrollbar.maximum())
+            
+            # Update search results if there's an active search
+            self.update_search_results()
 
         if hasattr(self, 'pending_table_rows') and len(self.pending_table_rows) >= 5:
             for data_values in self.pending_table_rows:
@@ -2489,6 +2744,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 scrollbar.setValue(current_scroll)
             else:
                 scrollbar.setValue(scrollbar.maximum())
+            
+            # Update search results if there's an active search
+            self.update_search_results2()
 
     def toggle_theme(self):
         self.background_image_index = (self.background_image_index + 1) % len(self.background_images)
@@ -2521,9 +2779,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
             }}
             QScrollBar:vertical {{
                 background   : transparent;
-                width        : 10px;
+                width        : 5px;
                 margin       : 2px 0 2px 0;
-                border-radius: 5px;
+                border-radius: 0px;
             }}
             QScrollBar::handle:vertical {{
                 background: qlineargradient(
@@ -2541,6 +2799,31 @@ class MainWindow(FluentWindow): # MSFluentWindow
             }}
             QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {{
                 height    : 0;
+                background: none;
+                border    : none;
+            }}
+            QScrollBar:horizontal {{
+                background   : transparent;
+                height       : 5px;
+                margin       : 0 2px 0 2px;
+                border-radius: 5px;
+            }}
+            QScrollBar::handle:horizontal {{
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #3da9fc, stop:1 #1e293b
+                );
+                min-width    : 24px;
+                border-radius: 0px;
+            }}
+            QScrollBar::handle:horizontal:hover {{
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:1,
+                    stop:0 #90caf9, stop:1 #3da9fc
+                );
+            }}
+            QScrollBar::add-line:horizontal, QScrollBar::sub-line:horizontal {{
+                width     : 0;
                 background: none;
                 border    : none;
             }}
@@ -2711,8 +2994,16 @@ class MainWindow(FluentWindow): # MSFluentWindow
             cursor.movePosition(cursor.MoveOperation.End)
             self.protocol_input.setTextCursor(cursor)
             
-            # Show brief status message
-            self.statusBar().showMessage(f"DCS计算完成: ∑=0x{checksum:02X}, DCS=0x{dcs:02X}", 3000)
+            # Show brief status message using InfoBar instead of statusBar
+            InfoBar.success(
+                title="DCS计算完成",
+                content=f"∑=0x{checksum:02X}, DCS=0x{dcs:02X}",
+                orient=Qt.Orientation.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP,
+                duration=3000,
+                parent=self
+            )
             
         except Exception as e:
             # Show error message
@@ -2761,9 +3052,17 @@ class MainWindow(FluentWindow): # MSFluentWindow
             # Update the input field with formatted result
             self.protocol_input.setPlainText(result)
             
-            # Show length information in status
+            # Show length information using InfoBar instead of statusBar
             byte_count = len(numbers) // 2
-            self.statusBar().showMessage(f"已格式化为0x前缀格式，共 {byte_count} 字节", 3000)
+            InfoBar.success(
+                title="格式化完成",
+                content=f"已格式化为0x前缀格式，共 {byte_count} 字节",
+                orient=Qt.Orientation.Horizontal,
+                isClosable=True,
+                position=InfoBarPosition.TOP,
+                duration=3000,
+                parent=self
+            )
             
         except Exception as e:
             # Show error message
