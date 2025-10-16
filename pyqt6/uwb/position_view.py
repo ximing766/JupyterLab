@@ -213,14 +213,12 @@ class PositionView(QWidget):
         center_x = self.width() / 2
         center_y = self.height() / 2 + self.origin_offset_y
         
-        # 获取所有用户
         users = self.user_manager.get_all_users()
         
-        # 如果没有用户数据，到此结束
         if not users:
             return
         
-        # 绘制用户信息（去掉黑色底纹）
+        # 绘制用户信息
         info_y = 0
         for i, user in enumerate(users):
             x, y, z = user.current_position

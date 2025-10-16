@@ -20,7 +20,7 @@ from PyQt6.QtGui import (
     QPixmap, QPainter, QIcon, QCursor,
     QClipboard, QIntValidator, QPen,
     QLinearGradient, QTextCharFormat,
-    QTextOption, QTextDocument
+    QTextOption, QTextDocument, QAction
 )
 from PyQt6.QtCharts import (
     QChart, QChartView,
@@ -31,18 +31,130 @@ from qfluentwidgets import (
     FluentIcon as FIF, InfoBar, InfoBarPosition, setTheme, Theme, isDarkTheme, ComboBoxSettingCard,
     MessageBox, ScrollArea, SubtitleLabel, setFont, ComboBox, SpinBox, EditableComboBox,
     setTheme, Theme, qconfig, PushButton, CheckBox, PrimaryPushButton, BodyLabel, TableWidget,
-    LineEdit, ToolButton, TextEdit, SwitchButton, CaptionLabel, DotInfoBadge, SearchLineEdit, ToolButton,
+    LineEdit, ToolButton, TextEdit, SwitchButton, CaptionLabel, DotInfoBadge, SearchLineEdit, ToolButton, PrimaryToolButton,
     PrimaryToolButton, CompactSpinBox, OptionsSettingCard, ConfigItem, OptionsConfigItem, OptionsValidator, QConfig,
-    NavigationItemPosition
+    NavigationItemPosition, RoundMenu
 )
 from log import Logger
 from position_view import PositionView
 from splash_screen import SplashScreen
 
 APP_VERSION = "v2.0.2"
-APP_NAME = "UWBDash-Lite"
+APP_NAME = "UWBDash"
 BUILD_DATE = "2025年9月"
 AUTHOR = "@Qilang²"
+
+
+class SearchLineEditWithHistory(SearchLineEdit):
+    """
+    SearchLineEdit with history functionality
+    """
+    def __init__(self, parent=None, component_name="default"):
+        super().__init__(parent)
+        self.search_history = []
+        self.max_history = 10
+        self.parent_window = None  # Will be set by parent
+        self.component_name = component_name  # Fixed component name for persistent storage
+        self.setup_history_menu()
+    
+    def set_parent_window(self, parent_window):
+        """Set parent window reference for config access"""
+        self.parent_window = parent_window
+        self.load_history_from_config()
+    
+    def load_history_from_config(self):
+        """Load search history from config file"""
+        if self.parent_window and hasattr(self.parent_window, 'config_path'):
+            try:
+                if self.parent_window.config_path.exists():
+                    with open(self.parent_window.config_path, "r", encoding="utf-8") as f:
+                        config_data = json.load(f)
+                    
+                    # Get search history for this specific search component
+                    search_config = config_data.get("search_history", {})
+                    self.search_history = search_config.get(self.component_name, [])
+                    
+                    # Limit to max_history items
+                    if len(self.search_history) > self.max_history:
+                        self.search_history = self.search_history[:self.max_history]
+            except Exception as e:
+                print(f"Error loading search history: {e}")
+    
+    def save_history_to_config(self):
+        """Save search history to config file"""
+        if self.parent_window and hasattr(self.parent_window, 'config_path'):
+            try:
+                config_data = {}
+                if self.parent_window.config_path.exists():
+                    with open(self.parent_window.config_path, "r", encoding="utf-8") as f:
+                        config_data = json.load(f)
+                
+                # Ensure search_history section exists
+                if "search_history" not in config_data:
+                    config_data["search_history"] = {}
+                
+                # Save history for this specific component
+                config_data["search_history"][self.component_name] = self.search_history
+                
+                # Write back to file
+                with open(self.parent_window.config_path, "w", encoding="utf-8") as f:
+                    json.dump(config_data, f, indent=2, ensure_ascii=False)
+            except Exception as e:
+                print(f"Error saving search history: {e}")
+    
+    def setup_history_menu(self):
+        """Setup history menu for search history"""
+        # Create a QAction for the history button with custom color
+        from PyQt6.QtGui import QColor
+        from qfluentwidgets import isDarkTheme
+        
+        # Set custom color for the history icon
+        icon_color = QColor(100, 149, 237) if isDarkTheme() else QColor(70, 130, 180)  # Steel blue color
+        self.history_action = QAction(FIF.HISTORY.icon(color=icon_color), "Search History", self)
+        self.history_action.triggered.connect(self.show_history_menu)
+        
+        # Add the history action to the search line edit
+        self.addAction(self.history_action, QLineEdit.ActionPosition.TrailingPosition)
+    
+    def show_history_menu(self):
+        """Show history menu"""
+        if not self.search_history:
+            return
+            
+        menu = RoundMenu(parent=self)
+        for history_item in self.search_history:
+            # Create QAction properly for menu
+            action = QAction(history_item, self)
+            menu.addAction(action)
+            action.triggered.connect(lambda checked, text=history_item: self.select_history_item(text))
+        
+        # Show menu at the bottom of the search line edit
+        pos = self.mapToGlobal(QPoint(0, self.height()))
+        menu.exec(pos)
+    
+    def select_history_item(self, text):
+        """Select history item and trigger search"""
+        self.setText(text)
+        self.searchSignal.emit(text)
+    
+    def add_to_history(self, text):
+        """Add search text to history"""
+        if text and text not in self.search_history:
+            self.search_history.insert(0, text)
+            if len(self.search_history) > self.max_history:
+                self.search_history = self.search_history[:self.max_history]
+            # Save to config file
+            self.save_history_to_config()
+    
+    def get_history(self):
+        """Get search history"""
+        return self.search_history.copy()
+    
+    def clear_history(self):
+        """Clear search history"""
+        self.search_history.clear()
+        self.save_history_to_config()
+
 
 def time_decorator(func):
     """
@@ -141,6 +253,15 @@ class MainWindow(FluentWindow): # MSFluentWindow
         ]
 
         self.init_ui()
+
+    def update_port_button_style(self, button, is_connected):
+        """Update SwitchButton state based on connection status"""
+        try:
+            # SwitchButton uses setChecked to show connection state
+            button.setChecked(is_connected)
+        except Exception as e:
+            print(f"按钮状态设置错误: {e}")
+            pass
 
     def paintEvent(self, event):
         if not self.background_cache or self.size() != self.last_window_size:
@@ -498,9 +619,12 @@ class MainWindow(FluentWindow): # MSFluentWindow
         status_layout.setContentsMargins(10, 0, 10, 0)
         status_layout.setSpacing(10)
 
-        # Modern switch button for serial port control
-        self.toggle_btn2 = SwitchButton()
+        # Switch button for serial port control
+        self.toggle_btn2 = SwitchButton(self)
+        self.toggle_btn2.setChecked(False)
         self.toggle_btn2.checkedChanged.connect(self.toggle_port2)
+        self.toggle_btn2.setOffText("")
+        self.toggle_btn2.setOnText("")
 
         line_top_1 = QFrame()
         line_top_1.setFrameShape(QFrame.Shape.VLine)
@@ -530,11 +654,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
         line_top_3.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_3.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
         
-        self.search_line2 = SearchLineEdit()
+        self.search_line2 = SearchLineEditWithHistory(component_name="com2_search")
+        self.search_line2.set_parent_window(self)  # Set parent window reference
         self.search_line2.setPlaceholderText("Search")
-        self.search_line2.setFixedWidth(200)
+        self.search_line2.setFixedWidth(300)
         self.search_line2.searchSignal.connect(self.on_search_triggered2)
         self.search_line2.clearSignal.connect(self.on_search_cleared2)
+        self.search_line2.returnPressed.connect(self.on_search_triggered2)
         
         # Add previous and next search buttons for COM2
         self.search_prev_btn2 = ToolButton(FIF.UP)
@@ -548,14 +674,14 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.search_next_btn2.setToolTip("Next match")
         
         # Search result count label for COM2
-        self.search_count_label2 = QLabel("0/0")
+        self.search_count_label2 = BodyLabel("0/0")
         self.search_count_label2.setStyleSheet("background: transparent;")
         self.search_count_label2.setMinimumWidth(40)
         
         top_layout.addWidget(self.port_combo2)
         top_layout.addWidget(self.baud_combo2)
         top_layout.addWidget(self.toggle_btn2)
-        top_layout.addSpacing(10)
+        # top_layout.addSpacing(10)
         top_layout.addWidget(line_top_1)
         top_layout.addSpacing(10)
         top_layout.addWidget(self.max_lines_spin2)
@@ -804,9 +930,30 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     print("警告: Logger 对象缺少 csv_log_dir 或 text_log_dir 属性，'打开日志文件'功能可能不可用。")
                     self.current_text_log_file_path2 = None
                 
+                # Update button style to connected state
+                self.update_port_button_style(self.toggle_btn2, True)
+                
             except Exception as e:
-                QMessageBox.warning(self, "错误", f"打开串口失败: {str(e)}")
+                error_msg = f"打开串口失败: {str(e)}\n"
+                error_msg += f"串口: {self.port_combo2.currentText()}\n"
+                error_msg += f"波特率: {self.baud_combo2.currentText()}\n"
+                error_msg += f"异常类型: {type(e).__name__}"
+                print(f"COM2串口异常详情: {error_msg}")  # 添加控制台输出用于调试
+                QMessageBox.warning(self, "错误", error_msg)
+                
+                # 确保在异常时清理可能已创建的资源
+                try:
+                    if hasattr(self, 'serial_thread2') and self.serial_thread2 is not None:
+                        self.serial_thread2.stop()
+                        self.serial_thread2 = None
+                    if hasattr(self, 'serial2') and self.serial2 is not None:
+                        self.serial2.close()
+                        self.serial2 = None
+                except:
+                    pass  # 忽略清理时的异常
+                
                 self.toggle_btn2.setChecked(False)  # Reset switch state on error
+                self.update_port_button_style(self.toggle_btn2, False)  # Reset button style
         else:
             try:
                 if hasattr(self, 'serial_thread2') and self.serial_thread2 is not None:
@@ -817,6 +964,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     self.serial2.close()
                     self.serial2 = None
                 
+                # Update button style to disconnected state
+                self.update_port_button_style(self.toggle_btn2, False)
+                
             except Exception as e:
                 print(f"关闭串口2时发生错误: {str(e)}")
                 # 即使出错也要重置状态
@@ -824,6 +974,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     self.serial_thread2 = None
                 if hasattr(self, 'serial2'):
                     self.serial2 = None
+                # Update button style to disconnected state
+                self.update_port_button_style(self.toggle_btn2, False)
     
     def handle_serial_2_data(self, data): # BM: COM2数据处理
         try:
@@ -887,9 +1039,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
         status_layout.setContentsMargins(10, 0, 10, 0)
         status_layout.setSpacing(10)
 
-        # Modern switch button for serial port control
-        self.toggle_btn = SwitchButton()
+        # Switch button for serial port control
+        self.toggle_btn = SwitchButton(self)
+        self.toggle_btn.setChecked(False)
         self.toggle_btn.checkedChanged.connect(self.toggle_port)
+        self.toggle_btn.setOffText("")
+        self.toggle_btn.setOnText("")
+
 
         line_top_1 = QFrame()
         line_top_1.setFrameShape(QFrame.Shape.VLine)
@@ -935,11 +1091,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
         line_top_4.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_4.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
-        self.search_line = SearchLineEdit()
+        self.search_line = SearchLineEditWithHistory(component_name="com1_search")
+        self.search_line.set_parent_window(self)  # Set parent window reference
         self.search_line.setPlaceholderText("Search")
-        self.search_line.setFixedWidth(200)
+        self.search_line.setFixedWidth(300)
         self.search_line.searchSignal.connect(self.on_search_triggered)
         self.search_line.clearSignal.connect(self.on_search_cleared)
+        self.search_line.returnPressed.connect(self.on_search_triggered)
         
         # Add previous and next search buttons
         self.search_prev_btn = ToolButton(FIF.UP)
@@ -952,14 +1110,14 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.search_next_btn.clicked.connect(self.search_next)
         self.search_next_btn.setToolTip("Next match")
         
-        self.search_count_label = QLabel("0/0")
+        self.search_count_label = BodyLabel("0/0")
         self.search_count_label.setStyleSheet("background: transparent;")
         self.search_count_label.setMinimumWidth(40)
 
         top_layout.addWidget(self.port_combo)
         top_layout.addWidget(self.baud_combo)
         top_layout.addWidget(self.toggle_btn)
-        top_layout.addSpacing(10)
+        # top_layout.addSpacing(10)
         top_layout.addWidget(line_top_1)
         top_layout.addSpacing(10)
         top_layout.addWidget(self.max_lines_spin)
@@ -1438,9 +1596,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
         # Auto search as user types
         self.perform_search(text)
     
-    def on_search_triggered(self, text):
+    def on_search_triggered(self, text=""):
         """Handle SearchLineEdit search signal (Enter key)"""
+        if not text:
+            text = self.search_line.text()
         if text:
+            # Add to search history
+            self.search_line.add_to_history(text)
             self.perform_search(text)
     
     def on_search_cleared(self):
@@ -1537,7 +1699,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
     def clear_current_line_highlight(self):
         """Clear current line highlight"""
-        if hasattr(self, 'current_line_start') and hasattr(self, 'current_line_end'):
+        if (hasattr(self, 'current_line_start') and hasattr(self, 'current_line_end') and 
+            self.current_line_start is not None and self.current_line_end is not None):
             cursor = self.serial_display.textCursor()
             cursor.setPosition(self.current_line_start)
             cursor.setPosition(self.current_line_end, QTextCursor.MoveMode.KeepAnchor)
@@ -1605,9 +1768,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
         # Auto search as user types
         self.perform_search2(text)
     
-    def on_search_triggered2(self, text):
+    def on_search_triggered2(self, text=""):
         """Handle SearchLineEdit search signal (Enter key) for COM2"""
+        if not text:
+            text = self.search_line2.text()
         if text:
+            # Add to search history
+            self.search_line2.add_to_history(text)
             self.perform_search2(text)
     
     def on_search_cleared2(self):
@@ -1704,7 +1871,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
     def clear_current_line_highlight2(self):
         """Clear current line highlight for COM2"""
-        if hasattr(self, 'current_line_start2') and hasattr(self, 'current_line_end2'):
+        if (hasattr(self, 'current_line_start2') and hasattr(self, 'current_line_end2') and 
+            self.current_line_start2 is not None and self.current_line_end2 is not None):
             cursor = self.serial_display2.textCursor()
             cursor.setPosition(self.current_line_start2)
             cursor.setPosition(self.current_line_end2, QTextCursor.MoveMode.KeepAnchor)
@@ -1969,9 +2137,31 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     self.current_csv_log_file_path  = None
                     self.current_text_log_file_path = None
                     self.open_csv_log_file_btn.setEnabled(False)
+                
+                # Update button style to connected state
+                self.update_port_button_style(self.toggle_btn, True)
+                
             except Exception as e:
-                QMessageBox.critical(self, "错误", f"打开串口失败：{str(e)}")
+                error_msg = f"打开串口失败：{str(e)}\n"
+                error_msg += f"串口: {self.port_combo.currentText()}\n"
+                error_msg += f"波特率: {self.baud_combo.currentText()}\n"
+                error_msg += f"异常类型: {type(e).__name__}"
+                print(f"COM1串口异常详情: {error_msg}")  # 添加控制台输出用于调试
+                QMessageBox.critical(self, "错误", error_msg)
+                
+                # 确保在异常时清理可能已创建的资源
+                try:
+                    if hasattr(self, 'serial_thread') and self.serial_thread is not None:
+                        self.serial_thread.stop()
+                        self.serial_thread = None
+                    if hasattr(self, 'serial_port') and self.serial_port is not None:
+                        self.serial_port.close()
+                        self.serial_port = None
+                except:
+                    pass  # 忽略清理时的异常
+                
                 self.toggle_btn.setChecked(False)  # Reset switch state on error
+                self.update_port_button_style(self.toggle_btn, False)  # Reset button style
                 return
         else:
             # 关闭串口
@@ -1982,6 +2172,10 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 if hasattr(self, 'serial_port') and self.serial_port is not None:
                     self.serial_port.close()
                     self.serial_port = None
+                
+                # Update button style to disconnected state
+                self.update_port_button_style(self.toggle_btn, False)
+                
             except Exception as e:
                 print(f"关闭串口时发生错误: {str(e)}")
                 # 即使出错也要重置状态
@@ -1989,6 +2183,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     self.serial_thread = None
                 if hasattr(self, 'serial_port'):
                     self.serial_port = None
+                # Update button style to disconnected state
+                self.update_port_button_style(self.toggle_btn, False)
     
     def open_current_csv_file(self):
         """使用系统默认应用打开当前的日志文件"""
@@ -2468,6 +2664,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 try:
                     # Fix unquoted hex values in JSON (e.g., "mac": F4A6 -> "mac": "F4A6")
                     fixed_text = re.sub(r'"mac":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"mac": "\1"', text)
+                    # Fix unquoted CardNo values (long numbers without quotes)
+                    fixed_text = re.sub(r'"CardNo":\s*([0-9]+)(?=\s*[,}])', r'"CardNo": "\1"', fixed_text)
                     # Fix empty values in JSON (e.g., "CardNo": , -> "CardNo": null)
                     fixed_text = re.sub(r'"(CardNo|Balance)":\s*,', r'"\1": null,', fixed_text)
                     fixed_text = re.sub(r'"(CardNo|Balance)":\s*}', r'"\1": null}', fixed_text)
