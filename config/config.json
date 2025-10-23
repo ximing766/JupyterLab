@@ -1,6 +1,6 @@
 {
     "LogLevel": {
-        "level": "ALL"
+        "level": "MIN"
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",

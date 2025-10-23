@@ -39,7 +39,7 @@ from log import Logger
 from position_view import PositionView
 from splash_screen import SplashScreen
 
-APP_VERSION = "v2.0.2"
+APP_VERSION = "v2.0.3"
 APP_NAME = "UWBDash"
 BUILD_DATE = "2025年9月"
 AUTHOR = "@Qilang²"
@@ -202,20 +202,24 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.last_time_log_count = 0  # Track data changes for refresh optimization
         self.load_historical_time_logs()  # Load existing time logs from buffer
         
+        # Initialize output format states (True = STR, False = HEX)
+        self.output_format_str = True   # COM1 output format (default: STR)
+        self.output_format_str2 = True  # COM2 output format (default: STR)
+        
         # Create config class and load configuration
         class AppConfig(QConfig):
             logLevelItem = OptionsConfigItem(
                 "LogLevel", "level", "ALL",      # group, key, default
-                OptionsValidator(["ALL", "INFO", "DEBUG", "WARN", "ERROR"])
+                OptionsValidator(["ALL", "MIN"])
             )
         
         self.config = AppConfig()
         # Use unified config for app settings
-        self.current_log_level = self.app_config.get("LogLevel", {}).get("level", "INFO")
+        self.current_log_level = self.app_config.get("LogLevel", {}).get("level", "ALL")
         print(f"current_log_level: {self.current_log_level}")
         
         # Sync QConfig with unified config file
-        if self.current_log_level in ["ALL", "INFO", "DEBUG", "WARN", "ERROR"]:
+        if self.current_log_level in ["ALL", "MIN"]:
             self.config.logLevelItem.value = self.current_log_level
             self.config.save()
         
@@ -565,27 +569,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
     def should_filter_log_message(self, message):
         if self.current_log_level == 'ALL':
             return False  # Show all messages
-        
-        message_upper = message.upper()
-        
-        if self.current_log_level == 'INFO':
-            # INFO level: show messages containing INFO/DEBUG/WARN/ERROR
-            return not ('APP     :INFO' in message_upper or 
-                       'DEBUG' in message_upper or 
-                       'WARN' in message_upper or 
-                       'ERROR' in message_upper)
-        elif self.current_log_level == 'DEBUG':
-            # DEBUG level: show messages containing DEBUG/WARN/ERROR
-            return not ('DEBUG' in message_upper or 
-                       'WARN' in message_upper or 
-                       'ERROR' in message_upper)
-        elif self.current_log_level == 'WARN':
-            # WARN level: show messages containing WARN/ERROR
-            return not ('WARN' in message_upper or 
-                       'ERROR' in message_upper)
-        elif self.current_log_level == 'ERROR':
-            # ERROR level: show only messages containing ERROR
-            return not ('ERROR' in message_upper)
+        elif self.current_log_level == 'MIN':
+            # MIN mode: exclude messages containing HALUCI and empty lines
+            return 'HALUCI' in message.upper() or message.strip() == ''
         
         return False  # Default: don't filter
 
@@ -630,6 +616,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
         line_top_1.setFrameShape(QFrame.Shape.VLine)
         line_top_1.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
+
+        # Output format toggle button (STR/HEX) for COM2
+        self.output_format_btn2 = PushButton("STR")
+        self.output_format_btn2.setFixedWidth(50)
+        self.output_format_btn2.setToolTip("切换输出格式 (STR/HEX)")
+        self.output_format_btn2.clicked.connect(self.toggle_output_format2)
+        self.output_format_str2 = True  # True for STR, False for HEX
 
         self.max_lines_spin2 = CompactSpinBox()
         self.max_lines_spin2.setRange(50000, 300000)
@@ -684,6 +677,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         # top_layout.addSpacing(10)
         top_layout.addWidget(line_top_1)
         top_layout.addSpacing(10)
+        top_layout.addWidget(self.output_format_btn2)
         top_layout.addWidget(self.max_lines_spin2)
         top_layout.addWidget(self.current_lines_label2)
         top_layout.addSpacing(10)
@@ -914,6 +908,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 self.serial_thread2 = SerialReadThread(self.serial2)
                 self.serial_thread2.data_received.connect(self.handle_serial_2_data)
                 self.serial_thread2.connection_lost.connect(self.handle_serial2_connection_lost)
+                # 根据当前输出格式设置是否按换行分割（STR: True, HEX: False）
+                try:
+                    self.serial_thread2.set_split_on_newline(self.output_format_str2)
+                except Exception:
+                    pass
                 self.serial_thread2.start()
                 
                 current_time      = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -979,23 +978,33 @@ class MainWindow(FluentWindow): # MSFluentWindow
     
     def handle_serial_2_data(self, data): # BM: COM2数据处理
         try:
-            text = data.decode('utf-8', errors='ignore')
+            # Apply format conversion based on current setting
+            if hasattr(self, 'output_format_str2') and not self.output_format_str2:
+                # HEX format - format data and add line break at the end
+                formatted_data = self.format_data_for_display(data, is_str_format=False)
+                text = formatted_data  # Don't add \n here, let format_data_for_display handle it
+            else:
+                # STR format (default)
+                text = data.decode('utf-8', errors='ignore')
+                
             self.log_worker.add_log_task("UwbLog2", "info", text.strip())
             text = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
             self.data_buffer2.append(text)
 
-            if "@@@ Time of Write Card End" in text:
-                #"@@@ Time of Write Card End     = 00:14:520  │ 80D7 │  710 ms"
-                match = re.search(r"│\s*([0-9A-Fa-f]+)\s*│\s*(\d+)\s*ms", text)
-                if match:
-                    address = match.group(1)
-                    transaction_time = match.group(2)
-                    
-                    if hasattr(self, 'Address_label_2') and self.Address_label_2 is not None:
-                        self.Address_label_2.setText(f"{address}  -")
-                    
-                    if hasattr(self, 'Transaction_time_label_2') and self.Transaction_time_label_2 is not None:
-                        self.Transaction_time_label_2.setText(f"{transaction_time}ms")
+            # Only process special patterns in STR mode
+            if not hasattr(self, 'output_format_str2') or self.output_format_str2:
+                if "@@@ Time of Write Card End" in text:
+                    #"@@@ Time of Write Card End     = 00:14:520  │ 80D7 │  710 ms"
+                    match = re.search(r"│\s*([0-9A-Fa-f]+)\s*│\s*(\d+)\s*ms", text)
+                    if match:
+                        address = match.group(1)
+                        transaction_time = match.group(2)
+                        
+                        if hasattr(self, 'Address_label_2') and self.Address_label_2 is not None:
+                            self.Address_label_2.setText(f"{address}  -")
+                        
+                        if hasattr(self, 'Transaction_time_label_2') and self.Transaction_time_label_2 is not None:
+                            self.Transaction_time_label_2.setText(f"{transaction_time}ms")
 
         except Exception as e:
             print(f"数据处理错误 (on_data_received): {str(e)}")
@@ -1004,7 +1013,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         """Handle serial connection lost for COM2"""
         try:
             # Update UI status to indicate disconnection
-            self.toggle_btn2.setText("打开串口")
+            # self.toggle_btn2.setText("打开串口")
             
             # Clean up serial resources
             if hasattr(self, 'serial_thread2'):
@@ -1052,6 +1061,12 @@ class MainWindow(FluentWindow): # MSFluentWindow
         line_top_1.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_1.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
 
+        # Output format toggle button (STR/HEX)
+        self.output_format_btn = PushButton("STR")
+        self.output_format_btn.setFixedWidth(50)
+        self.output_format_btn.setToolTip("切换输出格式 (STR/HEX)")
+        self.output_format_btn.clicked.connect(self.toggle_output_format)
+        self.output_format_str = True  # True for STR, False for HEX
         
         self.max_lines_spin = CompactSpinBox()
         self.max_lines_spin.setRange(50000, 300000)
@@ -1120,6 +1135,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         # top_layout.addSpacing(10)
         top_layout.addWidget(line_top_1)
         top_layout.addSpacing(10)
+        top_layout.addWidget(self.output_format_btn)
         top_layout.addWidget(self.max_lines_spin)
         top_layout.addWidget(self.current_lines_label)
         top_layout.addSpacing(10)
@@ -2114,6 +2130,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 self.serial_thread = SerialReadThread(self.serial_port)
                 self.serial_thread.data_received.connect(self.handle_serial_data)
                 self.serial_thread.connection_lost.connect(self.handle_serial_connection_lost)
+                # 根据当前输出格式设置是否按换行分割（STR: True, HEX: False）
+                try:
+                    self.serial_thread.set_split_on_newline(self.output_format_str)
+                except Exception:
+                    pass
                 self.serial_thread.start()
                 
                 current_time      = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
@@ -2561,6 +2582,86 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.send_line_edit.setPlaceholderText(placeholder)
         self.large_send_edit.setPlaceholderText(placeholder)
 
+    def toggle_output_format(self):
+        """Toggle output format between STR and HEX for COM1"""
+        self.output_format_str = not self.output_format_str
+        if self.output_format_str:
+            self.output_format_btn.setText("STR")
+            self.output_format_btn.setToolTip("当前: STR格式，点击切换到HEX格式")
+        else:
+            self.output_format_btn.setText("HEX")
+            self.output_format_btn.setToolTip("当前: HEX格式，点击切换到STR格式")
+        
+        # 同步更新串口读取线程的分割策略（STR: 按\n分割；HEX: 不分割）
+        if hasattr(self, 'serial_thread') and self.serial_thread:
+            try:
+                self.serial_thread.set_split_on_newline(self.output_format_str)
+            except Exception:
+                pass
+        
+        # Refresh display with new format
+        self.refresh_display_format()
+
+    def toggle_output_format2(self):
+        """Toggle output format between STR and HEX for COM2"""
+        self.output_format_str2 = not self.output_format_str2
+        if self.output_format_str2:
+            self.output_format_btn2.setText("STR")
+            self.output_format_btn2.setToolTip("当前: STR格式，点击切换到HEX格式")
+        else:
+            self.output_format_btn2.setText("HEX")
+            self.output_format_btn2.setToolTip("当前: HEX格式，点击切换到STR格式")
+        
+        # 同步更新串口读取线程的分割策略（STR: 按\n分割；HEX: 不分割）
+        if hasattr(self, 'serial_thread2') and self.serial_thread2:
+            try:
+                self.serial_thread2.set_split_on_newline(self.output_format_str2)
+            except Exception:
+                pass
+        
+        # Refresh display with new format
+        self.refresh_display_format2()
+
+    def refresh_display_format(self):
+        """Refresh COM1 display area with current format"""
+        # This function can be used to refresh the display when format changes
+        # For now, it will only affect new incoming data
+        pass
+
+    def refresh_display_format2(self):
+        """Refresh COM2 display area with current format"""
+        # This function can be used to refresh the display when format changes
+        # For now, it will only affect new incoming data
+        pass
+
+    def format_data_for_display(self, data, is_str_format=True):
+        """Format data for display based on selected format"""
+        try:
+            if is_str_format:
+                # STR format - decode as text
+                if isinstance(data, bytes):
+                    return data.decode('utf-8', errors='ignore')
+                else:
+                    return str(data)
+            else:
+                # HEX format - convert to hex string without any line break interpretation
+                if isinstance(data, bytes):
+                    # Convert each byte to 2-digit hex, separated by space
+                    hex_parts = []
+                    for byte in data:
+                        hex_parts.append(f"{byte:02X}")
+                    # Join with spaces without adding a newline to avoid misinterpreting 0A/0D as line breaks
+                    return ' '.join(hex_parts)
+                    
+                elif isinstance(data, str):
+                    # Convert string to bytes first, then to hex
+                    return self.format_data_for_display(data.encode('utf-8'), is_str_format=False)
+                else:
+                    return str(data) + '\n'
+        except Exception as e:
+            print(f"Error formatting data: {str(e)}")
+            return str(data) + '\n'
+
     def com1_send_data(self):
         """Send data through COM1 port based on selected mode"""
         try:
@@ -2627,28 +2728,37 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
     def handle_serial_data(self, data):
         try:
-            text = data.decode('utf-8')
+            # Apply format conversion based on current setting
+            if hasattr(self, 'output_format_str') and not self.output_format_str:
+                # HEX format - format data and add line break at the end
+                formatted_data = self.format_data_for_display(data, is_str_format=False)
+                text = formatted_data  # Don't add \n here, let format_data_for_display handle it
+            else:
+                # STR format (default)
+                text = data.decode('utf-8')
             
             self.log_worker.add_log_task("UwbLog", "info", text.strip())
             text = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
             self.data_buffer.append(text)
             
-            # Collect time log data containing '@@@ Time of'
-            if "@@@ Time of" in text:
-                timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-                log_entry = f"{text.strip()}"
-                self.time_log_data.append(log_entry)
-                # Keep only the latest 1000 entries to prevent memory issues
-                if len(self.time_log_data) > 1000:
-                    self.time_log_data = self.time_log_data[-1000:]
+            # Only process special patterns in STR mode
+            if not hasattr(self, 'output_format_str') or self.output_format_str:
+                # Collect time log data containing '@@@ Time of'
+                if "@@@ Time of" in text:
+                    timestamp = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                    log_entry = f"{text.strip()}"
+                    self.time_log_data.append(log_entry)
+                    # Keep only the latest 1000 entries to prevent memory issues
+                    if len(self.time_log_data) > 1000:
+                        self.time_log_data = self.time_log_data[-1000:]
 
-            if "Write Card End" in text:
-                #"@@@ Time of Write Card End     = 00:14:520  │ 80D7 │  710 ms"
-                print("open door")
-                match = re.search(r"│\s*([0-9A-Fa-f]+)\s*│\s*(\d+)\s*ms", text)
-                if match:
-                    address = match.group(1)
-                    transaction_time = match.group(2)
+                if "Write Card End" in text:
+                    #"@@@ Time of Write Card End     = 00:14:520  │ 80D7 │  710 ms"
+                    print("open door")
+                    match = re.search(r"│\s*([0-9A-Fa-f]+)\s*│\s*(\d+)\s*ms", text)
+                    if match:
+                        address = match.group(1)
+                        transaction_time = match.group(2)
                     
                     if hasattr(self, 'Address_label') and self.Address_label is not None:
                         self.Address_label.setText(f"{address}  -")
@@ -2665,7 +2775,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     # Fix unquoted hex values in JSON (e.g., "mac": F4A6 -> "mac": "F4A6")
                     fixed_text = re.sub(r'"mac":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"mac": "\1"', text)
                     # Fix unquoted CardNo values (long numbers without quotes)
-                    fixed_text = re.sub(r'"CardNo":\s*([0-9]+)(?=\s*[,}])', r'"CardNo": "\1"', fixed_text)
+                    fixed_text = re.sub(r'"CardNo":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"CardNo": "\1"', fixed_text)
                     # Fix empty values in JSON (e.g., "CardNo": , -> "CardNo": null)
                     fixed_text = re.sub(r'"(CardNo|Balance)":\s*,', r'"\1": null,', fixed_text)
                     fixed_text = re.sub(r'"(CardNo|Balance)":\s*}', r'"\1": null}', fixed_text)
@@ -2772,7 +2882,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         """Handle serial connection lost for COM1"""
         try:
             # Update UI status to indicate disconnection
-            self.toggle_btn.setText("打开串口")
+            # self.toggle_btn.setText("打开串口")
             
             # Clean up serial resources
             if hasattr(self, 'serial_thread'):
@@ -2808,9 +2918,20 @@ class MainWindow(FluentWindow): # MSFluentWindow
             
             # 如果选中了时间戳选项，为每行添加时间戳
             if self.timestamp.isChecked():
-                lines = text.splitlines(True) 
-                timestamp = QDateTime.currentDateTime().toString('[yyyy-MM-dd hh:mm:ss.zzz] ')
-                text = ''.join(timestamp + line for line in lines)
+                # 在HEX模式下，避免使用splitlines()，因为它会将0A字节当作换行符
+                if hasattr(self, 'output_format_str') and not self.output_format_str:
+                    # HEX模式：将整个文本作为一个整体添加时间戳，并在末尾补一个换行用于分隔每个数据块
+                    timestamp = QDateTime.currentDateTime().toString('[yyyy-MM-dd hh:mm:ss.zzz] ')
+                    text = timestamp + text + '\n'
+                else:
+                    # STR模式：正常使用splitlines()
+                    lines = text.splitlines(True) 
+                    timestamp = QDateTime.currentDateTime().toString('[yyyy-MM-dd hh:mm:ss.zzz] ')
+                    text = ''.join(timestamp + line for line in lines)
+            else:
+                # 未开启时间戳，但HEX模式下也需要在每个块末尾补换行，避免所有数据拼在一行
+                if hasattr(self, 'output_format_str') and not self.output_format_str:
+                    text = text + '\n'
             
             self.serial_display.setUpdatesEnabled(False)
             cursor.movePosition(QTextCursor.MoveOperation.End)
@@ -2893,9 +3014,20 @@ class MainWindow(FluentWindow): # MSFluentWindow
             
             # 如果选中了时间戳选项，为每行添加时间戳
             if self.timestamp2.isChecked():
-                lines     = text.splitlines(True)
-                timestamp = QDateTime.currentDateTime().toString('[yyyy-MM-dd hh:mm:ss.zzz] ')
-                text      = ''.join(timestamp + line for line in lines)
+                # 在HEX模式下，避免使用splitlines()，因为它会将0A字节当作换行符
+                if hasattr(self, 'output_format_str2') and not self.output_format_str2:
+                    # HEX模式：将整个文本作为一个整体添加时间戳，并在末尾补一个换行用于分隔每个数据块
+                    timestamp = QDateTime.currentDateTime().toString('[yyyy-MM-dd hh:mm:ss.zzz] ')
+                    text = timestamp + text + '\n'
+                else:
+                    # STR模式：正常使用splitlines()
+                    lines     = text.splitlines(True)
+                    timestamp = QDateTime.currentDateTime().toString('[yyyy-MM-dd hh:mm:ss.zzz] ')
+                    text      = ''.join(timestamp + line for line in lines)
+            else:
+                # 未开启时间戳，但HEX模式下也需要在每个块末尾补换行，避免所有数据拼在一行
+                if hasattr(self, 'output_format_str2') and not self.output_format_str2:
+                    text = text + '\n'
             
             self.serial_display2.setUpdatesEnabled(False)
             cursor.movePosition(QTextCursor.MoveOperation.End)
@@ -3725,7 +3857,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
             icon=FIF.FILTER,
             title='LOG LEVEL',
             content='设置显示的Log级别',
-            texts=['ALL', 'INFO', 'DEBUG', 'WARN', 'ERROR']
+            texts=['ALL', 'MIN']
         )
         self.logLevelCard.optionChanged.connect(self.on_log_level_changed)
         
@@ -4824,6 +4956,12 @@ class SerialReadThread(QThread):
         super().__init__()
         self.serial_port = serial_port
         self.running     = False
+        # 是否按换行符分割数据（STR模式：True；HEX模式：False）
+        self.split_on_newline = True
+        self.delimiter = b"\n"
+    
+    def set_split_on_newline(self, enable: bool):
+        self.split_on_newline = bool(enable)
         
     def run(self):
         self.running = True
@@ -4834,16 +4972,21 @@ class SerialReadThread(QThread):
                     # 等待一小段时间，让数据完整到达
                     time.sleep(0.05)
                     data = self.serial_port.read(self.serial_port.in_waiting)
-                    if data:
+                    if not data:
+                        pass
+                    elif self.split_on_newline:
+                        # 行模式：按换行符分包（保留换行符）
                         buffer.extend(data)
-                        # 检查是否有完整的行
-                        while b'\n' in buffer:
-                            line_end = buffer.find(b'\n')
+                        while self.delimiter in buffer:
+                            line_end = buffer.find(self.delimiter)
                             # 提取完整的行（包括换行符）
                             line = bytes(buffer[:line_end + 1])
                             buffer = buffer[line_end + 1:]
                             if line.strip():  # 忽略空行
                                 self.data_received.emit(line)
+                    else:
+                        # 原始模式：不按换行符分包，直接发送数据块
+                        self.data_received.emit(data)
             except Exception as e:
                 print(f"串口读取错误: {str(e)}")
                 self.connection_lost.emit(str(e))  # Emit signal when connection is lost
