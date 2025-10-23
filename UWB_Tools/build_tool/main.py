@@ -23,10 +23,10 @@ import time
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QVBoxLayout, QHBoxLayout, QGridLayout,
     QWidget, QLabel, QComboBox, QPushButton, QTextEdit,
-    QFileDialog, QMessageBox, QFrame, QSplitter, QDialog
+    QFileDialog, QMessageBox, QFrame, QSplitter, QDialog, QMenu
 )
 from PyQt6.QtCore import Qt, QTimer, pyqtSlot, QEvent
-from PyQt6.QtGui import QFont, QIcon, QPalette, QColor
+from PyQt6.QtGui import QFont, QIcon, QPalette, QColor, QAction
 import re
 
 from config_manager import ConfigManager
@@ -43,13 +43,16 @@ class UwbBuildTool(QMainWindow):
         self.build_timer = QTimer()
         self.build_timer.timeout.connect(self.update_build_time)
         
-        # Display mode: True for compact (default), False for extended
-        self.is_compact_mode = True
+        # Display mode: True for compact, False for extended (default)
+        self.is_compact_mode = False
         self.output_widget = None  # Will hold current output widget
         
         self.init_ui()
         self.load_config()
         self.setup_connections()
+        
+        # Show startup instructions
+        self.show_startup_instructions()
     
     def init_ui(self):
         self.setWindowTitle("UWB BUILD TOOL")
@@ -120,12 +123,21 @@ class UwbBuildTool(QMainWindow):
         self.project_combo.setEditable(True)
         # self.project_combo.setMinimumWidth(350)
         self.project_combo.setSizePolicy(self.project_combo.sizePolicy().horizontalPolicy(), self.project_combo.sizePolicy().verticalPolicy())
+        # Enable context menu for project combo
+        self.project_combo.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         project_layout.addWidget(self.project_combo, 1)
         
         self.browse_button = QPushButton("浏览")
         self.browse_button.setObjectName("browseButton")
         self.browse_button.setFixedWidth(50)
         project_layout.addWidget(self.browse_button)
+        
+        # Add delete project button
+        self.delete_project_button = QPushButton("删除")
+        self.delete_project_button.setObjectName("deleteButton")
+        self.delete_project_button.setFixedWidth(50)
+        self.delete_project_button.setToolTip("删除当前选中的项目")
+        project_layout.addWidget(self.delete_project_button)
         
         # Add separator line
         separator = QFrame()
@@ -334,6 +346,7 @@ class UwbBuildTool(QMainWindow):
     
     def setup_connections(self):
         self.browse_button.clicked.connect(self.browse_project)
+        self.delete_project_button.clicked.connect(self.delete_current_project)
         self.generate_header_button.clicked.connect(self.generate_headers)
         self.build_button.clicked.connect(self.start_build)
         self.rebuild_button.clicked.connect(self.start_rebuild)
@@ -513,6 +526,57 @@ class UwbBuildTool(QMainWindow):
         dialog = ConfigDialog(self.config_manager, self)
         if dialog.exec() == QDialog.DialogCode.Accepted:
             self.populate_mode_combo()
+    
+    @pyqtSlot()
+    def delete_current_project(self):
+        """删除当前选中的项目"""
+        current_index = self.project_combo.currentIndex()
+        if current_index < 0:
+            QMessageBox.warning(self, "警告", "请选择要删除的项目")
+            return
+        
+        current_text = self.project_combo.currentText()
+        current_data = self.project_combo.currentData()
+        
+        reply = QMessageBox.question(
+            self, "确认删除", 
+            f"确定要删除项目 '{current_text}' 吗？\n\n路径: {current_data}", 
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.No
+        )
+        
+        if reply == QMessageBox.StandardButton.Yes:
+            # Remove from config manager
+            self.config_manager.remove_project_from_history(current_data)
+            
+            # Remove from combo box
+            self.project_combo.removeItem(current_index)
+            
+            # If this was the last project, clear the last project setting
+            if self.project_combo.count() == 0:
+                self.config_manager.set_last_project("")
+            else:
+                # Set the first project as current if available
+                if self.project_combo.count() > 0:
+                    self.project_combo.setCurrentIndex(0)
+                    new_current_data = self.project_combo.currentData()
+                    if new_current_data:
+                        self.config_manager.set_last_project(new_current_data)
+    
+    def show_startup_instructions(self):
+        """显示应用启动时的操作说明"""
+        instructions = """
+   1. 新项目需先在 MCUXpresso 中创建并完成首次编译
+   2. 新项目应选择到 project/RhodesV4_XXX 目录下
+   3. 路径验证:
+      • 若项目名称包含 "UTN" 或 "32"，必须存在路径: demos/SE051W/demo_transit/inc
+      • 否则，需存在路径: demos/SR150_SE051W/demo_transit/inc
+"""
+        self.output_text.setPlainText(instructions)
+        
+        # Validate current project path if exists
+        current_project = self.project_combo.currentText()
+
     
     @pyqtSlot()
     def on_build_started(self):
