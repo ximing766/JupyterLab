@@ -897,7 +897,7 @@ class FlashTool(QMainWindow):
             if file_path in self.recent_files:
                 self.recent_files.remove(file_path)
             self.recent_files.insert(0, file_path)
-            self.recent_files = self.recent_files[:5]  # 只保留最近5个
+            self.recent_files = self.recent_files[:10]  # 只保留最近10个
             
             # 保存到设置
             self.settings.setValue('recent_files', '|'.join(self.recent_files))

@@ -1,9 +1,9 @@
 {
     "LogLevel": {
-        "level": "MIN"
+        "level": "ALL"
     },
     "QFluentWidgets": {
         "ThemeColor": "#ff009faa",
-        "ThemeMode": "Dark"
+        "ThemeMode": "Light"
     }
 }

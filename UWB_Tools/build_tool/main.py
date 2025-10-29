@@ -25,8 +25,8 @@ from PyQt6.QtWidgets import (
     QWidget, QLabel, QComboBox, QPushButton, QTextEdit,
     QFileDialog, QMessageBox, QFrame, QSplitter, QDialog, QMenu
 )
-from PyQt6.QtCore import Qt, QTimer, pyqtSlot, QEvent
-from PyQt6.QtGui import QFont, QIcon, QPalette, QColor, QAction
+from PyQt6.QtCore import Qt, QTimer, pyqtSlot, QEvent, QUrl
+from PyQt6.QtGui import QFont, QIcon, QPalette, QColor, QAction, QDesktopServices
 import re
 
 from config_manager import ConfigManager
@@ -192,17 +192,12 @@ class UwbBuildTool(QMainWindow):
         self.generate_header_button.setFixedHeight(28)
         controls_layout.addWidget(self.generate_header_button)
         
-        self.build_button = QPushButton("▶")
-        self.build_button.setObjectName("buildButton")
-        self.build_button.setFixedWidth(35)
-        self.build_button.setFixedHeight(28)
-        controls_layout.addWidget(self.build_button)
-        
-        self.rebuild_button = QPushButton("⟲")
-        self.rebuild_button.setObjectName("rebuildButton")
-        self.rebuild_button.setFixedWidth(35)
-        self.rebuild_button.setFixedHeight(28)
-        controls_layout.addWidget(self.rebuild_button)
+        self.open_firmware_folder_button = QPushButton("📁")
+        self.open_firmware_folder_button.setObjectName("openFirmwareFolderButton")
+        self.open_firmware_folder_button.setFixedWidth(35)
+        self.open_firmware_folder_button.setFixedHeight(28)
+        self.open_firmware_folder_button.setToolTip("打开固件文件夹")
+        controls_layout.addWidget(self.open_firmware_folder_button)
         
         self.make_button = QPushButton("➽")
         self.make_button.setObjectName("makeButton")
@@ -348,8 +343,7 @@ class UwbBuildTool(QMainWindow):
         self.browse_button.clicked.connect(self.browse_project)
         self.delete_project_button.clicked.connect(self.delete_current_project)
         self.generate_header_button.clicked.connect(self.generate_headers)
-        self.build_button.clicked.connect(self.start_build)
-        self.rebuild_button.clicked.connect(self.start_rebuild)
+        self.open_firmware_folder_button.clicked.connect(self.open_firmware_folder)
         self.make_button.clicked.connect(self.start_make)
         self.clear_output_button.clicked.connect(self.clear_output)
         self.config_button.clicked.connect(self.open_config_dialog)
@@ -503,12 +497,23 @@ class UwbBuildTool(QMainWindow):
         
         self.build_thread.start()
     
-    def start_build(self):
-        self._validate_and_setup_build(lambda thread, path, mode: thread.setup_build(path, mode))
-    
     @pyqtSlot()
-    def start_rebuild(self):
-        self._validate_and_setup_build(lambda thread, path, mode: thread.setup_rebuild(path, mode))
+    def open_firmware_folder(self):
+        project_path = self.project_combo.currentData()
+        if not project_path:
+            QMessageBox.warning(self, "警告", "请选择项目路径")
+            return
+        
+        config_mode = self.config_mode_combo.currentText()
+        firmware_dir = os.path.join(project_path, config_mode)
+        
+        if not os.path.exists(firmware_dir):
+            QMessageBox.warning(self, "警告", f"固件目录不存在: {firmware_dir}")
+            return
+            
+        # 使用系统默认文件管理器打开文件夹
+        QDesktopServices.openUrl(QUrl.fromLocalFile(firmware_dir))
+        self.append_output(f"已打开固件文件夹: {firmware_dir}")
     
     @pyqtSlot()
     def start_make(self):
@@ -524,8 +529,9 @@ class UwbBuildTool(QMainWindow):
     @pyqtSlot()
     def open_config_dialog(self):
         dialog = ConfigDialog(self.config_manager, self)
-        if dialog.exec() == QDialog.DialogCode.Accepted:
-            self.populate_mode_combo()
+        # 连接配置保存信号到刷新模式列表的方法
+        dialog.config_saved.connect(self.populate_mode_combo)
+        dialog.exec()
     
     @pyqtSlot()
     def delete_current_project(self):
@@ -580,8 +586,6 @@ class UwbBuildTool(QMainWindow):
     
     @pyqtSlot()
     def on_build_started(self):
-        self.build_button.setEnabled(False)
-        self.rebuild_button.setEnabled(False)
         self.make_button.setEnabled(False)
         self.generate_header_button.setEnabled(False)
 
@@ -604,8 +608,6 @@ class UwbBuildTool(QMainWindow):
     
     @pyqtSlot(bool, str)
     def on_build_finished(self, success: bool, message: str):
-        self.build_button.setEnabled(True)
-        self.rebuild_button.setEnabled(True)
         self.make_button.setEnabled(True)
         self.generate_header_button.setEnabled(True)
 

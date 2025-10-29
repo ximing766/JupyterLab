@@ -33,13 +33,13 @@ from qfluentwidgets import (
     setTheme, Theme, qconfig, PushButton, CheckBox, PrimaryPushButton, BodyLabel, TableWidget,
     LineEdit, ToolButton, TextEdit, SwitchButton, CaptionLabel, DotInfoBadge, SearchLineEdit, ToolButton, PrimaryToolButton,
     PrimaryToolButton, CompactSpinBox, OptionsSettingCard, ConfigItem, OptionsConfigItem, OptionsValidator, QConfig,
-    NavigationItemPosition, RoundMenu
+    NavigationItemPosition, RoundMenu, ProgressBar, CardWidget, ProgressRing, IconWidget
 )
 from log import Logger
 from position_view import PositionView
 from splash_screen import SplashScreen
 
-APP_VERSION = "v2.0.3"
+APP_VERSION = "v2.2"
 APP_NAME = "UWBDash"
 BUILD_DATE = "2025年9月"
 AUTHOR = "@Qilang²"
@@ -247,7 +247,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
             'master'   : [],
             'slave'    : [],
             'nlos'     : [],
-            'lift_deep': [],
+            'rssi'     : [],
             'speed'    : [],
         }
         self.base_points = [
@@ -412,7 +412,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
         self.Settings_page = self.create_settings_page()
         
-        # BM:NAV bar - Enhanced navigation with status indicators
+        # BM:NAV bar
         self.nav_com1 = self.addSubInterface(self.COM1_page, FIF.CONNECT, "COM1") 
         self.nav_com2 = self.addSubInterface(self.COM2_page, FIF.CONNECT, "COM2")
         self.addSubInterface(self.Chart_page, FIF.PIE_SINGLE, "CHART")
@@ -575,13 +575,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
         return False  # Default: don't filter
 
-    def create_pages(self): # BM: 创建页面
+    def create_pages(self): # BM: Create Page
         # Store pages as instance variables for MSFluentWindow
         self.COM1_page  = self.create_COM_page()
         self.COM2_page  = self.create_COM_page2()
         self.Chart_page = self.create_Chart_page()
     
-    def create_COM_page2(self):
+    def create_COM_page2(self): # BM: COM2 Page
         COM2_page = QWidget()
         layout = QVBoxLayout(COM2_page)
         layout.setContentsMargins(10, 10, 10, 10)
@@ -656,7 +656,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.search_line2.returnPressed.connect(self.on_search_triggered2)
         
         # Add previous and next search buttons for COM2
-        self.search_prev_btn2 = ToolButton(FIF.UP)
+        self.search_prev_btn2 = ToolButton(FIF.DOWN)
         self.search_prev_btn2.setFixedSize(30, 30)
         self.search_prev_btn2.clicked.connect(self.search_previous2)
         self.search_prev_btn2.setToolTip("Previous match")
@@ -735,7 +735,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.large_send_edit2 = TextEdit()
         self.large_send_edit2.setPlaceholderText("e.g., AA BB or 0xAA 0xBB or String")
         self.large_send_edit2.setMaximumHeight(300)
-        self.large_send_edit2.hide()
+        # 不使用show()，通过布局可见性控制显示
 
         self.send_btn2 = ToolButton(FIF.SEND)
         self.send_btn2.setFixedWidth(60)
@@ -753,10 +753,10 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.quick_config_btn2.clicked.connect(self.show_quick_send_config)
 
         # Expand/collapse button for COM2
-        self.expand_btn2 = ToolButton(FIF.UP)
+        self.expand_btn2 = ToolButton(FIF.DOWN)
         self.expand_btn2.setFixedSize(30, 30)
         self.expand_btn2.clicked.connect(self.toggle_input_size2)
-        self.is_expanded2 = False
+        self.is_expanded2 = True
 
         line_bottom_1 = QFrame()
         line_bottom_1.setFrameShape(QFrame.Shape.VLine)
@@ -802,7 +802,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         bottom_layout.addLayout(controls_layout)
         
         self.splitter2.addWidget(bottom_widget)
-        self.splitter2.setSizes([2000, 100])  
+        self.splitter2.setSizes([2000, 500])  
         
         layout.addWidget(self.splitter2)
         
@@ -976,7 +976,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 # Update button style to disconnected state
                 self.update_port_button_style(self.toggle_btn2, False)
     
-    def handle_serial_2_data(self, data): # BM: COM2数据处理
+    def handle_serial_2_data(self, data):
         try:
             # Apply format conversion based on current setting
             if hasattr(self, 'output_format_str2') and not self.output_format_str2:
@@ -1129,6 +1129,18 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.search_count_label.setStyleSheet("background: transparent;")
         self.search_count_label.setMinimumWidth(40)
 
+        # BM:仪表开关
+        line_top_5 = QFrame()
+        line_top_5.setFrameShape(QFrame.Shape.VLine)
+        line_top_5.setFrameShadow(QFrame.Shadow.Sunken)
+        line_top_5.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
+        
+        self.status_panel_toggle_btn = ToolButton(FIF.HIDE)
+        self.status_panel_toggle_btn.setFixedWidth(35)
+        self.status_panel_toggle_btn.setToolTip("隐藏状态监控面板")
+        self.status_panel_toggle_btn.clicked.connect(self.toggle_status_panel)
+        self.status_panel_visible = True  # 默认显示
+
         top_layout.addWidget(self.port_combo)
         top_layout.addWidget(self.baud_combo)
         top_layout.addWidget(self.toggle_btn)
@@ -1155,7 +1167,12 @@ class MainWindow(FluentWindow): # MSFluentWindow
         top_layout.addWidget(self.search_prev_btn)
         top_layout.addWidget(self.search_next_btn)
         top_layout.addWidget(self.search_count_label)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(line_top_5)
+        top_layout.addSpacing(10)
+        top_layout.addWidget(self.status_panel_toggle_btn)
         top_layout.addStretch()
+
         layout.addWidget(top_widget)
 
         self.splitter = QSplitter(Qt.Orientation.Vertical)
@@ -1219,11 +1236,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.send_line_edit.setPlaceholderText("e.g., AA BB or 0xAA 0xBB or String")
         self.send_line_edit.setClearButtonEnabled(True)
 
-        # Large input box for expanded mode (initially hidden)
+        # BM:输入框开关
         self.large_send_edit = TextEdit()
         self.large_send_edit.setPlaceholderText("e.g., AA BB or 0xAA 0xBB or String")
         self.large_send_edit.setMaximumHeight(300)
-        self.large_send_edit.hide()
+        self.large_send_edit.setVisible(False)
 
         self.send_btn = ToolButton(FIF.SEND)
         self.send_btn.setFixedWidth(60)
@@ -1240,8 +1257,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.quick_config_btn.setToolTip("Configure Quick Send")
         self.quick_config_btn.clicked.connect(self.show_quick_send_config)
 
-        # Expand/collapse button
-        self.expand_btn = ToolButton(FIF.UP)
+        # BM:串口发送开关
+        self.expand_btn = ToolButton(FIF.UP)  # Change icon to DOWN since input is expanded by default
         self.expand_btn.setFixedSize(30, 30)
         self.expand_btn.clicked.connect(self.toggle_input_size)
         self.is_expanded = False
@@ -1295,12 +1312,12 @@ class MainWindow(FluentWindow): # MSFluentWindow
             self.serial_display.clear()
 
     def create_display_area(self, layout):
-        """创建数据显示区域"""
+        display_splitter = QSplitter(Qt.Orientation.Horizontal)
+        
+        # 左侧：日志显示区域
         self.serial_display = QTextEdit()
         self.serial_display.setReadOnly(True)
         self.serial_display.document().setMaximumBlockCount(150000)  # 限制最大行数
-        # self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # 自动换行
-        # self.serial_display.setWordWrapMode(QTextOption.WrapMode.WrapAnywhere)  # 任意位置换行
         self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)  # 不自动换行
         self.serial_display.installEventFilter(self) # 安装事件过滤器
         
@@ -1335,9 +1352,265 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.serial_display.keyPressEvent = self.on_display_key_press
         self.font_size = 12  # 初始字体大小
         
-        layout.addWidget(self.serial_display)
+        # 右侧：状态监控面板
+        self.status_panel = self.create_status_panel()
+        
+        # 添加到分割器
+        display_splitter.addWidget(self.serial_display)
+        display_splitter.addWidget(self.status_panel)
+        
+        # 设置分割比例 (5:1)
+        display_splitter.setSizes([5000, 1000])
+        display_splitter.setCollapsible(0, False)  # 日志区域不可折叠
+        display_splitter.setCollapsible(1, True)   # 状态面板可折叠
+        
+        # 初始化状态数据
+        self.status_data = {
+            'Link': 'FFFF',
+            'USER': {'used': 0, 'total': 20},
+            'AUTH': {'used': 0, 'total': 20},
+            'TRANS': {'used': 0, 'total': 10},
+            'DTPML': {'used': 0, 'total': 20}
+        }
+        
+        layout.addWidget(display_splitter)
 
-    def create_Chart_page(self):
+    def create_status_panel(self):
+        # BM: 仪表配置
+        panel = QWidget()
+        panel.setFixedWidth(275)  # 固定宽度确保紧凑显示
+        panel.setStyleSheet("""
+            QWidget {
+                background-color: rgba(36, 42, 56, 0.1);
+                border-radius: 8px;
+            }
+        """)
+        
+        layout = QVBoxLayout(panel)
+        # layout.setContentsMargins(8, 8, 8, 8)
+        # layout.setSpacing(8)
+        
+        # 创建5个状态卡
+        self.link_card = self.create_status_card("LINK", "FFFF", FIF.TILES, is_link=True)
+        self.user_card = self.create_status_card("USERS", 20, FIF.PEOPLE)
+        self.auth_card = self.create_status_card("AUTH", 20, FIF.IOT)
+        self.trans_card = self.create_status_card("TRANS", 10, FIF.IOT)
+        self.dtpml_card = self.create_status_card("DTPML", 20, FIF.IOT)
+        
+        layout.addWidget(self.link_card)
+        layout.addWidget(self.user_card, 1)  # 添加拉伸因子
+        layout.addWidget(self.auth_card, 1)  # 添加拉伸因子
+        layout.addWidget(self.trans_card, 1)  # 添加拉伸因子
+        layout.addWidget(self.dtpml_card, 1)  # 添加拉伸因子
+        
+        return panel
+
+    def toggle_status_panel(self):
+        """切换状态面板显示/隐藏"""
+        if hasattr(self, 'status_panel'):
+            if self.status_panel_visible:
+                self.status_panel.setVisible(False)  # 使用setVisible而不是hide()
+                self.status_panel_toggle_btn.setIcon(FIF.VIEW.icon())
+                self.status_panel_toggle_btn.setToolTip("显示状态监控面板")
+            else:
+                self.status_panel.setVisible(True)   # 使用setVisible而不是show()
+                self.status_panel_toggle_btn.setIcon(FIF.HIDE.icon())
+                self.status_panel_toggle_btn.setToolTip("隐藏状态监控面板")
+            self.status_panel_visible = not self.status_panel_visible
+
+    def create_status_card(self, title, total, icon, is_link=False):
+        """创建单个状态卡"""
+        card = CardWidget()
+        
+        # 根据是否为LINK卡设置不同高度
+        if is_link:
+            card.setFixedHeight(50)  # LINK卡高度为原来的三分之一
+        else:
+            card.setMinimumHeight(120)  # 其他卡片设置最小高度，允许拉伸
+        
+        layout = QVBoxLayout(card)
+        
+        # 顶部：图标 + 标题 + 总数
+        top_container = QWidget()
+        top_container.setFixedHeight(35)
+        top_container.setStyleSheet("""
+            QWidget {
+                background-color: rgba(255, 255, 255, 0.1);      
+            }
+            BodyLabel {
+                background-color: transparent;
+                border: none;
+            }
+        """)
+        
+        top_layout = QHBoxLayout(top_container)
+        # top_layout.setContentsMargins(8, 4, 8, 4)
+        
+        icon_widget = IconWidget(icon)
+        icon_widget.setFixedSize(20, 20)
+        title_label = QLabel(title)
+        title_label.setStyleSheet("""
+                background-color: transparent;
+                font-weight: bold;
+                font-size: 14px;
+                color: rgba(255, 255, 255, 1);
+            """)
+        
+        top_layout.addSpacing(15)
+        top_layout.addWidget(icon_widget)
+        top_layout.addSpacing(5)
+        top_layout.addWidget(title_label)
+        top_layout.addStretch()
+        
+        # 总数显示
+        if is_link:
+            total_label = QLabel(str(total))
+            total_label.setStyleSheet("""
+                font-size: 16px;
+                color: rgba(35, 150, 158, 1);
+                background-color: transparent;
+                font-weight:bold;
+            """)
+            top_layout.addWidget(total_label)
+            top_layout.addSpacing(15)
+        
+        layout.addWidget(top_container)
+        
+        # 底部：进度条和数据显示
+        if not is_link:
+            bottom_layout = QHBoxLayout()
+
+            progress = ProgressRing()
+            progress.setRange(0, total)
+            progress.setValue(0)
+            progress.setTextVisible(True)
+            progress.setFixedSize(60, 60)
+            progress.setStrokeWidth(10)
+            
+            # 数据显示框
+            data_layout = QHBoxLayout()
+            data_layout.setSpacing(4)
+
+            used_widget = QWidget()
+            used_widget.setFixedSize(50, 50)
+            used_widget.setStyleSheet("""
+                background-color: rgba(255, 107, 129, 0.6);
+                border-radius: 4px;
+                padding: 2px;
+            """)
+            used_layout = QVBoxLayout(used_widget)
+            used_layout.setContentsMargins(2, 2, 2, 2)
+            used_layout.setSpacing(0)
+            used_title = QLabel("USED")
+            used_title.setStyleSheet("""
+                background-color: transparent;
+                font-weight:bold;
+            """)
+            used_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            used_layout.addWidget(used_title)
+            used_value = QLabel("0")
+            used_value.setStyleSheet("""
+                font-size:15px;
+            """)
+            used_value.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            used_layout.addWidget(used_value)
+            
+            free_widget = QWidget()
+            free_widget.setFixedSize(50, 50)
+            free_widget.setStyleSheet("""
+                background-color: rgba(72, 207, 173, 0.6);
+                border-radius: 4px;
+                padding: 2px;
+            """)
+            free_layout = QVBoxLayout(free_widget)
+            free_layout.setContentsMargins(2, 2, 2, 2)
+            free_layout.setSpacing(0)
+            free_title = QLabel("FREE")
+            free_title.setStyleSheet("""
+                background-color: transparent;
+                font-weight: bold;
+            """)
+            free_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            free_layout.addWidget(free_title)
+            free_value = QLabel(str(total))
+            free_value.setStyleSheet("""
+                font-size:15px;
+            """)
+            free_value.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            free_layout.addWidget(free_value)
+            
+            all_widget = QWidget()
+            all_widget.setFixedSize(50, 50)
+            all_widget.setStyleSheet("""
+                background-color: rgba(77, 130, 211, 0.6);
+                border-radius: 4px;
+                padding: 2px;
+            """)
+            all_layout = QVBoxLayout(all_widget)
+            all_layout.setContentsMargins(2, 2, 2, 2)
+            all_layout.setSpacing(0)
+            all_title = QLabel("ALL")
+            all_title.setStyleSheet("""
+                background-color: transparent;
+                font-weight: bold;
+            """)
+            all_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            all_layout.addWidget(all_title)
+            all_value = QLabel(str(total))
+            all_value.setStyleSheet("""
+                font-size: 15px;
+                
+            """)
+            all_value.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            all_layout.addWidget(all_value)
+            
+            data_layout.addWidget(used_widget)
+            data_layout.addWidget(free_widget)
+            data_layout.addWidget(all_widget)
+            
+            bottom_layout.addWidget(progress)
+            bottom_layout.addLayout(data_layout)
+            
+            layout.addLayout(bottom_layout)
+            
+            setattr(card, 'progress', progress)
+            setattr(card, 'used_value', used_value)
+            setattr(card, 'free_value', free_value)
+        else:
+            # LINK卡片只显示地址信息
+            setattr(card, 'total_label', total_label)
+        
+        return card
+
+    # BM: 更新仪表数据
+    def update_status_card(self, card_type, used_value=None, link_value=None):
+        """更新状态卡数据"""
+        if card_type == "LINK" and link_value is not None:
+            self.link_card.total_label.setText(str(link_value))
+            self.status_data['Link'] = link_value
+        elif card_type in ["USER", "AUTH", "TRANS", "DTPML"] and used_value is not None:
+            card_map = {
+                "USER": self.user_card,
+                "AUTH": self.auth_card,
+                "TRANS": self.trans_card,
+                "DTPML": self.dtpml_card
+            }
+            
+            card = card_map[card_type]
+            total = self.status_data[card_type]['total']
+            free = total - used_value
+            
+            # 更新进度条
+            card.progress.setValue(used_value)
+            
+            # 更新数据显示
+            card.used_value.setText(str(used_value))
+            card.free_value.setText(str(free))
+            
+            # 更新状态数据
+            self.status_data[card_type]['used'] = used_value
+
+    def create_Chart_page(self):  # BM: Chart Page
         Chart_page = QWidget()
         layout = QVBoxLayout(Chart_page)
         layout.setContentsMargins(0, 0, 0, 0)
@@ -1350,7 +1623,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
         canvas_splitter = QSplitter(Qt.Orientation.Horizontal)
 
-        table_widget = self.create_test_area()  # 这里包含了表格和预留区域
+        table_widget = self.create_test_area()  # 这里包含了表格和闸机动画区域
         canvas_splitter.addWidget(table_widget)
         
         bottom_right = QWidget()
@@ -1358,10 +1631,15 @@ class MainWindow(FluentWindow): # MSFluentWindow
         bottom_right_layout.setContentsMargins(5, 5, 5, 5)
         
         button_layout = QHBoxLayout()
-        button_layout.addStretch()  # 推到右边
+        button_layout.addStretch()
+        
+        self.multi_gate_toggle_btn = PushButton("🚪")
+        self.multi_gate_toggle_btn.setFixedSize(50, 30)
+        self.multi_gate_toggle_btn.clicked.connect(self.toggle_multi_gate_mode)
+        button_layout.addWidget(self.multi_gate_toggle_btn)
+        
         self.layout_toggle_btn = PushButton("⚡")
         self.layout_toggle_btn.setFixedSize(50, 30)
-
         self.layout_toggle_btn.clicked.connect(self.toggle_layout_mode)
         button_layout.addWidget(self.layout_toggle_btn)
         bottom_right_layout.addLayout(button_layout)
@@ -1378,6 +1656,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.chart_widget = chart_widget
         self.table_widget = table_widget
         self.is_expanded_mode = False
+        self.is_multi_gate_mode = False  # 多闸机模式状态
 
         canvas_splitter.setSizes([100, 100])
         main_splitter.addWidget(canvas_splitter)
@@ -1434,6 +1713,17 @@ class MainWindow(FluentWindow): # MSFluentWindow
             self.layout_toggle_btn.setText("⚡")
             self.is_expanded_mode = False
     
+    def toggle_multi_gate_mode(self):
+        self.is_multi_gate_mode = not self.is_multi_gate_mode
+        
+        if self.is_multi_gate_mode:
+            self.multi_gate_toggle_btn.setText("🚪🚪")
+        else:
+            self.multi_gate_toggle_btn.setText("🚪")
+        
+        # 通知position_view更新显示
+        if hasattr(self, 'position_view'):
+            self.position_view.set_multi_gate_mode(self.is_multi_gate_mode)
 
     
     def create_chart_area(self):
@@ -1449,7 +1739,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
             'master'   : 'Master',
             'slave'    : 'Slave',
             'nlos'     : 'NLOS',
-            'lift_deep': 'RSSI',
+            'rssi'     : 'RSSI',
             'speed'    : 'Speed'
         }
         for key, title in chart_titles.items():
@@ -1458,7 +1748,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 'master'   : QColor("#FF6B6B"),
                 'slave'    : QColor("#4ECDC4"),
                 'nlos'     : QColor("#45B7D1"),
-                'lift_deep': QColor("#68ecae"),
+                'rssi'     : QColor("#68ecae"),
                 'speed'    : QColor("#FFBE0B")
             }
             series.setColor(colors[key])
@@ -2289,7 +2579,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
             if data:
                 mean = sum(data) / len(data)
                 std = (sum((x - mean) ** 2 for x in data) / len(data)) ** 0.5
-                display_key = "RSSI" if chart_key == "lift_deep" else chart_key.upper()
+                display_key = "RSSI" if chart_key == "rssi" else chart_key.upper()
                 title = f"{display_key} | Avg: {mean:.1f} | Std: {std:.1f}"
             else:
                 mean = 0
@@ -2454,22 +2744,17 @@ class MainWindow(FluentWindow): # MSFluentWindow
     def toggle_input_size2(self):
         """Toggle between small and large input boxes for COM2"""
         if self.is_expanded2:
-            # Collapse: hide large input, show small input
-            self.large_send_edit2.hide()
-            self.send_line_edit2.show()
+            self.large_send_edit2.setVisible(False) 
             self.expand_btn2.setIcon(FIF.UP)
             # Reset splitter sizes to original
             if hasattr(self.splitter2, 'setSizes'):
                 self.splitter2.setSizes([2000, 100])
             self.is_expanded2 = False
         else:
-            # Expand: hide small input, show large input
-            self.send_line_edit2.hide()
-            self.large_send_edit2.show()
+            self.large_send_edit2.setVisible(True)
             self.expand_btn2.setIcon(FIF.DOWN )
-            # Increase bottom area size
             if hasattr(self.splitter2, 'setSizes'):
-                self.splitter2.setSizes([1500, 500])
+                self.splitter2.setSizes([2000, 500])
             self.is_expanded2 = True
 
     def toggle_send_mode2(self):
@@ -2549,24 +2834,17 @@ class MainWindow(FluentWindow): # MSFluentWindow
             )
 
     def toggle_input_size(self):
-        """Toggle between small and large input boxes"""
         if self.is_expanded:
-            # Collapse: hide large input, show small input
-            self.large_send_edit.hide()
-            self.send_line_edit.show()
+            self.large_send_edit.setVisible(False)
             self.expand_btn.setIcon(FIF.UP)
-            # Reset splitter sizes to original
             if hasattr(self.splitter, 'setSizes'):
                 self.splitter.setSizes([2000, 100])
             self.is_expanded = False
         else:
-            # Expand: hide small input, show large input
-            self.send_line_edit.hide()
-            self.large_send_edit.show()
+            self.large_send_edit.setVisible(True)
             self.expand_btn.setIcon(FIF.DOWN )
-            # Increase bottom area size
             if hasattr(self.splitter, 'setSizes'):
-                self.splitter.setSizes([1500, 500])
+                self.splitter.setSizes([2000, 500])
             self.is_expanded = True
 
     def toggle_send_mode(self):
@@ -2726,6 +3004,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 parent=self
             )
 
+    # BM: COM1 data handle
     def handle_serial_data(self, data):
         try:
             # Apply format conversion based on current setting
@@ -2768,17 +3047,28 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     
                     if hasattr(self, 'gate_animation') and self.gate_animation is not None:
                         self.gate_animation.trigger_gate_animation()
-            # BM: COM1数据处理
             if "@POSITION" in text:
                 # print(f'接收到原始数据：{repr(text)}')
                 try:
                     # Fix unquoted hex values in JSON (e.g., "mac": F4A6 -> "mac": "F4A6")
                     fixed_text = re.sub(r'"mac":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"mac": "\1"', text)
+                    
+                    # Fix unquoted Link values (hex values like 3B5D)
+                    fixed_text = re.sub(r'"Link":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"Link": "\1"', fixed_text)
+                    
                     # Fix unquoted CardNo values (long numbers without quotes)
-                    fixed_text = re.sub(r'"CardNo":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"CardNo": "\1"', fixed_text)
-                    # Fix empty values in JSON (e.g., "CardNo": , -> "CardNo": null)
+                    fixed_text = re.sub(r'"CardNo":\s*([0-9A-Fa-f]+)(?=\s*[,}])', r'"CardNo": "\1"', fixed_text)
+                    
+                    # Fix empty values in JSON - handle various empty patterns
+                    # Pattern 1: "CardNo": , -> "CardNo": null,
                     fixed_text = re.sub(r'"(CardNo|Balance)":\s*,', r'"\1": null,', fixed_text)
+                    # Pattern 2: "CardNo": } -> "CardNo": null}
                     fixed_text = re.sub(r'"(CardNo|Balance)":\s*}', r'"\1": null}', fixed_text)
+                    # Pattern 3: "CardNo":  , (with extra spaces) -> "CardNo": null,
+                    fixed_text = re.sub(r'"(CardNo|Balance)":\s+,', r'"\1": null,', fixed_text)
+                    # Pattern 4: Handle any field with empty value followed by comma or brace
+                    fixed_text = re.sub(r'"([^"]+)":\s*([,}])', r'"\1": null\2', fixed_text)
+                    
                     json_data = json.loads(fixed_text)
                 except json.JSONDecodeError as e:
                     print(f"JSON解析错误: {e}")
@@ -2817,7 +3107,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     'master'   : 'Master',
                     'slave'    : 'Slave',
                     'nlos'     : 'nLos',
-                    'lift_deep': 'LiftDeep',
+                    'rssi'     : 'RSSI',
                     'speed'    : 'Speed'
                 }
                 
@@ -2835,18 +3125,33 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     except (ValueError, TypeError):
                         continue
 
+                # 解析状态监控数据
+                link_value = json_data.get('Link', 'FFFF')
+                user_value = json_data.get('User', 0)
+                auth_value = json_data.get('Auth', 0)
+                trans_value = json_data.get('Trans', 0)
+                dtpml_value = json_data.get('Dtpml', 0)
+                
+                # 更新状态卡片
+                if hasattr(self, 'status_panel'):
+                    self.update_status_card("LINK", link_value=link_value)
+                    self.update_status_card("USER", used_value=user_value)
+                    self.update_status_card("AUTH", used_value=auth_value)
+                    self.update_status_card("TRANS", used_value=trans_value)
+                    self.update_status_card("DTPML", used_value=dtpml_value)
+
                 # Log data
                 data_values = [
                     json_data.get('Master', 0),
                     json_data.get('Slave', 0),
                     json_data.get('nLos', 0),
-                    json_data.get('LiftDeep', 0),
+                    json_data.get('RSSI', 0),
                     json_data.get('Speed', 0),
                     json_data.get('User-X', 0),
                     json_data.get('User-Y', 0),
                     json_data.get('User-Z', 0),
-                    json_data.get('Auth', 0),
-                    json_data.get('Trans', 0)
+                    auth_value,
+                    trans_value
                 ]
                 
                 # 写入CSV
@@ -3094,7 +3399,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self._save_unified_config()
         self.update()
     
-    def apply_theme(self):   # BM:全局主题 THEME
+    def apply_theme(self):   # BM: THEME
         theme = self.current_theme
         self.setStyleSheet(f"""
             MSFluentWindow {{
@@ -3591,7 +3896,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         if hasattr(self, 'protocol_input'):
             self.protocol_input.clear()
     
-    def parse_tlv_protocol(self, protocol_str):  # BM: 解析数据页面
+    def parse_tlv_protocol(self, protocol_str):  # BM: Parse TLV
         """Parse TLV protocol string - Standard TLV format"""
         # Remove spaces and convert to uppercase
         clean_str = protocol_str.replace(" ", "").replace("\n", "").replace("\t", "").replace("\r", "").upper()
@@ -3986,13 +4291,18 @@ class MainWindow(FluentWindow): # MSFluentWindow
             if not self.background_images:
                 # Fallback to default if no backgrounds configured
                 self.background_images = [
-                    "pic\\carton2.jpg",
-                    "pic\\person4.jpg",
-                    "pic\\person5.jpg",
-                    "pic\\person6.jpg",
-                    "pic\\person7.jpg",
-                    "pic\\person8.jpg",
-                    "pic\\person11.jpg"
+                    "pic\\D_1.jpg",
+                    "pic\\D_2.jpg",
+                    "pic\\D_3.png",
+                    "pic\\D_4.jpg",
+                    "pic\\D_5.jpg",
+                    "pic\\D_6.png",
+                    "pic\\D_7.jpg",
+                    "pic\\D_8.jpg",
+                    "pic\\D_9.jpg",
+                    "pic\\D10.jpg",
+                    "pic\\D_11.jpg",
+                    "pic\\L_1.png"
                 ]
             
             current_index = self.background_images.index(self.background_image) if self.background_image in self.background_images else 0
@@ -5103,7 +5413,7 @@ if __name__ == "__main__":
     
     def show_main_window():
         try:
-            window.show()
+            window.showMaximized()   # Show window in fullscreen mode by default
             window.raise_()          # Bring window to front
             window.activateWindow()  # Activate window
         except Exception as e:
@@ -5118,6 +5428,6 @@ if __name__ == "__main__":
     
     fallback_timer = QTimer()
     fallback_timer.timeout.connect(check_splash_closed)
-    fallback_timer.start(200)  
+    fallback_timer.start(500)  
     
     sys.exit(app.exec())

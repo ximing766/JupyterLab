@@ -14,6 +14,7 @@ class PositionView(QWidget):
         self.origin_offset_y  = -200
         self.main_window      = parent  # 保存主窗口引用
         self.display_scale    = 1.0     # 显示缩放因子，用于扩展模式
+        self.is_multi_gate_mode = False  # 多闸机模式状态
         
         # 创建静态内容缓存
         self.static_content   = None
@@ -35,6 +36,12 @@ class PositionView(QWidget):
         self.display_scale = scale
         self.static_content = None  # 清除缓存，强制重绘
         self.update()
+    
+    def set_multi_gate_mode(self, is_multi_gate):
+        """设置多闸机模式"""
+        self.is_multi_gate_mode = is_multi_gate
+        self.static_content = None  # 清除缓存，强制重绘
+        self.update()
         
     def update_animations(self):   #XXX 定时器会不断检测是否还需要update重绘
         """Update user position animations"""
@@ -47,7 +54,7 @@ class PositionView(QWidget):
             # No active animations, stop timer
             self.animation_timer.stop()
         
-    def draw_static_content(self, painter, center_x, center_y):
+    def draw_static_content(self, painter, center_x, center_y):  # BM: 绘制静态内容
         # 获取动态长度值并应用显示缩放
         red_height = int(self.main_window.red_length * self.scale * self.display_scale) if self.main_window.red_length != 0 else int(100 * self.display_scale)
         blue_height = int(self.main_window.blue_length * self.display_scale) if self.main_window.blue_length != 0 else int(300 * self.display_scale)
@@ -57,45 +64,92 @@ class PositionView(QWidget):
         area_width = int(200 * self.display_scale)
         area_half_width = int(100 * self.display_scale)
         
-        # 红色感应区（从原点开始向下）
+        # 应用缩放的闸机尺寸（需要在使用前定义）
+        gate_width = int(20 * self.display_scale)    # XXX 实际对应10个坐标
+        gate_height = int(80 * self.display_scale)
+        gate_half_height = int(40 * self.display_scale)
+        
+        # 多闸机模式下的布局调整
+        if self.is_multi_gate_mode:
+            # 在多闸机模式下，整体向左偏移更多以保持居中
+            offset_x = int(-120 * self.display_scale)  # 向左偏移150像素
+            center_x += offset_x
+        
+        # 绘制第一个通道的红色感应区（从原点开始向下）
         red_gradient = QLinearGradient(center_x, center_y, center_x, center_y + red_height)
         red_gradient.setColorAt(0, QColor(255, 0, 0, 70))  # 增加红色透明度
         red_gradient.setColorAt(1, QColor(255, 0, 0, 80))
         painter.setBrush(red_gradient)
         painter.setPen(Qt.PenStyle.NoPen)
-        painter.drawRect(int(center_x - area_half_width), int(center_y), area_width, red_height)
         
-        # 蓝色区域（紧接红色区域，不重叠）
+        # 在多闸机模式下，调整第一个通道的红蓝区域宽度
+        if self.is_multi_gate_mode:
+            # 第一个通道的左侧应该到第一个闸机的右侧
+            channel1_left_x = int(center_x - area_half_width + gate_width)  # 第一个闸机的右侧
+            # 保持与单通道模式相同的宽度，中间闸机向右移动
+            channel1_width = area_width  # 与单通道模式相同的宽度
+            channel1_right_x = channel1_left_x + channel1_width
+            
+            # 绘制第一个通道的红色感应区（从第一个闸机右侧开始，保持原宽度）
+            painter.drawRect(channel1_left_x, int(center_y), channel1_width, red_height)
+        else:
+            painter.drawRect(int(center_x - area_half_width), int(center_y), area_width, red_height)
+        
+        # 第一个通道的蓝色区域（紧接红色区域，不重叠）
         blue_start_y = center_y + red_height
         blue_rect_height = blue_height - red_height if blue_height > red_height else blue_height
         blue_gradient = QLinearGradient(center_x, blue_start_y, center_x, blue_start_y + blue_rect_height)
         blue_gradient.setColorAt(0, QColor(0, 140, 255, 100))  # 增加蓝色透明度和饱和度
         blue_gradient.setColorAt(1, QColor(0, 140, 255, 70))
         painter.setBrush(blue_gradient)
-        painter.drawRect(int(center_x - area_half_width), int(blue_start_y), area_width, blue_rect_height)
+
+        # 在多闸机模式下，调整第一个通道的蓝色感应区宽度
+        if self.is_multi_gate_mode:
+            # 第一个通道的左侧应该到第一个闸机的右侧
+            channel1_left_x = int(center_x - area_half_width + gate_width)  # 第一个闸机的右侧
+            # 保持与单通道模式相同的宽度
+            channel1_width = area_width  # 与单通道模式相同的宽度
+            
+            # 绘制第一个通道的蓝色感应区（从第一个闸机右侧开始，保持原宽度）
+            # 使用与单通道模式相同的高度
+            painter.drawRect(channel1_left_x, int(blue_start_y), channel1_width, blue_height)
+        else:
+            painter.drawRect(int(center_x - area_half_width), int(center_y + red_height), area_width, blue_height)
         
-        # 应用缩放的闸机尺寸
-        gate_width = int(20 * self.display_scale)
-        gate_height = int(80 * self.display_scale)
-        gate_half_height = int(40 * self.display_scale)
+
         
-        # 绘制闸机（左侧）
+        # 绘制第一个闸机（左侧）
+        # 在单通道模式下，将左闸机向左偏移一个闸机宽度，实现与多通道模式类似的布局
+        left_gate_offset = gate_width if not self.is_multi_gate_mode else 0
+        left_gate_x = int(center_x - area_half_width - left_gate_offset)
+        
         painter.setPen(QPen(QColor("#333333"), int(2 * self.display_scale)))
         painter.setBrush(QColor("#444444"))
-        painter.drawRect(int(center_x - area_half_width), int(center_y - gate_half_height), gate_width, gate_height)
+        painter.drawRect(left_gate_x, int(center_y - gate_half_height), gate_width, gate_height)
         # 闸机装饰
         painter.setPen(QPen(QColor("#666666"), max(1, int(1 * self.display_scale))))
         decoration_offset = int(5 * self.display_scale)
         decoration_spacing = int(30 * self.display_scale)
-        painter.drawLine(int(center_x - area_half_width + decoration_offset), int(center_y - decoration_spacing), 
-                        int(center_x - area_half_width + gate_width - decoration_offset), int(center_y - decoration_spacing))
-        painter.drawLine(int(center_x - area_half_width + decoration_offset), int(center_y), 
-                        int(center_x - area_half_width + gate_width - decoration_offset), int(center_y))
-        painter.drawLine(int(center_x - area_half_width + decoration_offset), int(center_y + decoration_spacing), 
-                        int(center_x - area_half_width + gate_width - decoration_offset), int(center_y + decoration_spacing))
+        painter.drawLine(int(left_gate_x + decoration_offset), int(center_y - decoration_spacing), 
+                        int(left_gate_x + gate_width - decoration_offset), int(center_y - decoration_spacing))
+        painter.drawLine(int(left_gate_x + decoration_offset), int(center_y), 
+                        int(left_gate_x + gate_width - decoration_offset), int(center_y))
+        painter.drawLine(int(left_gate_x + decoration_offset), int(center_y + decoration_spacing), 
+                        int(left_gate_x + gate_width - decoration_offset), int(center_y + decoration_spacing))
         
-        # 绘制闸机（右侧）
-        right_gate_x = int(center_x + area_half_width - gate_width)
+        # 绘制第二个闸机（右侧）
+        # 在单通道模式下，将右闸机向右偏移一个闸机宽度，实现与多通道模式类似的布局
+        # 在多通道模式下，中间闸机的位置需要根据第一个通道的实际宽度来计算
+        if self.is_multi_gate_mode:
+            # 多通道模式：中间闸机位于第一个通道的右侧
+            channel1_left_x = int(center_x - area_half_width + gate_width)  # 第一个闸机的右侧
+            channel1_width = area_width  # 与单通道模式相同的宽度
+            right_gate_x = channel1_left_x + channel1_width  # 中间闸机位于第一个通道右侧
+        else:
+            # 单通道模式：右闸机向右偏移
+            right_gate_offset = gate_width
+            right_gate_x = int(center_x + area_half_width - gate_width + right_gate_offset)
+        
         painter.setPen(QPen(QColor("#333333"), int(2 * self.display_scale)))
         painter.setBrush(QColor("#444444"))
         painter.drawRect(right_gate_x, int(center_y - gate_half_height), gate_width, gate_height)
@@ -108,17 +162,68 @@ class PositionView(QWidget):
         painter.drawLine(int(right_gate_x + decoration_offset), int(center_y + decoration_spacing), 
                         int(right_gate_x + gate_width - decoration_offset), int(center_y + decoration_spacing))
         
+        # 多闸机模式：绘制第二个通道，与第一个通道贴合
+        if self.is_multi_gate_mode:
+            # 第二个通道的起始位置（从中间闸机的右侧开始）
+            channel1_left_x = int(center_x - area_half_width + gate_width)  # 第一个闸机的右侧
+            channel1_width = area_width  # 与单通道模式相同的宽度
+            channel2_left_x = channel1_left_x + channel1_width + gate_width  # 从中间闸机的右侧开始
+            
+            # 第二个通道保持与第一个通道相同的宽度
+            channel2_width = area_width  # 与单通道模式相同的宽度
+            channel2_right_x = channel2_left_x + channel2_width
+            
+            # 绘制第二个通道的红色感应区
+            red_gradient2 = QLinearGradient(channel2_left_x, center_y, channel2_right_x, center_y + red_height)
+            red_gradient2.setColorAt(0, QColor(255, 0, 0, 70))
+            red_gradient2.setColorAt(1, QColor(255, 0, 0, 80))
+            painter.setBrush(red_gradient2)
+            painter.setPen(Qt.PenStyle.NoPen)
+            painter.drawRect(channel2_left_x, int(center_y), channel2_width, red_height)
+            
+            # 第二个通道的蓝色区域
+            blue_gradient2 = QLinearGradient(channel2_left_x, blue_start_y, channel2_right_x, blue_start_y + blue_height)
+            blue_gradient2.setColorAt(0, QColor(0, 140, 255, 100))
+            blue_gradient2.setColorAt(1, QColor(0, 140, 255, 70))
+            painter.setBrush(blue_gradient2)
+            # 使用与单通道模式相同的高度
+            painter.drawRect(channel2_left_x, int(blue_start_y), channel2_width, blue_height)
+            
+            # 绘制第三个闸机（第二个通道的右侧）
+            third_gate_x = channel2_right_x  # 第二个通道的右侧
+            painter.setPen(QPen(QColor("#333333"), int(2 * self.display_scale)))
+            painter.setBrush(QColor("#444444"))
+            painter.drawRect(third_gate_x, int(center_y - gate_half_height), gate_width, gate_height)
+            # 第三个闸机装饰
+            painter.setPen(QPen(QColor("#666666"), max(1, int(1 * self.display_scale))))
+            painter.drawLine(int(third_gate_x + decoration_offset), int(center_y - decoration_spacing), 
+                            int(third_gate_x + gate_width - decoration_offset), int(center_y - decoration_spacing))
+            painter.drawLine(int(third_gate_x + decoration_offset), int(center_y), 
+                            int(third_gate_x + gate_width - decoration_offset), int(center_y))
+            painter.drawLine(int(third_gate_x + decoration_offset), int(center_y + decoration_spacing), 
+                            int(third_gate_x + gate_width - decoration_offset), int(center_y + decoration_spacing))
+        
+        # 计算指标原点的正确位置
+        if self.is_multi_gate_mode:
+            # 多通道模式：原点应该位于第一个通道的中心（两个闸机的中心）
+            channel1_left_x = int(center_x - area_half_width + gate_width)  # 第一个闸机的右侧
+            channel1_width = area_width  # 与单通道模式相同的宽度
+            origin_x = channel1_left_x + channel1_width // 2  # 第一个通道的中心
+        else:
+            # 单通道模式：原点位于窗口中心
+            origin_x = center_x
+        
         # 绘制坐标轴
         painter.setPen(QPen(QColor("#666666"), max(1, int(1 * self.display_scale))))
         painter.drawLine(0, int(center_y), self.width(), int(center_y))
-        painter.drawLine(int(center_x), 0, int(center_x), self.height())
+        painter.drawLine(int(origin_x), 0, int(origin_x), self.height())
         
         # 绘制原点（红色）
         origin_size = int(4 * self.display_scale)
         origin_half_size = int(2 * self.display_scale)
         painter.setPen(QPen(QColor("#FF0000"), int(2 * self.display_scale)))
         painter.setBrush(QColor("#FF0000"))
-        painter.drawEllipse(int(center_x) - origin_half_size, int(center_y) - origin_half_size, origin_size, origin_size)
+        painter.drawEllipse(int(origin_x) - origin_half_size, int(center_y) - origin_half_size, origin_size, origin_size)
         
     def create_static_content(self):
         """创建静态内容缓存"""
@@ -213,6 +318,20 @@ class PositionView(QWidget):
         center_x = self.width() / 2
         center_y = self.height() / 2 + self.origin_offset_y
         
+        # 多闸机模式下应用相同的偏移，确保坐标系统一致
+        if self.is_multi_gate_mode:
+            offset_x = int(-120 * self.display_scale)  # 与静态内容相同的偏移
+            center_x += offset_x
+            
+            # 计算正确的原点位置（与静态内容中的原点位置一致）
+            area_width = int(200 * self.display_scale)
+            area_half_width = int(100 * self.display_scale)
+            gate_width = int(20 * self.display_scale)
+            channel1_left_x = int(center_x - area_half_width + gate_width)  # 第一个闸机的右侧
+            origin_x = channel1_left_x + area_width // 2  # 第一个通道的中心
+        else:
+            origin_x = center_x
+        
         users = self.user_manager.get_all_users()
         
         if not users:
@@ -248,15 +367,15 @@ class PositionView(QWidget):
         # 绘制所有用户的位置和轨迹
         for user in users:
             x, y, z = user.current_position
-            # 应用显示缩放到位置计算
-            screen_x = center_x + x * self.scale * self.display_scale
+            # 应用显示缩放到位置计算，使用正确的原点坐标
+            screen_x = origin_x + x * self.scale * self.display_scale
             screen_y = center_y + y * self.scale * self.display_scale
             user_color = self.user_manager.get_user_color(user.mac)
             
             # 绘制轨迹（如果有上一个位置）
             if user.last_position:
                 last_x, last_y, _ = user.last_position
-                last_screen_x = center_x + last_x * self.scale * self.display_scale
+                last_screen_x = origin_x + last_x * self.scale * self.display_scale
                 last_screen_y = center_y + last_y * self.scale * self.display_scale
                 
                 # 使用用户特定颜色绘制轨迹

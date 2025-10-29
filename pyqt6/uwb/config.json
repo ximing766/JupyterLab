@@ -1,20 +1,24 @@
 {
   "background": {
     "background_images": [
-      "pic\\person4.jpg",
-      "pic\\person5.jpg",
-      "pic\\person6.jpg",
-      "pic\\person7.jpg",
-      "pic\\person8.jpg",
-      "pic\\person11.jpg",
-      "pic\\person12.jpg",
-      "pic\\carton2.jpg"
+      "pic\\D_1.jpg",
+      "pic\\D_2.jpg",
+      "pic\\D_3.png",
+      "pic\\D_4.jpg",
+      "pic\\D_5.jpg",
+      "pic\\D_6.png",
+      "pic\\D_7.jpg",
+      "pic\\D_8.jpg",
+      "pic\\D_9.jpg",
+      "pic\\D10.jpg",
+      "pic\\D_11.jpg",
+      "pic\\L_1.png"
     ],
-    "current_background_image": "pic\\person7.jpg"
+    "current_background_image": "pic\\D_11.jpg"
   },
   "app": {
     "LogLevel": {
-      "level": "MIN"
+      "level": "ALL"
     },
     "QFluentWidgets": {
       "ThemeColor": "#ff009faa",
@@ -38,5 +42,10 @@
   "quick_send": {
     "test": "hello world",
     "123": "123"
+  },
+  "search_history": {
+    "com2_search": [
+      "uiComputedEpoch"
+    ]
   }
 }
