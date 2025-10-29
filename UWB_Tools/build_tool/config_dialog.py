@@ -26,10 +26,13 @@ from PyQt6.QtWidgets import (
     QListWidgetItem, QMessageBox, QFrame, QTextEdit,
     QSplitter
 )
-from PyQt6.QtCore import Qt, pyqtSlot, QPropertyAnimation, QEasingCurve, QSize
+from PyQt6.QtCore import Qt, pyqtSlot, pyqtSignal, QPropertyAnimation, QEasingCurve, QSize
 from PyQt6.QtGui import QFont, QIcon, QColor, QPalette
 
 class ConfigDialog(QDialog):
+    # 定义配置保存成功的信号
+    config_saved = pyqtSignal()
+    
     def __init__(self, config_manager, parent=None):
         super().__init__(parent)
         self.config_manager = config_manager
@@ -389,8 +392,10 @@ class ConfigDialog(QDialog):
             self.config_manager.config = config
             self.config_manager.save_config()
             
+            # 发射配置保存成功的信号
+            self.config_saved.emit()
+            
             QMessageBox.information(self, "成功", "配置已保存")
-            self.accept()
             
         except Exception as e:
             QMessageBox.critical(self, "错误", f"保存配置时出错: {str(e)}")
