@@ -171,7 +171,10 @@ class BuildThread(QThread):
             # Check if this is a make build and rename firmware if needed
             if hasattr(self, 'is_make') and self.is_make and hasattr(self, 'scheme_name') and self.scheme_name:
                 self._rename_firmware_after_make_build()
-            self.build_finished.emit(True, "编译成功")
+            # 获取当前时间并格式化
+            from datetime import datetime
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            self.build_finished.emit(True, f"编译成功 [{current_time}]")
         else:
             self.build_finished.emit(False, f"编译失败，返回码: {return_code}")
     

@@ -14,7 +14,8 @@
       "pic\\D_11.jpg",
       "pic\\L_1.png"
     ],
-    "current_background_image": "pic\\D_11.jpg"
+    "current_background_image": "pic\\D_4.jpg",
+    "opacity": 1.0
   },
   "app": {
     "LogLevel": {
@@ -42,10 +43,5 @@
   "quick_send": {
     "test": "hello world",
     "123": "123"
-  },
-  "search_history": {
-    "com2_search": [
-      "uiComputedEpoch"
-    ]
   }
 }
