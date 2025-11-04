@@ -58,7 +58,7 @@ class PositionView(QWidget):
         # 获取动态长度值并应用显示缩放
         red_height = int(self.main_window.red_length * self.scale * self.display_scale) if self.main_window.red_length != 0 else int(100 * self.display_scale)
         blue_height = int(self.main_window.blue_length * self.display_scale) if self.main_window.blue_length != 0 else int(300 * self.display_scale)
-        print(f'red_height: {red_height}, blue_height: {blue_height}, display_scale: {self.display_scale}')
+        # print(f'red_height: {red_height}, blue_height: {blue_height}, display_scale: {self.display_scale}')
         
         # 应用缩放的区域宽度
         area_width = int(200 * self.display_scale)

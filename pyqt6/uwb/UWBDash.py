@@ -38,10 +38,12 @@ from qfluentwidgets import (
 from log import Logger
 from position_view import PositionView
 from splash_screen import SplashScreen
+import csv
+import math
 
-APP_VERSION = "v2.2"
+APP_VERSION = "v2.3"
 APP_NAME = "UWBDash"
-BUILD_DATE = "2025年9月"
+BUILD_DATE = "2025年11月"
 AUTHOR = "@Qilang²"
 
 
@@ -250,11 +252,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
             'rssi'     : [],
             'speed'    : [],
         }
-        self.base_points = [
-            (0, -40), (0, 0), (1, 10), (0, 10), (-1, 10),
-            (1, 60), (0, 60), (-1, 60), (1, 110), (0, 110),
-            (-1, 110), (1, 160), (0, 160), (-1, 160), (0, 210)
-        ]
 
         self.init_ui()
 
@@ -317,7 +314,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
             self.last_window_size = size
             
         painter = QPainter(self) 
-        painter.setOpacity(1)
+        # Use configurable background opacity (0.0~1.0)
+        painter.setOpacity(getattr(self, 'background_opacity', 1.0))
         x = (self.width() - self.background_cache.width()) // 2
         y = (self.height() - self.background_cache.height()) // 2
         painter.drawPixmap(x, y, self.background_cache)
@@ -332,6 +330,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 background_config = config_data.get("background", {})
                 self.background_images = background_config.get("background_images", [])
                 self.background_image = background_config.get("current_background_image", None)
+                # Background opacity (0.0 ~ 1.0)
+                self.background_opacity = float(background_config.get("opacity", 1.0))
                 
                 self.app_config = config_data.get("app", {})
                 
@@ -383,7 +383,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
         config_data = {
             "background": {
                 "background_images": self.background_images,
-                "current_background_image": self.background_image
+                "current_background_image": self.background_image,
+                "opacity": getattr(self, 'background_opacity', 1.0)
             },
             "app": self.app_config,
             "highlight": {k: v.name() for k, v in self.highlight_config.items()},
@@ -409,6 +410,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.COM1_page.setObjectName("COM1")
         self.COM2_page.setObjectName("COM2") 
         self.Chart_page.setObjectName("CHART")
+        # 实例化测试页面并赋值给self.testInterface
+        self.testInterface = TestPage(self)
+        self.testInterface.setObjectName("TEST")
         
         self.Settings_page = self.create_settings_page()
         
@@ -416,12 +420,21 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.nav_com1 = self.addSubInterface(self.COM1_page, FIF.CONNECT, "COM1") 
         self.nav_com2 = self.addSubInterface(self.COM2_page, FIF.CONNECT, "COM2")
         self.addSubInterface(self.Chart_page, FIF.PIE_SINGLE, "CHART")
+        # 使用已实例化的self.testInterface添加导航
+        self.addSubInterface(self.testInterface, FIF.LABEL, "测试")
         self.addSubInterface(self.Settings_page, FIF.SETTING, "Setting", position=NavigationItemPosition.BOTTOM)
 
         self.navigationInterface.setExpandWidth(125)   # 展开时宽度设为 300 px
 
         self.apply_theme()
         setTheme(Theme.DARK)
+
+        # 页面切换时动态重挂载图表到对应页面
+        if hasattr(self, 'stackedWidget'):
+            try:
+                self.stackedWidget.currentChanged.connect(self.on_page_changed)
+            except Exception:
+                pass
     
     def mousePressEvent(self, event):
         if hasattr(self, 'stackedWidget') and self.stackedWidget:
@@ -446,6 +459,57 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 return
         
         super().mousePressEvent(event)
+
+    def on_page_changed(self, index):
+        """在Chart/测试页面之间移动图表，使其只在当前页面显示"""
+        try:
+            widget = self.stackedWidget.widget(index)
+            if not widget:
+                return
+            name = widget.objectName()
+            if name == "TEST":
+                self.attach_chart_to_test_page()
+            elif name == "CHART":
+                self.attach_chart_to_chart_page()
+        except Exception:
+            pass
+
+    def attach_chart_to_test_page(self):
+        """将图表挂载到测试页面顶部容器"""
+        try:
+            if not hasattr(self, 'chart_widget') or not self.chart_widget:
+                return
+            if not hasattr(self, 'testInterface') or not hasattr(self.testInterface, 'chart_container_layout'):
+                return
+            # 解除旧父子关系后重新挂载
+            self.chart_widget.setParent(None)
+            self.testInterface.chart_container_layout.addWidget(self.chart_widget)
+            self.chart_widget.show()
+        except Exception:
+            pass
+
+    def attach_chart_to_chart_page(self):
+        """Attach chart back to the Chart page (top splitter)."""
+        try:
+            if not hasattr(self, 'chart_widget') or not self.chart_widget:
+                return
+            if not hasattr(self, 'main_splitter') or not self.main_splitter:
+                return
+            self.chart_widget.setParent(None)
+            # 确保位于splitter顶部
+            self.main_splitter.insertWidget(0, self.chart_widget)
+            self.chart_widget.show()
+            # Re-apply stretch factors and sizes to avoid oversized chart
+            try:
+                # Smaller weight for chart, larger for bottom content
+                self.main_splitter.setStretchFactor(0, 1)
+                self.main_splitter.setStretchFactor(1, 3)
+                # Set initial size ratio (relative values)
+                self.main_splitter.setSizes([80, 220])
+            except Exception:
+                pass
+        except Exception:
+            pass
     
     def wheelEvent(self, event):
         # Get current interface from MSFluentWindow's stackedWidget
@@ -1659,8 +1723,16 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.is_multi_gate_mode = False  # 多闸机模式状态
 
         canvas_splitter.setSizes([100, 100])
+        # Set vertical splitter stretch factors and sizes to avoid oversized chart
+        try:
+            main_splitter.setStretchFactor(0, 1)
+            main_splitter.setStretchFactor(1, 3)
+            main_splitter.setSizes([100, 200])
+        except Exception:
+            pass
         main_splitter.addWidget(canvas_splitter)
-        main_splitter.setSizes([100, 200])
+        # Sizes will be re-applied in attach_chart_to_chart_page when switching pages
+        main_splitter.setSizes([80, 220])
 
         layout.addWidget(main_splitter)
         return Chart_page
@@ -1828,6 +1900,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 border-radius: 14px;                               /* 增加边框圆角 */
                 margin       : 2px;                                /* 添加边距 */
             """)
+            # Fix the height for each chart to reduce space on TestPage
+            chart_view.setMaximumHeight(300)
 
             # 鼠标悬停显示数据点值
             def show_tooltip(point, state, key=key):
@@ -2587,6 +2661,26 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 title = chart_key.upper()
             chart.setTitle(title)
 
+            # 将实时统计推送到测试页（Avg/Std/RSSI）
+            try:
+                if hasattr(self, 'testInterface') and self.testInterface:
+                    if not hasattr(self, '_test_metrics'):
+                        self._test_metrics = {'slave': (0.0, 0.0), 'master': (0.0, 0.0), 'rssi': 0.0}
+                    # 根据chart_key更新对应指标
+                    if chart_key == 'slave':
+                        self._test_metrics['slave'] = (mean, std)
+                    elif chart_key == 'master':
+                        self._test_metrics['master'] = (mean, std)
+                    elif chart_key == 'rssi':
+                        # 使用最新值作为RSSI即可
+                        self._test_metrics['rssi'] = data[-1] if data else 0.0
+                    a0_avg, a0_std = self._test_metrics['slave']
+                    a1_avg, a1_std = self._test_metrics['master']
+                    a1_rssi = self._test_metrics['rssi']
+                    self.testInterface.update_realtime_data(a0_avg, a0_std, a1_avg, a1_std, a1_rssi)
+            except Exception:
+                pass
+
             n = len(data)
             # ===== 均值线 =====
             if not hasattr(self, "mean_series"):
@@ -3099,7 +3193,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
                 # 仅当值发生变化时刷新位置视图
                 if hasattr(self, 'position_view') and refresh_needed:
-                    print("refresh areas")
+                    # print("refresh areas")
                     self.position_view.refresh_areas()
                 
                 # Map JSON keys to chart keys
@@ -4155,6 +4249,22 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.appearanceGroup.addSettingCard(self.themeCard)
         self.appearanceGroup.addSettingCard(self.backgroundCard)
         
+        # 背景透明度进度条（0~100）
+        opacityRow = QWidget(view)
+        opacityLayout = QHBoxLayout(opacityRow)
+        opacityLayout.setContentsMargins(0, 0, 0, 0)
+        opacityLayout.setSpacing(12)
+        self.opacityLabel = BodyLabel('背景透明度')
+        self.opacitySlider = QSlider(Qt.Orientation.Horizontal)
+        self.opacitySlider.setRange(0, 100)
+        current_opacity = int(getattr(self, 'background_opacity', 1.0) * 100)
+        self.opacitySlider.setValue(current_opacity)
+        self.opacityValueLabel = BodyLabel(f"{current_opacity}%")
+        self.opacitySlider.valueChanged.connect(self.on_opacity_slider_changed)
+        opacityLayout.addWidget(self.opacityLabel)
+        opacityLayout.addWidget(self.opacitySlider, 1)
+        opacityLayout.addWidget(self.opacityValueLabel)
+        
         self.applicationGroup = SettingCardGroup('应用设置', view)
         
         self.logLevelCard = OptionsSettingCard(
@@ -4222,6 +4332,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
         # Layout setup
         vBoxLayout.addWidget(self.appearanceGroup)
+        vBoxLayout.addWidget(opacityRow)
         vBoxLayout.addSpacing(10)
         vBoxLayout.addWidget(self.applicationGroup)
         vBoxLayout.addSpacing(10)
@@ -4339,6 +4450,18 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 duration=2000,
                 parent=self
             )
+
+    def on_opacity_slider_changed(self, value: int):
+        """从设置页滑块更新背景透明度 (0~100)"""
+        try:
+            self.background_opacity = max(0.0, min(1.0, value / 100.0))
+            if hasattr(self, 'opacityValueLabel'):
+                self.opacityValueLabel.setText(f"{int(self.background_opacity * 100)}%")
+            # 保存配置并刷新界面
+            self._save_unified_config()
+            self.update()
+        except Exception as e:
+            print(f"更新背景透明度失败: {e}")
 
     def on_quick_send_selected(self, text):
         """Handle quick send selection for COM1"""
@@ -5330,6 +5453,605 @@ class Particle:
         if not self.bounds.contains(self.pos):
             self.pos = QPointF(random.uniform(0, self.bounds.width()), self.bounds.height() -1)
             self.vel = QPointF(random.uniform(-0.5, 0.5), random.uniform(-0.8, -1.8))
+
+class TestPage(QWidget):
+    """UWB多测试点双锚点参数测试页面"""
+    def __init__(self, parent=None):
+        super().__init__(parent)
+        self.parent_window = parent
+        # 基础15个点位坐标（相对闸机中心）
+        self.base_points = [
+            (0, -40), (0, 0), (1, 10), (0, 10), (-1, 10),
+            (1, 60), (0, 60), (-1, 60), (1, 110), (0, 110),
+            (-1, 110), (1, 160), (0, 160), (-1, 160), (0, 210)
+        ]
+        self.A0_Anchor = [0, 0, 0]      # Slave锚点坐标
+        self.A1_Anchor = [0, 0, 0]      # Master锚点坐标
+        self.test_points = {}           # 生成的测试点字典
+        self.point_distances = {'A': {}, 'B': {}}  # 标准距离缓存
+        self.csv_path = Path(__file__).parent / "test_log.csv"
+        self.init_ui()
+        self.update_test_points()
+
+    
+
+    def on_point_changed(self):
+        """当点位序号或高度切换时，仅刷新Res显示（使用实时均值）"""
+        self.update_res_labels()
+
+    def append_csv_log(self):
+        """生成并追加一行CSV日志（无限追加），文件名可配置"""
+        # 文件名处理（优先使用顶部配置栏的输入）
+        file_name = (getattr(self, 'log_name_edit', None).text() if getattr(self, 'log_name_edit', None) else self.csv_path.name).strip()
+        if not file_name.lower().endswith('.csv'):
+            file_name += '.csv'
+        self.csv_path = Path(__file__).parent / file_name
+
+        # 当前点位与高度
+        idx = self.point_index_spin.value()
+        height_group = 'A' if self.height_combo.currentIndex() == 0 else 'B'
+        height_str = '80 cm' if height_group == 'A' else '150 cm'
+        key = f"{height_group}{idx}"
+        dists = self.point_distances.get(height_group, {}).get(str(idx), {})
+        std_a0 = dists.get('D0', dists.get('D_A0', 0))
+        std_a1 = dists.get('D1', dists.get('D_A1', 0))
+
+        # 实时均值/方差/RSSI
+        a0_avg = getattr(self, '_a0_avg', 0.0)
+        a1_avg = getattr(self, '_a1_avg', 0.0)
+        try:
+            a0_rssi = float(self.a0_rssi_edit.text())
+        except Exception:
+            a0_rssi = 0.0
+        a1_rssi = getattr(self, '_a1_rssi', 0.0)
+        a0_std = float(self.a0_std_label.text().split(':')[-1]) if hasattr(self, 'a0_std_label') else 0.0
+        a1_std = float(self.a1_std_label.text().split(':')[-1]) if hasattr(self, 'a1_std_label') else 0.0
+
+        # Res = 标准值 - 平均值
+        a0_res = std_a0 - a0_avg
+        a1_res = std_a1 - a1_avg
+
+        row = [
+            key, height_str,
+            f"{a0_avg:.1f}", f"{a0_std:.1f}", f"{a0_res:.1f}", f"{a0_rssi:.0f}",
+            f"{a1_avg:.1f}", f"{a1_std:.1f}", f"{a1_res:.1f}", f"{a1_rssi:.0f}"
+        ]
+
+        header = ['Point', 'Height', 'A0_Avg', 'A0_Std', 'A0_Res', 'A0_RSSI',
+                  'A1_Avg', 'A1_Std', 'A1_Res', 'A1_RSSI']
+
+        rows = []
+        if self.csv_path.exists():
+            with open(self.csv_path, newline='', encoding='utf-8') as f:
+                rows = list(csv.reader(f))
+        if not rows or rows[0] != header:
+            rows = [header]
+        rows.append(row)
+        with open(self.csv_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerows(rows)
+        InfoBar.success("已记录", f"点位{key}已追加到日志，共{len(rows)-1}条", parent=self, duration=1500)
+
+    def init_ui(self):      # BM: 测试页面
+        root = QVBoxLayout(self)
+        root.setSpacing(0)
+        root.setContentsMargins(0, 0, 0, 0)
+
+        if hasattr(self.parent_window, 'chart_widget'):
+            # 创建图表容器
+            chart_container = QWidget()
+            chart_container_layout = QVBoxLayout(chart_container)
+            chart_container_layout.setContentsMargins(0, 0, 0, 0)
+            chart_container_layout.setSpacing(0)
+            chart_container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+            # 保存引用，便于后续在页面切换时动态重挂载图表
+            self.chart_container = chart_container
+            self.chart_container_layout = chart_container_layout
+            
+            # 从主窗口获取图表部件并重新设置父对象
+            chart_widget = self.parent_window.chart_widget
+            if chart_widget.parent():
+                chart_widget.setParent(None)  # 先移除原父对象
+            chart_container_layout.addWidget(chart_widget)
+            chart_widget.show()
+            
+            # Add chart container compactly and move content upward
+            chart_container.setFixedHeight(300)
+            root.addWidget(chart_container, alignment=Qt.AlignmentFlag.AlignTop) 
+
+        # Top: test config bar (true single-row layout; no sub-layouts)
+        config_card = CardWidget()
+        config_card.setObjectName("configCard")
+        config_layout = QHBoxLayout(config_card)
+        config_layout.setSpacing(10)
+        config_card.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        config_layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+
+        # Width (cm)
+        width_label = QLabel("宽度")
+        width_label.setStyleSheet("background:transparent")
+        self.gate_width_edit = LineEdit()
+        self.gate_width_edit.setText("100")
+        self.gate_width_edit.textChanged.connect(self.update_test_points)
+
+        # Height (cm)
+        height_label = QLabel("高度")
+        height_label.setStyleSheet("background:transparent")
+        self.gate_height_edit = LineEdit()
+        self.gate_height_edit.setText("90")
+        self.gate_height_edit.textChanged.connect(self.update_test_points)
+
+        # Point index
+        point_index_label = QLabel("点位序号:")
+        point_index_label.setStyleSheet("background:transparent")
+        self.point_index_spin = SpinBox()
+        self.point_index_spin.setRange(0, 14)
+        self.point_index_spin.setValue(7)
+        self.point_index_spin.valueChanged.connect(self.on_point_changed)
+
+        # Point height
+        point_height_label = QLabel("点位高度:")
+        point_height_label.setStyleSheet("background:transparent")
+        self.height_combo = ComboBox()
+        self.height_combo.addItems(["0.8", "1.5"])
+        self.height_combo.currentIndexChanged.connect(self.on_point_changed)
+
+        # 日志名与操作
+        self.log_name_edit = LineEdit()
+        self.log_name_edit.setText(self.csv_path.name)
+        self.log_name_edit.setClearButtonEnabled(True)
+        self.log_name_edit.setMaximumWidth(200)
+        log_btn_top = PrimaryPushButton("Log")
+        log_btn_top.setFixedHeight(34)
+        log_btn_top.clicked.connect(self.append_csv_log)
+
+        # COM1开关与清除按钮
+        self.com1_switch = SwitchButton()
+        self.com1_switch.setOffText("COM1 OFF")
+        self.com1_switch.setOnText("COM1 ON")
+        self.com1_switch.checkedChanged.connect(self.on_com1_switch_changed)
+
+        self.clear_test_btn = PushButton("CLEAR")
+        self.clear_test_btn.clicked.connect(self.clear_test_data)
+
+        # Add all widgets directly to the single-row layout
+        config_layout.addWidget(width_label)
+        config_layout.addWidget(self.gate_width_edit)
+        config_layout.addWidget(height_label)
+        config_layout.addWidget(self.gate_height_edit)
+        config_layout.addWidget(point_index_label)
+        config_layout.addWidget(self.point_index_spin)
+        config_layout.addWidget(point_height_label)
+        config_layout.addWidget(self.height_combo)
+        config_layout.addWidget(self.log_name_edit, 1)
+        config_layout.addWidget(log_btn_top)
+        config_layout.addWidget(self.com1_switch)
+        config_layout.addWidget(self.clear_test_btn)
+
+        # 内容：A0（Slave）信息卡片
+        a0_card = CardWidget()
+        a0_layout = QVBoxLayout(a0_card)
+
+        a0_title = QLabel("A0")
+        a0_title.setStyleSheet("background-color: transparent; color: #E5E9F0; font-size: 20px; font-weight: 700; letter-spacing: 0.5px;")
+        self.a0_avg_label = QLabel("Avg: 0.0")
+        self.a0_avg_label.setStyleSheet("color: #9CDCFE; font-weight: 600; background-color: transparent; padding: 4px 8px; letter-spacing: 0.3px;")
+        self.a0_std_label = QLabel("Std: 0.0")
+        self.a0_std_label.setStyleSheet("color: #C18AFF; font-weight: 600; background-color: transparent; padding: 4px 8px; letter-spacing: 0.3px;")
+        self.a0_rssi_edit = LineEdit()
+        self.a0_res_label = QLabel("Res: 0.0")
+        self.a0_res_label.setObjectName("resBadgeA0")
+        # Res progress bar for A0
+        self.a0_res_bar = QProgressBar()
+        self.a0_res_bar.setRange(0, 100)
+        self.a0_res_bar.setValue(0)
+        self.a0_res_bar.setTextVisible(False)
+        self.a0_res_bar.setFixedHeight(12)
+        self.a0_res_bar.setStyleSheet(
+            "QProgressBar {"
+            "background-color: rgba(255,255,255,0.06);"
+            "border: none;"
+            "border-radius: 6px; padding: 2px;}"
+            "QProgressBar::chunk {"
+            "background-color: #22c55e;"
+            "border: none;"
+            "border-radius: 6px;}"
+        )
+
+        a0_layout.addWidget(a0_title)
+        a0_layout.addWidget(self.a0_avg_label)
+        a0_layout.addWidget(self.a0_std_label)
+        # RSSI标签与输入框同一行
+        rssi_row = CardWidget()
+        rssi_layout = QHBoxLayout(rssi_row)
+        self.a0_rssi_title = QLabel("RSSI:")
+        self.a0_rssi_title.setStyleSheet("color: #FFB86C;  background-color: transparent;")
+        rssi_layout.addWidget(self.a0_rssi_title)
+        rssi_layout.addWidget(self.a0_rssi_edit, 1)
+        a0_layout.addWidget(rssi_row)
+        a0_layout.addWidget(self.a0_res_label)
+        a0_layout.addWidget(self.a0_res_bar)
+        a0_layout.addStretch()
+
+        # 内容：A1（Master）信息卡片
+        a1_card = CardWidget()
+        a1_layout = QVBoxLayout(a1_card)
+
+        a1_title = QLabel("A1")
+        a1_title.setStyleSheet("background-color: transparent; color: #E5E9F0; font-size: 20px; font-weight: 700; letter-spacing: 0.5px;")
+
+        # A1 metrics labels (use QLabel with color accents)
+        self.a1_avg_label = QLabel("Avg: 0.0")
+        self.a1_avg_label.setStyleSheet("color: #9CDCFE; font-weight: 600; background-color: transparent; padding: 4px 8px; letter-spacing: 0.3px;")
+        self.a1_std_label = QLabel("Std: 0.0")
+        self.a1_std_label.setStyleSheet("color: #C18AFF; font-weight: 600; background-color: transparent; padding: 4px 8px; letter-spacing: 0.3px;")
+        self.a1_rssi_label = QLabel("RSSI: 0.0")
+        self.a1_rssi_label.setStyleSheet("color: #FFB86C; font-weight: 600; background-color: transparent; padding: 4px 8px; letter-spacing: 0.3px;")
+        self.a1_res_label = QLabel("Res: 0.0")
+        self.a1_res_label.setObjectName("resBadgeA1")
+        # Res progress bar for A1
+        self.a1_res_bar = QProgressBar()
+        self.a1_res_bar.setRange(0, 100)
+        self.a1_res_bar.setValue(0)
+        self.a1_res_bar.setTextVisible(False)
+        self.a1_res_bar.setFixedHeight(12)
+        self.a1_res_bar.setStyleSheet(
+            "QProgressBar {"
+            "background-color: rgba(255,255,255,0.06);"
+            "border: none;"
+            "border-radius: 6px; padding: 2px;}"
+            "QProgressBar::chunk {"
+            "background-color: #22c55e;"
+            "border: none;"
+            "border-radius: 6px;}"
+        )
+
+        a1_layout.addWidget(a1_title)
+        a1_layout.addWidget(self.a1_avg_label)
+        a1_layout.addWidget(self.a1_std_label)
+        a1_layout.addWidget(self.a1_rssi_label)
+        a1_layout.addWidget(self.a1_res_label)
+        a1_layout.addWidget(self.a1_res_bar)
+        a1_layout.addStretch()
+
+        # 两卡片横向布局并限制尺寸，减少留白并居中
+        cards_layout = QHBoxLayout()
+        cards_layout.setSpacing(12)
+        cards_layout.addWidget(a0_card)
+        cards_layout.addWidget(a1_card)
+        a0_card.setMinimumSize(360, 180)   # BM:测试页面框架大小
+        a1_card.setMinimumSize(360, 180)
+        a0_card.setMaximumSize(420, 280)
+        a1_card.setMaximumSize(420, 280)
+
+        # 顶部设置栏：拉满宽度
+        config_card.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        self._style_card(config_card)
+        root.addWidget(config_card, alignment=Qt.AlignmentFlag.AlignTop)
+
+        # 使用容器居中卡片区并限制总宽度
+        cards_container = QWidget()
+        cards_container.setLayout(cards_layout)
+        cards_container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
+        root.addWidget(cards_container, alignment=Qt.AlignmentFlag.AlignTop)
+
+        # 添加垂直伸缩空间，吸收剩余空间，防止组件被拉伸
+        root.addStretch()
+        
+        # 设置卡片样式
+        self._style_card(a0_card)
+        self._style_card(a1_card)
+        self.a0_res_label.setStyleSheet(
+            "QLabel#resBadgeA0 {"
+            "background-color: transparent;"
+            "color: #9CDCFE; padding: 6px 10px;"
+            "font-weight: 600; letter-spacing: 0.3px;}"
+        )
+        self.a1_res_label.setStyleSheet(
+            "QLabel#resBadgeA1 {"
+            "background-color: transparent;"
+            "color: #A7F3D0; padding: 6px 10px;"
+            "font-weight: 600; letter-spacing: 0.3px;}"
+        )
+
+    def _style_card(self, card: QWidget):
+        """Apply modern card style and drop shadow"""
+        try:
+            card.setStyleSheet(
+                """
+                QWidget {
+                    background: qlineargradient(x1:0,y1:0,x2:0,y2:1,
+                        stop:0 rgba(44, 54, 68, 0.85),
+                        stop:1 rgba(31, 41, 55, 0.75));
+                    border: 1px solid rgba(180, 200, 220, 0.10);
+                    border-radius: 16px;
+                }
+                """
+            )
+            shadow = QGraphicsDropShadowEffect(self)
+            shadow.setBlurRadius(10)
+            shadow.setOffset(0, 2)
+            shadow.setColor(QColor(0, 0, 0, 120))
+            card.setGraphicsEffect(shadow)
+        except Exception:
+            pass
+
+    def _update_res_bar(self, bar: QProgressBar, value: float, std_value: float):
+        """Update progress bar range, value and color for residual visualization.
+        Args:
+            bar: target progress bar
+            value: residual value (can be negative)
+            std_value: standard deviation used to scale the max range
+        """
+        try:
+            # Use absolute residual, and set a more generous max range to avoid early saturation
+            base = 100.0
+            dyn = (std_value * 6.0) if std_value and std_value > 0 else base
+            max_val = int(max(base, dyn))
+            val = int(min(abs(value), max_val))
+            bar.setRange(0, max_val)
+            bar.setValue(val)
+            # Map value to color bands: green -> orange -> red
+            ratio = 0.0 if max_val == 0 else min(1.0, val / max_val)
+            if ratio < 0.33:
+                color_hex = "#22c55e"  # green
+            elif ratio < 0.66:
+                color_hex = "#f59e0b"  # amber
+            else:
+                color_hex = "#ef4444"  # red
+            bar.setStyleSheet(
+                f"QProgressBar {{background-color: rgba(255,255,255,0.06); border: none; border-radius: 6px; padding: 2px;}}"
+                f"QProgressBar::chunk {{background-color: {color_hex}; border: none; border-radius: 6px;}}"
+            )
+        except Exception:
+            pass
+
+    def create_gate_group(self):
+        # 无标题容器，宽/高单位采用厘米
+        group = QWidget()
+        layout = QFormLayout(group)
+        layout.setSpacing(8)
+
+        self.gate_width_edit = LineEdit()
+        self.gate_width_edit.setText("100")
+        self.gate_width_edit.textChanged.connect(self.update_test_points)
+
+        self.gate_height_edit = LineEdit()
+        self.gate_height_edit.setText("90")
+        self.gate_height_edit.textChanged.connect(self.update_test_points)
+
+        layout.addRow("宽度", self.gate_width_edit)
+        layout.addRow("高度", self.gate_height_edit)
+        return group
+
+    def create_point_group(self):
+        group = QWidget()
+        layout = QFormLayout(group)
+        layout.setSpacing(8)
+
+        self.point_index_spin = SpinBox()
+        self.point_index_spin.setRange(0, 14)
+        self.point_index_spin.setValue(7)
+        self.point_index_spin.valueChanged.connect(self.on_point_changed)
+
+        self.height_combo = ComboBox()
+        self.height_combo.addItems(["0.8", "1.5"])
+        self.height_combo.currentIndexChanged.connect(self.on_point_changed)
+
+        layout.addRow("点位序号:", self.point_index_spin)
+        layout.addRow("点位高度:", self.height_combo)
+        return group
+
+    def update_test_points(self):
+        """根据闸机宽高重新计算所有测试点与标准距离"""
+        try:
+            width_cm = int(self.gate_width_edit.text())
+            height_cm = int(self.gate_height_edit.text())
+        except ValueError:
+            return
+        self.A0_Anchor = [-width_cm / 2, 0, height_cm]
+        self.A1_Anchor = [ width_cm / 2, 0, height_cm]
+
+        # （A0-A14为0.8m高，B0-B14为1.5m高）
+        self.test_points = {}
+        for i, (x, y) in enumerate(self.base_points):
+            x_pos = (x * (width_cm / 2)) if x != 0 else 0
+            self.test_points[f"A{i}"] = [x_pos, y, 80]
+            self.test_points[f"B{i}"] = [x_pos, y, 150]
+
+        self.point_distances = {'A': {}, 'B': {}}
+        for name, coord in self.test_points.items():
+            dist_A0 = math.sqrt(
+                (coord[0] - self.A0_Anchor[0]) ** 2 +
+                (coord[1] - self.A0_Anchor[1]) ** 2 +
+                (coord[2] - self.A0_Anchor[2]) ** 2
+            )
+            dist_A1 = math.sqrt(
+                (coord[0] - self.A1_Anchor[0]) ** 2 +
+                (coord[1] - self.A1_Anchor[1]) ** 2 +
+                (coord[2] - self.A1_Anchor[2]) ** 2
+            )
+            group = name[0]  # 'A'或'B'
+            idx = name[1:]   # '0'~'14'
+            self.point_distances[group][idx] = {
+                'D_A0': round(dist_A0),
+                'D_A1': round(dist_A1)
+            }
+        print(self.point_distances)
+        self.on_point_changed()
+
+    def on_point_changed(self):
+        """当点位或高度变化时刷新Res值"""
+        self.update_res_labels()
+
+    def update_res_labels(self):
+        """根据当前选中点位与实时数据计算Res"""
+        idx = self.point_index_spin.value()
+        height_group = "A" if self.height_combo.currentIndex() == 0 else "B"
+        key = f"{height_group}{idx}"
+
+        # 标准距离
+        std_A0 = self.point_distances[height_group].get(str(idx), {}).get('D_A0', 0)
+        std_A1 = self.point_distances[height_group].get(str(idx), {}).get('D_A1', 0)
+
+        # 使用缓存的实时数据
+        avg_A0 = getattr(self, '_a0_avg', 0.0)
+        avg_A1 = getattr(self, '_a1_avg', 0.0)
+
+        res_A0 = std_A0 - avg_A0
+        res_A1 = std_A1 - avg_A1
+
+        self.a0_res_label.setText(f"Res: {res_A0:.1f}")
+        self.a1_res_label.setText(f"Res: {res_A1:.1f}")
+        # Update progress bars to visualize deviation
+        try:
+            a0_std = float(self.a0_std_label.text().split(':')[-1]) if hasattr(self, 'a0_std_label') else 0.0
+        except Exception:
+            a0_std = 0.0
+        try:
+            a1_std = float(self.a1_std_label.text().split(':')[-1]) if hasattr(self, 'a1_std_label') else 0.0
+        except Exception:
+            a1_std = 0.0
+        self._update_res_bar(self.a0_res_bar, res_A0, a0_std)
+        self._update_res_bar(self.a1_res_bar, res_A1, a1_std)
+
+    def append_csv_log(self):
+        """追加一行测试记录到CSV（无限追加，文件名可配置）"""
+        headers = ['Point', 'Height', 'A0_Avg', 'A0_Std', 'A0_Res', 'A0_RSSI',
+                   'A1_Avg', 'A1_Std', 'A1_Res', 'A1_RSSI']
+
+        file_name = (getattr(self, 'log_name_edit', None).text() if getattr(self, 'log_name_edit', None) else self.csv_path.name).strip()
+        if not file_name.lower().endswith('.csv'):
+            file_name += '.csv'
+        self.csv_path = Path(__file__).parent / file_name
+
+        idx = self.point_index_spin.value()
+        height_group = 'A' if self.height_combo.currentIndex() == 0 else 'B'
+        height_str = '0.8' if height_group == 'A' else '1.5'
+        point_name = f"{idx}"
+
+        try:
+            a0_rssi = float(self.a0_rssi_edit.text())
+        except Exception:
+            a0_rssi = 0.0
+
+        a0_avg = getattr(self, '_a0_avg', 0.0)
+        a1_avg = getattr(self, '_a1_avg', 0.0)
+        a1_rssi = getattr(self, '_a1_rssi', 0.0)
+        a0_std = float(self.a0_std_label.text().split(':')[-1]) if hasattr(self, 'a0_std_label') else 0.0
+        a1_std = float(self.a1_std_label.text().split(':')[-1]) if hasattr(self, 'a1_std_label') else 0.0
+
+        # 标准距离
+        std_A0 = self.point_distances.get(height_group, {}).get(str(idx), {}).get('D_A0', 0)
+        std_A1 = self.point_distances.get(height_group, {}).get(str(idx), {}).get('D_A1', 0)
+        a0_res = std_A0 - a0_avg
+        a1_res = std_A1 - a1_avg
+
+        row = [point_name, height_str,
+               f"{a0_avg:.1f}", f"{a0_std:.1f}", f"{a0_res:.1f}", f"{a0_rssi:.0f}",
+               f"{a1_avg:.1f}", f"{a1_std:.1f}", f"{a1_res:.1f}", f"{a1_rssi:.0f}"]
+
+        # 读写CSV（不做数量限制）
+        rows = []
+        if self.csv_path.exists():
+            with open(self.csv_path, newline='', encoding='utf-8') as f:
+                reader = csv.reader(f)
+                rows = list(reader)
+        if not rows or rows[0] != headers:
+            rows = [headers]
+        rows.append(row)
+
+        with open(self.csv_path, 'w', newline='', encoding='utf-8') as f:
+            writer = csv.writer(f)
+            writer.writerows(rows)
+
+        InfoBar.success("已记录", f"点位{point_name}已追加到日志，共{len(rows)-1}条", parent=self, duration=1500)
+
+    def update_realtime_data(self, a0_avg, a0_std, a1_avg, a1_std, a1_rssi):
+        """供外部调用，刷新实时数据并更新Res"""
+        # 更新显示
+        self.a0_avg_label.setText(f"Avg: {a0_avg:.1f}")
+        self.a0_std_label.setText(f"Std: {a0_std:.1f}")
+        self.a1_avg_label.setText(f"Avg: {a1_avg:.1f}")
+        self.a1_std_label.setText(f"Std: {a1_std:.1f}")
+        self.a1_rssi_label.setText(f"RSSI: {a1_rssi}")
+        # 更新内部缓存，用于后续计算Res
+        self._a0_avg = a0_avg
+        self._a1_avg = a1_avg
+        self._a1_rssi = a1_rssi
+        self.update_res_labels()
+
+    def clear_test_data(self):
+        """清空所有测试数据，重置Avg/Std、RSSI、Res和图表内容"""
+        # 重置显示值
+        self.a0_avg_label.setText("Avg: 0.0")
+        self.a0_std_label.setText("Std: 0.0")
+        self.a0_rssi_edit.setText("0.0")
+        self.a0_res_label.setText("Res: 0.0")
+        self.a1_avg_label.setText("Avg: 0.0")
+        self.a1_std_label.setText("Std: 0.0")
+        self.a1_rssi_label.setText("RSSI: 0.0")
+        self.a1_res_label.setText("Res: 0.0")
+        
+        # 重置进度条
+        self.a0_res_bar.setValue(0)
+        self.a1_res_bar.setValue(0)
+        
+        # 重置内部缓存
+        self._a0_avg = 0.0
+        self._a1_avg = 0.0
+        self._a1_rssi = 0.0
+        
+        # 清空图表数据（如果图表存在）
+        if hasattr(self.parent_window, 'chart_widget') and self.parent_window.chart_widget:
+            # chart_widget是包含多个图表的容器，我们需要访问其中的charts字典
+            if hasattr(self.parent_window, 'charts') and self.parent_window.charts:
+                # 清空所有系列数据
+                for chart in self.parent_window.charts.values():
+                    for series in chart.series():
+                        if hasattr(series, 'clear'):
+                            series.clear()
+                        elif hasattr(series, 'removePoints'):
+                            series.removePoints(0, series.count())
+            else:
+                # 如果无法访问charts，尝试直接通过chart_widget的子控件获取图表
+                chart_widget = self.parent_window.chart_widget
+                if hasattr(chart_widget, 'layout') and chart_widget.layout():
+                    # 遍历布局中的所有图表视图
+                    for i in range(chart_widget.layout().count()):
+                        item = chart_widget.layout().itemAt(i)
+                        if item and item.widget():
+                            chart_view = item.widget()
+                            if hasattr(chart_view, 'chart'):
+                                chart = chart_view.chart()
+                                if chart:
+                                    for series in chart.series():
+                                        if hasattr(series, 'clear'):
+                                            series.clear()
+                                        elif hasattr(series, 'removePoints'):
+                                            series.removePoints(0, series.count())
+        
+        InfoBar.success("已清空", "测试数据已重置", parent=self, duration=1500)
+
+    def on_com1_switch_changed(self, is_checked):
+        """COM1开关切换处理"""
+        if is_checked:
+            # 调用父窗口的toggle_port方法开启COM1
+            if hasattr(self.parent_window, 'toggle_btn') and hasattr(self.parent_window, 'toggle_port'):
+                # 设置按钮状态为选中，然后调用toggle_port
+                if not self.parent_window.toggle_btn.isChecked():
+                    self.parent_window.toggle_btn.setChecked(True)
+                    # toggle_port会在按钮状态改变时自动调用
+                InfoBar.success("COM1", "COM1端口已开启", parent=self, duration=1500)
+        else:
+            # 调用父窗口的toggle_port方法关闭COM1
+            if hasattr(self.parent_window, 'toggle_btn') and hasattr(self.parent_window, 'toggle_port'):
+                # 设置按钮状态为未选中，然后调用toggle_port
+                if self.parent_window.toggle_btn.isChecked():
+                    self.parent_window.toggle_btn.setChecked(False)
+                    # toggle_port会在按钮状态改变时自动调用
+                InfoBar.info("COM1", "COM1端口已关闭", parent=self, duration=1500)
+
 
 class ParticleEffectWidget(QWidget):
     def __init__(self, parent=None):

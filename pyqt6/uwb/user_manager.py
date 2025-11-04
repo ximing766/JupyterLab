@@ -25,7 +25,7 @@ class PositionFilter:
         
         # Outlier detection - limit movement if distance is too large
         if distance > self.max_jump_distance:
-            print(f"Outlier detected: distance {distance:.1f} exceeds threshold {self.max_jump_distance}")
+            # print(f"Outlier detected: distance {distance:.1f} exceeds threshold {self.max_jump_distance}")
             
             # Limit movement distance while preserving direction
             if distance > 0:
