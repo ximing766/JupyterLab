@@ -12,14 +12,14 @@ from PyQt6.QtCore import (
     Qt, QSize, QPoint, QUrl, QTimer,
     QDateTime, QThread, QMargins, QPointF,
     pyqtSignal, QObject, QPointF, QRectF,
-    QEvent, QRect
+    QEvent, QRect, QPropertyAnimation, QEasingCurve
 )
 from PyQt6.QtWidgets import *
 from PyQt6.QtGui import (
     QFont, QColor, QPalette, QTextCursor,
     QPixmap, QPainter, QIcon, QCursor,
     QClipboard, QIntValidator, QPen,
-    QLinearGradient, QTextCharFormat,
+    QLinearGradient, QBrush, QTextCharFormat,
     QTextOption, QTextDocument, QAction
 )
 from PyQt6.QtCharts import (
@@ -239,6 +239,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.chart_thread = ChartUpdateThread()
         self.chart_thread.update_chart.connect(self.update_chart)
         self.chart_thread.start()
+
+        # Store animations for progress bars to avoid GC
+        self._bar_animations = {}
 
         # MYTODO 
         # self.highlight_config_timer = QTimer()
@@ -632,15 +635,12 @@ class MainWindow(FluentWindow): # MSFluentWindow
     
     def should_filter_log_message(self, message):
         if self.current_log_level == 'ALL':
-            return False  # Show all messages
+            return False 
         elif self.current_log_level == 'MIN':
-            # MIN mode: exclude messages containing HALUCI and empty lines
             return 'HALUCI' in message.upper() or message.strip() == ''
-        
-        return False  # Default: don't filter
+        return False  
 
     def create_pages(self): # BM: Create Page
-        # Store pages as instance variables for MSFluentWindow
         self.COM1_page  = self.create_COM_page()
         self.COM2_page  = self.create_COM_page2()
         self.Chart_page = self.create_Chart_page()
@@ -995,6 +995,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 
                 # Update button style to connected state
                 self.update_port_button_style(self.toggle_btn2, True)
+                InfoBar.success("COM2", "端口已开启", parent=self, duration=1500)
                 
             except Exception as e:
                 error_msg = f"打开串口失败: {str(e)}\n"
@@ -1029,10 +1030,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 
                 # Update button style to disconnected state
                 self.update_port_button_style(self.toggle_btn2, False)
+                InfoBar.success("COM2", "端口已关闭", parent=self, duration=1500)
                 
             except Exception as e:
                 print(f"关闭串口2时发生错误: {str(e)}")
-                # 即使出错也要重置状态
+
                 if hasattr(self, 'serial_thread2'):
                     self.serial_thread2 = None
                 if hasattr(self, 'serial2'):
@@ -1648,7 +1650,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
     # BM: 更新仪表数据
     def update_status_card(self, card_type, used_value=None, link_value=None):
-        """更新状态卡数据"""
         if card_type == "LINK" and link_value is not None:
             self.link_card.total_label.setText(str(link_value))
             self.status_data['Link'] = link_value
@@ -1664,14 +1665,10 @@ class MainWindow(FluentWindow): # MSFluentWindow
             total = self.status_data[card_type]['total']
             free = total - used_value
             
-            # 更新进度条
             card.progress.setValue(used_value)
-            
-            # 更新数据显示
             card.used_value.setText(str(used_value))
             card.free_value.setText(str(free))
             
-            # 更新状态数据
             self.status_data[card_type]['used'] = used_value
 
     def create_Chart_page(self):  # BM: Chart Page
@@ -1818,8 +1815,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
             series = QLineSeries()
             colors = {
                 'master'   : QColor("#FF6B6B"),
-                'slave'    : QColor("#4ECDC4"),
-                'nlos'     : QColor("#45B7D1"),
+                'slave'    : QColor("#34aca4"),
+                'nlos'     : QColor("#ee84ce"),
                 'rssi'     : QColor("#68ecae"),
                 'speed'    : QColor("#FFBE0B")
             }
@@ -1838,15 +1835,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
             chart.setAnimationOptions(QChart.AnimationOption.SeriesAnimations)
             chart.legend().hide()
             
-            # 优化渐变背景 - 更丰富的渐变效果
-            gradient = QLinearGradient(0, 0, 0, 1)
-            gradient.setCoordinateMode(QLinearGradient.CoordinateMode.ObjectBoundingMode)
-            gradient.setColorAt(0.0, QColor(60, 62, 68, 150))   # 顶部颜色增强
-            gradient.setColorAt(0.3, QColor(50, 52, 60, 100))   # 添加中间过渡色
-            gradient.setColorAt(0.7, QColor(40, 42, 50, 70))    # 添加中间过渡色
-            gradient.setColorAt(1.0, QColor(32, 34, 38, 40))    # 底部颜色微调
-            chart.setBackgroundBrush(gradient)
-            chart.setBackgroundRoundness(12)        # 增加圆角
+            # Use solid background color (remove gradient and fix to former bottom color)
+            base_color = QColor(32, 34, 38, 40)
+            chart.setBackgroundBrush(QBrush(base_color))
             chart.setMargins(QMargins(8, 10, 8, 8)) # 调整边距
             
             # 优化阴影效果
@@ -1897,19 +1888,18 @@ class MainWindow(FluentWindow): # MSFluentWindow
             chart_view.setRenderHint(QPainter.RenderHint.Antialiasing)
             chart_view.setStyleSheet("""
                 background   : transparent;
-                border-radius: 14px;                               /* 增加边框圆角 */
                 margin       : 2px;                                /* 添加边距 */
             """)
             # Fix the height for each chart to reduce space on TestPage
             chart_view.setMaximumHeight(300)
 
             # 鼠标悬停显示数据点值
-            def show_tooltip(point, state, key=key):
-                if state:
-                    QToolTip.showText(QCursor.pos(), f"{chart_titles[key]}: {int(point.y())}")
-                else:
-                    QToolTip.hideText()
-            series.hovered.connect(show_tooltip)
+            # def show_tooltip(point, state, key=key):
+            #     if state:
+            #         QToolTip.showText(QCursor.pos(), f"{chart_titles[key]}: {int(point.y())}")
+            #     else:
+            #         QToolTip.hideText()
+            # series.hovered.connect(show_tooltip)
 
             self.charts[key] = chart
             top_layout.addWidget(chart_view)
@@ -2525,6 +2515,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 
                 # Update button style to connected state
                 self.update_port_button_style(self.toggle_btn, True)
+                InfoBar.success("COM1", "端口已开启", parent=self, duration=1500)
                 
             except Exception as e:
                 error_msg = f"打开串口失败：{str(e)}\n"
@@ -2560,6 +2551,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 
                 # Update button style to disconnected state
                 self.update_port_button_style(self.toggle_btn, False)
+                InfoBar.success("COM1", "端口已关闭", parent=self, duration=1500)
                 
             except Exception as e:
                 print(f"关闭串口时发生错误: {str(e)}")
@@ -3101,13 +3093,10 @@ class MainWindow(FluentWindow): # MSFluentWindow
     # BM: COM1 data handle
     def handle_serial_data(self, data):
         try:
-            # Apply format conversion based on current setting
             if hasattr(self, 'output_format_str') and not self.output_format_str:
-                # HEX format - format data and add line break at the end
                 formatted_data = self.format_data_for_display(data, is_str_format=False)
                 text = formatted_data  # Don't add \n here, let format_data_for_display handle it
             else:
-                # STR format (default)
                 text = data.decode('utf-8')
             
             self.log_worker.add_log_task("UwbLog", "info", text.strip())
@@ -3144,23 +3133,12 @@ class MainWindow(FluentWindow): # MSFluentWindow
             if "@POSITION" in text:
                 # print(f'接收到原始数据：{repr(text)}')
                 try:
-                    # Fix unquoted hex values in JSON (e.g., "mac": F4A6 -> "mac": "F4A6")
                     fixed_text = re.sub(r'"mac":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"mac": "\1"', text)
-                    
-                    # Fix unquoted Link values (hex values like 3B5D)
                     fixed_text = re.sub(r'"Link":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"Link": "\1"', fixed_text)
-                    
-                    # Fix unquoted CardNo values (long numbers without quotes)
                     fixed_text = re.sub(r'"CardNo":\s*([0-9A-Fa-f]+)(?=\s*[,}])', r'"CardNo": "\1"', fixed_text)
-                    
-                    # Fix empty values in JSON - handle various empty patterns
-                    # Pattern 1: "CardNo": , -> "CardNo": null,
                     fixed_text = re.sub(r'"(CardNo|Balance)":\s*,', r'"\1": null,', fixed_text)
-                    # Pattern 2: "CardNo": } -> "CardNo": null}
                     fixed_text = re.sub(r'"(CardNo|Balance)":\s*}', r'"\1": null}', fixed_text)
-                    # Pattern 3: "CardNo":  , (with extra spaces) -> "CardNo": null,
                     fixed_text = re.sub(r'"(CardNo|Balance)":\s+,', r'"\1": null,', fixed_text)
-                    # Pattern 4: Handle any field with empty value followed by comma or brace
                     fixed_text = re.sub(r'"([^"]+)":\s*([,}])', r'"\1": null\2', fixed_text)
                     
                     json_data = json.loads(fixed_text)
@@ -3180,7 +3158,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 balance = None
                 if balance_raw is not None:
                     try:
-                        # 将余额从分转换为元（除以100）
                         balance = float(balance_raw) / 100.0
                     except (ValueError, TypeError):
                         balance = None
@@ -3196,7 +3173,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     # print("refresh areas")
                     self.position_view.refresh_areas()
                 
-                # Map JSON keys to chart keys
                 key_mapping = {
                     'master'   : 'Master',
                     'slave'    : 'Slave',
@@ -5469,7 +5445,7 @@ class TestPage(QWidget):
         self.A1_Anchor = [0, 0, 0]      # Master锚点坐标
         self.test_points = {}           # 生成的测试点字典
         self.point_distances = {'A': {}, 'B': {}}  # 标准距离缓存
-        self.csv_path = Path(__file__).parent / "test_log.csv"
+        self.csv_path = Path(__file__).parent / "XX_UWB_Test.csv"
         self.init_ui()
         self.update_test_points()
 
@@ -5538,24 +5514,20 @@ class TestPage(QWidget):
         root.setContentsMargins(0, 0, 0, 0)
 
         if hasattr(self.parent_window, 'chart_widget'):
-            # 创建图表容器
             chart_container = QWidget()
             chart_container_layout = QVBoxLayout(chart_container)
             chart_container_layout.setContentsMargins(0, 0, 0, 0)
             chart_container_layout.setSpacing(0)
             chart_container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
-            # 保存引用，便于后续在页面切换时动态重挂载图表
             self.chart_container = chart_container
             self.chart_container_layout = chart_container_layout
             
-            # 从主窗口获取图表部件并重新设置父对象
             chart_widget = self.parent_window.chart_widget
             if chart_widget.parent():
-                chart_widget.setParent(None)  # 先移除原父对象
+                chart_widget.setParent(None)
             chart_container_layout.addWidget(chart_widget)
             chart_widget.show()
             
-            # Add chart container compactly and move content upward
             chart_container.setFixedHeight(300)
             root.addWidget(chart_container, alignment=Qt.AlignmentFlag.AlignTop) 
 
@@ -5567,54 +5539,55 @@ class TestPage(QWidget):
         config_card.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         config_layout.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
 
-        # Width (cm)
-        width_label = QLabel("宽度")
+        width_label = QLabel("WIDTH:")
         width_label.setStyleSheet("background:transparent")
         self.gate_width_edit = LineEdit()
+        self.gate_width_edit.setFixedWidth(50)
         self.gate_width_edit.setText("100")
         self.gate_width_edit.textChanged.connect(self.update_test_points)
 
-        # Height (cm)
-        height_label = QLabel("高度")
+        height_label = QLabel("HEIGTH:")
         height_label.setStyleSheet("background:transparent")
         self.gate_height_edit = LineEdit()
+        self.gate_height_edit.setFixedWidth(50)
         self.gate_height_edit.setText("90")
         self.gate_height_edit.textChanged.connect(self.update_test_points)
 
         # Point index
-        point_index_label = QLabel("点位序号:")
+        point_index_label = QLabel("POINT SEQ:")
         point_index_label.setStyleSheet("background:transparent")
         self.point_index_spin = SpinBox()
         self.point_index_spin.setRange(0, 14)
-        self.point_index_spin.setValue(7)
+        self.point_index_spin.setValue(0)
         self.point_index_spin.valueChanged.connect(self.on_point_changed)
 
         # Point height
-        point_height_label = QLabel("点位高度:")
+        point_height_label = QLabel("POINT HEIGHT:")
         point_height_label.setStyleSheet("background:transparent")
         self.height_combo = ComboBox()
         self.height_combo.addItems(["0.8", "1.5"])
         self.height_combo.currentIndexChanged.connect(self.on_point_changed)
 
         # 日志名与操作
+        log_name_label = QLabel("CSV NAME:")
+        log_name_label.setStyleSheet("background:transparent")
         self.log_name_edit = LineEdit()
         self.log_name_edit.setText(self.csv_path.name)
         self.log_name_edit.setClearButtonEnabled(True)
-        self.log_name_edit.setMaximumWidth(200)
-        log_btn_top = PrimaryPushButton("Log")
+        self.log_name_edit.setMaximumWidth(250)
+        log_btn_top = PrimaryPushButton("LOG")
         log_btn_top.setFixedHeight(34)
         log_btn_top.clicked.connect(self.append_csv_log)
 
         # COM1开关与清除按钮
         self.com1_switch = SwitchButton()
-        self.com1_switch.setOffText("COM1 OFF")
-        self.com1_switch.setOnText("COM1 ON")
+        self.com1_switch.setOffText("COM_OFF")
+        self.com1_switch.setOnText("COM_ON")
         self.com1_switch.checkedChanged.connect(self.on_com1_switch_changed)
 
-        self.clear_test_btn = PushButton("CLEAR")
+        self.clear_test_btn = PrimaryPushButton("CLEAR")
         self.clear_test_btn.clicked.connect(self.clear_test_data)
 
-        # Add all widgets directly to the single-row layout
         config_layout.addWidget(width_label)
         config_layout.addWidget(self.gate_width_edit)
         config_layout.addWidget(height_label)
@@ -5623,166 +5596,288 @@ class TestPage(QWidget):
         config_layout.addWidget(self.point_index_spin)
         config_layout.addWidget(point_height_label)
         config_layout.addWidget(self.height_combo)
+        config_layout.addWidget(log_name_label)
         config_layout.addWidget(self.log_name_edit, 1)
-        config_layout.addWidget(log_btn_top)
         config_layout.addWidget(self.com1_switch)
+        config_layout.addStretch()
+        config_layout.addWidget(log_btn_top)
         config_layout.addWidget(self.clear_test_btn)
+        
 
-        # 内容：A0（Slave）信息卡片
+        title_col_width = 56
         a0_card = CardWidget()
+        a0_card.setObjectName("metricCard")
+        a0_card.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         a0_layout = QVBoxLayout(a0_card)
 
+        a0_layout.setContentsMargins(16, 12, 16, 12)
+        a0_layout.setSpacing(8)
+
         a0_title = QLabel("A0")
-        a0_title.setStyleSheet("background-color: transparent; color: #E5E9F0; font-size: 20px; font-weight: 700; letter-spacing: 0.5px;")
-        self.a0_avg_label = QLabel("Avg: 0.0")
-        self.a0_avg_label.setStyleSheet("color: #9CDCFE; font-weight: 600; background-color: transparent; padding: 4px 8px; letter-spacing: 0.3px;")
-        self.a0_std_label = QLabel("Std: 0.0")
-        self.a0_std_label.setStyleSheet("color: #C18AFF; font-weight: 600; background-color: transparent; padding: 4px 8px; letter-spacing: 0.3px;")
+        a0_title.setStyleSheet(
+            "background-color: transparent;"
+            "color: #f9f9fa;"  # slate-300
+            "font-size: 20px;"
+            "font-weight: 600;"
+            "letter-spacing: 0px;"
+        )
+        a0_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
+
+        self.a0_avg_title = QLabel("AVG:")
+        self.a0_avg_title.setStyleSheet(
+            "color: #F8FAFC;"
+            "font-weight: 500;"
+            "background-color: transparent;"
+            "padding: 0px;"
+            "font-size: 16px;"
+            "letter-spacing: 0px;"
+        )
+        self.a0_avg_title.setFixedWidth(title_col_width)
+        self.a0_avg_value = QLabel("0.0")
+        self.a0_avg_value.setStyleSheet(
+            "color: #F8FAFC;"
+            "font-weight: 500;"
+            "background-color: transparent;"
+            "padding: 0px;"
+            "font-size: 16px;"
+            "letter-spacing: 0px;"
+        )
+
+        self.a0_std_label = QLabel("STD: 0.0")
+        self.a0_std_label.setStyleSheet(
+            "color: #34D399;"  # emerald-400
+            "font-weight: 500;"
+            "background-color: transparent;"
+            "padding: 0px;"
+            "font-size: 16px;"
+            "letter-spacing: 0px;"
+        )
+        self.a0_trend_icon = QLabel("↗")  # simple visual indicator
+        self.a0_trend_icon.setStyleSheet(
+            "color: #34D399;"
+            "background-color: transparent;"
+            "font-size: 16px;"
+        )
+
+        content_widget = QWidget()
+        content_widget.setStyleSheet("background-color:transparent;")
+        content_layout = QHBoxLayout(content_widget)
+        content_layout.setContentsMargins(0, 0, 0, 0)
+        content_layout.setSpacing(8)
+        avg_row_a0 = QWidget()
+        avg_row_a0.setStyleSheet("background-color:transparent;")
+        avg_row_a0_layout = QHBoxLayout(avg_row_a0)
+        avg_row_a0_layout.setContentsMargins(0, 0, 0, 0)
+        avg_row_a0_layout.setSpacing(8)
+        avg_row_a0_layout.addWidget(self.a0_avg_title)
+        avg_row_a0_layout.addWidget(self.a0_avg_value, 1)
+        content_layout.addWidget(avg_row_a0, 1)
+
+        kpi_widget = QWidget()
+        kpi_widget.setStyleSheet("background-color:transparent;")
+        kpi_layout = QHBoxLayout(kpi_widget)
+        kpi_layout.setContentsMargins(0, 0, 0, 0)
+        kpi_layout.setSpacing(8)
+        kpi_layout.addWidget(self.a0_std_label)
+        kpi_layout.addWidget(self.a0_trend_icon)
+        content_layout.addWidget(kpi_widget, 0, Qt.AlignmentFlag.AlignRight)
+
+        # RSSI editor row stays as original functionality
         self.a0_rssi_edit = LineEdit()
-        self.a0_res_label = QLabel("Res: 0.0")
-        self.a0_res_label.setObjectName("resBadgeA0")
-        # Res progress bar for A0
-        self.a0_res_bar = QProgressBar()
+        # Align the editor visual style with A1 row spacing and padding
+        self.a0_rssi_edit.setFixedHeight(24)
+        self.a0_rssi_edit.setStyleSheet(
+            "LineEdit {"
+            "background-color: rgba(255,255,255,0.08);"
+            "border: 1px solid rgba(148,163,184,0.18);"
+            "border-radius: 8px;"
+            "padding-left: 8px;"
+            "color: #E2E8F0;"
+            "}"
+        )
+
+        self.a0_res_bar = ProgressBar()
         self.a0_res_bar.setRange(0, 100)
         self.a0_res_bar.setValue(0)
         self.a0_res_bar.setTextVisible(False)
         self.a0_res_bar.setFixedHeight(12)
-        self.a0_res_bar.setStyleSheet(
-            "QProgressBar {"
-            "background-color: rgba(255,255,255,0.06);"
-            "border: none;"
-            "border-radius: 6px; padding: 2px;}"
-            "QProgressBar::chunk {"
-            "background-color: #22c55e;"
-            "border: none;"
-            "border-radius: 6px;}"
-        )
 
-        a0_layout.addWidget(a0_title)
-        a0_layout.addWidget(self.a0_avg_label)
-        a0_layout.addWidget(self.a0_std_label)
-        # RSSI标签与输入框同一行
-        rssi_row = CardWidget()
+        # Build card structure
+        a0_layout.addWidget(a0_title, alignment=Qt.AlignmentFlag.AlignCenter)
+        a0_layout.addWidget(content_widget)
+
+        rssi_row = QWidget()
+        rssi_row.setStyleSheet("background-color:transparent;")
         rssi_layout = QHBoxLayout(rssi_row)
+        rssi_layout.setContentsMargins(0, 0, 0, 0)
+        rssi_layout.setSpacing(8)
         self.a0_rssi_title = QLabel("RSSI:")
-        self.a0_rssi_title.setStyleSheet("color: #FFB86C;  background-color: transparent;")
+        self.a0_rssi_title.setStyleSheet("color: #F8FAFC; background-color: transparent; font-size: 16px;")
+        self.a0_rssi_title.setFixedWidth(title_col_width)
         rssi_layout.addWidget(self.a0_rssi_title)
         rssi_layout.addWidget(self.a0_rssi_edit, 1)
         a0_layout.addWidget(rssi_row)
-        a0_layout.addWidget(self.a0_res_label)
-        a0_layout.addWidget(self.a0_res_bar)
+        res_group_a0 = QWidget()
+        res_group_a0.setStyleSheet("background-color:transparent;")
+        res_group_a0_layout = QVBoxLayout(res_group_a0)
+        res_group_a0_layout.setContentsMargins(0, 0, 0, 0)
+        res_group_a0_layout.setSpacing(6)
+
+        self.a0_res_title = QLabel("RES:")
+        self.a0_res_title.setStyleSheet("color: #d871b5; background-color: transparent; font-size: 16px;")
+        self.a0_res_title.setFixedWidth(title_col_width)
+        self.a0_res_value_label = QLabel("0.0")
+        self.a0_res_value_label.setStyleSheet("color: #d871b5; background-color: transparent; font-size: 16px;")
+        self.a0_res_value_label.setObjectName("resBadgeA0")
+        res_row_a0 = QWidget()
+        res_row_a0.setStyleSheet("background-color:transparent;")
+        res_row_a0_layout = QHBoxLayout(res_row_a0)
+        res_row_a0_layout.setContentsMargins(0, 0, 0, 0)
+        res_row_a0_layout.setSpacing(8)
+        res_row_a0_layout.addWidget(self.a0_res_title)
+        res_row_a0_layout.addWidget(self.a0_res_value_label, 1)
+        res_group_a0_layout.addWidget(res_row_a0)
+        # Add subtle shadow to progress bar
+        a0_bar_shadow = QGraphicsDropShadowEffect(self)
+        a0_bar_shadow.setBlurRadius(8)
+        a0_bar_shadow.setOffset(0, 2)
+        a0_bar_shadow.setColor(QColor(0, 0, 0, 120))
+        self.a0_res_bar.setGraphicsEffect(a0_bar_shadow)
+        res_group_a0_layout.addWidget(self.a0_res_bar)
+        a0_layout.addWidget(res_group_a0)
         a0_layout.addStretch()
 
-        # 内容：A1（Master）信息卡片
         a1_card = CardWidget()
+        a1_card.setObjectName("metricCard")
         a1_layout = QVBoxLayout(a1_card)
 
         a1_title = QLabel("A1")
-        a1_title.setStyleSheet("background-color: transparent; color: #E5E9F0; font-size: 20px; font-weight: 700; letter-spacing: 0.5px;")
+        a1_title.setStyleSheet("background-color: transparent; color: #CBD5E1; font-size: 20px; font-weight: 600; letter-spacing: 0px;")
+        a1_title.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
-        # A1 metrics labels (use QLabel with color accents)
-        self.a1_avg_label = QLabel("Avg: 0.0")
-        self.a1_avg_label.setStyleSheet("color: #9CDCFE; font-weight: 600; background-color: transparent; padding: 4px 8px; letter-spacing: 0.3px;")
-        self.a1_std_label = QLabel("Std: 0.0")
-        self.a1_std_label.setStyleSheet("color: #C18AFF; font-weight: 600; background-color: transparent; padding: 4px 8px; letter-spacing: 0.3px;")
-        self.a1_rssi_label = QLabel("RSSI: 0.0")
-        self.a1_rssi_label.setStyleSheet("color: #FFB86C; font-weight: 600; background-color: transparent; padding: 4px 8px; letter-spacing: 0.3px;")
-        self.a1_res_label = QLabel("Res: 0.0")
-        self.a1_res_label.setObjectName("resBadgeA1")
-        # Res progress bar for A1
-        self.a1_res_bar = QProgressBar()
+        self.a1_avg_title = QLabel("AVG:")
+        self.a1_avg_title.setStyleSheet("color: #F8FAFC; font-weight: 500; background-color: transparent; padding: 0px; letter-spacing: 0px; font-size: 16px;")
+        self.a1_avg_title.setFixedWidth(title_col_width)
+        self.a1_avg_value = QLabel("0.0")
+        self.a1_avg_value.setStyleSheet("color: #F8FAFC; font-weight: 500; background-color: transparent; padding: 0px; letter-spacing: 0px; font-size: 16px;")
+        self.a1_std_label = QLabel("STD: 0.0")
+        self.a1_std_label.setStyleSheet("color: #34D399; font-weight: 500; background-color: transparent; padding: 0px; letter-spacing: 0px; font-size: 16px;")
+        self.a1_trend_icon = QLabel("↗")
+        self.a1_trend_icon.setStyleSheet("color: #34D399; background-color: transparent; font-size: 16px;")
+        self.a1_rssi_title = QLabel("RSSI:")
+        self.a1_rssi_title.setStyleSheet("color: #F8FAFC; background-color: transparent; font-size: 16px;")
+        self.a1_rssi_title.setFixedWidth(title_col_width)
+        self.a1_rssi_label = QLabel("0.0")
+        self.a1_rssi_label.setStyleSheet("color: #F8FAFC; font-weight: 500; background-color: transparent; padding: 0px; letter-spacing: 0px; font-size: 16px;")
+
+        self.a1_res_title = QLabel("RES:")
+        self.a1_res_title.setStyleSheet("color: #d871b5; background-color: transparent; font-size: 16px;")
+        self.a1_res_title.setFixedWidth(title_col_width)
+        self.a1_res_value_label = QLabel("0.0")
+        self.a1_res_value_label.setStyleSheet("color: #d871b5; background-color: transparent; font-size: 16px;")
+        self.a1_res_value_label.setObjectName("resBadgeA1")
+
+        self.a1_res_bar = ProgressBar()
         self.a1_res_bar.setRange(0, 100)
         self.a1_res_bar.setValue(0)
         self.a1_res_bar.setTextVisible(False)
         self.a1_res_bar.setFixedHeight(12)
-        self.a1_res_bar.setStyleSheet(
-            "QProgressBar {"
-            "background-color: rgba(255,255,255,0.06);"
-            "border: none;"
-            "border-radius: 6px; padding: 2px;}"
-            "QProgressBar::chunk {"
-            "background-color: #22c55e;"
-            "border: none;"
-            "border-radius: 6px;}"
-        )
 
-        a1_layout.addWidget(a1_title)
-        a1_layout.addWidget(self.a1_avg_label)
-        a1_layout.addWidget(self.a1_std_label)
-        a1_layout.addWidget(self.a1_rssi_label)
-        a1_layout.addWidget(self.a1_res_label)
-        a1_layout.addWidget(self.a1_res_bar)
+        a1_layout.addWidget(a1_title, alignment=Qt.AlignmentFlag.AlignCenter)
+        a1_content = QWidget()
+        a1_content.setStyleSheet("background-color:transparent;")
+        a1_content_layout = QHBoxLayout(a1_content)
+        a1_content_layout.setContentsMargins(0, 0, 0, 0)
+        a1_content_layout.setSpacing(8)
+        avg_row_a1 = QWidget()
+        avg_row_a1.setStyleSheet("background-color:transparent;")
+        avg_row_a1_layout = QHBoxLayout(avg_row_a1)
+        avg_row_a1_layout.setContentsMargins(0, 0, 0, 0)
+        avg_row_a1_layout.setSpacing(8)
+        avg_row_a1_layout.addWidget(self.a1_avg_title)
+        avg_row_a1_layout.addWidget(self.a1_avg_value, 1)
+        a1_content_layout.addWidget(avg_row_a1, 1)
+        a1_kpi = QWidget()
+        a1_kpi.setStyleSheet("background-color:transparent;")
+        a1_kpi_layout = QHBoxLayout(a1_kpi)
+        a1_kpi_layout.setContentsMargins(0, 0, 0, 0)
+        a1_kpi_layout.setSpacing(8)
+        a1_kpi_layout.addWidget(self.a1_std_label)
+        a1_kpi_layout.addWidget(self.a1_trend_icon)
+        a1_content_layout.addWidget(a1_kpi, 0, Qt.AlignmentFlag.AlignRight)
+        a1_layout.addWidget(a1_content)
+        a1_rssi_row = QWidget()
+        a1_rssi_row.setStyleSheet("background-color:transparent;")
+        a1_rssi_layout = QHBoxLayout(a1_rssi_row)
+        a1_rssi_layout.setContentsMargins(0, 0, 0, 0)
+        a1_rssi_layout.setSpacing(8)
+        a1_rssi_layout.addWidget(self.a1_rssi_title)
+        a1_rssi_layout.addWidget(self.a1_rssi_label, 1)
+        a1_layout.addWidget(a1_rssi_row)
+        res_group_a1 = QWidget()
+        res_group_a1.setStyleSheet("background-color:transparent;")
+        res_group_a1_layout = QVBoxLayout(res_group_a1)
+        res_group_a1_layout.setContentsMargins(0, 0, 0, 0)
+        res_group_a1_layout.setSpacing(6)
+
+        res_row_a1 = QWidget()
+        res_row_a1.setStyleSheet("background-color:transparent;")
+        res_row_a1_layout = QHBoxLayout(res_row_a1)
+        res_row_a1_layout.setContentsMargins(0, 0, 0, 0)
+        res_row_a1_layout.setSpacing(8)
+        res_row_a1_layout.addWidget(self.a1_res_title)
+        res_row_a1_layout.addWidget(self.a1_res_value_label, 1)
+        res_group_a1_layout.addWidget(res_row_a1)
+        res_group_a1_layout.addWidget(self.a1_res_bar)
+        a1_layout.addWidget(res_group_a1)
         a1_layout.addStretch()
 
-        # 两卡片横向布局并限制尺寸，减少留白并居中
         cards_layout = QHBoxLayout()
         cards_layout.setSpacing(12)
         cards_layout.addWidget(a0_card)
         cards_layout.addWidget(a1_card)
-        a0_card.setMinimumSize(360, 180)   # BM:测试页面框架大小
-        a1_card.setMinimumSize(360, 180)
-        a0_card.setMaximumSize(420, 280)
-        a1_card.setMaximumSize(420, 280)
+        a0_card.setMinimumSize(300, 150)   # BM:测试页面框架大小
+        a1_card.setMinimumSize(300, 150)
+        a0_card.setMaximumSize(350, 250)
+        a1_card.setMaximumSize(350, 250)
 
-        # 顶部设置栏：拉满宽度
         config_card.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         self._style_card(config_card)
         root.addWidget(config_card, alignment=Qt.AlignmentFlag.AlignTop)
 
-        # 使用容器居中卡片区并限制总宽度
         cards_container = QWidget()
         cards_container.setLayout(cards_layout)
         cards_container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Fixed)
         root.addWidget(cards_container, alignment=Qt.AlignmentFlag.AlignTop)
-
-        # 添加垂直伸缩空间，吸收剩余空间，防止组件被拉伸
         root.addStretch()
         
-        # 设置卡片样式
-        self._style_card(a0_card)
-        self._style_card(a1_card)
-        self.a0_res_label.setStyleSheet(
-            "QLabel#resBadgeA0 {"
-            "background-color: transparent;"
-            "color: #9CDCFE; padding: 6px 10px;"
-            "font-weight: 600; letter-spacing: 0.3px;}"
-        )
-        self.a1_res_label.setStyleSheet(
-            "QLabel#resBadgeA1 {"
-            "background-color: transparent;"
-            "color: #A7F3D0; padding: 6px 10px;"
-            "font-weight: 600; letter-spacing: 0.3px;}"
-        )
+        self._style_modern_dark_card(a0_card)
+        self._style_modern_dark_card(a1_card)
 
     def _style_card(self, card: QWidget):
-        """Apply modern card style and drop shadow"""
-        try:
-            card.setStyleSheet(
-                """
-                QWidget {
-                    background: qlineargradient(x1:0,y1:0,x2:0,y2:1,
-                        stop:0 rgba(44, 54, 68, 0.85),
-                        stop:1 rgba(31, 41, 55, 0.75));
-                    border: 1px solid rgba(180, 200, 220, 0.10);
-                    border-radius: 16px;
-                }
-                """
-            )
-            shadow = QGraphicsDropShadowEffect(self)
-            shadow.setBlurRadius(10)
-            shadow.setOffset(0, 2)
-            shadow.setColor(QColor(0, 0, 0, 120))
-            card.setGraphicsEffect(shadow)
-        except Exception:
-            pass
+
+        card.setStyleSheet(
+            """
+            QWidget {
+                background: qlineargradient(x1:0,y1:0,x2:0,y2:1,
+                    stop:0 rgba(44, 54, 68, 0.85),
+                    stop:1 rgba(100, 74, 110, 0.363));
+            }
+            """
+        )
+
+    def _style_modern_dark_card(self, card: QWidget):
+        if card.objectName() != "metricCard":
+            card.setObjectName("metricCard")
+        card.setStyleSheet(
+            """
+            QWidget#metricCard {
+                background-color: rgba(100, 74, 110, 0.363); /* slate-900 with alpha */
+            }
+            """
+        )
 
     def _update_res_bar(self, bar: QProgressBar, value: float, std_value: float):
-        """Update progress bar range, value and color for residual visualization.
-        Args:
-            bar: target progress bar
-            value: residual value (can be negative)
-            std_value: standard deviation used to scale the max range
-        """
         try:
             # Use absolute residual, and set a more generous max range to avoid early saturation
             base = 100.0
@@ -5790,57 +5885,30 @@ class TestPage(QWidget):
             max_val = int(max(base, dyn))
             val = int(min(abs(value), max_val))
             bar.setRange(0, max_val)
-            bar.setValue(val)
-            # Map value to color bands: green -> orange -> red
+            # Animate value changes for smoother visual feedback
+            try:
+                anim = QPropertyAnimation(bar, b"value")
+                anim.setDuration(250)
+                anim.setStartValue(bar.value())
+                anim.setEndValue(val)
+                anim.setEasingCurve(QEasingCurve.Type.OutCubic)
+                self._bar_animations[id(bar)] = anim
+                anim.start()
+            except Exception:
+                bar.setValue(val)
             ratio = 0.0 if max_val == 0 else min(1.0, val / max_val)
             if ratio < 0.33:
-                color_hex = "#22c55e"  # green
+                color_start, color_end = "#22c55e", "#10b981"  # green gradient
             elif ratio < 0.66:
-                color_hex = "#f59e0b"  # amber
+                color_start, color_end = "#f59e0b", "#f97316"  # amber gradient
             else:
-                color_hex = "#ef4444"  # red
+                color_start, color_end = "#ef4444", "#f43f5e"  # red gradient
             bar.setStyleSheet(
-                f"QProgressBar {{background-color: rgba(255,255,255,0.06); border: none; border-radius: 6px; padding: 2px;}}"
-                f"QProgressBar::chunk {{background-color: {color_hex}; border: none; border-radius: 6px;}}"
+                f"QProgressBar {{background-color: rgba(255,255,255,0.08); border: 1px solid rgba(148,163,184,0.18); border-radius: 8px; padding: 2px;}}"
+                f"QProgressBar::chunk {{background: qlineargradient(x1:0,y1:0,x2:1,y2:0, stop:0 {color_start}, stop:1 {color_end}); border: none; border-radius: 8px;}}"
             )
         except Exception:
             pass
-
-    def create_gate_group(self):
-        # 无标题容器，宽/高单位采用厘米
-        group = QWidget()
-        layout = QFormLayout(group)
-        layout.setSpacing(8)
-
-        self.gate_width_edit = LineEdit()
-        self.gate_width_edit.setText("100")
-        self.gate_width_edit.textChanged.connect(self.update_test_points)
-
-        self.gate_height_edit = LineEdit()
-        self.gate_height_edit.setText("90")
-        self.gate_height_edit.textChanged.connect(self.update_test_points)
-
-        layout.addRow("宽度", self.gate_width_edit)
-        layout.addRow("高度", self.gate_height_edit)
-        return group
-
-    def create_point_group(self):
-        group = QWidget()
-        layout = QFormLayout(group)
-        layout.setSpacing(8)
-
-        self.point_index_spin = SpinBox()
-        self.point_index_spin.setRange(0, 14)
-        self.point_index_spin.setValue(7)
-        self.point_index_spin.valueChanged.connect(self.on_point_changed)
-
-        self.height_combo = ComboBox()
-        self.height_combo.addItems(["0.8", "1.5"])
-        self.height_combo.currentIndexChanged.connect(self.on_point_changed)
-
-        layout.addRow("点位序号:", self.point_index_spin)
-        layout.addRow("点位高度:", self.height_combo)
-        return group
 
     def update_test_points(self):
         """根据闸机宽高重新计算所有测试点与标准距离"""
@@ -5890,20 +5958,17 @@ class TestPage(QWidget):
         height_group = "A" if self.height_combo.currentIndex() == 0 else "B"
         key = f"{height_group}{idx}"
 
-        # 标准距离
         std_A0 = self.point_distances[height_group].get(str(idx), {}).get('D_A0', 0)
         std_A1 = self.point_distances[height_group].get(str(idx), {}).get('D_A1', 0)
 
-        # 使用缓存的实时数据
         avg_A0 = getattr(self, '_a0_avg', 0.0)
         avg_A1 = getattr(self, '_a1_avg', 0.0)
 
         res_A0 = std_A0 - avg_A0
         res_A1 = std_A1 - avg_A1
 
-        self.a0_res_label.setText(f"Res: {res_A0:.1f}")
-        self.a1_res_label.setText(f"Res: {res_A1:.1f}")
-        # Update progress bars to visualize deviation
+        self.a0_res_value_label.setText(f"{res_A0:.1f}")
+        self.a1_res_value_label.setText(f"{res_A1:.1f}")
         try:
             a0_std = float(self.a0_std_label.text().split(':')[-1]) if hasattr(self, 'a0_std_label') else 0.0
         except Exception:
@@ -5970,11 +6035,11 @@ class TestPage(QWidget):
     def update_realtime_data(self, a0_avg, a0_std, a1_avg, a1_std, a1_rssi):
         """供外部调用，刷新实时数据并更新Res"""
         # 更新显示
-        self.a0_avg_label.setText(f"Avg: {a0_avg:.1f}")
+        self.a0_avg_value.setText(f"{a0_avg:.1f}")
         self.a0_std_label.setText(f"Std: {a0_std:.1f}")
-        self.a1_avg_label.setText(f"Avg: {a1_avg:.1f}")
+        self.a1_avg_value.setText(f"{a1_avg:.1f}")
         self.a1_std_label.setText(f"Std: {a1_std:.1f}")
-        self.a1_rssi_label.setText(f"RSSI: {a1_rssi}")
+        self.a1_rssi_label.setText(f"{a1_rssi}")
         # 更新内部缓存，用于后续计算Res
         self._a0_avg = a0_avg
         self._a1_avg = a1_avg
@@ -5984,14 +6049,14 @@ class TestPage(QWidget):
     def clear_test_data(self):
         """清空所有测试数据，重置Avg/Std、RSSI、Res和图表内容"""
         # 重置显示值
-        self.a0_avg_label.setText("Avg: 0.0")
+        self.a0_avg_value.setText("0.0")
         self.a0_std_label.setText("Std: 0.0")
         self.a0_rssi_edit.setText("0.0")
-        self.a0_res_label.setText("Res: 0.0")
-        self.a1_avg_label.setText("Avg: 0.0")
+        self.a0_res_value_label.setText("0.0")
+        self.a1_avg_value.setText("0.0")
         self.a1_std_label.setText("Std: 0.0")
-        self.a1_rssi_label.setText("RSSI: 0.0")
-        self.a1_res_label.setText("Res: 0.0")
+        self.a1_rssi_label.setText("0.0")
+        self.a1_res_value_label.setText("0.0")
         
         # 重置进度条
         self.a0_res_bar.setValue(0)
@@ -6041,16 +6106,12 @@ class TestPage(QWidget):
                 # 设置按钮状态为选中，然后调用toggle_port
                 if not self.parent_window.toggle_btn.isChecked():
                     self.parent_window.toggle_btn.setChecked(True)
-                    # toggle_port会在按钮状态改变时自动调用
-                InfoBar.success("COM1", "COM1端口已开启", parent=self, duration=1500)
         else:
             # 调用父窗口的toggle_port方法关闭COM1
             if hasattr(self.parent_window, 'toggle_btn') and hasattr(self.parent_window, 'toggle_port'):
                 # 设置按钮状态为未选中，然后调用toggle_port
                 if self.parent_window.toggle_btn.isChecked():
                     self.parent_window.toggle_btn.setChecked(False)
-                    # toggle_port会在按钮状态改变时自动调用
-                InfoBar.info("COM1", "COM1端口已关闭", parent=self, duration=1500)
 
 
 class ParticleEffectWidget(QWidget):
