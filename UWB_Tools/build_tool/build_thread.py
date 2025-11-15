@@ -239,6 +239,13 @@ class HeaderGeneratorThread(QThread):
             
             if os.path.exists(demos_dir):
                 self.project_config_path = os.path.join(demos_dir, "project_config.h")
+            else:
+                # Fallback: use project local inc directory or project root
+                local_inc = os.path.join(project_path, "inc")
+                if os.path.exists(local_inc):
+                    self.project_config_path = os.path.join(local_inc, "project_config.h")
+                else:
+                    self.project_config_path = os.path.join(project_path, "project_config.h")
     
     def run(self):
         try:
@@ -275,6 +282,15 @@ class HeaderGeneratorThread(QThread):
                     content += f"#define {macro_name}\n"
                 else:
                     content += f"//#define {macro_name}\n"
+
+            # Add NUM_GATE_ANCHORS based on tri-state channel selection
+            try:
+                channel_state = int(self.config_manager.get_channel_mode_state())
+            except Exception:
+                channel_state = 0
+            anchors_map = {0: "0x02", 1: "0x03", 2: "0x04"}
+            anchors_val = anchors_map.get(channel_state, "0x02")
+            content += f"#define NUM_GATE_ANCHORS     ({anchors_val})\n"
             
             content += "\n#endif /* PROJECT_CONFIG_H */\n"
             

@@ -29,6 +29,13 @@ from PyQt6.QtCore import Qt, QTimer, pyqtSlot, QEvent, QUrl
 from PyQt6.QtGui import QFont, QIcon, QPalette, QColor, QAction, QDesktopServices
 import re
 
+# QFluentWidgets CheckBox for tri-state channel selection
+try:
+    from qfluentwidgets import CheckBox
+except ImportError:
+    # Fallback to standard QCheckBox if QFluentWidgets is not available
+    from PyQt6.QtWidgets import QCheckBox as CheckBox
+
 from config_manager import ConfigManager
 from build_thread import BuildThread, HeaderGeneratorThread
 from config_dialog import ConfigDialog
@@ -183,6 +190,16 @@ class UwbBuildTool(QMainWindow):
         self.config_mode_combo.addItems(["Debug", "Release"])
         # self.config_mode_combo.setFixedWidth(80)
         controls_layout.addWidget(self.config_mode_combo)
+
+        # Add tri-state channel mode checkbox (single/double/triple channel)
+        self.channel_mode_checkbox = CheckBox("单通道")
+        self.channel_mode_checkbox.setObjectName("channelModeCheckBox")
+        # Enable tri-state: Unchecked=单通道, PartiallyChecked=双通道, Checked=三通道
+        self.channel_mode_checkbox.setTristate(True)
+        # Force default to Unchecked (single channel)
+        self.channel_mode_checkbox.setCheckState(Qt.CheckState.Unchecked)
+        self.channel_mode_checkbox.setToolTip("选择通道数量：未选=单通道，半选=双通道，选中=三通道")
+        controls_layout.addWidget(self.channel_mode_checkbox)
         
         controls_layout.addStretch()
         
@@ -352,6 +369,8 @@ class UwbBuildTool(QMainWindow):
         self.project_combo.currentTextChanged.connect(self.on_project_changed)
         self.config_mode_combo.currentTextChanged.connect(self.on_config_mode_changed)
         self.mode_combo.currentTextChanged.connect(self.on_mode_changed)
+        # Channel mode checkbox state change
+        self.channel_mode_checkbox.stateChanged.connect(self.on_channel_mode_changed)
     
     def get_project_display_name(self, full_path: str) -> str:
         if not full_path:
@@ -392,6 +411,20 @@ class UwbBuildTool(QMainWindow):
         state = self.config_manager.get_window_state()
         if state:
             self.restoreState(state)
+
+        # Initialize channel mode checkbox from config
+        try:
+            channel_state = int(self.config_manager.get_channel_mode_state())
+        except Exception:
+            channel_state = 0
+        if channel_state == 0:
+            self.channel_mode_checkbox.setCheckState(Qt.CheckState.Unchecked)
+        elif channel_state == 1:
+            self.channel_mode_checkbox.setCheckState(Qt.CheckState.PartiallyChecked)
+        else:
+            self.channel_mode_checkbox.setCheckState(Qt.CheckState.Checked)
+        # Update checkbox text according to current state
+        self.update_channel_mode_text()
     
     def save_config(self):
         # Save display mode
@@ -697,6 +730,34 @@ class UwbBuildTool(QMainWindow):
             mode_key = self.mode_combo.itemData(current_index)
             if mode_key:
                 self.config_manager.set_selected_mode(mode_key)
+
+    @pyqtSlot(int)
+    def on_channel_mode_changed(self, state: int):
+        """Handle tri-state checkbox change and persist selection.
+        Unchecked -> single channel (0x02)
+        PartiallyChecked -> double channel (0x03)
+        Checked -> triple channel (0x04)
+        """
+        # Normalize state to 0/1/2 for storage
+        if state <= 0:
+            normalized = 0
+        elif state == 1:
+            normalized = 1
+        else:
+            normalized = 2
+        self.config_manager.set_channel_mode_state(normalized)
+        # Update checkbox text
+        self.update_channel_mode_text()
+
+    def update_channel_mode_text(self):
+        """Update checkbox text based on current tri-state selection."""
+        st = self.channel_mode_checkbox.checkState()
+        if st == Qt.CheckState.Unchecked:
+            self.channel_mode_checkbox.setText("单通道")
+        elif st == Qt.CheckState.PartiallyChecked:
+            self.channel_mode_checkbox.setText("双通道")
+        else:
+            self.channel_mode_checkbox.setText("三通道")
     
     def eventFilter(self, obj, event):
         """Handle window focus events for transparency"""

@@ -5438,7 +5438,7 @@ class TestPage(QWidget):
         # 基础15个点位坐标（相对闸机中心）
         self.base_points = [
             (0, -40), (0, 0), (1, 10), (0, 10), (-1, 10),
-            (1, 60), (0, 60), (-1, 60), (1, 110), (0, 110),
+            (1, 60), (0, 60), (-1, 60), (1, 110), (0, 110),F
             (-1, 110), (1, 160), (0, 160), (-1, 160), (0, 210)
         ]
         self.A0_Anchor = [0, 0, 0]      # Slave锚点坐标
@@ -5550,7 +5550,7 @@ class TestPage(QWidget):
         height_label.setStyleSheet("background:transparent")
         self.gate_height_edit = LineEdit()
         self.gate_height_edit.setFixedWidth(50)
-        self.gate_height_edit.setText("90")
+        self.gate_height_edit.setText("75")
         self.gate_height_edit.textChanged.connect(self.update_test_points)
 
         # Point index

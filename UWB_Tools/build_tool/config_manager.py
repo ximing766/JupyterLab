@@ -40,6 +40,8 @@ class ConfigManager(QObject):
             "window_geometry": None,
             "window_state": None,
             "display_mode": "compact",  # compact or extended
+            # Tri-state channel mode: 0=single, 1=double, 2=triple
+            "channel_mode_state": 0,
             "build_modes": {
                 "INGATE_MASTER_TRANSIT": {
                     "display_name": "INGATE主锚点传输模式",
@@ -196,3 +198,20 @@ class ConfigManager(QObject):
     def get_display_mode(self) -> str:
         """Get display mode"""
         return self.config.get("display_mode", "compact")
+
+    # -------------------- Channel Mode (Tri-state) --------------------
+    def set_channel_mode_state(self, state: int):
+        """Set channel mode state: 0=single, 1=double, 2=triple"""
+        try:
+            self.config["channel_mode_state"] = int(state)
+        except Exception:
+            self.config["channel_mode_state"] = 0
+        self.save_config()
+        self.config_changed.emit()
+
+    def get_channel_mode_state(self) -> int:
+        """Get channel mode state: 0=single, 1=double, 2=triple"""
+        try:
+            return int(self.config.get("channel_mode_state", 0))
+        except Exception:
+            return 0
