@@ -43,5 +43,10 @@
   "quick_send": {
     "test": "hello world",
     "123": "123"
+  },
+  "search_history": {
+    "com1_search": [
+      "E3"
+    ]
   }
 }

@@ -41,8 +41,13 @@ from splash_screen import SplashScreen
 import csv
 import math
 
+# 全局变量：控制COM1页面显示模式
+# False: 正常模式（显示状态监控面板）
+# True: 闸机模式（显示闸机动画，与日志各占一半宽度）
+COM1_GATE_MODE = True
+
 APP_VERSION = "v2.3"
-APP_NAME = "UWBDash"
+APP_NAME = "UWBDash-Lite-V2"
 BUILD_DATE = "2025年11月"
 AUTHOR = "@Qilang²"
 
@@ -421,10 +426,10 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
         # BM:NAV bar
         self.nav_com1 = self.addSubInterface(self.COM1_page, FIF.CONNECT, "COM1") 
-        self.nav_com2 = self.addSubInterface(self.COM2_page, FIF.CONNECT, "COM2")
-        self.addSubInterface(self.Chart_page, FIF.PIE_SINGLE, "CHART")
+        # self.nav_com2 = self.addSubInterface(self.COM2_page, FIF.CONNECT, "COM2")
+        # self.addSubInterface(self.Chart_page, FIF.PIE_SINGLE, "CHART")
         # 使用已实例化的self.testInterface添加导航
-        self.addSubInterface(self.testInterface, FIF.LABEL, "测试")
+        # self.addSubInterface(self.testInterface, FIF.LABEL, "测试")
         self.addSubInterface(self.Settings_page, FIF.SETTING, "Setting", position=NavigationItemPosition.BOTTOM)
 
         self.navigationInterface.setExpandWidth(125)   # 展开时宽度设为 300 px
@@ -1107,7 +1112,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.baud_combo = EditableComboBox()
         self.baud_combo.setFixedWidth(110)
         self.baud_combo.addItems(['9600', '115200', '230400', '460800', '3000000'])
-        self.baud_combo.setCurrentText('3000000')
+        self.baud_combo.setCurrentText('115200')
 
         status_widget = QWidget()
         status_layout = QHBoxLayout(status_widget)
@@ -1378,68 +1383,136 @@ class MainWindow(FluentWindow): # MSFluentWindow
             self.serial_display.clear()
 
     def create_display_area(self, layout):
-        display_splitter = QSplitter(Qt.Orientation.Horizontal)
-        
-        # 左侧：日志显示区域
-        self.serial_display = QTextEdit()
-        self.serial_display.setReadOnly(True)
-        self.serial_display.document().setMaximumBlockCount(150000)  # 限制最大行数
-        self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)  # 不自动换行
-        self.serial_display.installEventFilter(self) # 安装事件过滤器
-        
-        # 优化显示性能
-        self.serial_display.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-        self.serial_display.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-        
-        font = QFont("Microsoft YaHei", 12)
-        self.serial_display.setFont(font)
-        self.serial_display.setStyleSheet("""
-            QTextEdit {
-                background-color          : rgba(36, 42, 56, 0.2);
-                border                    : 1.5px solid #3a4a5c;
-                border-radius             : 1px;
-                padding                   : 12px;
-                color                     : {theme['text']};
-                font-size                 : 15px;
-                font-family               : 'JetBrains Mono', 'Consolas', 'Microsoft YaHei', monospace;
-                selection-background-color: #088bef;
-                selection-color           : #ffffff;
-            }
-            QTextEdit:focus {
-                border          : 1.5px solid #477faa;
-                background-color: rgba(27, 32, 44, 0.99);
-            }
-        """)
-        
-        self.serial_display.document().blockCountChanged.connect(self.update_current_lines)
-        self.update_current_lines()
+        # 根据全局变量决定显示模式（仅影响 COM1 页面）
+        if COM1_GATE_MODE:
+            # 闸机模式：日志显示与闸机动画各占一半宽度
+            display_splitter = QSplitter(Qt.Orientation.Horizontal)
 
-        # 添加鼠标事件处理
-        self.serial_display.keyPressEvent = self.on_display_key_press
-        self.font_size = 12  # 初始字体大小
-        
-        # 右侧：状态监控面板
-        self.status_panel = self.create_status_panel()
-        
-        # 添加到分割器
-        display_splitter.addWidget(self.serial_display)
-        display_splitter.addWidget(self.status_panel)
-        
-        # 设置分割比例 (5:1)
-        display_splitter.setSizes([5000, 1000])
-        display_splitter.setCollapsible(0, False)  # 日志区域不可折叠
-        display_splitter.setCollapsible(1, True)   # 状态面板可折叠
-        
-        # 初始化状态数据
-        self.status_data = {
-            'Link': 'FFFF',
-            'USER': {'used': 0, 'total': 20},
-            'AUTH': {'used': 0, 'total': 20},
-            'TRANS': {'used': 0, 'total': 10},
-            'DTPML': {'used': 0, 'total': 20}
-        }
-        
-        layout.addWidget(display_splitter)
+            # 左侧：日志显示区域（50%宽度）
+            self.serial_display = QTextEdit()
+            self.serial_display.hide()
+            self.serial_display.setReadOnly(True)
+            self.serial_display.document().setMaximumBlockCount(150000)  # 限制最大行数
+            self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)  # 不自动换行
+            self.serial_display.installEventFilter(self)  # 安装事件过滤器
+
+            # 优化显示性能
+            self.serial_display.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+            self.serial_display.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+
+            font = QFont("Microsoft YaHei", 12)
+            self.serial_display.setFont(font)
+            self.serial_display.setStyleSheet("""
+                QTextEdit {
+                    background-color          : rgba(36, 42, 56, 0.2);
+                    border                    : 1.5px solid #3a4a5c;
+                    border-radius             : 1px;
+                    padding                   : 12px;
+                    color                     : {theme['text']};
+                    font-size                 : 15px;
+                    font-family               : 'JetBrains Mono', 'Consolas', 'Microsoft YaHei', monospace;
+                    selection-background-color: #088bef;
+                    selection-color           : #ffffff;
+                }
+                QTextEdit:focus {
+                    border          : 1.5px solid #477faa;
+                    background-color: rgba(27, 32, 44, 0.99);
+                }
+            """)
+
+            self.serial_display.document().blockCountChanged.connect(self.update_current_lines)
+            self.update_current_lines()
+
+            # 添加鼠标事件处理
+            self.serial_display.keyPressEvent = self.on_display_key_press
+            self.font_size = 12  # 初始字体大小
+
+            # 右侧：闸机动画区域（50%宽度）
+            gate_widget = QWidget()
+            gate_widget.setStyleSheet("background: rgba(255, 255, 255, 0.05); border-radius: 10px;")
+            gate_layout = QVBoxLayout(gate_widget)
+            gate_layout.setContentsMargins(10, 10, 10, 10)
+
+            # 创建闸机动画组件（COM1 专用，避免与 CHART 页冲突）
+            if not hasattr(self, 'com1_gate_animation'):
+                self.com1_gate_animation = SubwayGateAnimation()
+                # Enable balance overlay only on COM1 page
+                self.com1_gate_animation.show_balance_overlay = True
+            gate_layout.addWidget(self.com1_gate_animation)
+
+            # 添加到分割器并设置比例
+            display_splitter.addWidget(self.serial_display)
+            display_splitter.addWidget(gate_widget)
+            display_splitter.setSizes([5000, 5000])  # 1:1
+            display_splitter.setCollapsible(0, False)
+            display_splitter.setCollapsible(1, False)
+
+            layout.addWidget(display_splitter)
+
+        else:
+            # 正常模式：日志显示 + 状态监控面板
+            display_splitter = QSplitter(Qt.Orientation.Horizontal)
+
+            # 左侧：日志显示区域
+            self.serial_display = QTextEdit()
+            self.serial_display.setReadOnly(True)
+            self.serial_display.document().setMaximumBlockCount(150000)  # 限制最大行数
+            self.serial_display.setLineWrapMode(QTextEdit.LineWrapMode.NoWrap)  # 不自动换行
+            self.serial_display.installEventFilter(self)  # 安装事件过滤器
+
+            # 优化显示性能
+            self.serial_display.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+            self.serial_display.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+
+            font = QFont("Microsoft YaHei", 12)
+            self.serial_display.setFont(font)
+            self.serial_display.setStyleSheet("""
+                QTextEdit {
+                    background-color          : rgba(36, 42, 56, 0.2);
+                    border                    : 1.5px solid #3a4a5c;
+                    border-radius             : 1px;
+                    padding                   : 12px;
+                    color                     : {theme['text']};
+                    font-size                 : 15px;
+                    font-family               : 'JetBrains Mono', 'Consolas', 'Microsoft YaHei', monospace;
+                    selection-background-color: #088bef;
+                    selection-color           : #ffffff;
+                }
+                QTextEdit:focus {
+                    border          : 1.5px solid #477faa;
+                    background-color: rgba(27, 32, 44, 0.99);
+                }
+            """)
+
+            self.serial_display.document().blockCountChanged.connect(self.update_current_lines)
+            self.update_current_lines()
+
+            # 添加鼠标事件处理
+            self.serial_display.keyPressEvent = self.on_display_key_press
+            self.font_size = 12  # 初始字体大小
+
+            # 右侧：状态监控面板
+            self.status_panel = self.create_status_panel()
+
+            # 添加到分割器
+            display_splitter.addWidget(self.serial_display)
+            display_splitter.addWidget(self.status_panel)
+
+            # 设置分割比例 (5:1)
+            display_splitter.setSizes([5000, 1000])
+            display_splitter.setCollapsible(0, False)  # 日志区域不可折叠
+            display_splitter.setCollapsible(1, True)   # 状态面板可折叠
+
+            # 初始化状态数据
+            self.status_data = {
+                'Link': 'FFFF',
+                'USER': {'used': 0, 'total': 20},
+                'AUTH': {'used': 0, 'total': 20},
+                'TRANS': {'used': 0, 'total': 10},
+                'DTPML': {'used': 0, 'total': 20}
+            }
+
+            layout.addWidget(display_splitter)
 
     def create_status_panel(self):
         # BM: 仪表配置
@@ -3130,6 +3203,38 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     
                     if hasattr(self, 'gate_animation') and self.gate_animation is not None:
                         self.gate_animation.trigger_gate_animation()
+                if COM1_GATE_MODE == True and "E3019000" in text:
+                    # 仅在检测到 E3019000 时触发闸机动画（不做其他处理）
+                    if hasattr(self, 'com1_gate_animation') and self.com1_gate_animation is not None:
+                        self.com1_gate_animation.trigger_gate_animation()
+                    elif hasattr(self, 'gate_animation') and self.gate_animation is not None:
+                        self.gate_animation.trigger_gate_animation()
+                if COM1_GATE_MODE == True and "9F7904" in text:
+                    try:
+                        # Parse 4 bytes (8 hex digits) immediately after 9F 79 04
+                        # Pattern tolerant to spaces between bytes
+                        m = re.search(r"9F\s*79\s*04\s*([0-9A-Fa-f]{2})\s*([0-9A-Fa-f]{2})\s*([0-9A-Fa-f]{2})\s*([0-9A-Fa-f]{2})", text)
+                        hex_str = None
+                        if m:
+                            hex_str = "".join(m.groups())
+                        else:
+                            m2 = re.search(r"9F\s*79\s*04\s*([0-9A-Fa-f]{8})", text)
+                            if m2:
+                                hex_str = m2.group(1)
+                        if not hex_str:
+                            # Fallback: remove non-hex and search contiguous sequence
+                            compact = re.sub(r"[^0-9A-Fa-f]", "", text)
+                            pos = compact.find("9F7904")
+                            if pos != -1 and pos + 6 + 8 <= len(compact):
+                                hex_str = compact[pos+6:pos+14]
+                        if hex_str:
+                            cents = int(hex_str, 16)
+                            yuan  = cents / 100.0
+                            if hasattr(self, 'com1_gate_animation') and self.com1_gate_animation is not None:
+                                self.com1_gate_animation.set_balance(yuan)
+                    except Exception as _:
+                        pass
+
             if "@POSITION" in text:
                 # print(f'接收到原始数据：{repr(text)}')
                 try:
@@ -4852,6 +4957,9 @@ class SubwayGateAnimation(QWidget):
         self.left_door_angle = 0    # 左门角度 (0-90)
         self.right_door_angle = 0   # 右门角度 (0-90)
         self.display_scale = 1.0    # 显示缩放因子，用于扩展模式
+        # Balance overlay state (COM1 gate mode only)
+        self.balance_yuan = None    # 当前余额（单位：元，小数两位）
+        self.show_balance_overlay = False  # 是否显示余额浮层（仅COM1页面启用）
         
         self.animation_timer = QTimer()
         self.animation_timer.timeout.connect(self.update_animation)
@@ -4872,6 +4980,14 @@ class SubwayGateAnimation(QWidget):
     def set_display_scale(self, scale):
         """设置显示缩放因子"""
         self.display_scale = scale
+        self.update()
+        
+    def set_balance(self, amount_yuan: float):
+        """Set balance in yuan and request redraw"""
+        try:
+            self.balance_yuan = float(amount_yuan)
+        except Exception:
+            self.balance_yuan = None
         self.update()
         
     def trigger_gate_animation(self):
@@ -4938,6 +5054,13 @@ class SubwayGateAnimation(QWidget):
         painter.setRenderHint(QPainter.RenderHint.SmoothPixmapTransform)
         
         self.draw_tech_background(painter)
+        # Draw balance overlay (top-left) only in COM1 gate mode
+        try:
+            if COM1_GATE_MODE and self.show_balance_overlay and self.balance_yuan is not None:
+                self.draw_balance_overlay(painter)
+        except NameError:
+            # COM1_GATE_MODE not defined; skip overlay
+            pass
         
         # 计算中心位置
         center_x = self.width() // 2
@@ -4954,6 +5077,43 @@ class SubwayGateAnimation(QWidget):
             self.draw_scan_lines(painter)
             if self.glow_intensity > 0:
                 self.draw_glow_effect(painter, center_x, center_y)
+        
+    def draw_balance_overlay(self, painter: QPainter):
+        """在左上角绘制余额浮层（仅视觉效果）"""
+        # Text
+        text = f"余额  {self.balance_yuan:,.2f} 元"
+        # Font styling
+        font = QFont()
+        font.setPointSize(int(14 * self.display_scale))
+        font.setBold(True)
+        painter.setFont(font)
+        metrics = painter.fontMetrics()
+        text_width = metrics.horizontalAdvance(text)
+        text_height = metrics.height()
+        margin = int(10 * self.display_scale)
+        padding_w = int(12 * self.display_scale)
+        padding_h = int(6 * self.display_scale)
+        rect_w = text_width + padding_w * 2
+        rect_h = text_height + padding_h * 2
+        rect = QRectF(margin, margin, rect_w, rect_h)
+        
+        # Background rounded rectangle
+        bg_color = QColor(20, 28, 38, 180)
+        border_color = QColor(120, 220, 255, 200)
+        painter.setBrush(bg_color)
+        painter.setPen(QPen(border_color, 1.5))
+        painter.drawRoundedRect(rect, 8, 8)
+        
+        # Glow effect under text
+        glow = QColor(0, 255, 180, 80)
+        painter.setPen(QPen(glow, 2))
+        painter.drawRoundedRect(rect.adjusted(-2, -2, 2, 2), 10, 10)
+        
+        # Draw text
+        painter.setPen(QColor(0, 255, 180))
+        text_x = rect.left() + padding_w
+        text_y = rect.top() + padding_h + metrics.ascent()
+        painter.drawText(QPointF(text_x, text_y), text)
         
     def draw_gate_doors(self, painter, center_x, center_y):
         """绘制横向地铁闸机门"""
@@ -5367,7 +5527,10 @@ class SerialReadThread(QThread):
         self.running     = False
         # 是否按换行符分割数据（STR模式：True；HEX模式：False）
         self.split_on_newline = True
-        self.delimiter = b"\n"
+        # Support multiple newline delimiters and idle flush when no newline
+        self.delimiter = b"\n"  # 仍保留，优先匹配
+        self.flush_timeout = 0.2  # If idle exceeds this timeout, flush buffered data (seconds)
+        self._last_buffer_update_ts = 0.0
     
     def set_split_on_newline(self, enable: bool):
         self.split_on_newline = bool(enable)
@@ -5384,11 +5547,18 @@ class SerialReadThread(QThread):
                     if not data:
                         pass
                     elif self.split_on_newline:
-                        # 行模式：按换行符分包（保留换行符）
+                        # Line mode: split on newline (\n or \r); idle flush when no newline
                         buffer.extend(data)
-                        while self.delimiter in buffer:
-                            line_end = buffer.find(self.delimiter)
-                            # 提取完整的行（包括换行符）
+                        self._last_buffer_update_ts = time.time()
+
+                        # Extract complete lines by earliest newline (\n or \r)
+                        while True:
+                            pos_n = buffer.find(b"\n")
+                            pos_r = buffer.find(b"\r")
+                            positions = [p for p in (pos_n, pos_r) if p != -1]
+                            if not positions:
+                                break
+                            line_end = min(positions)
                             line = bytes(buffer[:line_end + 1])
                             buffer = buffer[line_end + 1:]
                             if line.strip():  # 忽略空行
@@ -5396,6 +5566,16 @@ class SerialReadThread(QThread):
                     else:
                         # 原始模式：不按换行符分包，直接发送数据块
                         self.data_received.emit(data)
+                else:
+                    # When idle, in STR mode check idle flush for leftover buffer
+                    if self.split_on_newline and buffer:
+                        now = time.time()
+                        if now - self._last_buffer_update_ts >= self.flush_timeout:
+                            # Timeout without newline: flush buffer as one line (no newline append)
+                            line = bytes(buffer)
+                            buffer.clear()
+                            if line.strip():
+                                self.data_received.emit(line)
             except Exception as e:
                 print(f"串口读取错误: {str(e)}")
                 self.connection_lost.emit(str(e))  # Emit signal when connection is lost
@@ -5438,7 +5618,7 @@ class TestPage(QWidget):
         # 基础15个点位坐标（相对闸机中心）
         self.base_points = [
             (0, -40), (0, 0), (1, 10), (0, 10), (-1, 10),
-            (1, 60), (0, 60), (-1, 60), (1, 110), (0, 110),F
+            (1, 60), (0, 60), (-1, 60), (1, 110), (0, 110),
             (-1, 110), (1, 160), (0, 160), (-1, 160), (0, 210)
         ]
         self.A0_Anchor = [0, 0, 0]      # Slave锚点坐标

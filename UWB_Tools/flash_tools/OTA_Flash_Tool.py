@@ -444,8 +444,8 @@ class FlashTool(QMainWindow):
         self.setWindowTitle('DK6')
         self.settings = QSettings('DK6FlashTool', 'Settings')
         
-        self.setFixedWidth(320)  # 注释掉固定宽度设置，允许宽度调整
-        self.setFixedHeight(225)  # 设置固定高度为250px，BUILD按钮移到Pages栏后减小高度
+        self.setFixedWidth(280)  # 注释掉固定宽度设置，允许宽度调整
+        self.setFixedHeight(180)  # 设置固定高度为250px，BUILD按钮移到Pages栏后减小高度
         
         # 置顶窗口
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
@@ -523,7 +523,7 @@ class FlashTool(QMainWindow):
         
         self.baud_combo = QComboBox()
         self.baud_combo.addItems(['1000000', '460800'])
-        self.baud_combo.setCurrentText('460800')
+        self.baud_combo.setCurrentText('1000000')
         self.baud_combo.setMinimumWidth(80)
         
         top_row.addWidget(self.com_combo, 1)
@@ -560,8 +560,8 @@ class FlashTool(QMainWindow):
         self.pages_combo.setMinimumWidth(100)
         self.pages_combo.currentIndexChanged.connect(self.on_pages_changed)
 
-        config_row.addWidget(pages_label)
-        config_row.addWidget(self.pages_combo)
+        # config_row.addWidget(pages_label)
+        # config_row.addWidget(self.pages_combo)
         config_row.addStretch()  # 添加弹性空间
         main_layout.addLayout(config_row)
         
@@ -574,16 +574,16 @@ class FlashTool(QMainWindow):
         flash_btn.clicked.connect(self.flash_firmware)
         button_grid.addWidget(flash_btn, 0, 0)
         
+        reset_btn = QPushButton('RESET')
+        reset_btn.setObjectName('reset_btn')
+        reset_btn.clicked.connect(self.reset_device)
+        button_grid.addWidget(reset_btn, 0, 1)
+
         app_flash_btn = QPushButton('APP FLASH')
         app_flash_btn.setObjectName('app_flash_btn')  # 使用专用的App Flash按钮样式
         app_flash_btn.setEnabled(True)  # 启用App Flash按钮
         app_flash_btn.clicked.connect(lambda: self.flash_firmware(0x19000))
-        button_grid.addWidget(app_flash_btn, 0, 1)
-        
-        reset_btn = QPushButton('RESET')
-        reset_btn.setObjectName('reset_btn')
-        reset_btn.clicked.connect(self.reset_device)
-        button_grid.addWidget(reset_btn, 0, 2)
+        button_grid.addWidget(app_flash_btn, 0, 2)
         
         # 第二排按钮
         ota_flash_btn = QPushButton('OTA FLASH')
@@ -591,16 +591,16 @@ class FlashTool(QMainWindow):
         ota_flash_btn.clicked.connect(self.ota_flash_firmware)
         button_grid.addWidget(ota_flash_btn, 1, 0)
         
-        sr150_btn = QPushButton('SR150')
-        sr150_btn.setObjectName('sr150_btn')
-        sr150_btn.clicked.connect(self.sr150_flash_firmware)
-        button_grid.addWidget(sr150_btn, 1, 1)
-        
         # UUID按钮
         uuid_btn = QPushButton('UUID')
         uuid_btn.setObjectName('uuid_btn')
         uuid_btn.clicked.connect(self.get_uuid)
-        button_grid.addWidget(uuid_btn, 1, 2)
+        button_grid.addWidget(uuid_btn, 1, 1)
+
+        sr150_btn = QPushButton('SR150')
+        sr150_btn.setObjectName('sr150_btn')
+        sr150_btn.clicked.connect(self.sr150_flash_firmware)
+        button_grid.addWidget(sr150_btn, 1, 2)
         
         # 设置按钮间距
         button_grid.setVerticalSpacing(4)  
@@ -1001,7 +1001,8 @@ class FlashTool(QMainWindow):
         if success:
             print("flash OK!")
         else:
-            QMessageBox.critical(self, '失败', f'烧录失败: {message}')
+            # QMessageBox.critical(self, '失败', f'烧录失败: {message}')
+            print("flash failed!")
         
         self.flash_worker = None
     
