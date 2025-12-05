@@ -6,9 +6,8 @@ import ctypes
 import serial
 import serial.tools.list_ports
 from datetime import datetime
+from Ecb_Des import MyEcbDes
 
-sys.path.append("E:/Work/UWB/Code/UwbCOMCode")
-from Algorithm.Ecb_Des import MyEcbDes
 
 
 class UwbService:
@@ -38,7 +37,7 @@ class UwbService:
         self.halt_data_res = "0000FF130005FFFFFFFFFF06FFFFFFFFFF45C20001010000F600"
 
         self.DateTime = datetime.now().strftime("%Y%m%d%H%M%S")
-        self.MyEcbDes = MyEcbDes()
+        self.MyEcbDes = MyEcbDes() if MyEcbDes else None
 
         self.enter_port = ""
         self.exit_port = ""
@@ -245,6 +244,9 @@ class UwbService:
 
     def get_mac(self, write_data_res, type_):
         try:
+            if not self.MyEcbDes:
+                self._error("算法模块缺失")
+                return False
             macdata = self.Enter_macdata if type_ == 0 else self.Exit_macdata
             if len(self.CardNo) != 20 or len(self.RandomNo) != 8 or len(self.OnlineSeqNo) != 4:
                 return False

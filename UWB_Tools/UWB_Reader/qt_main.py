@@ -16,7 +16,7 @@ from PyQt6.QtWidgets import (
     QSplitter,
     QCheckBox,
     QFrame,
-    QTabWidget,
+    QStackedWidget,
     QGroupBox,
     QFormLayout,
     QFileDialog,
@@ -39,7 +39,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.setWindowTitle("UWBReader_v1.0")
-        self.setFixedSize(550, 350)
+        self.setFixedSize(650, 400)
         icon_path = os.path.join(os.path.dirname(__file__), "UWBReader.ico")
         if os.path.exists(icon_path):
             self.setWindowIcon(QIcon(icon_path))
@@ -74,9 +74,38 @@ class MainWindow(QMainWindow):
         cw = QWidget()
         cw.setObjectName("central")
         self.setCentralWidget(cw)
-        root = QVBoxLayout(cw)
+        main = QHBoxLayout(cw)
+        main.setContentsMargins(0, 0, 0, 0)
+        main.setSpacing(0)
+        nav = QFrame()
+        nav.setObjectName("nav")
+        nav_layout = QVBoxLayout(nav)
+        nav_layout.setContentsMargins(10, 10, 10, 10)
+        nav_layout.setSpacing(8)
+        # nav.setFixedWidth(72)
+        brand = QLabel("UWB")
+        brand.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        nav_layout.addWidget(brand)
+        sep = QFrame()
+        sep.setFrameShape(QFrame.Shape.HLine)
+        sep.setStyleSheet("QFrame{color:#dbe2f1; background:#dbe2f1; max-height:1px;}")
+        nav_layout.addWidget(sep)
+        self.nav_home = QPushButton("🏠")
+        self.nav_home.setCheckable(True)
+        self.nav_home.setChecked(True)
+        self.nav_settings = QPushButton("⚙")
+        self.nav_settings.setCheckable(True)
+        nav_layout.addWidget(self.nav_home)
+        nav_layout.addWidget(self.nav_settings)
+        nav_layout.addStretch(1)
+        main.addWidget(nav)
+        self.stack = QStackedWidget()
+        main.addWidget(self.stack, 1)
+        self.home_page = QWidget()
+        root = QVBoxLayout(self.home_page)
         root.setContentsMargins(8, 8, 8, 8)
         root.setSpacing(6)
+        self.stack.addWidget(self.home_page)
         top = QWidget()
         top.setObjectName("topBar")
         top_v = QVBoxLayout(top)
@@ -93,7 +122,6 @@ class MainWindow(QMainWindow):
         root.insertWidget(1, divider)
         self.settings = QWidget()
         self.settings.setObjectName("settingsPane")
-        root.addWidget(self.settings)
 
         self.enter_com = QComboBox()
         self.enter_baud = QComboBox()
@@ -143,6 +171,7 @@ class MainWindow(QMainWindow):
         ops_layout.addWidget(self.pin_top)
         ops_layout.addWidget(self.e1_check)
         ops_layout.addWidget(self.setting_toggle)
+        self.setting_toggle.hide()
         ops_layout.addStretch(1)
 
         left_log = QWidget()
@@ -238,13 +267,15 @@ class MainWindow(QMainWindow):
         f2.addRow("线路代码", self.line_exit)
         f2.addRow("站点代码", self.site_exit)
         f2.addRow("出站金额(hex)", self.money_exit)
+        self.stack.addWidget(self.settings)
 
     def _wire_signals(self):
         self.enter_toggle.clicked.connect(self._toggle_enter_connection)
         self.exit_toggle.clicked.connect(self._toggle_exit_connection)
         self.pin_top.toggled.connect(self._toggle_top)
         self.e1_check.toggled.connect(self._toggle_e1)
-        self.setting_toggle.clicked.connect(self._open_settings)
+        self.nav_home.clicked.connect(lambda: (self.stack.setCurrentWidget(self.home_page), self.nav_home.setChecked(True), self.nav_settings.setChecked(False)))
+        self.nav_settings.clicked.connect(self._open_settings)
         self.clear_enter.clicked.connect(lambda: self.enter_log.setPlainText(""))
         self.clear_exit.clicked.connect(lambda: self.exit_log.setPlainText(""))
         self.save_enter.clicked.connect(lambda: self._save_log(self.enter_log))
@@ -259,9 +290,9 @@ class MainWindow(QMainWindow):
         self.timer.timeout.connect(self._refresh_ports)
         self.timer.start(2000)
         self._refresh_ports()
-        self._settings_full_h = self.settings.sizeHint().height()
-        self.settings.setMaximumHeight(0)
-        self.settings.setVisible(False)
+        self.stack.setCurrentWidget(self.home_page)
+        self.nav_home.setChecked(True)
+        self.nav_settings.setChecked(False)
 
     def _refresh_ports(self):
         ports = self.service.get_available_ports()
@@ -272,8 +303,6 @@ class MainWindow(QMainWindow):
                 self.enter_com.setCurrentIndex(0)
             if not self.exit_com.currentText():
                 self.exit_com.setCurrentIndex(0)
-        self.enter_baud.setCurrentText("460800")
-        self.exit_baud.setCurrentText("460800")
 
     def _refresh_combo(self, combo, values):
         current = combo.currentText()
@@ -301,14 +330,12 @@ class MainWindow(QMainWindow):
             self.service.connect_exit()
 
     def _toggle_top(self, checked):
-        self.setWindowFlag(Qt.WindowType.WindowStaysOnTopHint, checked)
-        self.show()
+        flags = self.windowFlags()
         if checked:
-            try:
-                self.raise_()
-                self.activateWindow()
-            except Exception:
-                pass
+            self.setWindowFlags(flags | Qt.WindowType.WindowStaysOnTopHint)
+        else:
+            self.setWindowFlags(flags & ~Qt.WindowType.WindowStaysOnTopHint)
+        self.show()
 
     def _toggle_e1(self, checked):
         self.service.set_e1_check(bool(checked))
@@ -335,18 +362,12 @@ class MainWindow(QMainWindow):
             self._style_button(self.exit_toggle, connected)
 
     def _open_settings(self):
-        dlg = SettingsDialog(self.service, self)
-        dlg.exec()
+        self.stack.setCurrentWidget(self.settings)
+        self.nav_home.setChecked(False)
+        self.nav_settings.setChecked(True)
 
     def _toggle_setting(self):
-        visible = not self.settings.isVisible()
-        self.settings.setVisible(visible)
-        if visible:
-            self.settings.setMaximumHeight(self._settings_full_h or 300)
-        else:
-            self.settings.setMaximumHeight(0)
-        self.setting_toggle.setText("Setting")
-        self.adjustSize()
+        pass
 
     def _save_log(self, editor: QPlainTextEdit):
         path, _ = QFileDialog.getSaveFileName(self, "保存日志", "log.txt", "Text Files (*.txt)")
@@ -413,7 +434,7 @@ class MainWindow(QMainWindow):
             self.money_exit,
         ]:
             c.setStyleSheet(combo_styles)
-        editor_style = "QPlainTextEdit{background:#eef3ff; border:1px solid #dfe6f4; border-radius:8px;}"
+        editor_style = "QPlainTextEdit{background:#d1f2f7; border:1px solid #dfe6f4; border-radius:8px;}"
         self.enter_log.setStyleSheet(editor_style)
         self.exit_log.setStyleSheet(editor_style)
         splitter_style = "QSplitter::handle{background:#d9e1ef; width:4px; border-radius:2px;}"
@@ -422,7 +443,6 @@ class MainWindow(QMainWindow):
         title_style = "QLabel{color:#425b8a; font-weight:700; padding-left:8px; border-left:4px solid #5B8DEF;}"
         self.enter_title.setStyleSheet(title_style)
         self.exit_title.setStyleSheet(title_style)
-        self._style_ghost_button(self.setting_toggle)
         for b in [self.clear_enter, self.save_enter, self.clear_exit, self.save_exit]:
             self._style_ghost_button(b)
         cb_style = (
@@ -433,6 +453,14 @@ class MainWindow(QMainWindow):
         )
         self.pin_top.setStyleSheet(cb_style)
         self.e1_check.setStyleSheet(cb_style)
+        self.findChild(QFrame, "nav").setStyleSheet("#nav{background:#f1f4fb; border-right:1px solid #dbe2f1;}")
+        nav_btn_style = (
+            "QPushButton{background:transparent; color:#3a4a6b; border:none; padding:8px 10px; text-align:left;}"
+            "QPushButton:hover{background:#e8eefc;}"
+            "QPushButton:checked{background:#5B8DEF; color:white; border-radius:6px;}"
+        )
+        self.nav_home.setStyleSheet(nav_btn_style)
+        self.nav_settings.setStyleSheet(nav_btn_style)
 
     def _style_pill_button(self, btn):
         btn.setStyleSheet("QPushButton{background:#5B8DEF; color:white; border-radius:16px; padding:6px 14px;} QPushButton:hover{background:#4a7bdc}")

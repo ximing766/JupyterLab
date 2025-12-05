@@ -44,10 +44,10 @@ import math
 # 全局变量：控制COM1页面显示模式
 # False: 正常模式（显示状态监控面板）
 # True: 闸机模式（显示闸机动画，与日志各占一半宽度）
-COM1_GATE_MODE = True
+COM1_GATE_MODE = False
 
 APP_VERSION = "v2.3"
-APP_NAME = "UWBDash-Lite-V2"
+APP_NAME = "UWBDash"
 BUILD_DATE = "2025年11月"
 AUTHOR = "@Qilang²"
 
@@ -426,10 +426,10 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
         # BM:NAV bar
         self.nav_com1 = self.addSubInterface(self.COM1_page, FIF.CONNECT, "COM1") 
-        # self.nav_com2 = self.addSubInterface(self.COM2_page, FIF.CONNECT, "COM2")
-        # self.addSubInterface(self.Chart_page, FIF.PIE_SINGLE, "CHART")
+        self.nav_com2 = self.addSubInterface(self.COM2_page, FIF.CONNECT, "COM2")
+        self.addSubInterface(self.Chart_page, FIF.PIE_SINGLE, "CHART")
         # 使用已实例化的self.testInterface添加导航
-        # self.addSubInterface(self.testInterface, FIF.LABEL, "测试")
+        self.addSubInterface(self.testInterface, FIF.LABEL, "测试")
         self.addSubInterface(self.Settings_page, FIF.SETTING, "Setting", position=NavigationItemPosition.BOTTOM)
 
         self.navigationInterface.setExpandWidth(125)   # 展开时宽度设为 300 px
@@ -1112,7 +1112,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.baud_combo = EditableComboBox()
         self.baud_combo.setFixedWidth(110)
         self.baud_combo.addItems(['9600', '115200', '230400', '460800', '3000000'])
-        self.baud_combo.setCurrentText('115200')
+        self.baud_combo.setCurrentText('3000000')
 
         status_widget = QWidget()
         status_layout = QHBoxLayout(status_widget)
@@ -1779,7 +1779,35 @@ class MainWindow(FluentWindow): # MSFluentWindow
         bottom_right_layout.addLayout(button_layout)
         
         self.position_view = PositionView(self)
-        bottom_right_layout.addWidget(self.position_view)
+        position_container = QWidget()
+        position_container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
+        position_container_layout = QHBoxLayout(position_container)
+        position_container_layout.setContentsMargins(0, 0, 12, 0)
+        position_container_layout.setSpacing(6)
+        position_container_layout.addWidget(self.position_view, 1)
+
+        bar_container = QWidget()
+        bar_container_layout = QVBoxLayout(bar_container)
+        bar_container_layout.setContentsMargins(0, 0, 0, 0)
+        bar_container_layout.setSpacing(4)
+
+        self.height_label = CaptionLabel("0")
+        self.height_label.setAlignment(Qt.AlignmentFlag.AlignHCenter)
+        self.height_label.setStyleSheet("color:#8ccfff;")
+        bar_container_layout.addWidget(self.height_label)
+
+        self.height_bar = QProgressBar()
+        self.height_bar.setOrientation(Qt.Orientation.Vertical)
+        self.height_bar.setRange(-50, 50)
+        self.height_bar.setValue(0)
+        self.height_bar.setTextVisible(False)
+        self.height_bar.setFixedWidth(16)
+        self.height_bar.setFixedHeight(220)
+        self.height_bar.setStyleSheet("QProgressBar{background-color: rgba(255,255,255,60); border-radius:8px;} QProgressBar::chunk{background-color: #00aaff; border-radius:8px;}")
+        bar_container_layout.addWidget(self.height_bar, 1, Qt.AlignmentFlag.AlignHCenter)
+
+        position_container_layout.addWidget(bar_container, 0, Qt.AlignmentFlag.AlignVCenter)
+        bottom_right_layout.addWidget(position_container)
         # 初始化时刷新红蓝区域
         self.position_view.refresh_areas()
         canvas_splitter.addWidget(bottom_right)
@@ -3256,6 +3284,18 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 user_y = float(json_data.get('User-Y', 0))
                 user_z = float(json_data.get('User-Z', 0))
                 user_mac = json_data.get('mac', 'default')  # 获取用户MAC地址
+                if hasattr(self, 'height_bar'):
+                    try:
+                        z_val = int(user_z)
+                    except Exception:
+                        z_val = 0
+                    if z_val < -50:
+                        z_val = -50
+                    elif z_val > 50:
+                        z_val = 50
+                    self.height_bar.setValue(z_val)
+                    if hasattr(self, 'height_label'):
+                        self.height_label.setText(str(z_val))
                 
                 # 提取卡号和余额信息
                 card_no = json_data.get('CardNo')
