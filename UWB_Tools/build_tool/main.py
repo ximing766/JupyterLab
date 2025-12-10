@@ -250,6 +250,7 @@ class UwbBuildTool(QMainWindow):
         # self.output_text.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         # self.output_text.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
         self.output_text.setReadOnly(True)
+        self.output_text.setAcceptRichText(False)
         output_layout.addWidget(self.output_text)
         
         return output_widget
@@ -295,7 +296,7 @@ class UwbBuildTool(QMainWindow):
         self.output_text.setReadOnly(True)
         self.output_text.setObjectName("outputText")
         
-        self.output_text.setAcceptRichText(True)
+        self.output_text.setAcceptRichText(False)
         
         font = self.output_text.font()
         font.setFamily("Consolas")
@@ -678,40 +679,15 @@ class UwbBuildTool(QMainWindow):
                 self.build_time_label.setText(time_text)
     
     def append_output(self, text: str):
-        is_error = self.is_error_line(text)
-        
         # Always append to output_text (both compact and extended modes)
         if hasattr(self, 'output_text'):
-            if is_error:
-                highlighted_text = f'<span style="background-color: #ffebee; color: #c62828; font-weight: bold; padding: 2px 4px; border-radius: 3px;">{text}</span>'
-            else:
-                highlighted_text = text
-            
-            self.output_text.append(highlighted_text)
+            self.output_text.append(text)
             scrollbar = self.output_text.verticalScrollBar()
             scrollbar.setValue(scrollbar.maximum())
         
         # No additional status label updates needed in compact mode
     
-    def is_error_line(self, text: str) -> bool:
-        text_lower = text.lower()
-        text_stripped = text.strip()
-        
-        error_keywords = ['error', 'failed', 'ERROR', 'Error']
-        
-        if any(keyword in text_lower for keyword in error_keywords):
-            false_positives = [
-                'no error',
-                '0 errors',
-                'without error',
-                'ignore error',
-                'suppress error'
-            ]
-            
-            if not any(fp in text_lower for fp in false_positives):
-                return True
-        
-        return False
+    
     
     @pyqtSlot(str)
     def on_project_changed(self, text: str):
