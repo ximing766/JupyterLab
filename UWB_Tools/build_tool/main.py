@@ -29,12 +29,9 @@ from PyQt6.QtCore import Qt, QTimer, pyqtSlot, QEvent, QUrl
 from PyQt6.QtGui import QFont, QIcon, QPalette, QColor, QAction, QDesktopServices
 import re
 
-# QFluentWidgets CheckBox for tri-state channel selection
-try:
-    from qfluentwidgets import CheckBox
-except ImportError:
-    # Fallback to standard QCheckBox if QFluentWidgets is not available
-    from PyQt6.QtWidgets import QCheckBox as CheckBox
+
+from qfluentwidgets import CheckBox,FluentWindow
+
 
 from config_manager import ConfigManager
 from build_thread import BuildThread, HeaderGeneratorThread
@@ -50,8 +47,6 @@ class UwbBuildTool(QMainWindow):
         self.build_timer = QTimer()
         self.build_timer.timeout.connect(self.update_build_time)
         
-        # Display mode: True for compact, False for extended (default)
-        self.is_compact_mode = False
         self.output_widget = None  # Will hold current output widget
         
         self.init_ui()
@@ -64,15 +59,10 @@ class UwbBuildTool(QMainWindow):
     def init_ui(self):
         self.setWindowTitle("UWB BUILD TOOL")
         
-        # Set window size based on display mode
-        if self.is_compact_mode:
-            self.setMinimumSize(450, 200)
-            self.setMaximumSize(450, 200)
-            self.resize(450, 200)
-        else:
-            self.setMinimumSize(650, 400)
-            self.setMaximumSize(650, 400)
-            self.resize(650, 400)
+        # Set window size
+        self.setMinimumSize(520, 320)
+        self.setMaximumSize(520, 320)
+        self.resize(520, 320)
         
         # Set window to stay on top and handle transparency
         self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.WindowStaysOnTopHint)
@@ -90,34 +80,28 @@ class UwbBuildTool(QMainWindow):
         self.setStyleSheet(self.styleSheet())
         
         central_widget = QWidget()
+        central_widget.setObjectName("centralWidget")
         self.setCentralWidget(central_widget)
-        central_widget.setAutoFillBackground(True)
-        pal = central_widget.palette()
-        pal.setColor(QPalette.ColorRole.Window, QColor(255, 255, 255))
-        central_widget.setPalette(pal)
         
         main_layout = QVBoxLayout(central_widget)
         main_layout.setSpacing(8)
-        main_layout.setContentsMargins(12, 12, 12, 12)
+        main_layout.setContentsMargins(10, 8, 10, 8)
         
-        config_widget = self.create_compact_config_area()
+        config_widget = self.create_config_area()
         main_layout.addWidget(config_widget)
         
-        # Create output area based on display mode
-        if self.is_compact_mode:
-            self.output_widget = self.create_compact_output_area()
-        else:
-            self.output_widget = self.create_large_output_area()
+        # Create output area
+        self.output_widget = self.create_output_area()
         main_layout.addWidget(self.output_widget, 1)
     
-    def create_compact_config_area(self) -> QWidget:
+    def create_config_area(self) -> QWidget:
         config_widget = QWidget()
         config_widget.setObjectName("configArea")
-        config_widget.setMaximumHeight(120)
+        config_widget.setMaximumHeight(100)
         
         config_layout = QVBoxLayout(config_widget)
-        config_layout.setSpacing(6)
-        config_layout.setContentsMargins(8, 8, 8, 8)
+        config_layout.setSpacing(8)
+        config_layout.setContentsMargins(12, 12, 12, 12)
         
         project_layout = QHBoxLayout()
         project_layout.setSpacing(6)
@@ -177,7 +161,7 @@ class UwbBuildTool(QMainWindow):
         controls_layout.addWidget(mode_label)
         
         self.mode_combo = QComboBox()
-        # self.mode_combo.setMinimumWidth(200)
+        self.mode_combo.setMinimumWidth(100)
         # self.mode_combo.setFixedWidth(80)
         self.populate_mode_combo()
         controls_layout.addWidget(self.mode_combo)
@@ -205,55 +189,28 @@ class UwbBuildTool(QMainWindow):
         
         self.generate_header_button = QPushButton(".h")
         self.generate_header_button.setObjectName("generateButton")
-        self.generate_header_button.setFixedWidth(35)   
+        self.generate_header_button.setFixedWidth(38)   
         self.generate_header_button.setFixedHeight(28)
+        self.generate_header_button.setToolTip("生成头文件")
         controls_layout.addWidget(self.generate_header_button)
         
         self.open_firmware_folder_button = QPushButton("📁")
         self.open_firmware_folder_button.setObjectName("openFirmwareFolderButton")
-        self.open_firmware_folder_button.setFixedWidth(35)
+        self.open_firmware_folder_button.setFixedWidth(38)
         self.open_firmware_folder_button.setFixedHeight(28)
         self.open_firmware_folder_button.setToolTip("打开固件文件夹")
         controls_layout.addWidget(self.open_firmware_folder_button)
         
         self.make_button = QPushButton("➽")
         self.make_button.setObjectName("makeButton")
-        self.make_button.setFixedWidth(35)
+        self.make_button.setFixedWidth(38)
         self.make_button.setFixedHeight(28)
+        self.make_button.setToolTip("build")
         controls_layout.addWidget(self.make_button)
-
-        # Add display mode toggle button
-        self.toggle_mode_button = QPushButton("⚡")
-        self.toggle_mode_button.setObjectName("toggleModeButton")
-        self.toggle_mode_button.setFixedWidth(35)
-        self.toggle_mode_button.setFixedHeight(28)
-        self.toggle_mode_button.setToolTip("切换显示模式")
-        controls_layout.addWidget(self.toggle_mode_button)
         
         config_layout.addLayout(controls_layout)
         
         return config_widget
-    
-    def create_compact_output_area(self) -> QWidget:
-        """创建紧凑的输出区域，显示单行输出框"""
-        output_widget = QWidget()
-        output_widget.setObjectName("compactOutputArea")
-        
-        output_layout = QVBoxLayout(output_widget)
-        # output_layout.setSpacing(4)
-        output_layout.setContentsMargins(1, 1, 1, 1)
-        
-        # Create single-line output text area
-        self.output_text = QTextEdit()
-        self.output_text.setObjectName("compactOutputText")
-        # self.output_text.setMaximumHeight(60)  # Increased height for better visibility
-        # self.output_text.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
-        # self.output_text.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-        self.output_text.setReadOnly(True)
-        self.output_text.setAcceptRichText(False)
-        output_layout.addWidget(self.output_text)
-        
-        return output_widget
     
     def populate_mode_combo(self):
         """填充模式下拉列表"""
@@ -264,33 +221,14 @@ class UwbBuildTool(QMainWindow):
             display_name = mode_config.get("display_name", mode_key)
             self.mode_combo.addItem(display_name, mode_key)
     
-    def create_large_output_area(self) -> QWidget:
-        """创建大的输出区域"""
+    def create_output_area(self) -> QWidget:
+        """创建输出区域"""
         output_widget = QWidget()
         output_widget.setObjectName("outputArea")
         
         output_layout = QVBoxLayout(output_widget)
-        output_layout.setSpacing(4)
-        output_layout.setContentsMargins(8, 4, 8, 8)
-        
-        header_layout = QHBoxLayout()
-        header_layout.setSpacing(8)
-        
-        output_label = QLabel("编译输出")
-        output_label.setObjectName("outputLabel")
-        header_layout.addWidget(output_label)
-        
-        self.build_time_label = QLabel("")
-        self.build_time_label.setObjectName("buildTimeLabel")
-        header_layout.addWidget(self.build_time_label)
-        
-        header_layout.addStretch()
-        
-        self.status_label = QLabel("就绪")
-        self.status_label.setObjectName("statusLabel")
-        header_layout.addWidget(self.status_label)
-        
-        output_layout.addLayout(header_layout)
+        output_layout.setSpacing(0)
+        output_layout.setContentsMargins(1, 1, 1, 1)
         
         self.output_text = QTextEdit()
         self.output_text.setReadOnly(True)
@@ -302,47 +240,9 @@ class UwbBuildTool(QMainWindow):
         font.setFamily("Consolas")
         font.setStyleHint(QFont.StyleHint.Monospace)
         self.output_text.setFont(font)
-        output_layout.addWidget(self.output_text, 1)
+        output_layout.addWidget(self.output_text)
         
         return output_widget
-    
-    @pyqtSlot()
-    def toggle_display_mode(self):
-        """切换显示模式"""
-        self.is_compact_mode = not self.is_compact_mode
-        
-        # Remove current output widget
-        if self.output_widget:
-            self.output_widget.setParent(None)
-            self.output_widget.deleteLater()
-        
-        # Create new output widget based on new mode
-        if self.is_compact_mode:
-            self.output_widget = self.create_compact_output_area()
-            # Update window size for compact mode
-            self.setMinimumSize(450, 200)
-            self.setMaximumSize(450, 200)
-            self.resize(450, 200)
-        else:
-            self.output_widget = self.create_large_output_area()
-            # Update window size for extended mode
-            self.setMinimumSize(650, 400)
-            self.setMaximumSize(650, 400)
-            self.resize(650, 400)
-        
-        # Add new output widget to layout
-        central_widget = self.centralWidget()
-        main_layout = central_widget.layout()
-        main_layout.addWidget(self.output_widget, 1)
-        
-        # Update button tooltip
-        if self.is_compact_mode:
-            self.toggle_mode_button.setToolTip("切换到扩展模式")
-        else:
-            self.toggle_mode_button.setToolTip("切换到紧凑模式")
-        
-        # Save the new display mode
-        self.save_config()
     
     def load_stylesheet(self):
         try:
@@ -365,7 +265,6 @@ class UwbBuildTool(QMainWindow):
         self.make_button.clicked.connect(self.start_make)
         self.clear_output_button.clicked.connect(self.clear_output)
         self.config_button.clicked.connect(self.open_config_dialog)
-        self.toggle_mode_button.clicked.connect(self.toggle_display_mode)
         
         self.project_combo.currentTextChanged.connect(self.on_project_changed)
         self.config_mode_combo.currentTextChanged.connect(self.on_config_mode_changed)
@@ -402,8 +301,6 @@ class UwbBuildTool(QMainWindow):
                     break
         
         # Load display mode
-        display_mode = self.config_manager.get_display_mode()
-        self.is_compact_mode = (display_mode == "compact")
         
         geometry = self.config_manager.get_window_geometry()
         if geometry:
@@ -428,10 +325,6 @@ class UwbBuildTool(QMainWindow):
         self.update_channel_mode_text()
     
     def save_config(self):
-        # Save display mode
-        display_mode = "compact" if self.is_compact_mode else "extended"
-        self.config_manager.set_display_mode(display_mode)
-        
         self.config_manager.set_window_geometry(self.saveGeometry())
         self.config_manager.set_window_state(self.saveState())
     
@@ -624,15 +517,6 @@ class UwbBuildTool(QMainWindow):
         self.generate_header_button.setEnabled(False)
 
         self.build_start_time = time.time()
-        self.build_timer.start(100)
-        
-        # Update status labels based on current mode (only for extended mode)
-        if not self.is_compact_mode and hasattr(self, 'status_label'):
-            self.status_label.setText("构建中...")
-            self.status_label.setObjectName("statusBuilding")
-            self.status_label.setStyleSheet("")
-            self.status_label.style().unpolish(self.status_label)
-            self.status_label.style().polish(self.status_label)
         
         self.append_output("=== 开始构建 ===")
     
@@ -645,49 +529,25 @@ class UwbBuildTool(QMainWindow):
         self.make_button.setEnabled(True)
         self.generate_header_button.setEnabled(True)
 
-        self.build_timer.stop()
         if self.build_start_time:
             total_time = time.time() - self.build_start_time
-            time_text = f"耗时: {total_time:.1f}s"
-            
-            if hasattr(self, 'build_time_label'):
-                self.build_time_label.setText(time_text)
+            # time_text = f"耗时: {total_time:.1f}s"
+            # if hasattr(self, 'build_time_label'):
+            #     self.build_time_label.setText(time_text)
 
         if success:
-            status_text = "构建成功"
-            status_obj = "statusSuccess"
             self.append_output(f"✓ {message}")
         else:
-            status_text = "构建失败"
-            status_obj = "statusError"
             self.append_output(f"✗ {message}")
-        
-        # Update status labels based on current mode (only for extended mode)
-        if not self.is_compact_mode and hasattr(self, 'status_label'):
-            self.status_label.setText(status_text)
-            self.status_label.setObjectName(status_obj)
-            self.status_label.setStyleSheet("")
-            self.status_label.style().unpolish(self.status_label)
-            self.status_label.style().polish(self.status_label)
     
     def update_build_time(self):
-        if self.build_start_time:
-            elapsed_time = time.time() - self.build_start_time
-            time_text = f"耗时: {elapsed_time:.1f}s"
-            
-            if hasattr(self, 'build_time_label'):
-                self.build_time_label.setText(time_text)
+        pass
     
     def append_output(self, text: str):
-        # Always append to output_text (both compact and extended modes)
         if hasattr(self, 'output_text'):
             self.output_text.append(text)
             scrollbar = self.output_text.verticalScrollBar()
             scrollbar.setValue(scrollbar.maximum())
-        
-        # No additional status label updates needed in compact mode
-    
-    
     
     @pyqtSlot(str)
     def on_project_changed(self, text: str):

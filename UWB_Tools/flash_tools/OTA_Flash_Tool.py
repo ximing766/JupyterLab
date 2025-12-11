@@ -445,7 +445,7 @@ class FlashTool(QMainWindow):
         self.settings = QSettings('DK6FlashTool', 'Settings')
         
         self.setFixedWidth(280)  # 注释掉固定宽度设置，允许宽度调整
-        self.setFixedHeight(180)  # 设置固定高度为250px，BUILD按钮移到Pages栏后减小高度
+        self.setFixedHeight(130)  # 设置固定高度为250px，BUILD按钮移到Pages栏后减小高度
         
         # 置顶窗口
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
@@ -590,17 +590,20 @@ class FlashTool(QMainWindow):
         ota_flash_btn.setObjectName('ota_flash_btn')
         ota_flash_btn.clicked.connect(self.ota_flash_firmware)
         button_grid.addWidget(ota_flash_btn, 1, 0)
+        ota_flash_btn.setVisible(False)
         
         # UUID按钮
         uuid_btn = QPushButton('UUID')
         uuid_btn.setObjectName('uuid_btn')
         uuid_btn.clicked.connect(self.get_uuid)
         button_grid.addWidget(uuid_btn, 1, 1)
+        uuid_btn.setVisible(False)
 
         sr150_btn = QPushButton('SR150')
         sr150_btn.setObjectName('sr150_btn')
         sr150_btn.clicked.connect(self.sr150_flash_firmware)
         button_grid.addWidget(sr150_btn, 1, 2)
+        sr150_btn.setVisible(False)
         
         # 设置按钮间距
         button_grid.setVerticalSpacing(4)  
@@ -1451,8 +1454,8 @@ class FlashTool(QMainWindow):
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
-    app.setApplicationName("DK6 OTA Flash Tool")
-    app.setApplicationDisplayName("DK6 OTA Flash Tool")
+    # app.setApplicationName("DK6 OTA Flash Tool")
+    # app.setApplicationDisplayName("DK6 OTA Flash Tool")
     app.setOrganizationName("DK6 Tools")
     app.setOrganizationDomain("dk6tools.com")
     app.setApplicationVersion("1.0.0")

@@ -11,9 +11,9 @@
   "last_config_mode": "Debug",
   "mcuxpresso_ide_path": "D:/mcux_ide/mcuxpressoidec.exe",
   "mcuxpresso_workspace_path": "D:/Software/MCUXPRESSO/workspace",
-  "window_geometry": "01d9d0cb0003000000000eda0000016f000011630000031d00000eda0000018e000011630000031d0000000100000000078000000eda0000018e000011630000031d",
-  "window_state": "000000ff00000000fd000000000000028a0000019000000004000000040000000800000008fc00000000",
-  "selected_mode": "IN_A2",
+  "window_geometry": "01d9d0cb0003000000000f66000001b80000116d0000031600000f66000001d70000116d000003160000000100000000078000000f66000001d70000116d00000316",
+  "window_state": "000000ff00000000fd00000000000002080000014000000004000000040000000800000008fc00000000",
+  "selected_mode": "IN_A0",
   "build_modes": {
     "INGATE_MASTER_TRANSIT": {
       "display_name": "IN_M",
@@ -53,6 +53,7 @@
         "UWBIOT_APP_BUILD__DEMO_TRANSIT": 1,
         "DEMO_TRANSIT_ENABLE_BLE_SENDING": 1,
         "CURRENT_ANCHOR": "NB_ANCHOR_0",
+        "ENTRY_ANCHOR": 1,
         "UWB_GLOBAL_LOG_LEVEL": "UWB_LOG_INFO_LEVEL"
       }
     },
@@ -60,8 +61,10 @@
       "display_name": "IN_A1",
       "macros": {
         "UWBIOT_APP_BUILD__DEMO_TRANSIT": 1,
+        "DEMO_TRANSIT_ENABLE_BLE_SENDING": 1,
         "DEMO_TRANSIT_ENABLE_DATA_SENDING": 1,
         "CURRENT_ANCHOR": "NB_ANCHOR_1",
+        "ENTRY_ANCHOR": 1,
         "UWB_GLOBAL_LOG_LEVEL": "UWB_LOG_INFO_LEVEL"
       }
     },
@@ -69,8 +72,10 @@
       "display_name": "IN_A2",
       "macros": {
         "UWBIOT_APP_BUILD__DEMO_TRANSIT": 1,
+        "DEMO_TRANSIT_ENABLE_BLE_SENDING": 1,
         "DEMO_TRANSIT_ENABLE_DATA_SENDING": 1,
         "CURRENT_ANCHOR": "NB_ANCHOR_2",
+        "ENTRY_ANCHOR": 1,
         "UWB_GLOBAL_LOG_LEVEL": "UWB_LOG_INFO_LEVEL"
       }
     },
@@ -78,17 +83,38 @@
       "display_name": "IN_A3",
       "macros": {
         "UWBIOT_APP_BUILD__DEMO_TRANSIT": 1,
+        "DEMO_TRANSIT_ENABLE_BLE_SENDING": 1,
         "DEMO_TRANSIT_ENABLE_DATA_SENDING": 1,
         "CURRENT_ANCHOR": "NB_ANCHOR_3",
+        "ENTRY_ANCHOR": 1,
         "UWB_GLOBAL_LOG_LEVEL": "UWB_LOG_INFO_LEVEL"
       }
     },
-    "new_mode_1": {
-      "display_name": "new_mode_1",
+    "TAG": {
+      "display_name": "TAG",
       "macros": {}
+    },
+    "OUT_A0": {
+      "display_name": "OUT_A0",
+      "macros": {
+        "UWBIOT_APP_BUILD__DEMO_TRANSIT": 1,
+        "DEMO_TRANSIT_ENABLE_BLE_SENDING": 1,
+        "CURRENT_ANCHOR": "NB_ANCHOR_0",
+        "UWB_GLOBAL_LOG_LEVEL": "UWB_LOG_INFO_LEVEL"
+      }
+    },
+    "OUT_A1": {
+      "display_name": "OUT_A1",
+      "macros": {
+        "UWBIOT_APP_BUILD__DEMO_TRANSIT": 1,
+        "DEMO_TRANSIT_ENABLE_BLE_SENDING": 1,
+        "DEMO_TRANSIT_ENABLE_DATA_SENDING": 1,
+        "CURRENT_ANCHOR": "NB_ANCHOR_1",
+        "UWB_GLOBAL_LOG_LEVEL": "UWB_LOG_INFO_LEVEL"
+      }
     }
   },
   "display_mode": "extended",
   "selected_linker_script": "QN9090_UWB_TAG_FW_App.ld",
-  "channel_mode_state": 2
+  "channel_mode_state": 0
 }
