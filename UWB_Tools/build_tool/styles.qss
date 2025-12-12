@@ -139,14 +139,15 @@ QPushButton:pressed {
 
 /* Make Button (Primary Action) - 鲜艳蓝 */
 QPushButton#makeButton {
-    background-color: #52b4c5;
-    color: white;
-    border: 1px solid #1565c0;
+    background-color: #ede7f6;
+    color: #673ab7;
+    border: 1px solid #d1c4e9;
 }
 QPushButton#makeButton:hover {
-    background: qlineargradient(x1: 0, y1: 0, x2: 1, y2: 1,
-                                stop: 0 #42a5f5, stop: 1 #1e88e5);
+    background-color: #d1c4e9;
+    color: #512da8;
 }
+
 QPushButton#makeButton:pressed {
     background-color: #0d47a1;
 }
@@ -208,14 +209,55 @@ QFrame#leftPanel, QFrame#rightPanel {
     padding: 10px;
 }
 
+/* Config List & Inputs - 强制亮色背景解决黑底问题 */
 QListWidget#modeList {
+    background-color: #ffffff;
+    color: #37474f;
     border: 1px solid #cfd8dc;
     border-radius: 4px;
+    outline: none;
+}
+QListWidget#modeList::item {
+    padding: 4px;
+    color: #37474f;
 }
 QListWidget#modeList::item:selected {
     background-color: #e3f2fd;
     color: #1565c0;
     border-left: 3px solid #1565c0;
+}
+QListWidget#modeList::item:hover {
+    background-color: #f5f5f5;
+}
+
+QLineEdit#nameEdit, QLineEdit#displayNameEdit {
+    background-color: #ffffff;
+    color: #37474f;
+    border: 1px solid #cfd8dc;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 9pt;
+}
+QLineEdit#nameEdit:focus, QLineEdit#displayNameEdit:focus {
+    border: 1px solid #29b6f6;
+}
+
+QTextEdit#macrosEdit {
+    background-color: #ffffff;
+    color: #37474f;
+    border: 1px solid #cfd8dc;
+    border-radius: 4px;
+    padding: 6px;
+    font-family: "Consolas", "Courier New", monospace;
+    font-size: 9pt;
+}
+QTextEdit#macrosEdit:focus {
+    border: 1px solid #29b6f6;
+}
+
+QLabel#fieldLabel {
+    color: #546e7a;
+    font-weight: bold;
 }
 
 /* Dialog Action Buttons */

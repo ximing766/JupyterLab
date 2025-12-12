@@ -38,7 +38,7 @@ class ConfigDialog(QDialog):
         self.config_manager = config_manager
         self.setWindowTitle("构建模式配置")
         self.setModal(True)
-        self.resize(700, 550)
+        self.resize(600, 450)
         
         # 设置窗口样式
         self.setWindowIcon(QIcon(os.path.join(os.path.dirname(__file__), "compile_tool.ico")))
@@ -52,8 +52,8 @@ class ConfigDialog(QDialog):
         
     def init_ui(self):
         layout = QVBoxLayout(self)
-        layout.setSpacing(15)
-        layout.setContentsMargins(20, 20, 20, 20)
+        layout.setSpacing(10)
+        layout.setContentsMargins(10, 10, 10, 10)
 
         # 内容区域使用分割器
         splitter = QSplitter(Qt.Orientation.Horizontal)
@@ -64,7 +64,7 @@ class ConfigDialog(QDialog):
         
         splitter.addWidget(left_panel)
         splitter.addWidget(right_panel)
-        splitter.setSizes([200, 400])
+        splitter.setSizes([180, 420])
         
         layout.addWidget(splitter, 1)
         
@@ -72,7 +72,7 @@ class ConfigDialog(QDialog):
         button_layout = QHBoxLayout()
         button_layout.addStretch()
         
-        self.save_button = QPushButton("保存")
+        self.save_button = QPushButton("")
         self.save_button.setObjectName("saveButton")
         self.save_button.setIcon(QIcon.fromTheme("document-save"))
         self.save_button.setCursor(Qt.CursorShape.PointingHandCursor)
@@ -98,8 +98,8 @@ class ConfigDialog(QDialog):
         panel = QFrame()
         panel.setObjectName("leftPanel")
         layout = QVBoxLayout(panel)
-        layout.setContentsMargins(10, 15, 10, 15)
-        layout.setSpacing(10)
+        layout.setContentsMargins(5, 10, 5, 10)
+        layout.setSpacing(5)
         
         # 标题和按钮区域
         header_layout = QHBoxLayout()
@@ -115,7 +115,7 @@ class ConfigDialog(QDialog):
         self.add_button.setObjectName("addButton")
         self.add_button.setToolTip("添加新模式")
         self.add_button.setText("添加")
-        self.add_button.setFixedSize(70, 28)
+        self.add_button.setFixedSize(60, 24)
         self.add_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setup_button_animation(self.add_button)
         header_layout.addWidget(self.add_button)
@@ -125,7 +125,7 @@ class ConfigDialog(QDialog):
         self.delete_button.setObjectName("deleteButton")
         self.delete_button.setToolTip("删除选中的模式")
         self.delete_button.setText("删除")
-        self.delete_button.setFixedSize(70, 28)
+        self.delete_button.setFixedSize(60, 24)
         self.delete_button.setCursor(Qt.CursorShape.PointingHandCursor)
         self.setup_button_animation(self.delete_button)
         header_layout.addWidget(self.delete_button)
@@ -157,20 +157,20 @@ class ConfigDialog(QDialog):
         panel = QFrame()
         panel.setObjectName("rightPanel")
         layout = QVBoxLayout(panel)
-        layout.setContentsMargins(15, 15, 15, 15)
-        layout.setSpacing(12)
+        layout.setContentsMargins(10, 10, 10, 10)
+        layout.setSpacing(8)
         
         # 标题区域
         details_label = QLabel("模式详情")
         details_label.setObjectName("sectionLabel")
         layout.addWidget(details_label)
         layout.addWidget(self.create_horizontal_line())
-        layout.addSpacing(5)
+        layout.addSpacing(2)
         
         # 表单区域
         form_layout = QGridLayout()
-        form_layout.setVerticalSpacing(10)
-        form_layout.setHorizontalSpacing(15)
+        form_layout.setVerticalSpacing(6)
+        form_layout.setHorizontalSpacing(10)
         
         # 模式名称
         name_label = QLabel("模式名称:")
@@ -193,10 +193,11 @@ class ConfigDialog(QDialog):
         form_layout.addWidget(self.display_name_edit, 1, 1)
         
         layout.addLayout(form_layout)
-        layout.addSpacing(10)
+        layout.addSpacing(5)
         
         # 宏定义区域
         macros_layout = QVBoxLayout()
+        macros_layout.setSpacing(5)
         
         macros_label = QLabel("宏定义:")
         macros_label.setObjectName("sectionLabel")

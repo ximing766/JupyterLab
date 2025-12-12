@@ -60,9 +60,8 @@ class UwbBuildTool(QMainWindow):
         self.setWindowTitle("UWB BUILD TOOL")
         
         # Set window size
-        self.setMinimumSize(520, 320)
-        self.setMaximumSize(520, 320)
-        self.resize(520, 320)
+        self.setMaximumSize(330, 260)
+        self.resize(330, 260)
         
         # Set window to stay on top and handle transparency
         self.setWindowFlags(Qt.WindowType.Window | Qt.WindowType.WindowStaysOnTopHint)
@@ -84,8 +83,8 @@ class UwbBuildTool(QMainWindow):
         self.setCentralWidget(central_widget)
         
         main_layout = QVBoxLayout(central_widget)
-        main_layout.setSpacing(8)
-        main_layout.setContentsMargins(10, 8, 10, 8)
+        main_layout.setSpacing(1)
+        main_layout.setContentsMargins(10, 1, 10, 8)
         
         config_widget = self.create_config_area()
         main_layout.addWidget(config_widget)
@@ -106,28 +105,21 @@ class UwbBuildTool(QMainWindow):
         project_layout = QHBoxLayout()
         project_layout.setSpacing(6)
         
-        project_label = QLabel("项目:")
-        # project_label.setMinimumWidth(40)
-        project_layout.addWidget(project_label)
-        
         self.project_combo = QComboBox()
         self.project_combo.setEditable(True)
-        # self.project_combo.setMinimumWidth(350)
         self.project_combo.setSizePolicy(self.project_combo.sizePolicy().horizontalPolicy(), self.project_combo.sizePolicy().verticalPolicy())
-        # Enable context menu for project combo
         self.project_combo.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         project_layout.addWidget(self.project_combo, 1)
         
-        self.browse_button = QPushButton("浏览")
+        self.browse_button = QPushButton("🔍")
         self.browse_button.setObjectName("browseButton")
-        self.browse_button.setFixedWidth(50)
+        self.browse_button.setFixedWidth(40)
         project_layout.addWidget(self.browse_button)
         
         # Add delete project button
-        self.delete_project_button = QPushButton("删除")
+        self.delete_project_button = QPushButton("❌")
         self.delete_project_button.setObjectName("deleteButton")
-        self.delete_project_button.setFixedWidth(50)
-        self.delete_project_button.setToolTip("删除当前选中的项目")
+        self.delete_project_button.setFixedWidth(40)
         project_layout.addWidget(self.delete_project_button)
         
         # Add separator line
@@ -135,7 +127,7 @@ class UwbBuildTool(QMainWindow):
         separator.setFrameShape(QFrame.Shape.VLine)
         separator.setFrameShadow(QFrame.Shadow.Sunken)
         separator.setFixedWidth(2)
-        separator.setStyleSheet("QFrame { color: #cccccc; background-color: #cccccc; }")
+        separator.setStyleSheet("color: #cccccc; background-color: #cccccc;")
         project_layout.addWidget(separator)
         
         # Add config and clear buttons after browse button
@@ -156,10 +148,6 @@ class UwbBuildTool(QMainWindow):
         controls_layout = QHBoxLayout()
         controls_layout.setSpacing(6)
         
-        mode_label = QLabel("方案:")
-        mode_label.setMinimumWidth(35)
-        controls_layout.addWidget(mode_label)
-        
         self.mode_combo = QComboBox()
         self.mode_combo.setMinimumWidth(100)
         # self.mode_combo.setFixedWidth(80)
@@ -176,13 +164,12 @@ class UwbBuildTool(QMainWindow):
         controls_layout.addWidget(self.config_mode_combo)
 
         # Add tri-state channel mode checkbox (single/double/triple channel)
-        self.channel_mode_checkbox = CheckBox("单通道")
+        self.channel_mode_checkbox = CheckBox("S")
         self.channel_mode_checkbox.setObjectName("channelModeCheckBox")
         # Enable tri-state: Unchecked=单通道, PartiallyChecked=双通道, Checked=三通道
         self.channel_mode_checkbox.setTristate(True)
         # Force default to Unchecked (single channel)
         self.channel_mode_checkbox.setCheckState(Qt.CheckState.Unchecked)
-        self.channel_mode_checkbox.setToolTip("选择通道数量：未选=单通道，半选=双通道，选中=三通道")
         controls_layout.addWidget(self.channel_mode_checkbox)
         
         controls_layout.addStretch()
@@ -191,21 +178,18 @@ class UwbBuildTool(QMainWindow):
         self.generate_header_button.setObjectName("generateButton")
         self.generate_header_button.setFixedWidth(38)   
         self.generate_header_button.setFixedHeight(28)
-        self.generate_header_button.setToolTip("生成头文件")
         controls_layout.addWidget(self.generate_header_button)
         
         self.open_firmware_folder_button = QPushButton("📁")
         self.open_firmware_folder_button.setObjectName("openFirmwareFolderButton")
         self.open_firmware_folder_button.setFixedWidth(38)
         self.open_firmware_folder_button.setFixedHeight(28)
-        self.open_firmware_folder_button.setToolTip("打开固件文件夹")
         controls_layout.addWidget(self.open_firmware_folder_button)
         
-        self.make_button = QPushButton("➽")
+        self.make_button = QPushButton("🔨")
         self.make_button.setObjectName("makeButton")
         self.make_button.setFixedWidth(38)
         self.make_button.setFixedHeight(28)
-        self.make_button.setToolTip("build")
         controls_layout.addWidget(self.make_button)
         
         config_layout.addLayout(controls_layout)
@@ -589,11 +573,11 @@ class UwbBuildTool(QMainWindow):
         """Update checkbox text based on current tri-state selection."""
         st = self.channel_mode_checkbox.checkState()
         if st == Qt.CheckState.Unchecked:
-            self.channel_mode_checkbox.setText("单通道")
+            self.channel_mode_checkbox.setText("S")
         elif st == Qt.CheckState.PartiallyChecked:
-            self.channel_mode_checkbox.setText("双通道")
+            self.channel_mode_checkbox.setText("D")
         else:
-            self.channel_mode_checkbox.setText("三通道")
+            self.channel_mode_checkbox.setText("T")
     
     def eventFilter(self, obj, event):
         """Handle window focus events for transparency"""
