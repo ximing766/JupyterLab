@@ -3,3 +3,4 @@ pyqt6/chat/output/Chat.exe
 output
 UWBLogs
 **/nuitka_cache/
+**/__pycache__/

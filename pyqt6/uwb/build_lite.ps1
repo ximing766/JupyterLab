@@ -34,7 +34,7 @@ python -m nuitka `
     --nofollow-import-to=matplotlib `
     --nofollow-import-to=PySide6 `
     --product-name="UWBDash" `
-    --product-version="2.3" `
+    --product-version="2.3.1" `
     --file-version="1.0.0.0" `
     --copyright="CardShare@Qilang² © 2025" `
     --trademarks="UWBDash" `

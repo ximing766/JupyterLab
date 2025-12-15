@@ -46,9 +46,9 @@ import math
 # True: 闸机模式（显示闸机动画，与日志各占一半宽度）
 COM1_GATE_MODE = False
 
-APP_VERSION = "v2.3"
+APP_VERSION = "v2.3.1"
 APP_NAME = "UWBDash"
-BUILD_DATE = "2025年11月"
+BUILD_DATE = "2025年12月"
 AUTHOR = "@Qilang²"
 
 
@@ -725,7 +725,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.search_line2.returnPressed.connect(self.on_search_triggered2)
         
         # Add previous and next search buttons for COM2
-        self.search_prev_btn2 = ToolButton(FIF.DOWN)
+        self.search_prev_btn2 = ToolButton(FIF.UP)
         self.search_prev_btn2.setFixedSize(30, 30)
         self.search_prev_btn2.clicked.connect(self.search_previous2)
         self.search_prev_btn2.setToolTip("Previous match")
@@ -1509,7 +1509,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 'USER': {'used': 0, 'total': 20},
                 'AUTH': {'used': 0, 'total': 20},
                 'TRANS': {'used': 0, 'total': 10},
-                'DTPML': {'used': 0, 'total': 20}
+                'DTPML': {'used': 0, 'total': 2}
             }
 
             layout.addWidget(display_splitter)
@@ -1534,7 +1534,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.user_card = self.create_status_card("USERS", 20, FIF.PEOPLE)
         self.auth_card = self.create_status_card("AUTH", 20, FIF.IOT)
         self.trans_card = self.create_status_card("TRANS", 10, FIF.IOT)
-        self.dtpml_card = self.create_status_card("DTPML", 20, FIF.IOT)
+        self.dtpml_card = self.create_status_card("DTPML", 2, FIF.IOT)
         
         layout.addWidget(self.link_card)
         layout.addWidget(self.user_card, 1)  # 添加拉伸因子

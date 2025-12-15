@@ -2,6 +2,7 @@ from rich.logging import RichHandler
 import logging
 from logging.handlers import RotatingFileHandler
 import os
+from datetime import datetime
 
 class Logger:
     def __init__(self, name="rich", log_level=logging.INFO, app_path=None):
@@ -63,10 +64,18 @@ class Logger:
             for handler in logger.handlers[:]:
                 logger.removeHandler(handler)
         
+        # 获取当前日期用于创建子文件夹
+        date_str = datetime.now().strftime('%Y-%m-%d')
+        
         # 根据日志类型选择文件夹
         if format_type == 'csv':
             self.loggers[name] = {'logger': logger, 'type': 'csv'}
-            log_path = os.path.join(self.csv_log_dir, filename)
+            
+            # 创建日期子文件夹
+            current_date_dir = os.path.join(self.csv_log_dir, date_str)
+            os.makedirs(current_date_dir, exist_ok=True)
+            
+            log_path = os.path.join(current_date_dir, filename)
             handler = RotatingFileHandler(
                 log_path,
                 maxBytes=10*1024*1024,
@@ -78,7 +87,12 @@ class Logger:
             self.loggers[name] = {'logger': logger, 'type': 'csv'}
         else:
             self.loggers[name] = {'logger': logger, 'type': 'text'}
-            log_path = os.path.join(self.text_log_dir, filename)
+            
+            # 创建日期子文件夹
+            current_date_dir = os.path.join(self.text_log_dir, date_str)
+            os.makedirs(current_date_dir, exist_ok=True)
+            
+            log_path = os.path.join(current_date_dir, filename)
             handler = RotatingFileHandler(
                 log_path,
                 maxBytes=30*1024*1024,
