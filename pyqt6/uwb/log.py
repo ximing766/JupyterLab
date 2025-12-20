@@ -67,6 +67,8 @@ class Logger:
         # 获取当前日期用于创建子文件夹
         date_str = datetime.now().strftime('%Y-%m-%d')
         
+        log_path = ""
+
         # 根据日志类型选择文件夹
         if format_type == 'csv':
             self.loggers[name] = {'logger': logger, 'type': 'csv'}
@@ -102,7 +104,7 @@ class Logger:
             handler.setFormatter(self.text_formatter)
             logger.addHandler(handler)
             self.loggers[name] = {'logger': logger, 'type': 'text'}
-        return logger
+        return logger, log_path
 
     def log_to(self, logger_name, level, message):
         """向指定的日志文件写入日志"""

@@ -990,8 +990,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
                 # 确保 logger 实例及其目录属性存在
                 if hasattr(self.logger, 'text_log_dir'):
-                    self.current_text_log_file_path2 = os.path.join(self.logger.text_log_dir, text_log_filename)
-                    self.logger.create_logger("UwbLog2", text_log_filename, "text") # 创建 Text 日志
+                    _, text_path2 = self.logger.create_logger("UwbLog2", text_log_filename, "text") # 创建 Text 日志
+                    self.current_text_log_file_path2 = text_path2
                     self.open_text_log_file_btn2.setEnabled(True)
                 else:
                     # 如果无法获取 log_dir，则禁用按钮并打印警告
@@ -2599,12 +2599,14 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
                 # 确保 logger 实例及其目录属性存在
                 if hasattr(self.logger, 'csv_log_dir') and hasattr(self.logger, 'text_log_dir'):
-                    self.current_csv_log_file_path = os.path.join(self.logger.csv_log_dir, csv_log_filename)
-                    self.current_text_log_file_path = os.path.join(self.logger.text_log_dir, text_log_filename)
-                    self.logger.create_logger("data", csv_log_filename, "csv") # 创建 CSV 日志
+                    _, csv_path = self.logger.create_logger("data", csv_log_filename, "csv") # 创建 CSV 日志
+                    self.current_csv_log_file_path = csv_path
+                    
                     header_str = ",".join(self.csv_title)
                     self.log_worker.add_log_task("data", "info", header_str)
-                    self.logger.create_logger("UwbLog", text_log_filename, "text") # 创建 Text 日志
+                    
+                    _, text_path = self.logger.create_logger("UwbLog", text_log_filename, "text") # 创建 Text 日志
+                    self.current_text_log_file_path = text_path
                     self.open_csv_log_file_btn.setEnabled(True) # 启用按钮
                     self.open_text_log_file_btn.setEnabled(True)
                 else:
@@ -3629,7 +3631,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
             }}
             QScrollBar:vertical {{
                 background   : transparent;
-                width        : 5px;
+                width        : 7px;
                 margin       : 2px 0 2px 0;
                 border-radius: 0px;
             }}
@@ -3654,7 +3656,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
             }}
             QScrollBar:horizontal {{
                 background   : transparent;
-                height       : 5px;
+                height       : 7px;
                 margin       : 0 2px 0 2px;
                 border-radius: 5px;
             }}

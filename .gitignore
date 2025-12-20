@@ -4,3 +4,6 @@ output
 UWBLogs
 **/nuitka_cache/
 **/__pycache__/
+**/output/
+*.pyc
+**/__pycache__

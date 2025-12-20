@@ -38,7 +38,7 @@ class ServiceBridge(QObject):
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
-        self.setWindowTitle("UWBReader_v1.0")
+        self.setWindowTitle("UWBREADER")
         self.setFixedSize(650, 400)
         icon_path = os.path.join(os.path.dirname(__file__), "UWBReader.ico")
         if os.path.exists(icon_path):
@@ -83,17 +83,17 @@ class MainWindow(QMainWindow):
         nav_layout.setContentsMargins(10, 10, 10, 10)
         nav_layout.setSpacing(8)
         # nav.setFixedWidth(72)
-        brand = QLabel("UWB")
-        brand.setAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
+        brand = QLabel("🐻")
+        brand.setAlignment(Qt.AlignmentFlag.AlignCenter)
         nav_layout.addWidget(brand)
         sep = QFrame()
         sep.setFrameShape(QFrame.Shape.HLine)
         sep.setStyleSheet("QFrame{color:#dbe2f1; background:#dbe2f1; max-height:1px;}")
         nav_layout.addWidget(sep)
-        self.nav_home = QPushButton("🏠")
+        self.nav_home = QPushButton("🏯")
         self.nav_home.setCheckable(True)
         self.nav_home.setChecked(True)
-        self.nav_settings = QPushButton("⚙")
+        self.nav_settings = QPushButton("⚙️")
         self.nav_settings.setCheckable(True)
         nav_layout.addWidget(self.nav_home)
         nav_layout.addWidget(self.nav_settings)
@@ -126,17 +126,17 @@ class MainWindow(QMainWindow):
         self.enter_com = QComboBox()
         self.enter_baud = QComboBox()
         self.enter_baud.addItems(["230400", "460800", "115200", "3000000", "9600"])
-        self.enter_toggle = QPushButton("Open")
+        self.enter_toggle = QPushButton("OPEN")
         self._style_button(self.enter_toggle, False)
 
         self.exit_com = QComboBox()
         self.exit_baud = QComboBox()
         self.exit_baud.addItems(["230400", "460800", "115200", "3000000", "9600"])
-        self.exit_toggle = QPushButton("Open")
+        self.exit_toggle = QPushButton("OPEN")
         self._style_button(self.exit_toggle, False)
 
         self.pin_top = QCheckBox("Pin")
-        self.e1_check = QCheckBox("1E Check")
+        self.e1_check = QCheckBox("1E")
         self.e1_check.setChecked(True)
 
         row1 = QWidget()
@@ -183,13 +183,11 @@ class MainWindow(QMainWindow):
         left_bar_layout = QHBoxLayout(left_bar)
         left_bar_layout.setContentsMargins(0, 0, 0, 0)
         left_bar_layout.setSpacing(6)
-        self.clear_enter = QPushButton("Clear")
-        self.save_enter = QPushButton("Save")
+        self.clear_enter = QPushButton("CLEAR")
         self.enter_title = QLabel("ENTER")
         left_bar_layout.addWidget(self.enter_title)
         left_bar_layout.addStretch(1)
         left_bar_layout.addWidget(self.clear_enter)
-        left_bar_layout.addWidget(self.save_enter)
         left_layout.addWidget(left_bar)
         self.enter_log = QPlainTextEdit()
         self.enter_log.setReadOnly(True)
@@ -205,13 +203,11 @@ class MainWindow(QMainWindow):
         right_bar_layout = QHBoxLayout(right_bar)
         right_bar_layout.setContentsMargins(0, 0, 0, 0)
         right_bar_layout.setSpacing(6)
-        self.clear_exit = QPushButton("Clear")
-        self.save_exit = QPushButton("Save")
+        self.clear_exit = QPushButton("CLEAR")
         self.exit_title = QLabel("EXIT")
         right_bar_layout.addWidget(self.exit_title)
         right_bar_layout.addStretch(1)
         right_bar_layout.addWidget(self.clear_exit)
-        right_bar_layout.addWidget(self.save_exit)
         right_layout.addWidget(right_bar)
         self.exit_log = QPlainTextEdit()
         self.exit_log.setReadOnly(True)
@@ -278,8 +274,6 @@ class MainWindow(QMainWindow):
         self.nav_settings.clicked.connect(self._open_settings)
         self.clear_enter.clicked.connect(lambda: self.enter_log.setPlainText(""))
         self.clear_exit.clicked.connect(lambda: self.exit_log.setPlainText(""))
-        self.save_enter.clicked.connect(lambda: self._save_log(self.enter_log))
-        self.save_exit.clicked.connect(lambda: self._save_log(self.exit_log))
         self.bridge.enterLog.connect(self._append_enter)
         self.bridge.exitLog.connect(self._append_exit)
         self.bridge.error.connect(self._show_error)
@@ -354,11 +348,11 @@ class MainWindow(QMainWindow):
     def _update_state(self, which, connected):
         if which == "enter":
             self.enter_connected = connected
-            self.enter_toggle.setText("Close" if connected else "Open")
+            self.enter_toggle.setText("CLOSE" if connected else "OPEN")
             self._style_button(self.enter_toggle, connected)
         else:
             self.exit_connected = connected
-            self.exit_toggle.setText("Close" if connected else "Open")
+            self.exit_toggle.setText("CLOSE" if connected else "OPEN")
             self._style_button(self.exit_toggle, connected)
 
     def _open_settings(self):
@@ -368,12 +362,6 @@ class MainWindow(QMainWindow):
 
     def _toggle_setting(self):
         pass
-
-    def _save_log(self, editor: QPlainTextEdit):
-        path, _ = QFileDialog.getSaveFileName(self, "保存日志", "log.txt", "Text Files (*.txt)")
-        if path:
-            with open(path, "w", encoding="utf-8") as f:
-                f.write(editor.toPlainText())
 
     def _push_settings(self):
         self.service.set_enter_parameters(
@@ -443,8 +431,20 @@ class MainWindow(QMainWindow):
         title_style = "QLabel{color:#425b8a; font-weight:700; padding-left:8px; border-left:4px solid #5B8DEF;}"
         self.enter_title.setStyleSheet(title_style)
         self.exit_title.setStyleSheet(title_style)
-        for b in [self.clear_enter, self.save_enter, self.clear_exit, self.save_exit]:
+        for b in [self.clear_enter, self.clear_exit]:
             self._style_ghost_button(b)
+        
+        # ScrollBar Styles
+        sb_style = (
+            "QScrollBar:vertical{background:transparent; width:8px; margin:0px;}"
+            "QScrollBar::handle:vertical{background:#cfd6e6; min-height:30px; border-radius:4px;}"
+            "QScrollBar::handle:vertical:hover{background:#b0b8c8;}"
+            "QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical{height:0px;}"
+            "QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical{background:none;}"
+        )
+        self.enter_log.verticalScrollBar().setStyleSheet(sb_style)
+        self.exit_log.verticalScrollBar().setStyleSheet(sb_style)
+
         cb_style = (
             "QCheckBox{color:#4c5b73;}"
             "QCheckBox::indicator{width:16px; height:16px; border:1px solid #d0d7e2; border-radius:4px; background:#ffffff;}"
@@ -466,7 +466,12 @@ class MainWindow(QMainWindow):
         btn.setStyleSheet("QPushButton{background:#5B8DEF; color:white; border-radius:16px; padding:6px 14px;} QPushButton:hover{background:#4a7bdc}")
 
     def _style_ghost_button(self, btn):
-        btn.setStyleSheet("QPushButton{background:#ffffff; color:#4c5b73; border:1px solid #d0d7e2; border-radius:6px; padding:4px 10px;} QPushButton:hover{background:#f3f6fb}")
+        # Minimalist modern clear button
+        btn.setStyleSheet(
+            "QPushButton{background:transparent; color:#9aa5b6; border:none; border-radius:4px; font-weight:600; padding:4px 8px;}"
+            "QPushButton:hover{background:#eef3ff; color:#5B8DEF;}"
+            "QPushButton:pressed{background:#dbe5f9;}"
+        )
 
 class SettingsDialog(QDialog):
     def __init__(self, service: UwbService, parent=None):

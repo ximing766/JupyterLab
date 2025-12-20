@@ -178,14 +178,12 @@ class BleManager(private val context: Context) {
         
         return withContext(Dispatchers.IO) {
             try {
-                Log.d(TAG, "Sending APDU frame: ${data.size} bytes")
+                // Log.d(TAG, "Sending APDU frame: ${data.size} bytes")
                 
                 // Send APDU frame data directly
                 val success = writeCharacteristic(data)
                 
-                if (success) {
-                    Log.d(TAG, "APDU frame sent successfully")
-                } else {
+                if (!success) {
                     Log.e(TAG, "Failed to send APDU frame")
                 }
                 
@@ -209,14 +207,30 @@ class BleManager(private val context: Context) {
         
         return withContext(Dispatchers.IO) {
             try {
+                // Determine write type based on properties
+                val properties = characteristic.properties
+                val writeType = if ((properties and BluetoothGattCharacteristic.PROPERTY_WRITE_NO_RESPONSE) != 0) {
+                    BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE
+                } else {
+                    BluetoothGattCharacteristic.WRITE_TYPE_DEFAULT
+                }
+                
+                characteristic.writeType = writeType
+                
                 @Suppress("DEPRECATION")
                 characteristic.value = data
                 @Suppress("DEPRECATION")
                 val result = gatt.writeCharacteristic(characteristic)
                 
-                // #XXX OTA速率
+                // XXX OTA速率优化
                 if (result) {
-                    delay(7)
+                    // Use minimal delay for NO_RESPONSE to maximize throughput
+                    // 1ms is usually sufficient for stability on most devices
+                    if (writeType == BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE) {
+                         delay(1) 
+                    } else {
+                         delay(5) 
+                    }
                 }
                 
                 result

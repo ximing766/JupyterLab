@@ -31,24 +31,27 @@
     "APP     :INFO": "#8ccfff",
     "APP     :WARN": "#ffd280",
     "gCapSessionHandle": "#00ff7f",
-    "gDtxSessionHandle": "#b9f309",
     "gMrmSessionHandle": "#ffaaff",
     "APP_HIFTask": "#34a7b2",
     "SystemStatus = 1": "#aa9bff",
     "INTO RED AREA": "#ff5885",
     "INTO BLUE AREA": "#55aaff",
     "Crash Log": "#ff0000",
-    "Detection Area": "#6a6a6a"
+    "Detection Area": "#6a6a6a",
+    "gLLSessionHandle": "#b9f309",
+    "<inf>": "#6ef8ff",
+    "<dbg>": "#4385ff",
+    "<wrn>": "#ffda06"
   },
   "quick_send": {
-    "test": "hello world",
-    "123": "123"
+    "hello": "hello world",
+    "HALT": "00 00 FF 13 00 05 FF FF FF FF FF 06 FF FF FF FF FF 01 C2 00 01 01 00 00 3A 00"
   },
   "search_history": {
     "com1_search": [
-      "Crash Log",
-      "crash",
-      "E3"
+      "APP_HIFTask",
+      "gLLSessionHandle",
+      "@@@ Time of"
     ]
   }
 }

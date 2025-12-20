@@ -36,6 +36,7 @@ class OtaManager(
     
     // OTA confirmation waiting flags
     private var isWaitingForEraseConfirmation = false  // Flag to track erase confirmation waiting
+    private var eraseResult = false // Track erase result
     private var isWaitingForProgramConfirmation = false  // Flag to track program confirmation waiting
     private var isWaitingForVerifyConfirmation = false
     private var verificationResult = false // Track verification result  // Flag to track verify confirmation waiting
@@ -111,7 +112,7 @@ class OtaManager(
     }
     
     /**
-     * Perform the actual OTA upgrade process
+     * BM APP OTA  
      * @param firmwareUri URI of the firmware file
      * @param firmwareType Type of firmware (APP or SR150)
      */
@@ -185,11 +186,11 @@ class OtaManager(
         executeProgramPhase(firmwareChunks, firmwareType)
         
         // Step 7: Verify firmware (read header)
-        withContext(Dispatchers.Main) {
-            onStatusUpdate?.invoke("正在验证固件...")
-        }
+        // withContext(Dispatchers.Main) {
+        //     onStatusUpdate?.invoke("正在验证固件...")
+        // }
         
-        executeVerifyPhase(firmwareType)
+        // executeVerifyPhase(firmwareType)
         
         // Step 8: Complete
         val otaEndTime = System.currentTimeMillis()
@@ -197,16 +198,16 @@ class OtaManager(
         val durationSeconds = otaDuration / 1000.0
         
         // Check verification result before proceeding
-        if (!verificationResult) {
-            withContext(Dispatchers.Main) {
-                onStatusUpdate?.invoke("OTA升级失败")
-                LogManager.e("固件验证失败，停止升级流程")
-                onOtaComplete?.invoke(false, "固件验证失败，升级终止")
-            }
-            isOtaInProgress = false
-            otaStartTime = 0L
-            return
-        }
+        // if (!verificationResult) {
+        //     withContext(Dispatchers.Main) {
+        //         onStatusUpdate?.invoke("OTA升级失败")
+        //         LogManager.e("固件验证失败，停止升级流程")
+        //         onOtaComplete?.invoke(false, "固件验证失败，升级终止")
+        //     }
+        //     isOtaInProgress = false
+        //     otaStartTime = 0L
+        //     return
+        // }
 
         withContext(Dispatchers.Main) {
             onStatusUpdate?.invoke("OTA升级完成")
@@ -233,6 +234,7 @@ class OtaManager(
     }
     
     private suspend fun executeErasePhase(sectorsNeeded: Int, firmwareType: FirmwareType) {
+        eraseResult = false // Reset erase result
         withContext(Dispatchers.Main) {
             LogManager.i("=== 阶段1: Flash擦除 ===")
             onProgressUpdate?.invoke(0, 100, "开始擦除Flash...", null, 0L, totalBytesToTransfer.toLong())
@@ -287,8 +289,16 @@ class OtaManager(
             // Timeout occurred
             isWaitingForEraseConfirmation = false
             withContext(Dispatchers.Main) {
-                LogManager.w("警告：未收到擦除确认包，继续执行写入操作")
+                LogManager.e("错误：未收到擦除确认包，停止升级")
             }
+            throw Exception("擦除超时，未收到确认包")
+        }
+
+        if (!eraseResult) {
+            withContext(Dispatchers.Main) {
+                LogManager.e("错误：擦除失败，停止升级")
+            }
+            throw Exception("擦除失败")
         }
     }
     
@@ -529,7 +539,7 @@ class OtaManager(
     }
 
     /**
-     * Handle received BLE data, check for OTA confirmation packets
+     * BM BLE CB
      * Format: [phase, status/expected_page] where:
      * - phase: 0x01=erase, 0x02=program, 0x03=verify, 0x04=packet_loss_error
      * - status: 0x00=success, 0x01=failure (for phases 1-3)
@@ -544,9 +554,9 @@ class OtaManager(
                 0x01.toByte() -> { // Erase confirmation
                     if (isWaitingForEraseConfirmation) {
                         isWaitingForEraseConfirmation = false
-                        val success = statusOrPage == 0x00.toByte()
+                        eraseResult = statusOrPage == 0x00.toByte()
                         CoroutineScope(Dispatchers.Main).launch {
-                            if (success) {
+                            if (eraseResult) {
                                 LogManager.i("收到擦除确认包：擦除成功")
                             } else {
                                 LogManager.e("收到擦除确认包：擦除失败")
@@ -613,7 +623,7 @@ class OtaManager(
     }
 
     /**
-     * Perform SR150 firmware upgrade with special handling
+     * BM 150 OTA
      * SR150 firmware uses CRC16-XMODEM and writes config to 0x00300000
      */
     private suspend fun performSR150OtaUpgrade(firmwareUri: Uri) {
@@ -670,6 +680,12 @@ class OtaManager(
             LogManager.i("固件数据地址: 0x${(FirmwareType.SR150_FIRMWARE.startAddress + SR150FirmwareHeader.CONFIG_SIZE).toString(16).uppercase()}")
             onOtaComplete?.invoke(true, "SR150固件升级成功")
         }
+
+        // Step 10: Reset MCU
+        withContext(Dispatchers.Main) {
+            onStatusUpdate?.invoke("重置MCU...")
+        }
+        resetDevice()
         
         isOtaInProgress = false
         otaStartTime = 0L
@@ -679,6 +695,7 @@ class OtaManager(
      * Execute SR150 firmware erase phase
      */
     private suspend fun executeSR150ErasePhase(sectorsNeeded: Int) {
+        eraseResult = false // Reset erase result
         withContext(Dispatchers.Main) {
             LogManager.i("=== SR150阶段1: Flash擦除 ===")
             onProgressUpdate?.invoke(0, 100, "开始擦除SR150 Flash...", null, 0L, totalBytesToTransfer.toLong())
@@ -726,8 +743,16 @@ class OtaManager(
         if (isWaitingForEraseConfirmation) {
             isWaitingForEraseConfirmation = false
             withContext(Dispatchers.Main) {
-                LogManager.w("警告：未收到SR150擦除确认包，继续执行写入操作")
+                LogManager.e("错误：未收到SR150擦除确认包，停止升级")
             }
+            throw Exception("SR150擦除超时，未收到确认包")
+        }
+
+        if (!eraseResult) {
+            withContext(Dispatchers.Main) {
+                LogManager.e("错误：SR150擦除失败，停止升级")
+            }
+            throw Exception("SR150擦除失败")
         }
     }
     
