@@ -344,9 +344,9 @@ class OtaManager(
                 
                 val chunk = firmwareChunks[chunkIndex]
                 
-                // Calculate progress: 10% (erase) + 80% (program) + 10% (verify)
-                // Program phase progress: 10% to 90%
-                val programProgress = 10 + ((chunkIndex + 1) * 80 / totalChunks)
+                // Calculate progress: 10% (erase) + 90% (program)
+                // Program phase progress: 10% to 100%
+                val programProgress = 10 + ((chunkIndex + 1) * 90 / totalChunks)
                 
                 // Update bytes transferred and calculate speed
                 bytesTransferred += chunk.size
