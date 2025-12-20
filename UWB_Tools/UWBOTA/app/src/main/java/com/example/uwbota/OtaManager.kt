@@ -24,7 +24,7 @@ class OtaManager(
     private var otaJob: Job? = null
     
     // OTA configuration - Based on UWB_OTA_PLAN_INTRO.md
-    private val appFirmwareStartAddress = 0x280000  // External Flash App firmware storage area
+    private val appFirmwareStartAddress = 0x260000  // External Flash App firmware storage area
     private val sr150FirmwareStartAddress = 0x300000  // External Flash SR150 firmware storage area
     private val maxRetries = 3
     private val transmissionDelay = 100L // ms between transmissions

@@ -222,12 +222,12 @@ class BleManager(private val context: Context) {
                 @Suppress("DEPRECATION")
                 val result = gatt.writeCharacteristic(characteristic)
                 
-                // XXX OTA速率优化
+                // BM OTA速率优化
                 if (result) {
                     // Use minimal delay for NO_RESPONSE to maximize throughput
                     // 1ms is usually sufficient for stability on most devices
                     if (writeType == BluetoothGattCharacteristic.WRITE_TYPE_NO_RESPONSE) {
-                         delay(1) 
+                         delay(2) 
                     } else {
                          delay(5) 
                     }

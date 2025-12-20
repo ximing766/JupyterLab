@@ -20,7 +20,7 @@ class ApduProtocol {
         const val FIRMWARE_READ_HEADER: Byte = 0xCD.toByte()
         
         // Flash address constants - Based on UWB_OTA_PLAN_INTRO.md
-        const val APP_FIRMWARE_START_ADDRESS = 0x280000   // External Flash App firmware storage area
+        const val APP_FIRMWARE_START_ADDRESS = 0x260000   // External Flash App firmware storage area
         const val SR150_FIRMWARE_START_ADDRESS = 0x300000 // External Flash SR150 firmware storage area
         
         // Flash parameters

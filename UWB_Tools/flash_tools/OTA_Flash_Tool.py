@@ -29,7 +29,8 @@ OTA_TRANSFER_SIZE = W25Q32JV_PAGE_SIZE * OTA_PAGES_PER_TRANSFER  # 传输大小7
 
 # 固件相关常量
 FIRMWARE_MAGIC = 0x12345678
-EXTERNAL_FLASH_APP_START = 0x00280000
+INTER_APP_ADDR = 0x0A000  # 应用程序写入地址
+EXTERNAL_FLASH_APP_START = 0x00260000
 SR150_FLASH_START_ADDR = 0x00300100  # SR150固件写入地址
 MAX_FIRMWARE_SIZE = 1024 * 1024  # 1MB
 
@@ -438,6 +439,7 @@ class OTAWorker(QThread):
         
         self.finished.emit(True, success_msg)
 
+# BM: FLASH Tool
 class FlashTool(QMainWindow):
     def __init__(self):
         super().__init__()
@@ -445,7 +447,7 @@ class FlashTool(QMainWindow):
         self.settings = QSettings('DK6FlashTool', 'Settings')
         
         self.setFixedWidth(280)  # 注释掉固定宽度设置，允许宽度调整
-        self.setFixedHeight(130)  # 设置固定高度为250px，BUILD按钮移到Pages栏后减小高度
+        self.setFixedHeight(160)  # 设置固定高度为250px，BUILD按钮移到Pages栏后减小高度
         
         # 置顶窗口
         self.setWindowFlags(self.windowFlags() | Qt.WindowType.WindowStaysOnTopHint)
@@ -556,13 +558,13 @@ class FlashTool(QMainWindow):
         
         self.pages_combo = QComboBox()
         self.pages_combo.addItems(['1', '2', '3'])
-        self.pages_combo.setCurrentIndex(OTA_PAGES_PER_TRANSFER - 1)  # 设置为保存的配置
+        self.pages_combo.setCurrentIndex(OTA_PAGES_PER_TRANSFER - 1) 
         self.pages_combo.setMinimumWidth(100)
         self.pages_combo.currentIndexChanged.connect(self.on_pages_changed)
 
         # config_row.addWidget(pages_label)
         # config_row.addWidget(self.pages_combo)
-        config_row.addStretch()  # 添加弹性空间
+        config_row.addStretch()  
         main_layout.addLayout(config_row)
         
         button_frame = QFrame()
@@ -580,9 +582,9 @@ class FlashTool(QMainWindow):
         button_grid.addWidget(reset_btn, 0, 1)
 
         app_flash_btn = QPushButton('APP FLASH')
-        app_flash_btn.setObjectName('app_flash_btn')  # 使用专用的App Flash按钮样式
-        app_flash_btn.setEnabled(True)  # 启用App Flash按钮
-        app_flash_btn.clicked.connect(lambda: self.flash_firmware(0x19000))
+        app_flash_btn.setObjectName('app_flash_btn')
+        app_flash_btn.setEnabled(True)  
+        app_flash_btn.clicked.connect(lambda: self.flash_firmware(INTER_APP_ADDR))
         button_grid.addWidget(app_flash_btn, 0, 2)
         
         # 第二排按钮
@@ -590,20 +592,20 @@ class FlashTool(QMainWindow):
         ota_flash_btn.setObjectName('ota_flash_btn')
         ota_flash_btn.clicked.connect(self.ota_flash_firmware)
         button_grid.addWidget(ota_flash_btn, 1, 0)
-        ota_flash_btn.setVisible(False)
+        # ota_flash_btn.setVisible(False)
         
         # UUID按钮
         uuid_btn = QPushButton('UUID')
         uuid_btn.setObjectName('uuid_btn')
         uuid_btn.clicked.connect(self.get_uuid)
         button_grid.addWidget(uuid_btn, 1, 1)
-        uuid_btn.setVisible(False)
+        # uuid_btn.setVisible(False)
 
         sr150_btn = QPushButton('SR150')
         sr150_btn.setObjectName('sr150_btn')
         sr150_btn.clicked.connect(self.sr150_flash_firmware)
         button_grid.addWidget(sr150_btn, 1, 2)
-        sr150_btn.setVisible(False)
+        # sr150_btn.setVisible(False)
         
         # 设置按钮间距
         button_grid.setVerticalSpacing(4)  
