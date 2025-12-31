@@ -524,7 +524,7 @@ class FlashTool(QMainWindow):
         self.refresh_com_ports()
         
         self.baud_combo = QComboBox()
-        self.baud_combo.addItems(['1000000', '460800'])
+        self.baud_combo.addItems(['1000000', '460800', '921600'])
         self.baud_combo.setCurrentText('1000000')
         self.baud_combo.setMinimumWidth(80)
         
