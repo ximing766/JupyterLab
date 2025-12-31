@@ -10,3 +10,11 @@ UWBLogs
 **/*.dist
 **/*.rar
 **/*.build
+
+# 忽略编译生成的文件
+UWB_Tools/build_tool/main.dist/
+UWB_Tools/flash_tools/nuitka_cache/downloads/
+
+# 忽略可执行文件
+*.exe
+*.zip
