@@ -7,3 +7,6 @@ UWBLogs
 **/output/
 *.pyc
 **/__pycache__
+**/*.dist
+**/*.rar
+**/*.build
