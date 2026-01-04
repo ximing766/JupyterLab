@@ -237,9 +237,25 @@ class OTAWorker(QThread):
             # Use FIRMWARE_PROGRAM command to send multi-page data
             packet = self.parent_tool.build_protocol_packet(FIRMWARE_PROGRAM, transfer_addr, transfer_data)
             context_info = f"{transfer + 1}/{transfers_needed}"
-            success, msg = self.parent_tool.send_packet_and_wait_response(packet, timeout=5.0, context_info=context_info)
+            
+            # Retry logic
+            max_retries = 3
+            success = False
+            last_msg = ""
+            
+            for attempt in range(max_retries):
+                if attempt > 0:
+                    self.status_updated.emit(f"写入超时，正在重试 ({attempt}/{max_retries-1})...")
+                    print(f"写入失败，正在重试 {attempt}/{max_retries-1}...")
+                    time.sleep(0.5)  # Wait a bit before retry
+                
+                success, msg = self.parent_tool.send_packet_and_wait_response(packet, timeout=2.0, context_info=context_info)
+                if success:
+                    break
+                last_msg = msg
+            
             if not success:
-                raise Exception(f"多页写入失败 (0x{transfer_addr:08X}): {msg}")
+                raise Exception(f"多页写入失败 (0x{transfer_addr:08X}) 重试{max_retries}次后仍失败: {last_msg}")
             # self.parent_tool.send_packet_no_response(packet)
             
             # Update progress
@@ -256,7 +272,7 @@ class OTAWorker(QThread):
         self.status_updated.emit("正在验证固件头...")
         
         packet = self.parent_tool.build_protocol_packet(FIRMWARE_READ_HEADER, start_addr)
-        success, msg = self.parent_tool.send_packet_and_wait_response(packet, timeout=5.0)
+        success, msg = self.parent_tool.send_packet_and_wait_response(packet, timeout=2.0)
         
         self.progress_updated.emit(100)
         
@@ -332,7 +348,7 @@ class OTAWorker(QThread):
             # Use FIRMWARE_PROGRAM command to send multi-page data
             packet = self.parent_tool.build_protocol_packet(FIRMWARE_PROGRAM, transfer_addr, transfer_data)
             context_info = f"{transfer + 1}/{transfers_needed}"
-            success, msg = self.parent_tool.send_packet_and_wait_response(packet, timeout=5.0, context_info=context_info)
+            success, msg = self.parent_tool.send_packet_and_wait_response(packet, timeout=2.0, context_info=context_info)
             
             if not success:
                 raise Exception(f"SR150多页写入失败 (0x{transfer_addr:08X}): {msg}")
@@ -371,7 +387,7 @@ class OTAWorker(QThread):
         
         # Build and send packet
         packet = self.parent_tool.build_protocol_packet(FIRMWARE_PROGRAM, config_addr, bytes(config_data))
-        success, msg = self.parent_tool.send_packet_and_wait_response(packet, timeout=5.0)
+        success, msg = self.parent_tool.send_packet_and_wait_response(packet, timeout=2.0)
         
         if not success:
             raise Exception(f"SR150配置信息写入失败 (0x{config_addr:08X}): {msg}")
@@ -786,7 +802,7 @@ class FlashTool(QMainWindow):
         except Exception as e:
             return False, f"发送失败: {str(e)}"
         
-    def send_packet_and_wait_response(self, packet, timeout=5.0, context_info=None):
+    def send_packet_and_wait_response(self, packet, timeout=2.0, context_info=None):
         if not self.serial_conn or not self.serial_conn.is_open:
             return False, "串口未连接"
         try:
@@ -1063,7 +1079,7 @@ class FlashTool(QMainWindow):
             packet = self.build_protocol_packet(SEMS_LITE_COMMAND)
             # print(f"发送获取UUID指令: {packet.hex()}")
             
-            success, response_data = self.send_packet_and_wait_response(packet, timeout=5.0)
+            success, response_data = self.send_packet_and_wait_response(packet, timeout=2.0)
             
             if success and isinstance(response_data, bytearray):
                 payload_start = 5
@@ -1346,7 +1362,7 @@ class FlashTool(QMainWindow):
             # Use FIRMWARE_PROGRAM command to send multi-page data
             packet = self.build_protocol_packet(FIRMWARE_PROGRAM, transfer_addr, transfer_data)
             context_info = f"{transfer + 1}/{transfers_needed}"
-            success, msg = self.send_packet_and_wait_response(packet, timeout=5.0, context_info=context_info)
+            success, msg = self.send_packet_and_wait_response(packet, timeout=2.0, context_info=context_info)
             
             if not success:
                 raise Exception(f"SR150多页写入失败 (0x{transfer_addr:08X}): {msg}")
@@ -1388,7 +1404,7 @@ class FlashTool(QMainWindow):
         
         # Build and send packet
         packet = self.build_protocol_packet(FIRMWARE_PROGRAM, config_addr, bytes(config_data))
-        success, msg = self.send_packet_and_wait_response(packet, timeout=5.0)
+        success, msg = self.send_packet_and_wait_response(packet, timeout=2.0)
         
         if not success:
             raise Exception(f"SR150配置信息写入失败 (0x{config_addr:08X}): {msg}")
