@@ -107,7 +107,7 @@ class OTAWorker(QThread):
         self.parent_tool = parent_tool  # Reference to FlashTool instance
         self.serial_conn = None
         
-    def run(self):
+    def run(self):   # BM: 上位机串口DFU
         try:
             if self.operation_type == 'ota_flash':
                 self._execute_ota_flash()
@@ -238,9 +238,9 @@ class OTAWorker(QThread):
             packet = self.parent_tool.build_protocol_packet(FIRMWARE_PROGRAM, transfer_addr, transfer_data)
             context_info = f"{transfer + 1}/{transfers_needed}"
             success, msg = self.parent_tool.send_packet_and_wait_response(packet, timeout=5.0, context_info=context_info)
-            
             if not success:
                 raise Exception(f"多页写入失败 (0x{transfer_addr:08X}): {msg}")
+            # self.parent_tool.send_packet_no_response(packet)
             
             # Update progress
             current_progress += current_pages
@@ -775,6 +775,16 @@ class FlashTool(QMainWindow):
         packet.append(dcs)
         packet.append(0x00)
         return bytes(packet)
+    
+    def send_packet_no_response(self, packet):
+        if not self.serial_conn or not self.serial_conn.is_open:
+            return False, "串口未连接"
+        try:
+            self.serial_conn.write(packet)
+            self.serial_conn.flush()
+            return True, "发送成功"
+        except Exception as e:
+            return False, f"发送失败: {str(e)}"
         
     def send_packet_and_wait_response(self, packet, timeout=5.0, context_info=None):
         if not self.serial_conn or not self.serial_conn.is_open:
@@ -802,8 +812,8 @@ class FlashTool(QMainWindow):
                                     print(f"响应格式错误: 结束码不正确")
                                     return False, "响应格式错误"
                                 
-                                if context_info:
-                                    print(f'接收 {context_info}')
+                                # if context_info:
+                                #     print(f'接收 {context_info}')
                                 payload_start = 5
                                 payload_end = payload_start + payload_len
                                 dcs_pos = payload_end

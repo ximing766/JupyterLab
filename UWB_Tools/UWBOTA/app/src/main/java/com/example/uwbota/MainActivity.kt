@@ -81,6 +81,26 @@ class MainActivity : AppCompatActivity() {
         initializeComponents()
         setupClickListeners()
         checkPermissions()
+        
+        // Verify native call
+        try {
+            // Test 1: Estimate Angle (Optional verification)
+            // val angle = RssiDirNative.estimateAngle(-50f, -60f, 100f)
+            // logMessage("Native Call Verification: estimateAngle(-50, -60, 100) = $angle")
+
+            // Test 2: Self Test (Primary verification)
+            val count = RssiDirNative.selfTest()
+            logMessage("Native SelfTest Result Count: $count")
+            Toast.makeText(this, "Native SelfTest Count: $count", Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            logMessage("Native Call Failed: ${e.message}")
+            e.printStackTrace()
+            Toast.makeText(this, "Native Call Failed: ${e.message}", Toast.LENGTH_LONG).show()
+        } catch (e: UnsatisfiedLinkError) {
+             logMessage("Native Call Failed (Link Error): ${e.message}")
+             e.printStackTrace()
+             Toast.makeText(this, "Native Call Link Error", Toast.LENGTH_LONG).show()
+        }
     }
     
     private fun setupEdgeToEdge() {
