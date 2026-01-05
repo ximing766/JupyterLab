@@ -40,26 +40,27 @@ class OTAClient:
         self.serial_conn = None
 
     def connect(self):
-        try:
-            self.serial_conn = serial.Serial(
-                port=self.port,
-                baudrate=self.baud_rate,
-                timeout=2.0
-            )
-            print(f"串口 {self.port} 已连接 (波特率: {self.baud_rate})")
-            return True
-        except Exception as e:
-            print(f"串口连接失败: {e}")
-            return False
+        max_retries = 3
+        for attempt in range(max_retries):
+            try:
+                self.serial_conn = serial.Serial(
+                    port=self.port,
+                    baudrate=self.baud_rate,
+                    timeout=2.0
+                )
+                return True
+            except Exception as e:
+                if attempt < max_retries - 1:
+                    print(f"串口连接失败: {e}，正在重试 ({attempt + 1}/{max_retries})...")
+                    time.sleep(1.0)
+                else:
+                    print(f"串口连接失败: {e}")
+                    return False
 
     def close(self):
         if self.serial_conn and self.serial_conn.is_open:
             self.serial_conn.close()
-            print("串口已关闭")
 
-    # ==========================================
-    # 校验算法
-    # ==========================================
     def calculate_crc32(self, data):
         crc = 0xFFFFFFFF
         polynomial = 0xEDB88320
@@ -240,9 +241,43 @@ class OTAClient:
         except Exception as e:
             return False, f"通信错误: {str(e)}"
 
-    # ==========================================
-    # 业务逻辑
-    # ==========================================
+    def get_version(self):
+        # User provided fixed packet:
+        # 00 00 FF 15 00 06 FF FF FF FF FF 05 FF FF FF FF FF 01 C5 00 01 03 00 03 02 00 30 00
+        packet = bytes([
+            0x00, 0x00, 0xFF, 0x15, 0x00, 0x06, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x05, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF,
+            0x01, 0xC5, 0x00, 0x01, 0x03, 0x00, 0x03, 0x02, 0x00, 0x30, 0x00
+        ])
+        
+        try:
+            self.serial_conn.write(packet)
+            self.serial_conn.flush()
+            
+            # Read response
+            start_time = time.time()
+            received_data = bytearray()
+            while time.time() - start_time < 2.0:
+                if self.serial_conn.in_waiting > 0:
+                    data = self.serial_conn.read(self.serial_conn.in_waiting)
+                    received_data.extend(data)
+                    
+                    # Basic check for response
+                    if len(received_data) > 5:
+                         # Assuming we just want to print whatever we get for now as user didn't specify response format
+                         pass
+                time.sleep(0.01)
+                
+            if len(received_data) > 0:
+                print(f"收到响应: {received_data}")
+                return True
+            else:
+                print("未收到响应")
+                return False
+                
+        except Exception as e:
+            print(f"获取版本失败: {e}")
+            return False
+
     def reset_device(self):
         packet = self.build_protocol_packet(RESET_MCU)
         print(f"发送复位指令...")
@@ -256,7 +291,6 @@ class OTAClient:
             return False
 
     def _execute_erase_phase(self, start_addr, blocks_to_erase):
-        print("正在擦除Flash块...")
         packet = self.build_protocol_packet(FIRMWARE_ERASE, start_addr, blocks_to_erase)
         success, msg = self.send_packet_and_wait_response(packet, timeout=5.0)
         if not success:
@@ -264,8 +298,6 @@ class OTAClient:
         print("擦除完成")
 
     def _execute_program_phase(self, start_addr, complete_firmware, total_size, pages_to_program):
-        print("正在写入固件数据...")
-        
         transfers_needed = (pages_to_program + OTA_PAGES_PER_TRANSFER - 1) // OTA_PAGES_PER_TRANSFER
         
         for transfer in range(transfers_needed):
@@ -285,19 +317,23 @@ class OTAClient:
                 if padding_size > 0:
                     transfer_data += b'\xFF' * padding_size
             
-            print(f"传输 {transfer + 1}/{transfers_needed}: 0x{transfer_addr:08X} ({current_pages}页, {len(transfer_data)} 字节)")
+            # Progress calculation
+            progress = int( ((transfer + 1) / transfers_needed) * 100)
+            status_msg = f"\r\x1b[K进度: {progress}% | APP {transfer + 1}/{transfers_needed}: 0x{transfer_addr:08X} "
+            sys.stdout.write(status_msg)
+            sys.stdout.flush()
             
             packet = self.build_protocol_packet(FIRMWARE_PROGRAM, transfer_addr, transfer_data)
             context_info = f"{transfer + 1}/{transfers_needed}"
             
             # Retry logic
-            max_retries = 3
+            max_retries = 5
             success = False
             last_msg = ""
             
             for attempt in range(max_retries):
                 if attempt > 0:
-                    print(f"写入超时，正在重试 ({attempt}/{max_retries-1})...")
+                    sys.stdout.write(f"\n写入超时，正在重试 ({attempt}/{max_retries-1})...\n")
                     time.sleep(0.5)
                 
                 success, msg = self.send_packet_and_wait_response(packet, timeout=2.0, context_info=context_info)
@@ -308,16 +344,12 @@ class OTAClient:
             if not success:
                 raise Exception(f"多页写入失败 (0x{transfer_addr:08X}) 重试{max_retries}次后仍失败: {last_msg}")
             
-            # Progress bar simulation
-            progress = min(int(10 + ((transfer + 1) / transfers_needed) * 80), 90)
-            sys.stdout.write(f"\r进度: {progress}%")
-            sys.stdout.flush()
-            
             time.sleep(0.1)
-        print("\n写入完成")
+
+        print() # Newline after loop
 
     def _execute_verification_phase(self, start_addr, firmware_data, firmware_size):
-        print("正在验证固件头...")
+
         packet = self.build_protocol_packet(FIRMWARE_READ_HEADER, start_addr)
         success, msg = self.send_packet_and_wait_response(packet, timeout=2.0)
         
@@ -374,7 +406,6 @@ class OTAClient:
             self._execute_erase_phase(start_addr, blocks_to_erase)
             self._execute_program_phase(start_addr, complete_firmware, total_size, pages_to_program)
             self._execute_verification_phase(start_addr, firmware_data, firmware_size)
-            print("OTA操作结束")
             return True
         except Exception as e:
             print(f"OTA失败: {e}")
@@ -398,7 +429,6 @@ class OTAClient:
             self._execute_erase_phase(SR150_FLASH_START_ADDR, blocks_to_erase)
             
             # SR150 Program Phase (Similar to normal program but no header)
-            print("正在写入SR150固件数据...")
             transfers_needed = (pages_to_program + OTA_PAGES_PER_TRANSFER - 1) // OTA_PAGES_PER_TRANSFER
             
             for transfer in range(transfers_needed):
@@ -418,7 +448,9 @@ class OTAClient:
                     if padding_size > 0:
                         transfer_data += b'\xFF' * padding_size
                 
-                print(f"传输 {transfer + 1}/{transfers_needed}: 0x{transfer_addr:08X} ({current_pages}页, {len(transfer_data)} 字节)")
+                status_msg = f"\r\x1b[KSR150 {transfer + 1}/{transfers_needed}: 0x{transfer_addr:08X}"
+                sys.stdout.write(status_msg)
+                sys.stdout.flush()
                 
                 packet = self.build_protocol_packet(FIRMWARE_PROGRAM, transfer_addr, transfer_data)
                 context_info = f"{transfer + 1}/{transfers_needed}"
@@ -428,7 +460,9 @@ class OTAClient:
                     raise Exception(f"SR150写入失败: {msg}")
                 
                 time.sleep(0.1)
-                
+            
+            print()
+            
             # Write config
             print("写入SR150配置信息...")
             firmware_crc = self.calculate_crc_xmodem(firmware_data)
@@ -455,13 +489,16 @@ def main():
     parser.add_argument('--port', required=True, help='串口号 (如 /dev/ttyUSB0)')
     parser.add_argument('--baud', type=int, default=460800, help='波特率 (默认 460800)')
     parser.add_argument('--file', help='固件文件路径 (升级模式必需)')
-    parser.add_argument('--mode', choices=['ota', 'sr150', 'reset'], default='ota', help='操作模式')
+    parser.add_argument('--v', action='store_true', help='获取设备版本信息')
+    parser.add_argument('--mode', choices=['ota', 'sr150', 'reset'], default='ota', help='默认ota模式\n'
+                                                                                            'sr150模式: 升级SR150固件\n'
+                                                                                            'reset模式: 复位设备')
     parser.add_argument('--auto-reset', action='store_true', help='升级完成后自动复位设备')
     
     args = parser.parse_args()
     
     # 检查参数依赖
-    if args.mode in ['ota', 'sr150'] and not args.file:
+    if args.mode in ['ota', 'sr150'] and not args.file and not args.v:
         print("错误: 升级模式下必须指定 --file")
         sys.exit(1)
         
@@ -470,7 +507,9 @@ def main():
         sys.exit(1)
         
     try:
-        if args.mode == 'reset':
+        if args.v:
+            client.get_version()
+        elif args.mode == 'reset':
             client.reset_device()
         elif args.mode == 'ota':
             if client.ota_flash(args.file):

@@ -1,6 +1,6 @@
 #!/bin/bash
 
-# 确保安装了 nuitka: pip install nuitka
+# python3.12和nutika有冲突
 
 echo "Starting build for OTA_Flash_Tool_CLI (Linux)..."
 
@@ -9,6 +9,7 @@ python3 -m nuitka \
     --onefile \
     --output-dir=output_linux \
     --output-filename=ota_tool_cli \
+    --include-package=serial \
     --remove-output \
     --assume-yes-for-downloads \
     --python-flag=-OO \
