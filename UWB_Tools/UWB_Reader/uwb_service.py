@@ -319,6 +319,7 @@ class UwbService:
                 send_data(self.enter_write_data_res if is_enter else self.exit_write_data_res, 2)
         elif command == "C2" and status == "00" and apdu_num == 1:
             send_data(self.halt_data_res, 3)
+            print("HALT")
 
     def read_data_enter(self):
         buffer = b""

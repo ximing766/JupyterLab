@@ -1,0 +1,43 @@
+# 使用基于 Debian 的 Python 3.11 镜像 (slim 版本较小)
+FROM python:3.11-slim-bookworm
+
+# 设置工作目录
+WORKDIR /app
+
+# 替换为国内源以加速构建 (可选, 根据网络情况)
+RUN sed -i 's/deb.debian.org/mirrors.ustc.edu.cn/g' /etc/apt/sources.list.d/debian.sources
+
+# 安装构建依赖
+# gcc: Nuitka 编译需要 C 编译器
+# patchelf: Nuitka 处理库依赖时需要
+# python3-dev: Python 头文件
+RUN apt-get update && apt-get install -y \
+    gcc \
+    libffi-dev \
+    libzstd-dev \
+    patchelf \
+    pkg-config \
+    python3-dev \
+    python3-zstandard \
+    && rm -rf /var/lib/apt/lists/*
+
+# 安装 Nuitka 和项目依赖
+# 升级 pip
+RUN pip install --no-cache-dir --upgrade pip -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 安装依赖库
+RUN pip install --no-cache-dir --no-deps \
+    nuitka \
+    -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+RUN pip install --no-cache-dir \
+    ordered-set \
+    pyserial \
+    -i https://pypi.tuna.tsinghua.edu.cn/simple
+
+# 设置环境变量，确保 Nuitka 能够正确找到工具
+ENV CC=gcc
+ENV PYTHONPATH=/usr/lib/python3/dist-packages
+
+# 默认命令 (会被 docker run 覆盖，但这里占位)
+CMD ["python3", "--version"]
