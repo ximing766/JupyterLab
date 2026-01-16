@@ -665,7 +665,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
         self.baud_combo2 = EditableComboBox()
         self.baud_combo2.setFixedWidth(110)
-        self.baud_combo2.addItems(['9600', '115200', '230400', '460800', '3000000'])
+        self.baud_combo2.addItems(['9600', '115200', '230400', '460800', '921600', '1000000', '3000000'])
         self.baud_combo2.setCurrentText('3000000')
 
 
@@ -1111,7 +1111,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
         self.baud_combo = EditableComboBox()
         self.baud_combo.setFixedWidth(110)
-        self.baud_combo.addItems(['9600', '115200', '230400', '460800', '3000000'])
+        self.baud_combo.addItems(['9600', '115200', '230400', '460800', '921600', '1000000', '3000000'])
         self.baud_combo.setCurrentText('3000000')
 
         status_widget = QWidget()
@@ -3309,7 +3309,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     except (ValueError, TypeError):
                         balance = None
                 
-                new_red_length = int(json_data.get('RedAreaH', 0)) / 2
+                new_red_length = int(json_data.get('RedAreaH', 0))
                 new_blue_length = int(json_data.get('BlueAreaH', 0))
                 refresh_needed = (getattr(self, 'red_length', None) != new_red_length) or (getattr(self, 'blue_length', None) != new_blue_length)
                 self.red_length = new_red_length

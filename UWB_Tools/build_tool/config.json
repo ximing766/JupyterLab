@@ -116,5 +116,5 @@
   },
   "display_mode": "extended",
   "selected_linker_script": "QN9090_UWB_TAG_FW_App.ld",
-  "channel_mode_state": 0
+  "channel_mode_state": 1
 }

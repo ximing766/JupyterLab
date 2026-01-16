@@ -430,7 +430,8 @@ class UwbBuildTool(QMainWindow):
     def start_make(self):
         # Get current selected scheme name
         scheme_name = self.mode_combo.currentText() if self.mode_combo.currentIndex() >= 0 else None
-        self._validate_and_setup_build(lambda thread, path, mode: thread.setup_make(path, mode, scheme_name))
+        channel_mode = self.channel_mode_checkbox.text()
+        self._validate_and_setup_build(lambda thread, path, mode: thread.setup_make(path, mode, scheme_name, channel_mode))
     
     @pyqtSlot()
     def clear_output(self):

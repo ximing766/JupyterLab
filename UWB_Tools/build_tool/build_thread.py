@@ -52,10 +52,11 @@ class BuildThread(QThread):
         self.setup_build(project_path, config_mode)
         self.is_rebuild = True
     
-    def setup_make(self, project_path: str, config_mode: str, scheme_name: str = None):
+    def setup_make(self, project_path: str, config_mode: str, scheme_name: str = None, channel_mode_text: str = None):
         self.project_path = project_path
         self.config_mode = config_mode
         self.scheme_name = scheme_name
+        self.channel_mode_text = channel_mode_text
         self.is_make = True
     
     def should_show_line(self, line: str) -> bool:
@@ -132,7 +133,8 @@ class BuildThread(QThread):
                     project_name_part = project_name
                 
                 # Create new firmware name using project name part and scheme name
-                new_firmware_name = f"{project_name_part}_{self.scheme_name}.bin"
+                suffix = f"_{self.channel_mode_text}" if self.channel_mode_text else ""
+                new_firmware_name = f"{project_name_part}_{self.scheme_name}{suffix}.bin"
                 new_firmware = os.path.join(makefile_dir, new_firmware_name)
                 
                 if os.path.exists(new_firmware):
