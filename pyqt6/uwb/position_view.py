@@ -10,7 +10,8 @@ from user_manager import MultiUserManager, UserData
 class PositionView(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
-        self.scale            = 2
+        self.scale            = 2.0     # 坐标缩放因子 (pixels per unit)
+        self.channel_width    = 200     # 闸机/通道宽度 (cm/units)
         self.origin_offset_y  = -200
         self.main_window      = parent  # 保存主窗口引用
         self.display_scale    = 1.0     # 显示缩放因子，用于扩展模式
@@ -31,6 +32,18 @@ class PositionView(QWidget):
         self.current_position = None
         self.last_position = None
         
+    def set_coordinate_scale(self, scale):
+        """设置坐标缩放因子"""
+        self.scale = scale
+        self.static_content = None
+        self.update()
+
+    def set_channel_width(self, width):
+        """设置通道宽度"""
+        self.channel_width = width
+        self.static_content = None
+        self.update()
+
     def set_display_scale(self, scale):
         """设置显示缩放因子"""
         self.display_scale = scale
@@ -54,21 +67,25 @@ class PositionView(QWidget):
             # No active animations, stop timer
             self.animation_timer.stop()
         
-    def draw_static_content(self, painter, center_x, center_y):  # BM: 绘制静态内容
+    def draw_static_content(self, painter, center_x, center_y):  # BM: 绘制闸机
         # 获取动态长度值并应用显示缩放
         red_height = int(self.main_window.red_length * self.scale * self.display_scale) if self.main_window.red_length != 0 else int(100 * self.display_scale)
         print(f'red_height: {red_height}')
         blue_height = int(self.main_window.blue_length * self.scale * self.display_scale) if self.main_window.blue_length != 0 else int(300 * self.display_scale)
         # print(f'red_height: {red_height}, blue_height: {blue_height}, display_scale: {self.display_scale}')
         
-        # 应用缩放的区域宽度
-        area_width = int(200 * self.display_scale)
-        area_half_width = int(100 * self.display_scale)
+        # 应用缩放的区域宽度 (注意：需要乘以坐标缩放因子 scale)
+        area_width = int(self.channel_width * self.scale * self.display_scale)
+        area_half_width = int((self.channel_width / 2) * self.scale * self.display_scale)
         
-        # 应用缩放的闸机尺寸（需要在使用前定义）
-        gate_width = int(20 * self.display_scale)    # XXX 实际对应10个坐标
-        gate_height = int(80 * self.display_scale)
-        gate_half_height = int(40 * self.display_scale)
+        # 应用缩放的闸机尺寸（基于物理尺寸 10cm x 40cm）
+        # 原来是 20px x 80px (在 scale=2.0 时)，所以物理尺寸约为 10cm x 40cm
+        gate_width_cm = 10
+        gate_height_cm = 20
+        
+        gate_width = int(gate_width_cm * self.scale * self.display_scale)
+        gate_height = int(gate_height_cm * 2 * self.scale * self.display_scale) # 保持原来的长宽比视觉
+        gate_half_height = int(gate_height / 2)
         
         # 多闸机模式下的布局调整
         if self.is_multi_gate_mode:
@@ -325,9 +342,12 @@ class PositionView(QWidget):
             center_x += offset_x
             
             # 计算正确的原点位置（与静态内容中的原点位置一致）
-            area_width = int(200 * self.display_scale)
-            area_half_width = int(100 * self.display_scale)
-            gate_width = int(20 * self.display_scale)
+            area_width = int(self.channel_width * self.scale * self.display_scale)
+            area_half_width = int((self.channel_width / 2) * self.scale * self.display_scale)
+            
+            gate_width_cm = 10
+            gate_width = int(gate_width_cm * self.scale * self.display_scale)
+            
             channel1_left_x = int(center_x - area_half_width + gate_width)  # 第一个闸机的右侧
             origin_x = channel1_left_x + area_width // 2  # 第一个通道的中心
         else:

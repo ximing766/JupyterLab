@@ -348,6 +348,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 
                 self.quick_send_data = config_data.get("quick_send", {})
                 
+                # Position View Configuration
+                self.position_view_config = config_data.get("position_view", {})
+                self.channel_width = self.position_view_config.get("channel_width", 200)
+                self.coordinate_scale = self.position_view_config.get("coordinate_scale", 2.0)
+                
                 # Validate background configuration
                 if not self.background_images:
                     print("Warning: No background images found in config file.")
@@ -396,7 +401,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
             },
             "app": self.app_config,
             "highlight": {k: v.name() for k, v in self.highlight_config.items()},
-            "quick_send": self.quick_send_data
+            "quick_send": self.quick_send_data,
+            "position_view": {
+                "channel_width": getattr(self, 'channel_width', 200),
+                "coordinate_scale": getattr(self, 'coordinate_scale', 2.0)
+            }
         }
         try:
             with open(self.config_path, "w", encoding="utf-8") as f:
@@ -666,8 +675,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.baud_combo2 = EditableComboBox()
         self.baud_combo2.setFixedWidth(110)
         self.baud_combo2.addItems(['9600', '115200', '230400', '460800', '921600', '1000000', '3000000'])
-        self.baud_combo2.setCurrentText('3000000')
-
+        self.baud_combo2.setCurrentText('921600')
 
         status_widget = QWidget()
         status_layout = QHBoxLayout(status_widget)
@@ -1112,7 +1120,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.baud_combo = EditableComboBox()
         self.baud_combo.setFixedWidth(110)
         self.baud_combo.addItems(['9600', '115200', '230400', '460800', '921600', '1000000', '3000000'])
-        self.baud_combo.setCurrentText('3000000')
+        self.baud_combo.setCurrentText('921600')
 
         status_widget = QWidget()
         status_layout = QHBoxLayout(status_widget)
@@ -1779,6 +1787,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
         bottom_right_layout.addLayout(button_layout)
         
         self.position_view = PositionView(self)
+        # Apply configuration
+        if hasattr(self, 'channel_width'):
+            self.position_view.set_channel_width(self.channel_width)
+        if hasattr(self, 'coordinate_scale'):
+            self.position_view.set_coordinate_scale(self.coordinate_scale)
         position_container = QWidget()
         position_container.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         position_container_layout = QHBoxLayout(position_container)
@@ -4388,6 +4401,45 @@ class MainWindow(FluentWindow): # MSFluentWindow
         opacityLayout.addWidget(self.opacitySlider, 1)
         opacityLayout.addWidget(self.opacityValueLabel)
         
+        # View Settings (Custom)
+        viewSettingsLabel = SubtitleLabel('视图设置', view)
+        
+        # Channel Width Row
+        self.channelWidthRow = QWidget(view)
+        cwLayout = QHBoxLayout(self.channelWidthRow)
+        cwLayout.setContentsMargins(0, 0, 0, 0)
+        cwLayout.setSpacing(12)
+        cwLabel = BodyLabel('闸机通道宽度 (cm)')
+        self.cwSpinBox = SpinBox()
+        self.cwSpinBox.setRange(50, 500)
+        self.cwSpinBox.setValue(getattr(self, 'channel_width', 200))
+        self.cwSpinBox.valueChanged.connect(self.on_channel_width_changed)
+        cwLayout.addWidget(cwLabel)
+        cwLayout.addStretch(1)
+        cwLayout.addWidget(self.cwSpinBox)
+        
+        # Scale Row
+        self.scaleRow = QWidget(view)
+        sLayout = QHBoxLayout(self.scaleRow)
+        sLayout.setContentsMargins(0, 0, 0, 0)
+        sLayout.setSpacing(12)
+        sLabel = BodyLabel('地图缩放比例')
+        self.scaleCombo = ComboBox()
+        self.scaleCombo.addItems(['2.0 (2像素/cm)', '1.0 (1像素/cm)', '0.5 (1像素/2cm)'])
+        
+        curr_scale = getattr(self, 'coordinate_scale', 2.0)
+        if curr_scale == 2.0:
+            self.scaleCombo.setCurrentIndex(0)
+        elif curr_scale == 1.0:
+            self.scaleCombo.setCurrentIndex(1)
+        elif curr_scale == 0.5:
+            self.scaleCombo.setCurrentIndex(2)
+            
+        self.scaleCombo.currentIndexChanged.connect(self.on_coordinate_scale_changed)
+        sLayout.addWidget(sLabel)
+        sLayout.addStretch(1)
+        sLayout.addWidget(self.scaleCombo)
+        
         self.applicationGroup = SettingCardGroup('应用设置', view)
         
         self.logLevelCard = OptionsSettingCard(
@@ -4456,6 +4508,10 @@ class MainWindow(FluentWindow): # MSFluentWindow
         # Layout setup
         vBoxLayout.addWidget(self.appearanceGroup)
         vBoxLayout.addWidget(opacityRow)
+        vBoxLayout.addSpacing(10)
+        vBoxLayout.addWidget(viewSettingsLabel)
+        vBoxLayout.addWidget(self.channelWidthRow)
+        vBoxLayout.addWidget(self.scaleRow)
         vBoxLayout.addSpacing(10)
         vBoxLayout.addWidget(self.applicationGroup)
         vBoxLayout.addSpacing(10)
@@ -4585,6 +4641,23 @@ class MainWindow(FluentWindow): # MSFluentWindow
             self.update()
         except Exception as e:
             print(f"更新背景透明度失败: {e}")
+
+    def on_channel_width_changed(self, value):
+        """更新闸机通道宽度"""
+        self.channel_width = value
+        if hasattr(self, 'position_view'):
+            self.position_view.set_channel_width(value)
+        self._save_unified_config()
+
+    def on_coordinate_scale_changed(self, index):
+        """更新地图缩放比例"""
+        values = [2.0, 1.0, 0.5]
+        if 0 <= index < len(values):
+            scale = values[index]
+            self.coordinate_scale = scale
+            if hasattr(self, 'position_view'):
+                self.position_view.set_coordinate_scale(scale)
+            self._save_unified_config()
 
     def on_quick_send_selected(self, text):
         """Handle quick send selection for COM1"""
