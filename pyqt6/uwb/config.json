@@ -48,7 +48,7 @@
     "HALT": "00 00 FF 13 00 05 FF FF FF FF FF 06 FF FF FF FF FF 01 C2 00 01 01 00 00 3A 00"
   },
   "position_view": {
-    "channel_width": 100,
+    "channel_width": 85,
     "coordinate_scale": 1.0
   }
 }

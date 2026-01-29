@@ -4,6 +4,7 @@ from PyQt6.QtGui import (
     QFont, QColor, QPainter, QPen,
     QLinearGradient, QPixmap
 )
+import time
 from user_manager import MultiUserManager, UserData
 
 
@@ -60,11 +61,19 @@ class PositionView(QWidget):
         """Update user position animations"""
         has_active_animations = self.user_manager.update_animations()
         
-        if has_active_animations:
+        # Also keep updating if there are stationary users (for ripple effect)
+        # Check if any user is stationary and recently updated (within 3 seconds)
+        current_time = time.time()
+        has_stationary_users = any(
+            user.is_stationary and (current_time - user.last_update_time < 3.0)
+            for user in self.user_manager.users.values()
+        )
+        
+        if has_active_animations or has_stationary_users:
             # Continue animation
             self.update()  # Trigger repaint
         else:
-            # No active animations, stop timer
+            # No active animations or effects, stop timer
             self.animation_timer.stop()
         
     def draw_static_content(self, painter, center_x, center_y):  # BM: 绘制闸机
@@ -270,17 +279,16 @@ class PositionView(QWidget):
                 self.last_position = self.current_position
                 self.current_position = (user.current_position[0], user.current_position[1])
         
-        # 根据位置变化类型决定处理方式
-        if position_changed:
-            # Check if any user is animating to decide whether to start animation timer
-            has_animations = any(user.is_animating for user in self.user_manager.users.values())
-            
-            if has_animations and not self.animation_timer.isActive():
-                # Start animation timer only if there are animations
-                self.animation_timer.start()
-            
-            # Always trigger redraw for position changes
-            self.update()
+        # Check if any user is animating or stationary to decide whether to start animation timer
+        has_animations = any(user.is_animating for user in self.user_manager.users.values())
+        has_stationary = any(user.is_stationary for user in self.user_manager.users.values())
+        
+        if (has_animations or has_stationary) and not self.animation_timer.isActive():
+            # Start animation timer if there are animations or stationary effects
+            self.animation_timer.start()
+        
+        # Always trigger redraw for position changes
+        self.update()
     
     def update_multi_user_positions(self, user_positions):  # BM: 更新用户位置
         any_position_changed = False
@@ -303,17 +311,16 @@ class PositionView(QWidget):
             self.last_position = self.current_position
             self.current_position = (first_user.current_position[0], first_user.current_position[1])
         
-        # Only trigger redraw and animation if any position changed significantly
-        if any_position_changed:
-            # Check if any user is animating to decide whether to start animation timer
-            has_animations = any(user.is_animating for user in self.user_manager.users.values())
-            
-            if has_animations and not self.animation_timer.isActive():
-                # Start animation timer only if there are animations
-                self.animation_timer.start()
-            
-            # Always trigger redraw for position changes
-            self.update()
+        # Check if any user is animating or stationary to decide whether to start animation timer
+        has_animations = any(user.is_animating for user in self.user_manager.users.values())
+        has_stationary = any(user.is_stationary for user in self.user_manager.users.values())
+        
+        if (has_animations or has_stationary) and not self.animation_timer.isActive():
+            # Start animation timer if there are animations or stationary effects
+            self.animation_timer.start()
+        
+        # Always trigger redraw for position changes
+        self.update()
         
     def refresh_areas(self):
         """刷新红蓝区域，当长度值变化时调用"""
@@ -411,6 +418,26 @@ class PositionView(QWidget):
                 painter.drawLine(int(last_screen_x), int(last_screen_y), 
                                int(screen_x), int(screen_y))
             
+            # Draw stationary ripple effect if user is stationary and recently updated
+            current_time = time.time()
+            if user.is_stationary and (current_time - user.last_update_time < 3.0):
+                # Calculate ripple size based on time (1.5 second cycle)
+                # Phase goes from 0 to 1 repeatedly
+                phase = (current_time - user.stationary_start_time) % 1.5 / 1.5
+                
+                # Size expands from 1x to 3x point size
+                point_size_base = int(12 * self.display_scale)
+                max_ripple_size = point_size_base * 3.0
+                current_ripple_size = point_size_base + (max_ripple_size - point_size_base) * phase
+                current_ripple_half = current_ripple_size / 2
+                
+                # Alpha fades out as it expands (150 -> 0)
+                alpha = int(150 * (1 - phase))
+                
+                painter.setPen(Qt.PenStyle.NoPen)
+                painter.setBrush(QColor(*user_color, alpha))
+                painter.drawEllipse(QPointF(screen_x, screen_y), current_ripple_half, current_ripple_half)
+
             # 绘制当前位置点
             point_size = int(12 * self.display_scale)
             point_half_size = int(6 * self.display_scale)

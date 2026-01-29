@@ -4423,16 +4423,16 @@ class MainWindow(FluentWindow): # MSFluentWindow
         sLayout = QHBoxLayout(self.scaleRow)
         sLayout.setContentsMargins(0, 0, 0, 0)
         sLayout.setSpacing(12)
-        sLabel = BodyLabel('地图缩放比例')
+        sLabel = BodyLabel('View缩放比例')
         self.scaleCombo = ComboBox()
-        self.scaleCombo.addItems(['2.0 (2像素/cm)', '1.0 (1像素/cm)', '0.5 (1像素/2cm)'])
+        self.scaleCombo.addItems(['2.0', '1.5', '1.0'])
         
         curr_scale = getattr(self, 'coordinate_scale', 2.0)
         if curr_scale == 2.0:
             self.scaleCombo.setCurrentIndex(0)
-        elif curr_scale == 1.0:
+        elif curr_scale == 1.5:
             self.scaleCombo.setCurrentIndex(1)
-        elif curr_scale == 0.5:
+        elif curr_scale == 1.0:
             self.scaleCombo.setCurrentIndex(2)
             
         self.scaleCombo.currentIndexChanged.connect(self.on_coordinate_scale_changed)
@@ -4651,7 +4651,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
     def on_coordinate_scale_changed(self, index):
         """更新地图缩放比例"""
-        values = [2.0, 1.0, 0.5]
+        values = [2.0, 1.5, 1.0]
         if 0 <= index < len(values):
             scale = values[index]
             self.coordinate_scale = scale

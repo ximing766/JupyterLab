@@ -1,32 +1,68 @@
 from typing import Tuple, Optional, List
 import time
+import math
+
+
+class SimpleKalmanFilter:
+    """
+    Simple 1D Kalman Filter implementation
+    """
+    def __init__(self, R=1.0, Q=0.1):
+        self.R = R  # Measurement noise covariance (measurement uncertainty)
+        self.Q = Q  # Process noise covariance (prediction uncertainty)
+        self.P = 1.0  # Estimation error covariance
+        self.x = None # State estimate
+        
+    def update(self, measurement):
+        # Initialize if first measurement
+        if self.x is None:
+            self.x = measurement
+            self.P = 1.0
+            return self.x
+            
+        # Prediction update
+        # Assuming constant state model for position (velocity is process noise)
+        self.P = self.P + self.Q
+        
+        # Measurement update
+        K = self.P / (self.P + self.R)  # Kalman Gain
+        self.x = self.x + K * (measurement - self.x)
+        self.P = (1 - K) * self.P
+        
+        return self.x
+        
+    def reset(self):
+        self.x = None
+        self.P = 1.0
 
 
 class PositionFilter:
-    def __init__(self, history_max_size: int = 5, max_jump_distance: float = 50.0, 
-                 smoothing_factor: float = 0.5):
-
+    def __init__(self, history_max_size: int = 5, max_jump_distance: float = 50.0):
         self.history_max_size = history_max_size
         self.max_jump_distance = max_jump_distance
-        self.smoothing_factor = smoothing_factor
         self.position_history: List[Tuple[float, float]] = []
         self.last_position: Optional[Tuple[float, float]] = None
+        
+        # Initialize Kalman filters for X and Y coordinates
+        # R=10.0 (high measurement noise for UWB), Q=0.5 (users move relatively smoothly)
+        self.kf_x = SimpleKalmanFilter(R=5.0, Q=0.5)
+        self.kf_y = SimpleKalmanFilter(R=5.0, Q=0.5)
         
     def filter_position(self, x: float, y: float) -> Tuple[float, float]:
         # If this is the first position, accept it directly
         if self.last_position is None:
             self.last_position = (x, y)
             self.position_history.append((x, y))
+            self.kf_x.update(x)
+            self.kf_y.update(y)
             return (x, y)
             
-        # Calculate distance from last position
+        # Calculate distance from last position (raw data)
         last_x, last_y = self.last_position
         distance = ((x - last_x) ** 2 + (y - last_y) ** 2) ** 0.5
         
         # Outlier detection - limit movement if distance is too large
         if distance > self.max_jump_distance:
-            # print(f"Outlier detected: distance {distance:.1f} exceeds threshold {self.max_jump_distance}")
-            
             # Limit movement distance while preserving direction
             if distance > 0:
                 direction_x = (x - last_x) / distance
@@ -34,24 +70,16 @@ class PositionFilter:
                 x = last_x + direction_x * self.max_jump_distance
                 y = last_y + direction_y * self.max_jump_distance
         
+        # Apply Kalman Filter
+        filtered_x = self.kf_x.update(x)
+        filtered_y = self.kf_y.update(y)
+        
         # Add current position to history
-        self.position_history.append((x, y))
+        self.position_history.append((filtered_x, filtered_y))
         
         # Maintain history size limit
         if len(self.position_history) > self.history_max_size:
             self.position_history.pop(0)
-        
-        # Apply moving average filtering
-        if len(self.position_history) > 1:
-            # Calculate average of historical positions
-            avg_x = sum(pos[0] for pos in self.position_history) / len(self.position_history)
-            avg_y = sum(pos[1] for pos in self.position_history) / len(self.position_history)
-            
-            # Apply smoothing factor - interpolate between current measurement and average
-            filtered_x = x * self.smoothing_factor + avg_x * (1 - self.smoothing_factor)
-            filtered_y = y * self.smoothing_factor + avg_y * (1 - self.smoothing_factor)
-        else:
-            filtered_x, filtered_y = x, y
         
         # Update last position
         self.last_position = (filtered_x, filtered_y)
@@ -62,6 +90,8 @@ class PositionFilter:
         """Reset filter state"""
         self.position_history.clear()
         self.last_position = None
+        self.kf_x.reset()
+        self.kf_y.reset()
 
 
 class UserData:
@@ -81,10 +111,24 @@ class UserData:
         self.target_position: Optional[Tuple[float, float, float]] = None
         self.animation_start_position: Optional[Tuple[float, float, float]] = None
         self.animation_start_time: float = 0.0
-        self.animation_duration: float = 0.25  # BM: 250ms animation duration
+        self.animation_duration: float = 0.25  # Default 250ms
         self.is_animating: bool = False
         
+        # Stationary state tracking
+        self.is_stationary: bool = False
+        self.stationary_start_time: float = 0.0
+        
     def update_position(self, x: float, y: float, z: float = 0.0) -> bool:
+        current_time = time.time()
+        
+        # Calculate dynamic animation duration based on update interval
+        # Use smoothed update interval to avoid jitter
+        time_diff = current_time - self.last_update_time
+        if time_diff > 0.05 and time_diff < 2.0:  # Valid interval (50ms - 2s)
+             # Slightly larger than interval to ensure smooth transition (1.2x -> 1.1x)
+             # Reduced multiplier for snappier response
+            self.animation_duration = time_diff * 1.1
+            
         # Apply filtering to 2D coordinates
         filtered_x, filtered_y = self.filter.filter_position(x, y)
         
@@ -100,27 +144,37 @@ class UserData:
             distance = ((filtered_x - self.last_position[0]) ** 2 + 
                        (filtered_y - self.last_position[1]) ** 2) ** 0.5
             # BM: 用户移动3级处理机制
-            if distance < 5.0:  # Small movement - ignore
+            if distance < 5.0:  # Small movement - stationary with feedback
+                # Update timestamp but keep position fixed to avoid jitter
+                self.last_update_time = current_time
+                self.has_new_data = True # Trigger redraw for feedback effect
+                
+                if not self.is_stationary:
+                    self.is_stationary = True
+                    self.stationary_start_time = current_time
+                
                 return False
             elif distance > 5.0:  # Large movement - start animation 
                 # Start interpolation animation
                 self.animation_start_position = self.current_position
                 self.target_position = new_target
-                self.animation_start_time = time.time()
+                self.animation_start_time = current_time
                 self.is_animating = True
-                self.last_update_time = time.time()
+                self.last_update_time = current_time
                 self.has_new_data = True
+                self.is_stationary = False
                 return True
             else:  # Medium movement (3.0 - 10.0) - direct update
-                # Medium movement, update directly without animation
+                # Should not be reached given logic above, but kept for safety
                 self.current_position = new_target
-                self.last_update_time = time.time()
+                self.last_update_time = current_time
                 self.has_new_data = True
+                self.is_stationary = False
                 return True
         else:
             # First position, set directly
             self.current_position = new_target
-            self.last_update_time = time.time()
+            self.last_update_time = current_time
             self.has_new_data = True
             return True
     
@@ -143,8 +197,9 @@ class UserData:
         # Calculate interpolation progress (0.0 to 1.0)
         progress = elapsed_time / self.animation_duration
         
-        # Apply easing function for smoother animation (ease-out)
-        eased_progress = 1 - (1 - progress) ** 3
+        # Apply easing function for smoother animation
+        # Changed from Cubic to Quadratic for smoother continuous movement
+        eased_progress = 1 - (1 - progress) ** 2
         
         # Interpolate between start and target positions
         start_x, start_y, start_z = self.animation_start_position
