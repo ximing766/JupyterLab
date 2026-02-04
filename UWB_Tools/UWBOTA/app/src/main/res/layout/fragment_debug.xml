@@ -9,8 +9,8 @@
     <TextView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Debug Parameters"
-        android:textSize="24sp"
+        android:text="Debug"
+        android:textSize="22sp"
         android:textStyle="bold"
         android:layout_marginBottom="24dp"
         android:textColor="@color/black"/>
@@ -131,7 +131,7 @@
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
-    <!-- RED Value Control -->
+    <!-- Transit Area Control -->
     <com.google.android.material.card.MaterialCardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -156,7 +156,7 @@
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
-                    android:text="RED Value"
+                    android:text="Transit Area"
                     android:textSize="16sp"
                     android:textStyle="bold"/>
 
@@ -183,7 +183,7 @@
                 android:id="@+id/btnSetRed"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Set RED Value"
+                android:text="Set Transit Area"
                 android:layout_marginTop="8dp"/>
 
         </LinearLayout>

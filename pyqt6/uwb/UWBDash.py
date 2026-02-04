@@ -189,7 +189,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.config_path                 = Path(__file__).parent / "config.json"
         self._load_unified_config()
         self.logger                      = Logger(app_path=str(app_path))
-        self.csv_title                   = ['Master', 'Slave', 'NLOS', 'RSSI', 'Speed','X', 'Y', 'Z', 'Auth', 'Trans']
+        self.csv_title                   = ['A0', 'A1', 'A2', 'A3', 'RSSI', 'X', 'Y', 'Z', 'Auth', 'Trans']
         self.background_cache            = None         # 添加背景缓存
         self.last_window_size            = QSize()      # 添加窗口尺寸记录
         self.drag_pos                    = QPoint()
@@ -254,11 +254,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
         # self.highlight_config_timer.start(10000)
 
         self.uwb_data = {
-            'master'   : [],
-            'slave'    : [],
-            'nlos'     : [],
+            'a0'       : [],
+            'a1'       : [],
+            'a2'       : [],
+            'a3'       : [],
             'rssi'     : [],
-            'speed'    : [],
         }
 
         self.init_ui()
@@ -1919,20 +1919,20 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.charts  = {}
         self.series  = {}
         chart_titles = {
-            'master'   : 'Master',
-            'slave'    : 'Slave',
-            'nlos'     : 'NLOS',
+            'a0'       : 'A0',
+            'a1'       : 'A1',
+            'a2'       : 'A2',
+            'a3'       : 'A3',
             'rssi'     : 'RSSI',
-            'speed'    : 'Speed'
         }
         for key, title in chart_titles.items():
             series = QLineSeries()
             colors = {
-                'master'   : QColor("#FF6B6B"),
-                'slave'    : QColor("#34aca4"),
-                'nlos'     : QColor("#ee84ce"),
+                'a0'       : QColor("#34aca4"),
+                'a1'       : QColor("#FF6B6B"),
+                'a2'       : QColor("#FFBE0B"),
+                'a3'       : QColor("#ee84ce"),
                 'rssi'     : QColor("#68ecae"),
-                'speed'    : QColor("#FFBE0B")
             }
             series.setColor(colors[key])
             series.setPen(QPen(colors[key], 3))   # 曲线加粗
@@ -1946,7 +1946,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
             chart.setTitle(title)
             chart.setTitleFont(QFont("Segoe UI", 12, QFont.Weight.Bold))
             chart.setTitleBrush(colors[key].darker(120))
-            chart.setAnimationOptions(QChart.AnimationOption.SeriesAnimations)
+            chart.setAnimationOptions(QChart.AnimationOption.NoAnimation)
             chart.legend().hide()
             
             # Use solid background color (remove gradient and fix to former bottom color)
@@ -2037,7 +2037,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
         self.data_table = TableWidget()
         self.data_table.setColumnCount(10)
-        self.data_table.setHorizontalHeaderLabels(['Master', 'Slave', 'NLOS', 'RSSI', 'Speed','X', 'Y', 'Z', 'Auth', 'Trans'])
+        self.data_table.setHorizontalHeaderLabels(['A0', 'A1', 'A2', 'A3', 'RSSI', 'X', 'Y', 'Z', 'Auth', 'Trans'])
         
         self.data_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.data_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -2734,26 +2734,48 @@ class MainWindow(FluentWindow): # MSFluentWindow
             series = self.series[chart_key]
             data_list = self.uwb_data[chart_key]
             
-            # 如果点数超过100，移除最旧的点
-            if series.count() >= 100:
-                series.remove(0)
-            
-            # 更新所有点的X坐标
-            for i in range(series.count()):
-                old_point = series.at(i)
-                series.replace(i, QPointF(i, old_point.y()))
-            
-            # 添加新点
-            series.append(len(data_list) - 1, value)
+            # 使用replace一次性更新所有点，避免在循环中频繁调用C++接口导致卡顿
+            # 这是高性能绘图的关键优化
+            points = [QPointF(i, val) for i, val in enumerate(data_list)]
+            series.replace(points)
             
             # 更新Y轴范围
             if data_list:
                 min_val = min(data_list)
                 max_val = max(data_list)
-                margin  = (max_val - min_val) * 0.1 if max_val != min_val else 1.0
+                
+                # 计算动态范围，增加滞后性防止抖动
+                # 只有当新数据超出当前范围的一定阈值，或者范围明显过大时才调整
                 chart   = self.charts[chart_key]
                 y_axis  = chart.axes(Qt.Orientation.Vertical)[0]
-                y_axis.setRange(min_val - margin, max_val + margin)
+                
+                # 确保min_val和max_val之间有最小间隔，防止除零或过小范围
+                if max_val == min_val:
+                    max_val += 1
+                    min_val -= 1
+                
+                range_span = max_val - min_val
+                target_min = min_val - range_span * 0.1
+                target_max = max_val + range_span * 0.1
+                
+                # 圆整到最近的10的倍数，使坐标轴更稳定
+                target_min = int(target_min / 10) * 10
+                target_max = int(target_max / 10 + 1) * 10
+                
+                current_min = y_axis.min()
+                current_max = y_axis.max()
+                
+                # 只有当目标范围超出当前范围，或者目标范围显著小于当前范围（例如小于当前范围的70%）时才更新
+                # 这样可以快速扩张，缓慢收缩
+                should_update = False
+                
+                if target_min < current_min or target_max > current_max:
+                    should_update = True
+                elif (target_max - target_min) < (current_max - current_min) * 0.7:
+                    should_update = True
+                    
+                if should_update:
+                    y_axis.setRange(target_min, target_max)
             
             data = self.uwb_data.get(chart_key, [])
             chart = self.charts[chart_key]
@@ -2773,19 +2795,20 @@ class MainWindow(FluentWindow): # MSFluentWindow
             try:
                 if hasattr(self, 'testInterface') and self.testInterface:
                     if not hasattr(self, '_test_metrics'):
-                        self._test_metrics = {'slave': (0.0, 0.0), 'master': (0.0, 0.0), 'rssi': 0.0}
+                        self._test_metrics = {'a0': (0.0, 0.0), 'a1': (0.0, 0.0), 'rssi': 0.0}
                     # 根据chart_key更新对应指标
-                    if chart_key == 'slave':
-                        self._test_metrics['slave'] = (mean, std)
-                    elif chart_key == 'master':
-                        self._test_metrics['master'] = (mean, std)
+                    if chart_key == 'a0':
+                        self._test_metrics['a0'] = (mean, std)
+                    elif chart_key == 'a1':
+                        self._test_metrics['a1'] = (mean, std)
                     elif chart_key == 'rssi':
                         # 使用最新值作为RSSI即可
                         self._test_metrics['rssi'] = data[-1] if data else 0.0
-                    a0_avg, a0_std = self._test_metrics['slave']
-                    a1_avg, a1_std = self._test_metrics['master']
-                    a1_rssi = self._test_metrics['rssi']
-                    self.testInterface.update_realtime_data(a0_avg, a0_std, a1_avg, a1_std, a1_rssi)
+                    
+                    a0_avg, a0_std = self._test_metrics.get('a0', (0.0, 0.0))
+                    a1_avg, a1_std = self._test_metrics.get('a1', (0.0, 0.0))
+                    rssi = self._test_metrics.get('rssi', 0.0)
+                    self.testInterface.update_realtime_data(a0_avg, a0_std, a1_avg, a1_std, rssi)
             except Exception:
                 pass
 
@@ -2796,8 +2819,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
             if chart_key not in self.mean_series:
                 from PyQt6.QtCharts import QLineSeries
                 mean_series = QLineSeries()
-                mean_series.setColor(QColor(255, 255, 255))  # 紫色
-                mean_series.setPen(QPen(QColor(255, 255, 255), 3, Qt.PenStyle.DashLine))  # 实线加粗
+                mean_series.setColor(QColor(255, 255, 255, 80))  # 设置透明度
+                mean_series.setPen(QPen(QColor(255, 255, 255, 80), 3, Qt.PenStyle.DashLine))  # 实线加粗
                 chart.addSeries(mean_series)
                 mean_series.attachAxis(chart.axes(Qt.Orientation.Horizontal)[0])
                 mean_series.attachAxis(chart.axes(Qt.Orientation.Vertical)[0])
@@ -3213,7 +3236,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 formatted_data = self.format_data_for_display(data, is_str_format=False)
                 text = formatted_data  # Don't add \n here, let format_data_for_display handle it
             else:
-                text = data.decode('utf-8')
+                text = data.decode('utf-8', errors='replace')
             
             self.log_worker.add_log_task("UwbLog", "info", text.strip())
             text = re.sub(r'\x1b\[[0-9;]*[a-zA-Z]', '', text)
@@ -3281,12 +3304,21 @@ class MainWindow(FluentWindow): # MSFluentWindow
             if "@POSITION" in text:
                 # print(f'接收到原始数据：{repr(text)}')
                 try:
-                    fixed_text = re.sub(r'"mac":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"mac": "\1"', text)
+                    # 预处理：修复无效的 JSON 格式
+                    # 1. 处理 "CardNo": . 这种情况，替换为 "CardNo": null
+                    fixed_text = re.sub(r'"CardNo":\s*\.', '"CardNo": null', text)
+                    
+                    # 2. 补全缺失引号的 MAC 地址等字段
+                    fixed_text = re.sub(r'"mac":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"mac": "\1"', fixed_text)
                     fixed_text = re.sub(r'"Link":\s*([A-Fa-f0-9]+)(?=\s*[,}])', r'"Link": "\1"', fixed_text)
                     fixed_text = re.sub(r'"CardNo":\s*([0-9A-Fa-f]+)(?=\s*[,}])', r'"CardNo": "\1"', fixed_text)
+                    
+                    # 3. 处理空值或特殊格式错误
                     fixed_text = re.sub(r'"(CardNo|Balance)":\s*,', r'"\1": null,', fixed_text)
                     fixed_text = re.sub(r'"(CardNo|Balance)":\s*}', r'"\1": null}', fixed_text)
                     fixed_text = re.sub(r'"(CardNo|Balance)":\s+,', r'"\1": null,', fixed_text)
+                    
+                    # 4. 通用兜底：处理 key: , 或 key: } 的情况
                     fixed_text = re.sub(r'"([^"]+)":\s*([,}])', r'"\1": null\2', fixed_text)
                     
                     json_data = json.loads(fixed_text)
@@ -3334,11 +3366,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     self.position_view.refresh_areas()
                 
                 key_mapping = {
-                    'master'   : 'Master',
-                    'slave'    : 'Slave',
-                    'nlos'     : 'nLos',
+                    'a0'       : 'A0',
+                    'a1'       : 'A1',
+                    'a2'       : 'A2',
+                    'a3'       : 'A3',
                     'rssi'     : 'RSSI',
-                    'speed'    : 'Speed'
                 }
                 
                 # Update data with correct key mapping
@@ -3372,11 +3404,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
                 # Log data
                 data_values = [
-                    json_data.get('Master', 0),
-                    json_data.get('Slave', 0),
-                    json_data.get('nLos', 0),
+                    json_data.get('A0', 0),
+                    json_data.get('A1', 0),
+                    json_data.get('A2', 0),
+                    json_data.get('A3', 0),
                     json_data.get('RSSI', 0),
-                    json_data.get('Speed', 0),
                     json_data.get('User-X', 0),
                     json_data.get('User-Y', 0),
                     json_data.get('User-Z', 0),
@@ -5736,8 +5768,8 @@ class TestPage(QWidget):
             (1, 60), (0, 60), (-1, 60), (1, 110), (0, 110),
             (-1, 110), (1, 160), (0, 160), (-1, 160), (0, 210)
         ]
-        self.A0_Anchor = [0, 0, 0]      # Slave锚点坐标
-        self.A1_Anchor = [0, 0, 0]      # Master锚点坐标
+        self.A0_Anchor = [0, 0, 0]      # A0锚点坐标
+        self.A1_Anchor = [0, 0, 0]      # A1锚点坐标
         self.test_points = {}           # 生成的测试点字典
         self.point_distances = {'A': {}, 'B': {}}  # 标准距离缓存
         self.csv_path = Path(__file__).parent / "XX_UWB_Test.csv"
@@ -5750,58 +5782,6 @@ class TestPage(QWidget):
         """当点位序号或高度切换时，仅刷新Res显示（使用实时均值）"""
         self.update_res_labels()
 
-    def append_csv_log(self):
-        """生成并追加一行CSV日志（无限追加），文件名可配置"""
-        # 文件名处理（优先使用顶部配置栏的输入）
-        file_name = (getattr(self, 'log_name_edit', None).text() if getattr(self, 'log_name_edit', None) else self.csv_path.name).strip()
-        if not file_name.lower().endswith('.csv'):
-            file_name += '.csv'
-        self.csv_path = Path(__file__).parent / file_name
-
-        # 当前点位与高度
-        idx = self.point_index_spin.value()
-        height_group = 'A' if self.height_combo.currentIndex() == 0 else 'B'
-        height_str = '80 cm' if height_group == 'A' else '150 cm'
-        key = f"{height_group}{idx}"
-        dists = self.point_distances.get(height_group, {}).get(str(idx), {})
-        std_a0 = dists.get('D0', dists.get('D_A0', 0))
-        std_a1 = dists.get('D1', dists.get('D_A1', 0))
-
-        # 实时均值/方差/RSSI
-        a0_avg = getattr(self, '_a0_avg', 0.0)
-        a1_avg = getattr(self, '_a1_avg', 0.0)
-        try:
-            a0_rssi = float(self.a0_rssi_edit.text())
-        except Exception:
-            a0_rssi = 0.0
-        a1_rssi = getattr(self, '_a1_rssi', 0.0)
-        a0_std = float(self.a0_std_label.text().split(':')[-1]) if hasattr(self, 'a0_std_label') else 0.0
-        a1_std = float(self.a1_std_label.text().split(':')[-1]) if hasattr(self, 'a1_std_label') else 0.0
-
-        # Res = 标准值 - 平均值
-        a0_res = std_a0 - a0_avg
-        a1_res = std_a1 - a1_avg
-
-        row = [
-            key, height_str,
-            f"{a0_avg:.1f}", f"{a0_std:.1f}", f"{a0_res:.1f}", f"{a0_rssi:.0f}",
-            f"{a1_avg:.1f}", f"{a1_std:.1f}", f"{a1_res:.1f}", f"{a1_rssi:.0f}"
-        ]
-
-        header = ['Point', 'Height', 'A0_Avg', 'A0_Std', 'A0_Res', 'A0_RSSI',
-                  'A1_Avg', 'A1_Std', 'A1_Res', 'A1_RSSI']
-
-        rows = []
-        if self.csv_path.exists():
-            with open(self.csv_path, newline='', encoding='utf-8') as f:
-                rows = list(csv.reader(f))
-        if not rows or rows[0] != header:
-            rows = [header]
-        rows.append(row)
-        with open(self.csv_path, 'w', newline='', encoding='utf-8') as f:
-            writer = csv.writer(f)
-            writer.writerows(rows)
-        InfoBar.success("已记录", f"点位{key}已追加到日志，共{len(rows)-1}条", parent=self, duration=1500)
 
     def init_ui(self):      # BM: 测试页面
         root = QVBoxLayout(self)
@@ -6212,6 +6192,8 @@ class TestPage(QWidget):
             height_cm = int(self.gate_height_edit.text())
         except ValueError:
             return
+        
+        # 假设 A0/A1 在顶部
         self.A0_Anchor = [-width_cm / 2, 0, height_cm]
         self.A1_Anchor = [ width_cm / 2, 0, height_cm]
 
@@ -6234,13 +6216,14 @@ class TestPage(QWidget):
                 (coord[1] - self.A1_Anchor[1]) ** 2 +
                 (coord[2] - self.A1_Anchor[2]) ** 2
             )
+            
             group = name[0]  # 'A'或'B'
             idx = name[1:]   # '0'~'14'
             self.point_distances[group][idx] = {
                 'D_A0': round(dist_A0),
                 'D_A1': round(dist_A1)
             }
-        print(self.point_distances)
+        # print(self.point_distances)
         self.on_point_changed()
 
     def on_point_changed(self):
@@ -6264,6 +6247,7 @@ class TestPage(QWidget):
 
         self.a0_res_value_label.setText(f"{res_A0:.1f}")
         self.a1_res_value_label.setText(f"{res_A1:.1f}")
+            
         try:
             a0_std = float(self.a0_std_label.text().split(':')[-1]) if hasattr(self, 'a0_std_label') else 0.0
         except Exception:
@@ -6272,6 +6256,7 @@ class TestPage(QWidget):
             a1_std = float(self.a1_std_label.text().split(':')[-1]) if hasattr(self, 'a1_std_label') else 0.0
         except Exception:
             a1_std = 0.0
+            
         self._update_res_bar(self.a0_res_bar, res_A0, a0_std)
         self._update_res_bar(self.a1_res_bar, res_A1, a1_std)
 
@@ -6297,19 +6282,27 @@ class TestPage(QWidget):
 
         a0_avg = getattr(self, '_a0_avg', 0.0)
         a1_avg = getattr(self, '_a1_avg', 0.0)
-        a1_rssi = getattr(self, '_a1_rssi', 0.0)
-        a0_std = float(self.a0_std_label.text().split(':')[-1]) if hasattr(self, 'a0_std_label') else 0.0
-        a1_std = float(self.a1_std_label.text().split(':')[-1]) if hasattr(self, 'a1_std_label') else 0.0
+        rssi = getattr(self, '_rssi', 0.0)
+        
+        try:
+            a0_std = float(self.a0_std_label.text().split(':')[-1]) if hasattr(self, 'a0_std_label') else 0.0
+        except Exception:
+            a0_std = 0.0
+        try:
+            a1_std = float(self.a1_std_label.text().split(':')[-1]) if hasattr(self, 'a1_std_label') else 0.0
+        except Exception:
+            a1_std = 0.0
 
         # 标准距离
         std_A0 = self.point_distances.get(height_group, {}).get(str(idx), {}).get('D_A0', 0)
         std_A1 = self.point_distances.get(height_group, {}).get(str(idx), {}).get('D_A1', 0)
+        
         a0_res = std_A0 - a0_avg
         a1_res = std_A1 - a1_avg
 
         row = [point_name, height_str,
                f"{a0_avg:.1f}", f"{a0_std:.1f}", f"{a0_res:.1f}", f"{a0_rssi:.0f}",
-               f"{a1_avg:.1f}", f"{a1_std:.1f}", f"{a1_res:.1f}", f"{a1_rssi:.0f}"]
+               f"{a1_avg:.1f}", f"{a1_std:.1f}", f"{a1_res:.1f}", f"{rssi:.0f}"]
 
         # 读写CSV（不做数量限制）
         rows = []
@@ -6327,18 +6320,19 @@ class TestPage(QWidget):
 
         InfoBar.success("已记录", f"点位{point_name}已追加到日志，共{len(rows)-1}条", parent=self, duration=1500)
 
-    def update_realtime_data(self, a0_avg, a0_std, a1_avg, a1_std, a1_rssi):
+    def update_realtime_data(self, a0_avg, a0_std, a1_avg, a1_std, rssi):
         """供外部调用，刷新实时数据并更新Res"""
         # 更新显示
         self.a0_avg_value.setText(f"{a0_avg:.1f}")
         self.a0_std_label.setText(f"Std: {a0_std:.1f}")
         self.a1_avg_value.setText(f"{a1_avg:.1f}")
         self.a1_std_label.setText(f"Std: {a1_std:.1f}")
-        self.a1_rssi_label.setText(f"{a1_rssi}")
+        self.a1_rssi_label.setText(f"{rssi}")
+
         # 更新内部缓存，用于后续计算Res
         self._a0_avg = a0_avg
         self._a1_avg = a1_avg
-        self._a1_rssi = a1_rssi
+        self._rssi = rssi
         self.update_res_labels()
 
     def clear_test_data(self):
@@ -6360,7 +6354,7 @@ class TestPage(QWidget):
         # 重置内部缓存
         self._a0_avg = 0.0
         self._a1_avg = 0.0
-        self._a1_rssi = 0.0
+        self._rssi = 0.0
         
         # 清空图表数据（如果图表存在）
         if hasattr(self.parent_window, 'chart_widget') and self.parent_window.chart_widget:

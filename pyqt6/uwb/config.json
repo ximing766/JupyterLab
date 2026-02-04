@@ -49,6 +49,11 @@
   },
   "position_view": {
     "channel_width": 85,
-    "coordinate_scale": 1.0
+    "coordinate_scale": 1.5
+  },
+  "search_history": {
+    "com1_search": [
+      "[BLE] Updated"
+    ]
   }
 }
