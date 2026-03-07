@@ -2548,7 +2548,17 @@ class MainWindow(FluentWindow): # MSFluentWindow
             # 检查串口列表是否有变化
             if set(ports) == set(self.current_ports):
                 return
-                
+            
+            # 打印串口详情
+            try:
+                import serial.tools.list_ports
+                com_details = list(serial.tools.list_ports.comports())
+                print(f"\\n[COM1] 串口列表更新:")
+                for p in com_details:
+                    print(f"  {p}")
+            except Exception as e:
+                print(f"打印串口详情失败: {e}")
+
             current_port = self.port_combo.currentText()
             
             self.current_ports = ports
