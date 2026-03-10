@@ -6,8 +6,10 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
-import com.example.uwbota.ble.BleManager
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.uwbota.databinding.FragmentDebugBinding
+import com.example.uwbota.databinding.ItemDebugParamBinding
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -16,6 +18,31 @@ import kotlinx.coroutines.withContext
 class DebugFragment : Fragment() {
     private var _binding: FragmentDebugBinding? = null
     private val binding get() = _binding!!
+
+    // Data class for debug parameters
+    data class DebugParam(
+        val id: Int,
+        val name: String,
+        val type: Byte,
+        val min: Int,
+        val max: Int,
+        var value: Int
+    )
+
+    // List of parameters
+    private val params = mutableListOf(
+        DebugParam(1, "Park H", 0x01.toByte(), 100, 300, 100),
+        DebugParam(2, "Park W", 0x02.toByte(), 50, 200, 50),
+        DebugParam(3, "Transit Area", 0x03.toByte(), 0, 100, 45),
+        DebugParam(4, "Q Value", 0x09.toByte(), 0, 200, 50),
+        DebugParam(5, "R Value", 0x0A.toByte(), 0, 200, 100),
+        DebugParam(6, "Reserved 1", 0x04.toByte(), 0, 255, 0),
+        DebugParam(7, "Reserved 2", 0x05.toByte(), 0, 255, 0),
+        DebugParam(8, "Reserved 3", 0x06.toByte(), 0, 255, 0),
+        DebugParam(9, "Reserved 4", 0x07.toByte(), 0, 255, 0),
+        DebugParam(10, "Reserved 5", 0x08.toByte(), 0, 255, 0),
+        
+    )
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -28,45 +55,15 @@ class DebugFragment : Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-        setupListeners()
+        setupRecyclerView()
     }
 
-    private fun setupListeners() {
-        // Q Value (Range 0-200, Default 50)
-        binding.sliderQ.value = 50f
-        binding.tvQValue.text = "50"
-        binding.sliderQ.addOnChangeListener { _, value, _ ->
-            binding.tvQValue.text = value.toInt().toString()
-        }
-        binding.btnSetQ.setOnClickListener {
-            // Type 0x01 for Q
-            sendValue(0x01.toByte(), binding.sliderQ.value.toInt().toByte())
-        }
-
-        // R Value (Range 0-200, Default 100)
-        binding.sliderR.value = 100f
-        binding.tvRValue.text = "100"
-        binding.sliderR.addOnChangeListener { _, value, _ ->
-            binding.tvRValue.text = value.toInt().toString()
-        }
-        binding.btnSetR.setOnClickListener {
-            // Type 0x02 for R
-            sendValue(0x02.toByte(), binding.sliderR.value.toInt().toByte())
-        }
-
-        // RED Value (Range 0-100, Default 45)
-        binding.sliderRed.value = 45f
-        binding.tvRedValue.text = "45"
-        binding.sliderRed.addOnChangeListener { _, value, _ ->
-            binding.tvRedValue.text = value.toInt().toString()
-        }
-        binding.btnSetRed.setOnClickListener {
-            // Type 0x03 for RED
-            sendValue(0x03.toByte(), binding.sliderRed.value.toInt().toByte())
-        }
+    private fun setupRecyclerView() {
+        binding.rvDebugParams.layoutManager = LinearLayoutManager(context)
+        binding.rvDebugParams.adapter = DebugParamAdapter(params)
     }
 
-    private fun sendValue(type: Byte, value: Byte) {
+    private fun sendValue(type: Byte, value: Int) {
         val mainActivity = requireActivity() as? MainActivity
         if (mainActivity == null) return
         
@@ -76,18 +73,29 @@ class DebugFragment : Fragment() {
             return
         }
 
-        // Protocol: A5 + type + value + 5A
-        val packet = byteArrayOf(0xA5.toByte(), type, value, 0x5A.toByte())
-        
+        val packet: ByteArray
+        val valueStr: String
+
+        if (value > 255) {
+            // Send 2 bytes: High Byte, Low Byte (Big Endian)
+            val high = (value shr 8).toByte()
+            val low = (value and 0xFF).toByte()
+            packet = byteArrayOf(0xA5.toByte(), type, high, low, 0x5A.toByte())
+            valueStr = "0x%04X (%d)".format(value, value)
+        } else {
+            // Send 1 byte: Value
+            packet = byteArrayOf(0xA5.toByte(), type, value.toByte(), 0x5A.toByte())
+            valueStr = "0x%02X (%d)".format(value, value)
+        }
+
         // Use a coroutine to send
         CoroutineScope(Dispatchers.IO).launch {
             val success = bleManager.sendApduFrame(packet)
             withContext(Dispatchers.Main) {
                 if (success) {
-                    binding.tvDebugStatus.text = "Sent: Type=${type}, Value=${value.toUByte()}"
-                    Toast.makeText(context, "Sent successfully", Toast.LENGTH_SHORT).show()
+                    // Using Toast as status textview is removed
+                    // Toast.makeText(context, "Sent: $valueStr", Toast.LENGTH_SHORT).show()
                 } else {
-                    binding.tvDebugStatus.text = "Send failed"
                     Toast.makeText(context, "Send failed", Toast.LENGTH_SHORT).show()
                 }
             }
@@ -97,5 +105,56 @@ class DebugFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    // Inner Adapter Class
+    inner class DebugParamAdapter(private val items: List<DebugParam>) : 
+        RecyclerView.Adapter<DebugParamAdapter.ViewHolder>() {
+
+        inner class ViewHolder(val itemBinding: ItemDebugParamBinding) : 
+            RecyclerView.ViewHolder(itemBinding.root)
+
+        override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
+            val itemBinding = ItemDebugParamBinding.inflate(
+                LayoutInflater.from(parent.context), 
+                parent, 
+                false
+            )
+            return ViewHolder(itemBinding)
+        }
+
+        override fun onBindViewHolder(holder: ViewHolder, position: Int) {
+            val item = items[position]
+            with(holder.itemBinding) {
+                tvParamName.text = item.name
+                
+                // Update slider range
+                sliderParam.valueFrom = item.min.toFloat()
+                sliderParam.valueTo = item.max.toFloat()
+                
+                // Ensure value is within range
+                if (item.value < item.min) item.value = item.min
+                if (item.value > item.max) item.value = item.max
+                
+                sliderParam.value = item.value.toFloat()
+                tvParamValue.text = item.value.toString()
+
+                // Slider listener
+                sliderParam.clearOnChangeListeners()
+                sliderParam.addOnChangeListener { _, value, _ ->
+                    val intValue = value.toInt()
+                    item.value = intValue
+                    tvParamValue.text = intValue.toString()
+                }
+
+                // Button listener - Now using ImageButton for compact design
+                btnSetParam.setOnClickListener {
+                    sendValue(item.type, item.value)
+                    Toast.makeText(context, "Sent ${item.name}: ${item.value}", Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+
+        override fun getItemCount() = items.size
     }
 }
