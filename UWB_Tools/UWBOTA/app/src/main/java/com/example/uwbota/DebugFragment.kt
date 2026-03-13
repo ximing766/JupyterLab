@@ -31,12 +31,12 @@ class DebugFragment : Fragment() {
 
     // List of parameters
     private val params = mutableListOf(
-        DebugParam(1, "Park H", 0x01.toByte(), 100, 300, 100),
-        DebugParam(2, "Park W", 0x02.toByte(), 50, 200, 50),
-        DebugParam(3, "Transit Area", 0x03.toByte(), 0, 100, 45),
+        DebugParam(1, "Vert Height", 0x01.toByte(), 50, 350, 250),
+        DebugParam(2, "Horiz Offset", 0x02.toByte(), 50, 350, 100),
+        DebugParam(3, "Trigger Dist", 0x03.toByte(), 50, 350, 200),
         DebugParam(4, "Q Value", 0x09.toByte(), 0, 200, 50),
         DebugParam(5, "R Value", 0x0A.toByte(), 0, 200, 100),
-        DebugParam(6, "Reserved 1", 0x04.toByte(), 0, 255, 0),
+        DebugParam(6, "Reset", 0xF1.toByte(), 0, 0, 0),
         DebugParam(7, "Reserved 2", 0x05.toByte(), 0, 255, 0),
         DebugParam(8, "Reserved 3", 0x06.toByte(), 0, 255, 0),
         DebugParam(9, "Reserved 4", 0x07.toByte(), 0, 255, 0),
@@ -128,16 +128,27 @@ class DebugFragment : Fragment() {
             with(holder.itemBinding) {
                 tvParamName.text = item.name
                 
-                // Update slider range
-                sliderParam.valueFrom = item.min.toFloat()
-                sliderParam.valueTo = item.max.toFloat()
-                
-                // Ensure value is within range
-                if (item.value < item.min) item.value = item.min
-                if (item.value > item.max) item.value = item.max
-                
-                sliderParam.value = item.value.toFloat()
-                tvParamValue.text = item.value.toString()
+                // Handle Reset type (0xF1) separately
+                if (item.type == 0xF1.toByte()) {
+                    sliderParam.visibility = View.INVISIBLE
+                    tvParamValue.visibility = View.INVISIBLE
+                    sliderParam.isEnabled = false
+                } else {
+                    sliderParam.visibility = View.VISIBLE
+                    tvParamValue.visibility = View.VISIBLE
+                    sliderParam.isEnabled = true
+                    
+                    // Update slider range
+                    sliderParam.valueFrom = item.min.toFloat()
+                    sliderParam.valueTo = item.max.toFloat()
+                    
+                    // Ensure value is within range
+                    if (item.value < item.min) item.value = item.min
+                    if (item.value > item.max) item.value = item.max
+                    
+                    sliderParam.value = item.value.toFloat()
+                    tvParamValue.text = item.value.toString()
+                }
 
                 // Slider listener
                 sliderParam.clearOnChangeListeners()
