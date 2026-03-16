@@ -76,7 +76,7 @@ class SplashScreen(CardWidget):
         layout.addWidget(logo_container)
         
         # App title
-        self.title_label = SubtitleLabel("UWB Dashboard")
+        self.title_label = SubtitleLabel("UWB")
         self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.title_label.setStyleSheet("""
             font-size: 24px;

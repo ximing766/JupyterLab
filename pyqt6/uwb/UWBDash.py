@@ -422,7 +422,15 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
     def init_ui(self):
         self.setMinimumSize(1000, 700)
-        self.setGeometry(100, 100, 1000, 700)
+        
+        primary_screen = QApplication.primaryScreen()
+        if primary_screen:
+            self.setGeometry(primary_screen.availableGeometry())
+        else:
+            self.setGeometry(100, 100, 1000, 700)
+        
+        # Set state to maximized before showing
+        self.setWindowState(Qt.WindowState.WindowMaximized)
     
         self.create_pages()
         
@@ -2093,7 +2101,6 @@ class MainWindow(FluentWindow): # MSFluentWindow
         top_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         self.data_table = TableWidget()
-        # Header configuration will be handled by update_data_table_headers in init_ui
         
         self.data_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.data_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
@@ -6578,7 +6585,8 @@ if __name__ == "__main__":
     
     def show_main_window():
         try:
-            window.showMaximized()   # Show window in fullscreen mode by default
+            # window.showMaximized()   # Show window in fullscreen mode by default
+            window.show()
             window.raise_()          # Bring window to front
             window.activateWindow()  # Activate window
         except Exception as e:
