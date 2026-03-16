@@ -42,7 +42,7 @@ class SplashScreen(CardWidget):
         # Setup timers for animations - Accelerated by 1/3
         self.fade_timer = QTimer()
         self.fade_timer.timeout.connect(self.fade_in_animation)
-        self.fade_timer.start(13)  # Faster animation: ~77 FPS for smoother and quicker fade
+        self.fade_timer.start(10)  # Faster animation: ~100 FPS
         
         self.progress_timer = QTimer()
         self.progress_timer.timeout.connect(self.update_progress)
@@ -139,13 +139,13 @@ class SplashScreen(CardWidget):
     def fade_in_animation(self):
         """Handle fade-in animation"""
         if self.opacity < 1.0:
-            self.opacity += 0.075  # Faster fade-in: increased from 0.05 to 0.075
+            self.opacity += 0.15  # Faster fade-in: increased from 0.075 to 0.15
             self.update()
         else:
             self.fade_timer.stop()
             self.fade_in_complete = True
             # Start progress animation after fade-in is complete
-            self.progress_timer.start(33)  # Faster progress updates: reduced from 50ms to 33ms
+            self.progress_timer.start(20)  # Faster progress updates: reduced from 33ms to 20ms
             
     def update_progress(self):
         """Update loading progress"""
@@ -174,11 +174,14 @@ class SplashScreen(CardWidget):
             self.progress_timer.stop()
             if not self.is_closing:
                 self.is_closing = True
-                # Reduced delay before closing: from 500ms to 300ms
-                QTimer.singleShot(300, self.fade_out_and_close)
+                # Reduced delay before closing: from 300ms to 50ms
+                QTimer.singleShot(50, self.fade_out_and_close)
             
     def fade_out_and_close(self):
         """Handle fade-out animation and close"""
+        # Emit finished signal before fading out to ensure main window is ready
+        self.finished.emit()
+        
         if not hasattr(self, 'fade_out_timer'):
             self.fade_out_timer = QTimer()
             self.fade_out_timer.timeout.connect(self.fade_out_step)
@@ -187,11 +190,9 @@ class SplashScreen(CardWidget):
     def fade_out_step(self):
         """Single step of fade-out animation"""
         if self.opacity > 0:
-            self.opacity -= 0.1  # Faster fade-out: increased from 0.08 to 0.1
+            self.opacity -= 0.2  # Faster fade-out: increased from 0.1 to 0.2
             self.update()
         else:
             self.fade_out_timer.stop()
-            # Emit finished signal before closing
-            self.finished.emit()
-            # Reduced final delay: from 100ms to 50ms
-            QTimer.singleShot(50, self.close)
+            # Reduced final delay: from 50ms to 10ms
+            QTimer.singleShot(10, self.close)

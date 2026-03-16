@@ -20,8 +20,9 @@ from PyQt6.QtGui import (
     QPixmap, QPainter, QIcon, QCursor,
     QClipboard, QIntValidator, QPen,
     QLinearGradient, QBrush, QTextCharFormat,
-    QTextOption, QTextDocument, QAction
+    QTextOption, QTextDocument
 )
+from qfluentwidgets import Action as QAction
 from PyQt6.QtCharts import (
     QChart, QChartView,
     QLineSeries, QValueAxis
@@ -33,7 +34,7 @@ from qfluentwidgets import (
     setTheme, Theme, qconfig, PushButton, CheckBox, PrimaryPushButton, BodyLabel, TableWidget,
     LineEdit, ToolButton, TextEdit, SwitchButton, CaptionLabel, DotInfoBadge, SearchLineEdit, ToolButton, PrimaryToolButton,
     PrimaryToolButton, CompactSpinBox, OptionsSettingCard, ConfigItem, OptionsConfigItem, OptionsValidator, QConfig,
-    NavigationItemPosition, RoundMenu, ProgressBar, CardWidget, ProgressRing, IconWidget
+    NavigationItemPosition, RoundMenu, ProgressBar, CardWidget, ProgressRing, IconWidget, RangeSettingCard, SettingCard
 )
 from log import Logger
 from position_view import PositionView
@@ -46,9 +47,9 @@ import math
 # True: 闸机模式（显示闸机动画，与日志各占一半宽度）
 COM1_GATE_MODE = False
 
-APP_VERSION = "v2.3.1"
+APP_VERSION = "v2.4"
 APP_NAME = "UWBDash"
-BUILD_DATE = "2025年12月"
+BUILD_DATE = "2026年3月"
 AUTHOR = "@Qilang²"
 
 
@@ -115,9 +116,9 @@ class SearchLineEditWithHistory(SearchLineEdit):
         from PyQt6.QtGui import QColor
         from qfluentwidgets import isDarkTheme
         
-        # Set custom color for the history icon
+        # Icon action already handles history logic when triggered. We don't need a separate button.
         icon_color = QColor(100, 149, 237) if isDarkTheme() else QColor(70, 130, 180)  # Steel blue color
-        self.history_action = QAction(FIF.HISTORY.icon(color=icon_color), "Search History", self)
+        self.history_action = QAction(FIF.HISTORY, "Search History", self)
         self.history_action.triggered.connect(self.show_history_menu)
         
         # Add the history action to the search line edit
@@ -189,7 +190,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.config_path                 = Path(__file__).parent / "config.json"
         self._load_unified_config()
         self.logger                      = Logger(app_path=str(app_path))
-        self.csv_title                   = ['A0', 'A1', 'A2', 'A3', 'RSSI', 'X', 'Y', 'Z', 'Auth', 'Trans']
+        self.csv_title                   = ['A1', 'RSSI', 'AoA-Azi', 'Pdoa-Fst', 'AoA-Ele', 'Pdoa-Sec']
         self.background_cache            = None         # 添加背景缓存
         self.last_window_size            = QSize()      # 添加窗口尺寸记录
         self.drag_pos                    = QPoint()
@@ -392,7 +393,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
             self.quick_send_data = {}
 
     def _save_unified_config(self):
-        print("保存配置函数被调用")
+        # print("保存配置函数被调用")
         config_data = {
             "background": {
                 "background_images": self.background_images,
@@ -405,6 +406,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
             "position_view": {
                 "channel_width": getattr(self, 'channel_width', 200),
                 "coordinate_scale": getattr(self, 'coordinate_scale', 2.0)
+            },
+            "system": {
+                "filter_bluetooth_ports": getattr(self, 'filter_bluetooth_ports', True)
             }
         }
         try:
@@ -424,12 +428,16 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
         self.load_quick_send_config()
         
+        # Configure data table headers based on self.csv_title if available
+        self.update_data_table_headers()
+        
         self.COM1_page.setObjectName("COM1")
         self.COM2_page.setObjectName("COM2") 
         self.Chart_page.setObjectName("CHART")
         # 实例化测试页面并赋值给self.testInterface
         self.testInterface = TestPage(self)
         self.testInterface.setObjectName("TEST")
+        self.testInterface.hide()  # Hide it since it's not added to the stacked widget
         
         self.Settings_page = self.create_settings_page()
         
@@ -438,13 +446,17 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.nav_com2 = self.addSubInterface(self.COM2_page, FIF.CONNECT, "COM2")
         self.addSubInterface(self.Chart_page, FIF.PIE_SINGLE, "CHART")
         # 使用已实例化的self.testInterface添加导航
-        self.addSubInterface(self.testInterface, FIF.LABEL, "测试")
+        # self.addSubInterface(self.testInterface, FIF.LABEL, "测试")
         self.addSubInterface(self.Settings_page, FIF.SETTING, "Setting", position=NavigationItemPosition.BOTTOM)
 
         self.navigationInterface.setExpandWidth(125)   # 展开时宽度设为 300 px
 
         self.apply_theme()
         setTheme(Theme.DARK)
+
+        # 隐藏TitleBar中的Icon，避免白底Icon在左上角显示不协调
+        if hasattr(self, 'titleBar') and hasattr(self.titleBar, 'iconLabel'):
+            self.titleBar.iconLabel.hide()
 
         # 页面切换时动态重挂载图表到对应页面
         if hasattr(self, 'stackedWidget'):
@@ -561,16 +573,14 @@ class MainWindow(FluentWindow): # MSFluentWindow
     def show_help_dialog(self):
         """Show help dialog with modern Fluent Design"""
         help_content = """
-        <h2>🚀 UWB Dash 使用指南</h2>
-        <h3>📊 数据监控</h3>
+        <h3>数据监控</h3>
         <p>• <b>实时数据</b>：查看当前位置和距离信息</p>
-        <p>• <b>图表显示</b>：观察位置变化趋势</p>
-        <p>• <b>数据记录</b>：保存历史数据用于分析</p>
-        <h3>🎯 定位功能</h3>
+        <p>• <b>图表显示</b>：位置变化趋势</p>
+        <p>• <b>数据记录</b>：保存历史数据</p>
+        <h3>定位功能</h3>
         <p>• 实时位置可视化</p>
         <p>• 支持多个用户同时在线监控</p>
-        <h3>⚙️ 设置选项</h3>
-        <p>• 主题切换：浅色/深色模式</p>
+        <h3>设置选项</h3>
         <p>• 背景自定义：个性化界面</p>
         <h3>⌨️ 一些功能 </h3>
         <p>• <b>鼠标侧键</b>：快速切换页面（前进/后退）</p>
@@ -654,6 +664,17 @@ class MainWindow(FluentWindow): # MSFluentWindow
             return 'HALUCI' in message.upper() or message.strip() == ''
         return False  
 
+    def update_data_table_headers(self):
+        """Update the data table headers to match self.csv_title"""
+        if hasattr(self, 'data_table') and hasattr(self, 'csv_title'):
+            self.data_table.setColumnCount(len(self.csv_title))
+            self.data_table.setHorizontalHeaderLabels(self.csv_title)
+            # Center align header text
+            for i in range(len(self.csv_title)):
+                item = self.data_table.horizontalHeaderItem(i)
+                if item:
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+
     def create_pages(self): # BM: Create Page
         self.COM1_page  = self.create_COM_page()
         self.COM2_page  = self.create_COM_page2()
@@ -731,6 +752,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.search_line2.searchSignal.connect(self.on_search_triggered2)
         self.search_line2.clearSignal.connect(self.on_search_cleared2)
         self.search_line2.returnPressed.connect(self.on_search_triggered2)
+        # Prevent the built-in clear button from disconnecting a non-existent signal
+        if hasattr(self.search_line2, 'clearButton'):
+            try:
+                self.search_line2.clearButton.clicked.disconnect()
+                self.search_line2.clearButton.clicked.connect(self.search_line2.clear)
+            except TypeError:
+                pass
         
         # Add previous and next search buttons for COM2
         self.search_prev_btn2 = ToolButton(FIF.UP)
@@ -807,6 +835,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.send_line_edit2 = LineEdit()
         self.send_line_edit2.setPlaceholderText("e.g., AA BB or 0xAA 0xBB or String")
         self.send_line_edit2.setClearButtonEnabled(True)
+        # Prevent the built-in clear button from disconnecting a non-existent signal
+        if hasattr(self.send_line_edit2, 'clearButton'):
+            try:
+                self.send_line_edit2.clearButton.clicked.disconnect()
+                self.send_line_edit2.clearButton.clicked.connect(self.send_line_edit2.clear)
+            except TypeError:
+                pass
 
         # Large input box for expanded mode (initially hidden)
         self.large_send_edit2 = TextEdit()
@@ -953,6 +988,16 @@ class MainWindow(FluentWindow): # MSFluentWindow
         import serial.tools.list_ports
         current_port = self.port_combo2.currentText() if self.port_combo2.count() > 0 else ""
         ports = list(serial.tools.list_ports.comports())
+        
+        # Filter out standard serial over Bluetooth links if configured
+        filter_bt = getattr(self, 'filter_bluetooth_ports', True)
+        if filter_bt:
+            filtered_ports = []
+            for p in ports:
+                if not ("蓝牙链接上的标准串行" in p.description or "Standard Serial over Bluetooth link" in p.description or "BTHENUM" in p.hwid):
+                    filtered_ports.append(p)
+            ports = filtered_ports
+            
         available_ports = [port.device for port in ports]
         if set(available_ports) != set(self.current_ports2):
             self.port_combo2.clear()
@@ -1120,7 +1165,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.baud_combo = EditableComboBox()
         self.baud_combo.setFixedWidth(110)
         self.baud_combo.addItems(['9600', '115200', '230400', '460800', '921600', '1000000', '3000000'])
-        self.baud_combo.setCurrentText('921600')
+        self.baud_combo.setCurrentText('3000000')
 
         status_widget = QWidget()
         status_layout = QHBoxLayout(status_widget)
@@ -1192,6 +1237,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.search_line.searchSignal.connect(self.on_search_triggered)
         self.search_line.clearSignal.connect(self.on_search_cleared)
         self.search_line.returnPressed.connect(self.on_search_triggered)
+        # Prevent the built-in clear button from disconnecting a non-existent signal
+        if hasattr(self.search_line, 'clearButton'):
+            try:
+                self.search_line.clearButton.clicked.disconnect()
+                self.search_line.clearButton.clicked.connect(self.search_line.clear)
+            except TypeError:
+                pass
         
         # Add previous and next search buttons
         self.search_prev_btn = ToolButton(FIF.UP)
@@ -1218,7 +1270,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.status_panel_toggle_btn.setFixedWidth(35)
         self.status_panel_toggle_btn.setToolTip("隐藏状态监控面板")
         self.status_panel_toggle_btn.clicked.connect(self.toggle_status_panel)
-        self.status_panel_visible = True  # 默认显示
+        self.status_panel_visible = False  # 默认显示
 
         top_layout.addWidget(self.port_combo)
         top_layout.addWidget(self.baud_combo)
@@ -1314,6 +1366,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.send_line_edit = LineEdit()
         self.send_line_edit.setPlaceholderText("e.g., AA BB or 0xAA 0xBB or String")
         self.send_line_edit.setClearButtonEnabled(True)
+        # Prevent the built-in clear button from disconnecting a non-existent signal
+        if hasattr(self.send_line_edit, 'clearButton'):
+            try:
+                self.send_line_edit.clearButton.clicked.disconnect()
+                self.send_line_edit.clearButton.clicked.connect(self.send_line_edit.clear)
+            except TypeError:
+                pass
 
         # BM:输入框开关
         self.large_send_edit = TextEdit()
@@ -1501,6 +1560,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
             # 右侧：状态监控面板
             self.status_panel = self.create_status_panel()
+            self.status_panel.setVisible(False)
 
             # 添加到分割器
             display_splitter.addWidget(self.serial_display)
@@ -1553,16 +1613,13 @@ class MainWindow(FluentWindow): # MSFluentWindow
         return panel
 
     def toggle_status_panel(self):
-        """切换状态面板显示/隐藏"""
         if hasattr(self, 'status_panel'):
             if self.status_panel_visible:
                 self.status_panel.setVisible(False)  # 使用setVisible而不是hide()
-                self.status_panel_toggle_btn.setIcon(FIF.VIEW.icon())
-                self.status_panel_toggle_btn.setToolTip("显示状态监控面板")
+                self.status_panel_toggle_btn.setIcon(FIF.HIDE.icon())
             else:
                 self.status_panel.setVisible(True)   # 使用setVisible而不是show()
-                self.status_panel_toggle_btn.setIcon(FIF.HIDE.icon())
-                self.status_panel_toggle_btn.setToolTip("隐藏状态监控面板")
+                self.status_panel_toggle_btn.setIcon(FIF.VIEW.icon())
             self.status_panel_visible = not self.status_panel_visible
 
     def create_status_card(self, title, total, icon, is_link=False):
@@ -1833,7 +1890,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.is_expanded_mode = False
         self.is_multi_gate_mode = False  # 多闸机模式状态
 
-        canvas_splitter.setSizes([100, 100])
+        canvas_splitter.setSizes([173, 100])
         # Set vertical splitter stretch factors and sizes to avoid oversized chart
         try:
             main_splitter.setStretchFactor(0, 1)
@@ -1871,7 +1928,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
             if hasattr(self, 'position_view'):
                 self.position_view.set_display_scale(1.2)
             
-            self.layout_toggle_btn.setText("📊")
+            self.layout_toggle_btn.setText("✨")
             self.is_expanded_mode = True
         else:
             # 切换回正常模式：显示所有区域
@@ -2029,21 +2086,27 @@ class MainWindow(FluentWindow): # MSFluentWindow
         form_splitter = QSplitter(Qt.Orientation.Vertical)
         form_splitter.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
-        # 上部分 - 数据表格
+        # BM - 数据表格
         top_table = QWidget()
         top_table_layout = QVBoxLayout(top_table)
         top_table_layout.setContentsMargins(5, 5, 5, 5)
         top_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
         self.data_table = TableWidget()
-        self.data_table.setColumnCount(10)
-        self.data_table.setHorizontalHeaderLabels(['A0', 'A1', 'A2', 'A3', 'RSSI', 'X', 'Y', 'Z', 'Auth', 'Trans'])
+        # Header configuration will be handled by update_data_table_headers in init_ui
         
         self.data_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.Stretch)
         self.data_table.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
         self.data_table.setAlternatingRowColors(True)           # 斑马纹
         self.data_table.setBorderVisible(True)                  # 边框线
         self.data_table.setBorderRadius(8)                      # 圆角表头
+        
+        # Beautification
+        # self.data_table.verticalHeader().setVisible(False)      # Hide row numbers for cleaner look
+        # self.data_table.setShowGrid(False)                      # Hide grid lines
+        # self.data_table.setFocusPolicy(Qt.FocusPolicy.NoFocus)  # Remove focus outline
+        # self.data_table.setSelectionMode(QAbstractItemView.SelectionMode.NoSelection) # Disable selection highlighting for read-only view
+        
         top_table_layout.addWidget(self.data_table)
 
         # 下部分 - 闸机动画区域
@@ -2060,7 +2123,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
         form_splitter.addWidget(top_table)
         form_splitter.addWidget(bottom_space)
-        form_splitter.setSizes([120, 300])
+        form_splitter.setSizes([510, 300])
 
         bottom_left_layout.addWidget(form_splitter)
         return bottom_left
@@ -2535,7 +2598,25 @@ class MainWindow(FluentWindow): # MSFluentWindow
                         break
                 
                 winreg.CloseKey(key)
-                # print(f"注册表方式找到串口: {ports}")
+                
+                # Filter out standard serial over Bluetooth links if configured
+                filter_bt = getattr(self, 'filter_bluetooth_ports', True)
+                if filter_bt:
+                    try:
+                        import serial.tools.list_ports
+                        com_details = list(serial.tools.list_ports.comports())
+                        filtered_ports = []
+                        for port in ports:
+                            is_bt = False
+                            for p in com_details:
+                                if p.device == port and ("蓝牙链接上的标准串行" in p.description or "Standard Serial over Bluetooth link" in p.description or "BTHENUM" in p.hwid):
+                                    is_bt = True
+                                    break
+                            if not is_bt:
+                                filtered_ports.append(port)
+                        ports = filtered_ports
+                    except Exception as filter_e:
+                        print(f"Filtering Bluetooth ports failed: {filter_e}")
                 
             except Exception as reg_error:
                 print(f"注册表方式获取串口失败: {str(reg_error)}")
@@ -3332,6 +3413,11 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     fixed_text = re.sub(r'"([^"]+)":\s*([,}])', r'"\1": null\2', fixed_text)
                     
                     json_data = json.loads(fixed_text)
+                    # 临时存起新增的4个字段
+                    json_data.setdefault('AoA-Azi', 0)
+                    json_data.setdefault('Pdoa-Fst', 100)
+                    json_data.setdefault('AoA-Ele', 0)
+                    json_data.setdefault('Pdoa-Sec', 100)
                 except json.JSONDecodeError as e:
                     print(f"JSON解析错误: {e}")
                     print(f"原始数据: {text}")
@@ -3413,18 +3499,10 @@ class MainWindow(FluentWindow): # MSFluentWindow
                     self.update_status_card("DTPML", used_value=dtpml_value)
 
                 # Log data
-                data_values = [
-                    json_data.get('A0', 0),
-                    json_data.get('A1', 0),
-                    json_data.get('A2', 0),
-                    json_data.get('A3', 0),
-                    json_data.get('RSSI', 0),
-                    json_data.get('User-X', 0),
-                    json_data.get('User-Y', 0),
-                    json_data.get('User-Z', 0),
-                    auth_value,
-                    trans_value
-                ]
+                data_values = []
+                for field in self.csv_title:
+                    val = json_data.get(field, 0)
+                    data_values.append(val)
                 
                 # 写入CSV
                 csv_data = ",".join(str(val) for val in data_values)
@@ -3564,7 +3642,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 row_position = self.data_table.rowCount()
                 self.data_table.insertRow(row_position)
                 for col, value in enumerate(data_values):
-                    self.data_table.setItem(row_position, col, QTableWidgetItem(str(value)))
+                    item = QTableWidgetItem(str(value))
+                    item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                    self.data_table.setItem(row_position, col, item)
                 if self.data_table.rowCount() > 100:
                     self.data_table.removeRow(0)
             self.data_table.scrollToBottom()
@@ -4410,62 +4490,46 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
         self.appearanceGroup = SettingCardGroup('外观设置', view)
         
-        self.themeCard = PushSettingCard(
-            text='深色',
-            icon=FIF.BRUSH,
-            title='应用主题',
-            content='深色主题已启用'
-        )
-        self.themeCard.clicked.connect(self.onThemeCardClicked)
-        
         self.backgroundCard = PushSettingCard(
             text='切换背景',
             icon=FIF.PHOTO,
             title='背景图片',
         )
         self.backgroundCard.clicked.connect(self.on_background_toggle)
-        self.appearanceGroup.addSettingCard(self.themeCard)
         self.appearanceGroup.addSettingCard(self.backgroundCard)
         
-        # 背景透明度进度条（0~100）
-        opacityRow = QWidget(view)
-        opacityLayout = QHBoxLayout(opacityRow)
-        opacityLayout.setContentsMargins(0, 0, 0, 0)
-        opacityLayout.setSpacing(12)
-        self.opacityLabel = BodyLabel('背景透明度')
+        # 背景透明度卡片
+        self.opacityCard = SettingCard(FIF.BRUSH, '背景透明度')
         self.opacitySlider = QSlider(Qt.Orientation.Horizontal)
         self.opacitySlider.setRange(0, 100)
+        self.opacitySlider.setFixedWidth(200)
         current_opacity = int(getattr(self, 'background_opacity', 1.0) * 100)
         self.opacitySlider.setValue(current_opacity)
         self.opacityValueLabel = BodyLabel(f"{current_opacity}%")
+        self.opacityValueLabel.setFixedWidth(40)
         self.opacitySlider.valueChanged.connect(self.on_opacity_slider_changed)
-        opacityLayout.addWidget(self.opacityLabel)
-        opacityLayout.addWidget(self.opacitySlider, 1)
-        opacityLayout.addWidget(self.opacityValueLabel)
         
-        # View Settings (Custom)
-        viewSettingsLabel = SubtitleLabel('视图设置', view)
+        self.opacityCard.hBoxLayout.addWidget(self.opacitySlider, 0, Qt.AlignmentFlag.AlignRight)
+        self.opacityCard.hBoxLayout.addSpacing(16)
+        self.opacityCard.hBoxLayout.addWidget(self.opacityValueLabel, 0, Qt.AlignmentFlag.AlignRight)
+        self.opacityCard.hBoxLayout.addSpacing(16)
+        self.appearanceGroup.addSettingCard(self.opacityCard)
         
-        # Channel Width Row
-        self.channelWidthRow = QWidget(view)
-        cwLayout = QHBoxLayout(self.channelWidthRow)
-        cwLayout.setContentsMargins(0, 0, 0, 0)
-        cwLayout.setSpacing(12)
-        cwLabel = BodyLabel('闸机通道宽度 (cm)')
+        # View Settings Group
+        self.viewGroup = SettingCardGroup('视图设置', view)
+        
+        # Channel Width Card
+        self.channelWidthCard = SettingCard(FIF.ALIGNMENT, '闸机通道宽度 (cm)')
         self.cwSpinBox = SpinBox()
         self.cwSpinBox.setRange(50, 500)
         self.cwSpinBox.setValue(getattr(self, 'channel_width', 200))
         self.cwSpinBox.valueChanged.connect(self.on_channel_width_changed)
-        cwLayout.addWidget(cwLabel)
-        cwLayout.addStretch(1)
-        cwLayout.addWidget(self.cwSpinBox)
+        self.channelWidthCard.hBoxLayout.addWidget(self.cwSpinBox, 0, Qt.AlignmentFlag.AlignRight)
+        self.channelWidthCard.hBoxLayout.addSpacing(16)
+        self.viewGroup.addSettingCard(self.channelWidthCard)
         
-        # Scale Row
-        self.scaleRow = QWidget(view)
-        sLayout = QHBoxLayout(self.scaleRow)
-        sLayout.setContentsMargins(0, 0, 0, 0)
-        sLayout.setSpacing(12)
-        sLabel = BodyLabel('View缩放比例')
+        # Scale Card
+        self.scaleCard = SettingCard(FIF.ZOOM, 'View缩放比例')
         self.scaleCombo = ComboBox()
         self.scaleCombo.addItems(['2.0', '1.5', '1.0'])
         
@@ -4478,9 +4542,18 @@ class MainWindow(FluentWindow): # MSFluentWindow
             self.scaleCombo.setCurrentIndex(2)
             
         self.scaleCombo.currentIndexChanged.connect(self.on_coordinate_scale_changed)
-        sLayout.addWidget(sLabel)
-        sLayout.addStretch(1)
-        sLayout.addWidget(self.scaleCombo)
+        self.scaleCard.hBoxLayout.addWidget(self.scaleCombo, 0, Qt.AlignmentFlag.AlignRight)
+        self.scaleCard.hBoxLayout.addSpacing(16)
+        self.viewGroup.addSettingCard(self.scaleCard)
+
+        # Bluetooth Filter Card
+        self.btFilterCard = SettingCard(FIF.BLUETOOTH, '过滤经典蓝牙串口')
+        self.btFilterSwitch = SwitchButton()
+        self.btFilterSwitch.setChecked(getattr(self, 'filter_bluetooth_ports', True))
+        self.btFilterSwitch.checkedChanged.connect(self.on_bt_filter_changed)
+        self.btFilterCard.hBoxLayout.addWidget(self.btFilterSwitch, 0, Qt.AlignmentFlag.AlignRight)
+        self.btFilterCard.hBoxLayout.addSpacing(16)
+        self.viewGroup.addSettingCard(self.btFilterCard)
         
         self.applicationGroup = SettingCardGroup('应用设置', view)
         
@@ -4549,11 +4622,8 @@ class MainWindow(FluentWindow): # MSFluentWindow
         
         # Layout setup
         vBoxLayout.addWidget(self.appearanceGroup)
-        vBoxLayout.addWidget(opacityRow)
         vBoxLayout.addSpacing(10)
-        vBoxLayout.addWidget(viewSettingsLabel)
-        vBoxLayout.addWidget(self.channelWidthRow)
-        vBoxLayout.addWidget(self.scaleRow)
+        vBoxLayout.addWidget(self.viewGroup)
         vBoxLayout.addSpacing(10)
         vBoxLayout.addWidget(self.applicationGroup)
         vBoxLayout.addSpacing(10)
@@ -4680,9 +4750,18 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 self.opacityValueLabel.setText(f"{int(self.background_opacity * 100)}%")
             # 保存配置并刷新界面
             self._save_unified_config()
+            # Force background cache regeneration
+            self.background_cache = None
             self.update()
         except Exception as e:
             print(f"更新背景透明度失败: {e}")
+
+    def on_bt_filter_changed(self, is_checked):
+        """Update classic bluetooth com port filter setting"""
+        self.filter_bluetooth_ports = is_checked
+        self._save_unified_config()
+        self.refresh_ports()
+        self.refresh_ports2()
 
     def on_channel_width_changed(self, value):
         """更新闸机通道宽度"""
@@ -5859,6 +5938,13 @@ class TestPage(QWidget):
         self.log_name_edit = LineEdit()
         self.log_name_edit.setText(self.csv_path.name)
         self.log_name_edit.setClearButtonEnabled(True)
+        # Prevent the built-in clear button from disconnecting a non-existent signal
+        if hasattr(self.log_name_edit, 'clearButton'):
+            try:
+                self.log_name_edit.clearButton.clicked.disconnect()
+                self.log_name_edit.clearButton.clicked.connect(self.log_name_edit.clear)
+            except TypeError:
+                pass
         self.log_name_edit.setMaximumWidth(250)
         log_btn_top = PrimaryPushButton("LOG")
         log_btn_top.setFixedHeight(34)
@@ -5967,9 +6053,7 @@ class TestPage(QWidget):
         kpi_layout.addWidget(self.a0_trend_icon)
         content_layout.addWidget(kpi_widget, 0, Qt.AlignmentFlag.AlignRight)
 
-        # RSSI editor row stays as original functionality
         self.a0_rssi_edit = LineEdit()
-        # Align the editor visual style with A1 row spacing and padding
         self.a0_rssi_edit.setFixedHeight(24)
         self.a0_rssi_edit.setStyleSheet(
             "LineEdit {"
@@ -6203,7 +6287,6 @@ class TestPage(QWidget):
         except ValueError:
             return
         
-        # 假设 A0/A1 在顶部
         self.A0_Anchor = [-width_cm / 2, 0, height_cm]
         self.A1_Anchor = [ width_cm / 2, 0, height_cm]
 
