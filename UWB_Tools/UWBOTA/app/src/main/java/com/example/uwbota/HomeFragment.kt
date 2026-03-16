@@ -6,7 +6,11 @@ import android.bluetooth.BluetoothManager
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
+import android.provider.DocumentsContract
+import android.provider.Settings
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,7 +23,16 @@ import com.example.uwbota.databinding.FragmentHomeBinding
 import com.example.uwbota.ui.DeviceSelectionDialog
 import com.example.uwbota.FirmwareType
 import com.example.uwbota.utils.LogManager
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import org.json.JSONArray
+import java.io.File
+import java.io.FileOutputStream
 import java.io.InputStream
+import java.net.HttpURLConnection
+import java.net.URL
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -40,11 +53,13 @@ class HomeFragment : Fragment() {
 
     // File picker launcher
     private val filePickerLauncher = registerForActivityResult(
-        ActivityResultContracts.GetContent()
-    ) { uri: Uri? ->
-        uri?.let {
-            selectedFirmwareUri = it
-            loadFirmwareFile(it)
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (result.resultCode == Activity.RESULT_OK) {
+            result.data?.data?.let { uri ->
+                selectedFirmwareUri = uri
+                loadFirmwareFile(uri)
+            }
         }
     }
 
@@ -77,6 +92,11 @@ class HomeFragment : Fragment() {
         
         // Initial UI state update
         updateConnectionStatus(bleManager.isConnected())
+
+        // Auto sync on start
+        if (checkStoragePermission()) {
+            syncFirmwareFromGitee()
+        }
     }
     
     private fun initializeComponents() {
@@ -135,7 +155,13 @@ class HomeFragment : Fragment() {
     
     private fun setupClickListeners() {
         binding.btnSelectFile.setOnClickListener {
-            filePickerLauncher.launch("*/*")
+            openFilePicker()
+        }
+
+        binding.btnSyncGitee.setOnClickListener {
+            if (checkStoragePermission()) {
+                syncFirmwareFromGitee()
+            }
         }
         
         binding.btnScanDevices.setOnClickListener {
@@ -158,6 +184,134 @@ class HomeFragment : Fragment() {
         }
     }
     
+    private fun checkStoragePermission(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (!Environment.isExternalStorageManager()) {
+                try {
+                    val intent = Intent(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION)
+                    intent.addCategory("android.intent.category.DEFAULT")
+                    intent.data = Uri.parse("package:${requireContext().packageName}")
+                    startActivity(intent)
+                    Toast.makeText(context, "Please grant all files access permission to sync firmware", Toast.LENGTH_LONG).show()
+                } catch (e: Exception) {
+                    val intent = Intent()
+                    intent.action = Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION
+                    startActivity(intent)
+                }
+                return false
+            }
+        }
+        return true
+    }
+
+    private fun syncFirmwareFromGitee() {
+        logMessage("Starting firmware sync...")
+        binding.btnSyncGitee.isEnabled = false
+        
+        CoroutineScope(Dispatchers.IO).launch {
+            try {
+                val repoOwner = "ximing766"
+                val repoName = "utn3.2_firmware"
+                val targetDir = File(Environment.getExternalStorageDirectory(), "UWB")
+                
+                if (!targetDir.exists()) {
+                    if (targetDir.mkdirs()) {
+                        withContext(Dispatchers.Main) { logMessage("Created directory: ${targetDir.absolutePath}") }
+                    } else {
+                         withContext(Dispatchers.Main) { logMessage("Failed to create directory: ${targetDir.absolutePath}") }
+                         return@launch
+                    }
+                }
+
+                val apiUrl = "https://gitee.com/api/v5/repos/$repoOwner/$repoName/contents/"
+                // withContext(Dispatchers.Main) { logMessage("Fetching file list from Gitee...") }
+                
+                val url = URL(apiUrl)
+                val connection = url.openConnection() as HttpURLConnection
+                connection.requestMethod = "GET"
+                connection.connectTimeout = 10000
+                connection.readTimeout = 10000
+                
+                val jsonString = connection.inputStream.bufferedReader().use { it.readText() }
+                val jsonArray = JSONArray(jsonString)
+                
+                var downloadCount = 0
+                
+                for (i in 0 until jsonArray.length()) {
+                    val item = jsonArray.getJSONObject(i)
+                    val name = item.getString("name")
+                    val type = item.getString("type")
+                    val downloadUrl = item.getString("download_url")
+                    
+                    if (type == "file" && name.endsWith(".bin", ignoreCase = true)) {
+                        val file = File(targetDir, name)
+                        val isUpdate = file.exists()
+                        
+                        withContext(Dispatchers.Main) { 
+                            if (isUpdate) {
+                                logMessage("Updating: $name")
+                            } else {
+                                logMessage("Downloading: $name")
+                            }
+                        }
+                        
+                        downloadFile(downloadUrl, file)
+                        downloadCount++
+                        // withContext(Dispatchers.Main) { logMessage("Successfully saved: ${file.name}") }
+                    }
+                }
+                
+                withContext(Dispatchers.Main) { 
+                    logMessage("Sync complete. $downloadCount files.") 
+                    Toast.makeText(context, "Sync complete", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                e.printStackTrace()
+                withContext(Dispatchers.Main) { 
+                    logMessage("Sync failed: ${e.message}")
+                    Toast.makeText(context, "Sync failed: ${e.message}", Toast.LENGTH_LONG).show()
+                }
+            } finally {
+                withContext(Dispatchers.Main) { binding.btnSyncGitee.isEnabled = true }
+            }
+        }
+    }
+
+    private fun downloadFile(urlStr: String, outputFile: File) {
+        val url = URL(urlStr)
+        val connection = url.openConnection() as HttpURLConnection
+        connection.requestMethod = "GET"
+        connection.connectTimeout = 10000
+        connection.readTimeout = 10000
+        connection.connect()
+        
+        connection.inputStream.use { input ->
+            FileOutputStream(outputFile).use { output ->
+                input.copyTo(output)
+            }
+        }
+    }
+
+    private fun openFilePicker() {
+        val intent = Intent(Intent.ACTION_OPEN_DOCUMENT).apply {
+            addCategory(Intent.CATEGORY_OPENABLE)
+            type = "*/*" 
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                val uri = Uri.parse("content://com.android.externalstorage.documents/document/primary%3AUWB%2F")
+                putExtra(DocumentsContract.EXTRA_INITIAL_URI, uri)
+            }
+        }
+        try {
+            filePickerLauncher.launch(intent)
+        } catch (e: Exception) {
+            // Fallback if system doesn't support the intent
+            val fallbackIntent = Intent(Intent.ACTION_GET_CONTENT).apply {
+                type = "*/*"
+            }
+            filePickerLauncher.launch(fallbackIntent)
+        }
+    }
+
     private fun checkBluetoothEnabled(): Boolean {
         val bluetoothManager = requireContext().getSystemService(Context.BLUETOOTH_SERVICE) as BluetoothManager
         val adapter = bluetoothManager.adapter
@@ -186,7 +340,7 @@ class HomeFragment : Fragment() {
             inputStream?.close()
             
             binding.tvSelectedFile.text = "Selected: $fileName (${selectedFirmwareData?.size ?: 0} bytes)"
-            logMessage("Firmware file loaded: $fileName")
+            // logMessage("Firmware file loaded: $fileName")
             
             updateStartButtonState()
         } catch (e: Exception) {
