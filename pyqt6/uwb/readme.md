@@ -1,9 +1,11 @@
+# UWBDash
+UWB数据监控与可视化仪表盘。
 
-```bash
-python -m nuitka --standalone --windows-console-mode=disable --enable-plugin=pyqt6 --windows-icon-from-ico=./logo.ico --include-data-dir=./pic=./pic --include-data-file=./config.json=./config.json --include-data-file=./UWBDash.json=./UWBDash.json --include-data-file=./logo.ico=./logo.ico --include-module=log --include-module=position_view --include-module=splash_screen --include-module=user_manager --output-dir=../../output --jobs=8 --python-flag=-OO --nofollow-import-to=numpy,scipy,pandas,PySide6,matplotlib --product-name="UWBDash" --product-version="2.3" --file-version="1.0.0.0" --copyright="CardShare@Qilang² © 2025" --trademarks="UWBDash" UWBDash.py
-```
+## 核心功能
+- **多串口监控**: 支持双路 COM 端口数据读取与解析。
+- **实时绘图**: 动态展示 UWB 距离、RSSI、AoA/Pdoa 等参数。
+- **灵活配置**: 支持背景自定义、日志保存及搜索历史记录。
 
-
-```bash
-python -m nuitka --standalone --windows-console-mode=disable --enable-plugin=pyqt6 --windows-icon-from-ico=./logo.ico --include-data-dir=./pic=./pic --include-data-file=./config.json=./config.json --include-data-file=./UWBDash.json=./UWBDash.json --include-data-file=./logo.ico=./logo.ico --include-module=log --include-module=position_view --include-module=splash_screen --include-module=user_manager --output-dir=../../output/UWBDash_lite --jobs=8 --python-flag=-OO --nofollow-import-to=numpy,scipy,pandas,PySide6,matplotlib --product-name="UWBDash-Lite-V2" --product-version="2.3" --file-version="1.0.0.0" --copyright="CardShare@Qilang² © 2025" --trademarks="UWBDash" UWBDash.py
-```
+## 脚本说明
+- **[build_lite.ps1](file:///e:/Work/Python/JupyterLab/pyqt6/uwb/build_lite.ps1)**: 使用 Nuitka 进行精简打包，排除冗余库（numpy/scipy等）以减小体积，生成独立 EXE。
+- **[release.ps1](file:///e:/Work/Python/JupyterLab/pyqt6/uwb/release.ps1)**: 自动化发布脚本。执行清理构建目录、压缩 `dist` 文件夹，并利用 GitHub CLI (`gh`) 创建版本并上传附件。

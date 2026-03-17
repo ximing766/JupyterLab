@@ -223,7 +223,7 @@ class HomeFragment : Fragment() {
                     }
                 }
 
-                val apiUrl = "https://gitee.com/api/v5/repos/$repoOwner/$repoName/contents/"
+                val apiUrl = "https://gitee.com/api/v5/repos/$repoOwner/$repoName/contents/bin?ref=main"
                 // withContext(Dispatchers.Main) { logMessage("Fetching file list from Gitee...") }
                 
                 val url = URL(apiUrl)
