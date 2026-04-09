@@ -221,6 +221,21 @@ class HomeFragment : Fragment() {
                          withContext(Dispatchers.Main) { logMessage("Failed to create directory: ${targetDir.absolutePath}") }
                          return@launch
                     }
+                } else {
+                    // Clean up old IN* or OUT* bin files
+                    var deletedCount = 0
+                    targetDir.listFiles()?.forEach { file ->
+                        if (file.isFile && file.name.lowercase().endsWith(".bin") &&
+                            (file.name.uppercase().startsWith("IN") || file.name.uppercase().startsWith("OUT"))) {
+                            if (file.delete()) {
+                                deletedCount++
+                                LogManager.i("Deleted old firmware file: ${file.name}")
+                            }
+                        }
+                    }
+                    if (deletedCount > 0) {
+                        withContext(Dispatchers.Main) { logMessage("Cleaned up $deletedCount old firmware files") }
+                    }
                 }
 
                 val apiUrl = "https://gitee.com/api/v5/repos/$repoOwner/$repoName/contents/bin?ref=main"

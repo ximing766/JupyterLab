@@ -6,6 +6,8 @@ import datetime
 import time
 import queue
 import random
+import subprocess
+import shutil
 from pathlib import Path
 import serial
 from PyQt6.QtCore import (
@@ -47,7 +49,7 @@ import math
 # True: 闸机模式（显示闸机动画，与日志各占一半宽度）
 COM1_GATE_MODE = False
 
-APP_VERSION = "v2.4"
+APP_VERSION = "v2.4.1"
 APP_NAME = "UWBDash"
 BUILD_DATE = "2026年3月"
 AUTHOR = "@Qilang²"
@@ -213,6 +215,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
         # Initialize output format states (True = STR, False = HEX)
         self.output_format_str = True   # COM1 output format (default: STR)
         self.output_format_str2 = True  # COM2 output format (default: STR)
+        self.viki_parse_enabled = False
+        self.viki_parser_thread = None
+        self.viki_script_path = str(Path(__file__).parent / "config" / "viki.pl")
         
         # Create config class and load configuration
         class AppConfig(QConfig):
@@ -1199,7 +1204,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.output_format_btn.setToolTip("切换输出格式 (STR/HEX)")
         self.output_format_btn.clicked.connect(self.toggle_output_format)
         self.output_format_str = True  # True for STR, False for HEX
-        
+
         self.max_lines_spin = CompactSpinBox()
         self.max_lines_spin.setRange(50000, 300000)
         self.max_lines_spin.setValue(150000)
@@ -1212,12 +1217,15 @@ class MainWindow(FluentWindow): # MSFluentWindow
         line_top_2.setFrameShape(QFrame.Shape.VLine)
         line_top_2.setFrameShadow(QFrame.Shadow.Sunken)
         line_top_2.setStyleSheet("color: #66abf5; background: #4a90e2; min-width:1px;")
+        line_top_2.setVisible(False)
 
         self.Address_label = QLabel("0000  -")
         self.Address_label.setStyleSheet("background: transparent;")
+        self.Address_label.setVisible(False)
         self.Transaction_time_label = QLabel("0000ms")
         self.Transaction_time_label.setStyleSheet("background: transparent;")
-        
+        self.Transaction_time_label.setVisible(False)
+
         line_top_3 = QFrame()
         line_top_3.setFrameShape(QFrame.Shape.VLine)
         line_top_3.setFrameShadow(QFrame.Shadow.Sunken)
@@ -2702,6 +2710,9 @@ class MainWindow(FluentWindow): # MSFluentWindow
                 except Exception:
                     pass
                 self.serial_thread.start()
+
+                if getattr(self, 'viki_parse_enabled', False):
+                    self.start_viki_parser()
                 
                 current_time      = datetime.datetime.now().strftime("%Y%m%d_%H%M%S")
                 port_name         = self.port_combo.currentText().replace(":", "_")
@@ -2756,6 +2767,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         else:
             # 关闭串口
             try:
+                self.stop_viki_parser()
                 if hasattr(self, 'serial_thread') and self.serial_thread is not None:
                     self.serial_thread.stop()
                     self.serial_thread = None
@@ -2964,7 +2976,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
     def _create_time_log_dialog(self):
         """Create and show time log dialog"""
         self.time_log_dialog = QDialog(self)
-        self.time_log_dialog.setWindowTitle("⏰ Time Log")
+        self.time_log_dialog.setWindowTitle("Key Log")
         self.time_log_dialog.setWindowFlags(Qt.WindowType.Dialog | Qt.WindowType.WindowCloseButtonHint)
         # Increase dialog size for better visibility
         self.time_log_dialog.resize(900, 600)
@@ -3185,6 +3197,10 @@ class MainWindow(FluentWindow): # MSFluentWindow
 
     def toggle_output_format(self):
         """Toggle output format between STR and HEX for COM1"""
+        if getattr(self, 'viki_parse_enabled', False) and not self.output_format_str:
+            InfoBar.info("VIKI", "解析模式下固定为 HEX 显示", parent=self, duration=1500)
+            return
+
         self.output_format_str = not self.output_format_str
         if self.output_format_str:
             self.output_format_btn.setText("STR")
@@ -3234,6 +3250,67 @@ class MainWindow(FluentWindow): # MSFluentWindow
         # This function can be used to refresh the display when format changes
         # For now, it will only affect new incoming data
         pass
+
+    def toggle_viki_parse_mode(self, enabled):
+        """Enable/disable viki parser and render decoded result directly in COM1."""
+        enabled = bool(enabled)
+        if enabled:
+            if not os.path.exists(self.viki_script_path):
+                QMessageBox.warning(self, "错误", f"找不到解析脚本：\n{self.viki_script_path}")
+                if hasattr(self, 'vikiParseSwitch'):
+                    self.vikiParseSwitch.setChecked(False)
+                return
+
+            # Viki parser expects continuous HEX stream from COM data.
+            if self.output_format_str:
+                self.toggle_output_format()
+
+            self.viki_parse_enabled = True
+            self.start_viki_parser()
+            InfoBar.success("VIKI", "已开启解析模式", parent=self, duration=1500)
+        else:
+            self.viki_parse_enabled = False
+            self.stop_viki_parser()
+            InfoBar.info("VIKI", "已关闭解析模式", parent=self, duration=1500)
+
+    def start_viki_parser(self):
+        """Start parser worker thread."""
+        if self.viki_parser_thread is not None:
+            return
+        self.viki_parser_thread = VikiParserThread(self.viki_script_path)
+        self.viki_parser_thread.parsed_ready.connect(self.on_viki_parsed_output)
+        self.viki_parser_thread.error_raised.connect(self.on_viki_parser_error)
+        self.viki_parser_thread.start()
+
+    def stop_viki_parser(self):
+        """Stop parser worker thread."""
+        if self.viki_parser_thread is None:
+            return
+        self.viki_parser_thread.stop()
+        self.viki_parser_thread = None
+
+    def on_viki_parsed_output(self, text):
+        """Append parsed text to COM1 display buffer."""
+        if not text:
+            return
+        self.data_buffer.append(text)
+        for line in text.splitlines():
+            if line.strip():
+                self.log_worker.add_log_task("UwbLog", "info", line)
+
+    def on_viki_parser_error(self, message):
+        """Receive non-fatal parser errors from worker."""
+        if message:
+            print(f"Viki parser error: {message}")
+
+    def to_hex_line(self, data):
+        """Normalize incoming serial chunk to uppercase hex bytes separated by spaces."""
+        if isinstance(data, bytes):
+            return " ".join(f"{b:02X}" for b in data)
+        if isinstance(data, str):
+            parts = re.findall(r"[0-9A-Fa-f]{2}", data)
+            return " ".join(p.upper() for p in parts)
+        return ""
 
     def format_data_for_display(self, data, is_str_format=True):
         """Format data for display based on selected format"""
@@ -3330,6 +3407,12 @@ class MainWindow(FluentWindow): # MSFluentWindow
     # BM: COM1 data handle
     def handle_serial_data(self, data):
         try:
+            if getattr(self, 'viki_parse_enabled', False):
+                hex_line = self.to_hex_line(data)
+                if hex_line and self.viki_parser_thread is not None:
+                    self.viki_parser_thread.enqueue_hex_frame(hex_line)
+                return
+
             if hasattr(self, 'output_format_str') and not self.output_format_str:
                 formatted_data = self.format_data_for_display(data, is_str_format=False)
                 text = formatted_data  # Don't add \n here, let format_data_for_display handle it
@@ -3543,6 +3626,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
     def handle_serial_connection_lost(self, error_msg):
         """Handle serial connection lost for COM1"""
         try:
+            self.stop_viki_parser()
             # Update UI status to indicate disconnection
             # self.toggle_btn.setText("打开串口")
             
@@ -4561,6 +4645,16 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.btFilterCard.hBoxLayout.addWidget(self.btFilterSwitch, 0, Qt.AlignmentFlag.AlignRight)
         self.btFilterCard.hBoxLayout.addSpacing(16)
         self.viewGroup.addSettingCard(self.btFilterCard)
+
+        self.vikiParseCard = SettingCard(FIF.DOCUMENT, 'Viki 实时解析（COM1）')
+        self.vikiParseSwitch = SwitchButton()
+        self.vikiParseSwitch.setChecked(getattr(self, 'viki_parse_enabled', False))
+        self.vikiParseSwitch.setOffText("")
+        self.vikiParseSwitch.setOnText("")
+        self.vikiParseSwitch.checkedChanged.connect(self.toggle_viki_parse_mode)
+        self.vikiParseCard.hBoxLayout.addWidget(self.vikiParseSwitch, 0, Qt.AlignmentFlag.AlignRight)
+        self.vikiParseCard.hBoxLayout.addSpacing(16)
+        self.viewGroup.addSettingCard(self.vikiParseCard)
         
         self.applicationGroup = SettingCardGroup('应用设置', view)
         
@@ -5759,6 +5853,129 @@ class SubwayGateAnimation(QWidget):
                                int(particle['size']), int(particle['size']))
         
     
+class VikiParserThread(QThread):
+    parsed_ready = pyqtSignal(str)
+    error_raised = pyqtSignal(str)
+
+    def __init__(self, viki_script_path):
+        super().__init__()
+        self.viki_script_path = viki_script_path
+        self.perl_executable = self._resolve_perl_executable()
+        self.running = False
+        self.frame_queue = queue.Queue(maxsize=500)
+
+    def _resolve_perl_executable(self):
+        """Resolve perl executable for dev/runtime/packaged modes."""
+        script_path = Path(self.viki_script_path)
+        config_dir = script_path.parent
+
+        # Preferred packaged location if you bundle a portable perl runtime.
+        bundled_perl = config_dir / "perl" / "bin" / "perl.exe"
+        if bundled_perl.exists():
+            return str(bundled_perl)
+
+        # Fallback to system perl in PATH.
+        perl_in_path = shutil.which("perl")
+        if perl_in_path:
+            return perl_in_path
+
+        return "perl"
+
+    def enqueue_hex_frame(self, hex_line):
+        """Push one HEX frame into parser queue."""
+        if not hex_line:
+            return
+        try:
+            self.frame_queue.put_nowait(hex_line)
+        except queue.Full:
+            # Drop oldest frame to keep UI responsive under heavy stream.
+            try:
+                self.frame_queue.get_nowait()
+            except queue.Empty:
+                pass
+            try:
+                self.frame_queue.put_nowait(hex_line)
+            except queue.Full:
+                pass
+
+    def stop(self):
+        self.running = False
+        self.wait()
+
+    def run(self):
+        self.running = True
+        while self.running:
+            batch = []
+            try:
+                first = self.frame_queue.get(timeout=0.2)
+                batch.append(first)
+                while len(batch) < 20:
+                    try:
+                        batch.append(self.frame_queue.get_nowait())
+                    except queue.Empty:
+                        break
+            except queue.Empty:
+                continue
+
+            parsed = self._parse_batch(batch)
+            if parsed:
+                self.parsed_ready.emit(parsed)
+
+    def _parse_batch(self, batch):
+        """Parse a small batch of HEX lines via viki.pl and return cleaned output."""
+        try:
+            payload = "".join(f"NXPUCIR => {line}\n" for line in batch)
+            startupinfo = None
+            creationflags = 0
+            if os.name == "nt":
+                startupinfo = subprocess.STARTUPINFO()
+                startupinfo.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+                startupinfo.wShowWindow = 0
+                creationflags = getattr(subprocess, "CREATE_NO_WINDOW", 0)
+
+            proc = subprocess.run(
+                [self.perl_executable, self.viki_script_path],
+                input=payload,
+                text=True,
+                capture_output=True,
+                timeout=6,
+                startupinfo=startupinfo,
+                creationflags=creationflags
+            )
+
+            stdout_text = proc.stdout or ""
+            stderr_text = proc.stderr or ""
+
+            # Keep stderr only when it is a real failure message.
+            stderr_text = stderr_text.replace("\r", "")
+            if stderr_text and "masks earlier declaration" not in stderr_text:
+                self.error_raised.emit(stderr_text.strip())
+
+            cleaned_lines = []
+            for raw_line in stdout_text.splitlines():
+                line = re.sub(r"\x1b\[[0-9;]*[A-Za-z]", "", raw_line).rstrip()
+                if not line:
+                    continue
+
+                # Strip viki help banner and static info.
+                if line == "usage:":
+                    continue
+                if line.startswith(". "):
+                    continue
+                if line.startswith("Default modules:"):
+                    continue
+                if "Spec Rev." in line:
+                    continue
+
+                cleaned_lines.append(line)
+
+            if not cleaned_lines:
+                return ""
+            return "\n".join(cleaned_lines) + "\n"
+        except Exception as e:
+            self.error_raised.emit(str(e))
+            return ""
+
 
 class SerialReadThread(QThread):
     data_received = pyqtSignal(bytes)

@@ -19,6 +19,7 @@ python -m nuitka `
     --windows-icon-from-ico=./logo.ico `
     --include-data-dir=./pic=./pic `
     --include-data-file=./config.json=./config.json `
+    --include-data-file=./config/viki.pl=./config/viki.pl `
     --include-data-file=./UWBDash.json=./UWBDash.json `
     --include-data-file=./logo.ico=./logo.ico `
     --include-module=log `

@@ -39,7 +39,7 @@ class DebugFragment : Fragment() {
         DebugParam(6, "Reset", 0xF1.toByte(), 0, 0, 0),
         DebugParam(7, "Reserved 2", 0x05.toByte(), 0, 255, 0),
         DebugParam(8, "Reserved 3", 0x06.toByte(), 0, 255, 0),
-        DebugParam(9, "Reserved 4", 0x07.toByte(), 0, 255, 0),
+        DebugParam(9, "Antenna", 0x07.toByte(), 0, 65535, 15300),
         DebugParam(10, "Reserved 5", 0x08.toByte(), 0, 255, 0),
         
     )
@@ -131,10 +131,37 @@ class DebugFragment : Fragment() {
                 // Handle Reset type (0xF1) separately
                 if (item.type == 0xF1.toByte()) {
                     sliderParam.visibility = View.INVISIBLE
+                    llStepper.visibility = View.GONE
                     tvParamValue.visibility = View.INVISIBLE
                     sliderParam.isEnabled = false
+                } else if (item.type == 0x07.toByte()) {
+                    sliderParam.visibility = View.GONE
+                    llStepper.visibility = View.VISIBLE
+                    tvParamValue.visibility = View.VISIBLE
+                    tvParamValue.text = item.value.toString()
+
+                    btnMinus.setOnClickListener {
+                        item.value = (item.value - 10).coerceAtLeast(item.min)
+                        tvParamValue.text = item.value.toString()
+                    }
+                    
+                    btnPlus.setOnClickListener {
+                        item.value = (item.value + 10).coerceAtMost(item.max)
+                        tvParamValue.text = item.value.toString()
+                    }
+
+                    btnMinus50.setOnClickListener {
+                        item.value = (item.value - 50).coerceAtLeast(item.min)
+                        tvParamValue.text = item.value.toString()
+                    }
+
+                    btnPlus50.setOnClickListener {
+                        item.value = (item.value + 50).coerceAtMost(item.max)
+                        tvParamValue.text = item.value.toString()
+                    }
                 } else {
                     sliderParam.visibility = View.VISIBLE
+                    llStepper.visibility = View.GONE
                     tvParamValue.visibility = View.VISIBLE
                     sliderParam.isEnabled = true
                     

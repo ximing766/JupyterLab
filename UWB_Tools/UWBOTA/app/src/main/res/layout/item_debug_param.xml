@@ -66,6 +66,72 @@
                 app:thumbRadius="8dp"
                 app:trackHeight="4dp" />
 
+            <LinearLayout
+                android:id="@+id/llStepper"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:gravity="center"
+                android:visibility="gone">
+
+                <Button
+                    android:id="@+id/btnMinus50"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="4dp"
+                    android:minWidth="40dp"
+                    android:minHeight="36dp"
+                    android:paddingHorizontal="4dp"
+                    android:text="-50"
+                    android:textColor="#E53935"
+                    app:strokeColor="#E53935"
+                    app:cornerRadius="12dp" />
+
+                <Button
+                    android:id="@+id/btnMinus"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="8dp"
+                    android:minWidth="40dp"
+                    android:minHeight="36dp"
+                    android:paddingHorizontal="4dp"
+                    android:text="-10"
+                    android:textColor="#E53935"
+                    app:strokeColor="#E53935"
+                    app:cornerRadius="12dp" />
+
+                <Button
+                    android:id="@+id/btnPlus"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:minWidth="40dp"
+                    android:minHeight="36dp"
+                    android:paddingHorizontal="4dp"
+                    android:text="+10"
+                    android:textColor="#43A047"
+                    app:strokeColor="#43A047"
+                    app:cornerRadius="12dp" />
+
+                <Button
+                    android:id="@+id/btnPlus50"
+                    style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="4dp"
+                    android:minWidth="40dp"
+                    android:minHeight="36dp"
+                    android:paddingHorizontal="4dp"
+                    android:text="+50"
+                    android:textColor="#43A047"
+                    app:strokeColor="#43A047"
+                    app:cornerRadius="12dp" />
+            </LinearLayout>
+
             <ImageButton
                 android:id="@+id/btnSetParam"
                 android:layout_width="32dp"
