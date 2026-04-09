@@ -2,12 +2,74 @@
 import serial , xlwt , sys , time 
 import json
 import re  # 正则清洗JSON
-#控制转台
+import subprocess
+import os
 import motor_modbus_rtu_0308 as inst
 
-# 你的配置（完全不变，适配你的硬件）
 UWB_COM = 'COM6'
 UWB_BAUDRATE = 921600
+
+ENABLE_VIKI_PARSE = True  # 开关：True 启用 viki 解析 HEX 数据，False 使用原 JSON 逻辑
+VIKI_SCRIPT_PATH = os.path.join(os.path.dirname(__file__), "viki.pl")
+
+def parse_hex_with_viki(hex_line):
+    try:
+        hex_line = hex_line.strip()
+        payload = f"NXPUCIR => {hex_line}\n"
+        si = None
+        cf = 0
+        if os.name == 'nt':
+            si = subprocess.STARTUPINFO()
+            si.dwFlags |= subprocess.STARTF_USESHOWWINDOW
+            si.wShowWindow = 0
+            cf = subprocess.CREATE_NO_WINDOW
+
+        proc = subprocess.run(
+            ['perl', VIKI_SCRIPT_PATH],
+            input=payload,
+            text=True,
+            capture_output=True,
+            startupinfo=si,
+            creationflags=cf,
+            timeout=2
+        )
+        
+        output = proc.stdout
+        if not output:
+            return None
+            
+        return extract_viki_params(output)
+    except Exception as e:
+        return None
+
+def extract_viki_params(output_text):
+    data = {
+        "Distance": 0.0, "RSSI": 0.0, "AoA_Azi": 0.0, 
+        "AoA_Ele": 0.0, "Pdoa_Fst": 0.0, "Pdoa_Sec": 0.0, "nLos": 1
+    }
+    
+    dist_cm = re.search(r"Dist:\s*(\d+)cm", output_text)
+    if dist_cm: data["Distance"] = float(dist_cm.group(1))
+        
+    rssi_m = re.search(r"RSSI:\s*(-?\d+\.?\d*)dBm", output_text)
+    if rssi_m: data["RSSI"] = float(rssi_m.group(1))
+        
+    azi_m = re.search(r"Azimuth:\s*(-?\d+\.?\d*)deg", output_text)
+    if azi_m: data["AoA_Azi"] = float(azi_m.group(1))
+        
+    ele_m = re.search(r"Elevation:\s*(-?\d+\.?\d*)deg", output_text)
+    if ele_m: data["AoA_Ele"] = float(ele_m.group(1))
+        
+    pdoa_m = re.findall(r"PDoA:\s*(-?\d+\.?\d*)", output_text)
+    if len(pdoa_m) >= 1: data["Pdoa_Fst"] = float(pdoa_m[0])
+    if len(pdoa_m) >= 2: data["Pdoa_Sec"] = float(pdoa_m[1])
+        
+    if "NLos" in output_text or "NLOS" in output_text: 
+        data["nLos"] = 0
+    else:
+        data["nLos"] = 1
+        
+    return data
 
 # 转台控制函数（完全不变）
 def turntable_rotate_3D(degreeAzi):
@@ -27,36 +89,56 @@ def read_and_write_data(set_count, azimuth, test_count, ser, sheet, workbook):
             continue
 
         try:
-            # 解码数据
-            line = data_raw.decode('utf-8', errors='ignore').strip()
-            # 【关键】只处理包含有效JSON的行，过滤所有无用日志
-            if '{"@POSITION"' not in line:
-                continue
+            data_json = None
+            
+            if ENABLE_VIKI_PARSE:
+                # 方案 A: 使用 Viki 解析 HEX
+                hex_str = data_raw.hex().upper()
+                hex_line = " ".join(hex_str[i:i+2] for i in range(0, len(hex_str), 2))
+                
+                if "62 00" in hex_line:
+                    parts = hex_line.split("62 00")
+                    for p in reversed(parts):
+                        if len(p.replace(" ", "")) > 10:
+                            valid_hex = "62 00" + p
+                            data_json = parse_hex_with_viki(valid_hex)
+                            if data_json:
+                                break
+                                
+                if not data_json:
+                    continue
+                
+                Distance    = data_json.get("Distance", 0.0)
+                RSSI        = data_json.get("RSSI", 0.0)
+                AoA_Azi     = data_json.get("AoA_Azi", 0.0)
+                Pdoa_Fst    = data_json.get("Pdoa_Fst", 0.0)
+                AoA_Ele     = data_json.get("AoA_Ele", 0.0)
+                Pdoa_Sec    = data_json.get("Pdoa_Sec", 0.0)
+                nLos        = data_json.get("nLos", 1)
 
-            # 精准截取完整JSON数据
-            json_start = line.find('{"@POSITION"')
-            json_end = line.rfind('}')
-            if json_start == -1 or json_end == -1:
-                continue
-            json_str = line[json_start : json_end + 1]
+            else:
+                # 方案 B: 原有 JSON 解析逻辑
+                line = data_raw.decode('utf-8', errors='ignore').strip()
+                
+                if '{"@POSITION"' in line:
+                    json_start = line.find('{"@POSITION"')
+                    json_end = line.rfind('}')
+                    if json_start != -1 and json_end != -1:
+                        json_str = line[json_start : json_end + 1]
+                        json_str = json_str.replace('"CardNo": ,', '"CardNo": null,')
+                        json_str = re.sub(r'"mac":\s*([0-9A-Fa-f]+)', r'"mac": "\1"', json_str)
+                        data_json = json.loads(json_str)
 
-            # 修复JSON格式错误（仅修复你数据里的2个问题）
-            # 1. 修复CardNo空值
-            json_str = json_str.replace('"CardNo": ,', '"CardNo": null,')
-            # 2. 修复mac字段缺少双引号
-            json_str = re.sub(r'"mac":\s*([0-9A-Fa-f]+)', r'"mac": "\1"', json_str)
+                if not data_json:
+                    continue
 
-            # 解析有效数据
-            data_json = json.loads(json_str)
-
-            # 提取参数（A1强制读取，无默认值0）
-            Distance    = data_json["A1"]
-            RSSI        = data_json["RSSI"]
-            AoA_Azi     = data_json["AoA-Azi"]
-            Pdoa_Fst    = data_json["Pdoa-Fst"]
-            AoA_Ele     = data_json["AoA-Ele"]
-            Pdoa_Sec    = data_json["Pdoa-Sec"]
-            nLos        = data_json["nLos"]
+                Distance    = data_json.get("A1", 0.0)
+                RSSI        = data_json.get("RSSI", 0.0)
+                AoA_Azi     = data_json.get("AoA-Azi", 0.0)
+                Pdoa_Fst    = data_json.get("Pdoa-Fst", 0.0)
+                AoA_Ele     = data_json.get("AoA-Ele", 0.0)
+                Pdoa_Sec    = data_json.get("Pdoa-Sec", 0.0)
+                nLos        = data_json.get("nLos", 1)
 
             # 计数统计
             if nLos == 0:
