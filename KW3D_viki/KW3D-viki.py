@@ -96,13 +96,27 @@ def read_and_write_data(set_count, azimuth, test_count, ser, sheet, workbook):
                 hex_str = data_raw.hex().upper()
                 hex_line = " ".join(hex_str[i:i+2] for i in range(0, len(hex_str), 2))
                 
-                if "62 00" in hex_line:
-                    parts = hex_line.split("62 00")
-                    for p in reversed(parts):
-                        if len(p.replace(" ", "")) > 10:
-                            valid_hex = "62 00" + p
-                            data_json = parse_hex_with_viki(valid_hex)
-                            if data_json:
+                if not hasattr(ser, "hex_buffer"):
+                    ser.hex_buffer = ""
+            
+                ser.hex_buffer += " " + hex_line if ser.hex_buffer else hex_line
+            
+                if "62 00 00 5C" in ser.hex_buffer:
+                    parts = ser.hex_buffer.split("62 00 00 5C")
+                    ser.hex_buffer = "62 00 00 5C" + parts[-1] if len(parts) > 1 else ser.hex_buffer
+
+                    for p in parts[:-1]:
+                        p = p.strip()
+                        if not p:
+                            continue
+                            
+                        valid_hex = "62 00 00 5C " + p
+                        print(valid_hex)
+                        
+                        if len(valid_hex.replace(" ", "")) > 20:
+                            parsed_data = parse_hex_with_viki(valid_hex)
+                            if parsed_data:
+                                data_json = parsed_data
                                 break
                                 
                 if not data_json:
