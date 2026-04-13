@@ -4,10 +4,10 @@ import json
 import re  # 正则清洗JSON
 import subprocess
 import os
-import motor_modbus_rtu_0308 as inst
+# import motor_modbus_rtu_0308 as inst
 
-UWB_COM = 'COM6'
-UWB_BAUDRATE = 921600
+UWB_COM = 'COM47'
+UWB_BAUDRATE = 3000000
 
 ENABLE_VIKI_PARSE = True  # 开关：True 启用 viki 解析 HEX 数据，False 使用原 JSON 逻辑
 VIKI_SCRIPT_PATH = os.path.join(os.path.dirname(__file__), "viki.pl")
@@ -72,9 +72,9 @@ def extract_viki_params(output_text):
     return data
 
 # 转台控制函数（完全不变）
-def turntable_rotate_3D(degreeAzi):
-    inst.write(degreeAzi)
-    inst.query("*OPC?")
+# def turntable_rotate_3D(degreeAzi):
+#     inst.write(degreeAzi)
+#     inst.query("*OPC?")
 
 # ===================== 核心修复：数据采集与解析 =====================
 def read_and_write_data(set_count, azimuth, test_count, ser, sheet, workbook):
@@ -84,7 +84,7 @@ def read_and_write_data(set_count, azimuth, test_count, ser, sheet, workbook):
 
     while count < set_count:
         # 读取串口数据
-        data_raw = ser.read(1024)
+        data_raw = ser.read(128)
         if not data_raw:
             continue
 
@@ -111,10 +111,10 @@ def read_and_write_data(set_count, azimuth, test_count, ser, sheet, workbook):
                             continue
                             
                         valid_hex = "62 00 00 5C " + p
-                        print(valid_hex)
                         
-                        if len(valid_hex.replace(" ", "")) > 20:
+                        if len(valid_hex.replace(" ", "")) >= 192:
                             parsed_data = parse_hex_with_viki(valid_hex)
+                            print(valid_hex)
                             if parsed_data:
                                 data_json = parsed_data
                                 break
@@ -263,13 +263,14 @@ if __name__ == '__main__':
 
     # 循环采集数据
     for i in range(test_num+1):
-        turntable_rotate_3D(start)
+        # turntable_rotate_3D(start)
         current_angle = -start
         print(f"\n🎯 已转到角度：{current_angle}°")
 
         # 等待稳定+清空缓存
         time.sleep(1)
         ser.reset_input_buffer()
+        ser.hex_buffer = ""
         print("🔍 开始采集数据...")
         read_and_write_data(set_count, current_angle, i, ser, sheet, workbook)
 
