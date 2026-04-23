@@ -445,7 +445,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.update_data_table_headers()
         
         self.COM1_page.setObjectName("COM1")
-        self.COM2_page.setObjectName("COM2") 
+        self.COM2_page.setObjectName("COM2")
         self.Chart_page.setObjectName("CHART")
         # 实例化测试页面并赋值给self.testInterface
         self.testInterface = TestPage(self)
@@ -459,7 +459,7 @@ class MainWindow(FluentWindow): # MSFluentWindow
         self.nav_com2 = self.addSubInterface(self.COM2_page, FIF.CONNECT, "COM2")
         self.addSubInterface(self.Chart_page, FIF.PIE_SINGLE, "CHART")
         # 使用已实例化的self.testInterface添加导航
-        # self.addSubInterface(self.testInterface, FIF.LABEL, "测试")
+        self.addSubInterface(self.testInterface, FIF.LABEL, "测试")
         self.addSubInterface(self.Settings_page, FIF.SETTING, "Setting", position=NavigationItemPosition.BOTTOM)
 
         self.navigationInterface.setExpandWidth(125)   # 展开时宽度设为 300 px
