@@ -1,0 +1,101 @@
+@import "tailwindcss";
+@import "@assistant-ui/react-ui/styles/index.css";
+
+:root {
+  --background: #f4f7fb; /* 淡浅蓝灰背景色 */
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+html, body {
+  height: 100%;
+  overflow: hidden; /* 防止整个页面出现滚动条 */
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+/* 隐藏聊天区域的滚动条但保留滚动功能 */
+.aui-thread-viewport {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE/Edge */
+}
+.aui-thread-viewport::-webkit-scrollbar {
+  display: none; /* Chrome/Safari */
+}
+
+/* 覆盖 assistant-ui 默认的输入框样式去除原生的怪异边框/把手 */
+.aui-thread-composer-input {
+  resize: none !important;
+  outline: none !important;
+  box-shadow: none !important;
+}
+
+/* 调整用户消息的布局，使其像 ChatGPT 一样靠左对齐，并与 Agent 消息对齐 */
+.aui-user-message-root {
+  display: grid !important;
+  grid-template-columns: auto auto 1fr !important;
+  grid-template-rows: auto 1fr !important;
+  row-gap: 0 !important;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+}
+
+.aui-user-message-root > * {
+  grid-column-start: unset !important;
+}
+
+.aui-user-message-content {
+  grid-column: span 2 / span 2 !important;
+  grid-column-start: 2 !important;
+  grid-row-start: 1 !important;
+  max-width: calc(var(--aui-thread-max-width) * 0.8) !important;
+  margin-top: 0.375rem !important;
+  margin-bottom: 0.375rem !important;
+  /* 保留 assistant-ui 自带气泡，只修改对齐 */
+}
+
+.aui-user-message-attachments {
+  grid-column-start: 2 !important;
+  grid-row-start: 2 !important;
+  justify-content: flex-start !important;
+}
+
+/* 轻微动态渐变背景动画 */
+@keyframes subtle-gradient {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+.animated-bg {
+  background: linear-gradient(-45deg, #f4f7fb, #eef2f8, #f0f4fc, #e8f0fe);
+  background-size: 400% 400%;
+  animation: subtle-gradient 15s ease infinite;
+}
+
+@media (prefers-color-scheme: dark) {
+  .animated-bg {
+    background: linear-gradient(-45deg, #0a0a0a, #11151c, #0d1117, #0f131a);
+    background-size: 400% 400%;
+    animation: subtle-gradient 15s ease infinite;
+  }
+}
