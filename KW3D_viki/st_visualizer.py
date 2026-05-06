@@ -14,6 +14,9 @@ from KW3D_viki import read_and_write_data, UWB_COM, UWB_BAUDRATE
 #     inst.write(degreeAzi)
 #     inst.query("*OPC?")
 
+# streamlit run st_visualizer.py
+
+
 # --- 页面配置 ---
 st.set_page_config(page_title="UWB 实时数据分析", layout="wide")
 # st.title("UWB数据观测")

@@ -6,7 +6,7 @@ import subprocess
 import os
 # import motor_modbus_rtu_0308 as inst
 
-UWB_COM = 'COM47'
+UWB_COM = 'COM63'
 UWB_BAUDRATE = 3000000
 
 ENABLE_VIKI_PARSE = True  # 开关：True 启用 viki 解析 HEX 数据，False 使用原 JSON 逻辑

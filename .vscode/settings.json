@@ -1,3 +1,12 @@
 {
-    "todo-tree.tree.showBadges": false
+    "todo-tree.tree.showBadges": false,
+    "files.associations": {
+        "charconv": "c",
+        "xlocmon": "c",
+        "*.tcc": "c",
+        "regex": "c",
+        "valarray": "c",
+        "variant": "c",
+        "*.def": "c"
+    }
 }
